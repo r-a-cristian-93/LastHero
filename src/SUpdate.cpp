@@ -74,8 +74,8 @@ void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 				//update position
 				pos += vel;
 
-				if (e->c_shape) {
-					e->c_shape->shape->move(vel);
+				if (e->get<CShape>()) {
+					e->get<CShape>()->shape->move(vel);
 				}
 			}
 		}

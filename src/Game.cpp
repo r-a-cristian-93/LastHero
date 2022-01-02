@@ -152,7 +152,7 @@ void Game::spawnPlayer() {
 	player = ent_mgr.add(Entity::TAG_PLAYER);
 
 	std::shared_ptr<sf::CircleShape> shape = std::make_shared<sf::CircleShape>(p_conf.shape_radius, p_conf.vertices);
-	player->c_shape = std::make_shared<CShape>(shape);
+	player->add<CShape>(new CShape(shape));
 	shape->setOrigin(p_conf.shape_radius, p_conf.shape_radius);
 	shape->setFillColor(sf::Color(p_conf.fill_r, p_conf.fill_g, p_conf.fill_b));
 	shape->setOutlineColor(sf::Color(p_conf.out_r, p_conf.out_g, p_conf.out_b));
@@ -164,13 +164,11 @@ void Game::spawnPlayer() {
 	player->add<CTransform>(new CTransform(pos, p_conf.velocity));
 	player->get<CTransform>()->d_angle = 2;
 
-	player->c_shape->shape->setPosition(player->get<CTransform>()->pos);
+	player->get<CShape>()->shape->setPosition(player->get<CTransform>()->pos);
 
 	player->alive = true;
 
 	player->c_input = std::make_shared<CInput>();
-
-	//ent_mgr.update();
 }
 
 void Game::spawnEnemy() {
@@ -179,7 +177,7 @@ void Game::spawnEnemy() {
 	size_t vertices = static_cast<size_t>(rand() % (e_conf.vertices_max - e_conf.vertices_min) + e_conf.vertices_min);
 	std::shared_ptr<sf::CircleShape> shape = std::make_shared<sf::CircleShape>(e_conf.shape_radius, vertices);
 
-	e->c_shape = std::make_shared<CShape>(shape);
+	e->add<CShape>(new CShape(shape));
 	shape->setOrigin(e_conf.shape_radius, e_conf.shape_radius);
 
 	int r = rand() % 255;
@@ -210,7 +208,7 @@ void Game::spawnEnemy() {
 	e->add<CTransform>(new CTransform(pos, velocity));
 	e->get<CTransform>()->d_angle = rand() % e_conf.velocity_max + e_conf.velocity_min;
 	e->get<CTransform>()->dir = {1,1};
-	e->c_shape->shape->setPosition(e->get<CTransform>()->pos);
+	e->get<CShape>()->shape->setPosition(e->get<CTransform>()->pos);
 
 	e->add<CScore>(new CScore(vertices));
 
@@ -384,12 +382,12 @@ void Game::sCollision() {
 }
 
 void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
-	size_t vertices = parent->c_shape->shape->getPointCount();
-	float rotation = parent->c_shape->shape->getRotation();
+	size_t vertices = parent->get<CShape>()->shape->getPointCount();
+	float rotation = parent->get<CShape>()->shape->getRotation();
 	float alpha = 360 / vertices;
 	sf::Vector2f parent_pos = parent->get<CTransform>()->pos;
-	sf::Color fill_color = parent->c_shape->shape->getFillColor();
-	float radius = parent->c_shape->shape->getRadius() / vertices;
+	sf::Color fill_color = parent->get<CShape>()->shape->getFillColor();
+	float radius = parent->get<CShape>()->shape->getRadius() / vertices;
 	float max_velocity = parent->get<CTransform>()->max_velocity / 2;
 
 	for (size_t i=0; i<vertices; i++) {
@@ -397,7 +395,7 @@ void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
 		std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_CHILD);
 
 		std::shared_ptr<sf::CircleShape> shape = std::make_shared<sf::CircleShape>(radius, vertices);
-		e->c_shape = std::make_shared<CShape>(shape);
+		e->add<CShape>(new CShape(shape));
 		shape->setOrigin(radius, radius);
 		shape->setFillColor(fill_color);
 
@@ -410,7 +408,7 @@ void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
 		e->add<CTransform>(new CTransform(parent_pos+ dir*(radius*2), max_velocity));
 		e->get<CTransform>()->d_angle = max_velocity;
 		e->get<CTransform>()->dir = dir;
-		e->c_shape->shape->setPosition(e->get<CTransform>()->pos);
+		e->get<CShape>()->shape->setPosition(e->get<CTransform>()->pos);
 
 		e->add<CLifespan>(new CLifespan(e_conf.child_lifespan));
 
@@ -451,9 +449,9 @@ void Game::checkLifespan(std::shared_ptr<Entity>& e) {
 		if (remaining * 3 < lifespan) {
 			int alpha = remaining * 255 / lifespan*3;
 
-			sf::Color color = e->c_shape->shape->getFillColor();
+			sf::Color color = e->get<CShape>()->shape->getFillColor();
 			color.a = alpha;
-			e->c_shape->shape->setFillColor(color);
+			e->get<CShape>()->shape->setFillColor(color);
 		}
 
 		if (remaining <= 0) {
@@ -470,7 +468,7 @@ void Game::spawnBullet() {
 	std::shared_ptr<Entity> bullet = ent_mgr.add(Entity::TAG_BULLET);
 
 	std::shared_ptr<sf::CircleShape> shape = std::make_shared<sf::CircleShape>(b_conf.shape_radius, b_conf.vertices);
-	bullet->c_shape = std::make_shared<CShape>(shape);
+	bullet->add<CShape>(new CShape(shape));
 	shape->setOrigin(b_conf.shape_radius, b_conf.shape_radius);
 	shape->setFillColor(sf::Color(b_conf.fill_r, b_conf.fill_g, b_conf.fill_b));
 
@@ -480,7 +478,7 @@ void Game::spawnBullet() {
 	bullet->add<CTransform>(new CTransform(pos, b_conf.velocity));
 	bullet->get<CTransform>()->dir = direction;
 	bullet->get<CTransform>()->d_angle = 1;
-	bullet->c_shape->shape->setPosition(bullet->get<CTransform>()->pos);
+	bullet->get<CShape>()->shape->setPosition(bullet->get<CTransform>()->pos);
 
 	bullet->add<CLifespan>(new CLifespan(b_conf.lifespan));
 
@@ -491,7 +489,7 @@ void Game::sSpin() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
 		if (e->get<CTransform>()) {
 			if (e->get<CTransform>()->d_angle) {
-				e->c_shape->shape->rotate(e->get<CTransform>()->d_angle);
+				e->get<CShape>()->shape->rotate(e->get<CTransform>()->d_angle);
 			}
 		}
 	}
@@ -504,7 +502,7 @@ void Game::spawnMissle() {
 	std::shared_ptr<Entity> missle = ent_mgr.add(Entity::TAG_MISSLE);
 
 	std::shared_ptr<sf::CircleShape> shape = std::make_shared<sf::CircleShape>(m_conf.shape_radius, m_conf.vertices);
-	missle->c_shape = std::make_shared<CShape>(shape);
+	missle->add<CShape>(new CShape(shape));
 	shape->setOrigin(m_conf.shape_radius, m_conf.shape_radius);
 	shape->setFillColor(sf::Color(m_conf.fill_r, m_conf.fill_g, m_conf.fill_b));
 
@@ -513,7 +511,7 @@ void Game::spawnMissle() {
 	missle->add<CTransform>(new CTransform(player_pos, m_conf.velocity));
 	missle->get<CTransform>()->dir = mouse_pos - player_pos;
 
-	missle->c_shape->shape->setPosition(missle->get<CTransform>()->pos);
+	missle->get<CShape>()->shape->setPosition(missle->get<CTransform>()->pos);
 
 	missle->add<CLifespan>(new CLifespan(m_conf.lifespan));
 

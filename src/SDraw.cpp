@@ -3,8 +3,8 @@
 
 void SDraw::drawEntities(sf::RenderWindow* w, const EntityVec& entities) {
 	for(const std::shared_ptr<Entity>& e:entities) {
-		if (e->c_shape) {
-			w->draw(*(e->c_shape->shape));
+		if (e->get<CShape>()) {
+			w->draw(*(e->get<CShape>()->shape));
 		}
 	}	
 }
