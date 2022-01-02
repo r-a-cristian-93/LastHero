@@ -38,7 +38,6 @@ public:
 	const size_t tag;
 	bool alive;
 
-	std::shared_ptr<CInput> c_input;
 	std::shared_ptr<CTarget> c_target;
 	std::shared_ptr<CCooldown> c_cooldown;
 

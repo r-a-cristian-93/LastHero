@@ -168,7 +168,7 @@ void Game::spawnPlayer() {
 
 	player->alive = true;
 
-	player->c_input = std::make_shared<CInput>();
+	player->add<CInput>(new CInput());
 }
 
 void Game::spawnEnemy() {
@@ -235,16 +235,16 @@ void Game::sUserInput() {
 		if (event.type == sf::Event::KeyPressed) {
 			switch (event.key.code) {
 				case sf::Keyboard::W :
-					player->c_input->up = true;
+					player->get<CInput>()->up = true;
 					break;
 				case sf::Keyboard::S :
-					player->c_input->down = true;
+					player->get<CInput>()->down = true;
 					break;
 				case sf::Keyboard::A :
-					player->c_input->left = true;
+					player->get<CInput>()->left = true;
 					break;
 				case sf::Keyboard::D :
-					player->c_input->right = true;
+					player->get<CInput>()->right = true;
 					break;
 				case sf::Keyboard::Space:
 					paused = !paused;
@@ -254,16 +254,16 @@ void Game::sUserInput() {
 		if (event.type == sf::Event::KeyReleased) {
 			switch (event.key.code) {
 				case sf::Keyboard::W :
-					player->c_input->up = false;
+					player->get<CInput>()->up = false;
 					break;
 				case sf::Keyboard::S :
-					player->c_input->down = false;
+					player->get<CInput>()->down = false;
 					break;
 				case sf::Keyboard::A :
-					player->c_input->left = false;
+					player->get<CInput>()->left = false;
 					break;
 				case sf::Keyboard::D :
-					player->c_input->right = false;
+					player->get<CInput>()->right = false;
 				break;
 			}
 		}
@@ -271,12 +271,12 @@ void Game::sUserInput() {
 		if (!paused) {
 			if (event.type == sf::Event::MouseButtonPressed){
 				if (event.mouseButton.button == sf::Mouse::Left) {
-					player->c_input->shoot = true;
+					player->get<CInput>()->shoot = true;
 				}
 			}
 			if (event.type == sf::Event::MouseButtonPressed){
 				if (event.mouseButton.button == sf::Mouse::Right) {
-					player->c_input->fire_missle = true;
+					player->get<CInput>()->fire_missle = true;
 				}
 			}
 		}
@@ -417,15 +417,15 @@ void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
 }
 
 void Game::sCombat() {
-	if (player->c_input->shoot) {
+	if (player->get<CInput>()->shoot) {
 		spawnBullet();
-		player->c_input->shoot = false;
+		player->get<CInput>()->shoot = false;
 	}
-	if (player->c_input->fire_missle) {
+	if (player->get<CInput>()->fire_missle) {
 		if (ent_mgr.getEntities(Entity::TAG_MISSLE).size() == 0) {
 			spawnMissle();
 		}
-		player->c_input->fire_missle = false;
+		player->get<CInput>()->fire_missle = false;
 	}
 }
 

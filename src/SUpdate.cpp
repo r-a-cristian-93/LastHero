@@ -10,13 +10,13 @@ void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 			sf::Vector2f& vel = e->get<CTransform>()->vel;
 			sf::Vector2f& pos = e->get<CTransform>()->pos;
 			
-			if (e->c_input) {
-				if (e->c_input->up) dir.y = -1;
-				else if (e->c_input->down) dir.y = 1;
+			if (e->get<CInput>()) {
+				if (e->get<CInput>()->up) dir.y = -1;
+				else if (e->get<CInput>()->down) dir.y = 1;
 				else dir.y = 0;
 
-				if (e->c_input->left) dir.x = -1;
-				else if (e->c_input->right) dir.x = 1;
+				if (e->get<CInput>()->left) dir.x = -1;
+				else if (e->get<CInput>()->right) dir.x = 1;
 				else dir.x = 0;
 			}
 
@@ -41,7 +41,7 @@ void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 					}
 
 					if (bounds.left <= limits.left || bounds.width >= limits.width) {						
-						if (e->c_input) {
+						if (e->get<CInput>()) {
 							dir.x = 0;
 							vel.x = 0;
 						}
@@ -56,7 +56,7 @@ void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 					}
 
 					if (bounds.top <= limits.top || bounds.height >= limits.height) {
-						if (e->c_input) {
+						if (e->get<CInput>()) {
 							dir.y = 0;
 							vel.y = 0;
 						}
