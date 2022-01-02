@@ -38,7 +38,6 @@ public:
 	const size_t tag;
 	bool alive;
 
-	std::shared_ptr<CTransform> c_transform;
 	std::shared_ptr<CShape> c_shape;
 	std::shared_ptr<CInput> c_input;
 	std::shared_ptr<CTarget> c_target;

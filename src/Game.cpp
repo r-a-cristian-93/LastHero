@@ -161,10 +161,10 @@ void Game::spawnPlayer() {
 	player->add<CCollision>(new CCollision(p_conf.collision_radius));
 
 	sf::Vector2f pos(app_conf.window_w/2, app_conf.window_h/2);
-	player->c_transform = std::make_shared<CTransform>(pos, p_conf.velocity);
-	player->c_transform->d_angle = 2;
-	//player->c_transform->dir = {1,1};
-	player->c_shape->shape->setPosition(player->c_transform->pos);
+	player->add<CTransform>(new CTransform(pos, p_conf.velocity));
+	player->get<CTransform>()->d_angle = 2;
+
+	player->c_shape->shape->setPosition(player->get<CTransform>()->pos);
 
 	player->alive = true;
 
@@ -199,7 +199,7 @@ void Game::spawnEnemy() {
 		pos.y = rand() % static_cast<int>(app_conf.window_h - e_conf.shape_radius*2) + e_conf.shape_radius;
 
 		float square_min_dist = (p_conf.shape_radius*10 + e_conf.shape_radius) * (p_conf.shape_radius*10 + e_conf.shape_radius);
-		float square_current_dist = squareDistance(pos, player->c_transform->pos);
+		float square_current_dist = squareDistance(pos, player->get<CTransform>()->pos);
 
 		if (square_current_dist > square_min_dist) {
 			position_is_set = true;
@@ -207,10 +207,10 @@ void Game::spawnEnemy() {
 	}
 
 	float velocity = rand() % (e_conf.velocity_max - e_conf.velocity_min) + e_conf.velocity_min;
-	e->c_transform = std::make_shared<CTransform>(pos, velocity);
-	e->c_transform->d_angle = rand() % e_conf.velocity_max + e_conf.velocity_min;
-	e->c_transform->dir = {1,1};
-	e->c_shape->shape->setPosition(e->c_transform->pos);
+	e->add<CTransform>(new CTransform(pos, velocity));
+	e->get<CTransform>()->d_angle = rand() % e_conf.velocity_max + e_conf.velocity_min;
+	e->get<CTransform>()->dir = {1,1};
+	e->c_shape->shape->setPosition(e->get<CTransform>()->pos);
 
 	e->add<CScore>(new CScore(vertices));
 
@@ -286,7 +286,7 @@ void Game::sUserInput() {
 }
 
 bool checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entity>& b) {
-	float square_distance = squareDistance(a->c_transform->pos, b->c_transform->pos);
+	float square_distance = squareDistance(a->get<CTransform>()->pos, b->get<CTransform>()->pos);
 
 	if (a->get<CCollision>() && b->get<CCollision>()) {
 		int square_radius =
@@ -387,10 +387,10 @@ void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
 	size_t vertices = parent->c_shape->shape->getPointCount();
 	float rotation = parent->c_shape->shape->getRotation();
 	float alpha = 360 / vertices;
-	sf::Vector2f parent_pos = parent->c_transform->pos;
+	sf::Vector2f parent_pos = parent->get<CTransform>()->pos;
 	sf::Color fill_color = parent->c_shape->shape->getFillColor();
 	float radius = parent->c_shape->shape->getRadius() / vertices;
-	float max_velocity = parent->c_transform->max_velocity / 2;
+	float max_velocity = parent->get<CTransform>()->max_velocity / 2;
 
 	for (size_t i=0; i<vertices; i++) {
 
@@ -407,10 +407,10 @@ void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
 		dir.x = cos((alpha*i + rotation) * PI / 180);
 		dir.y = sin((alpha*i + rotation) * PI / 180);
 
-		e->c_transform = std::make_shared<CTransform>(parent_pos+ dir*(radius*2), max_velocity);
-		e->c_transform->d_angle = max_velocity;
-		e->c_transform->dir = dir;
-		e->c_shape->shape->setPosition(e->c_transform->pos);
+		e->add<CTransform>(new CTransform(parent_pos+ dir*(radius*2), max_velocity));
+		e->get<CTransform>()->d_angle = max_velocity;
+		e->get<CTransform>()->dir = dir;
+		e->c_shape->shape->setPosition(e->get<CTransform>()->pos);
 
 		e->add<CLifespan>(new CLifespan(e_conf.child_lifespan));
 
@@ -464,7 +464,7 @@ void Game::checkLifespan(std::shared_ptr<Entity>& e) {
 
 void Game::spawnBullet() {
 	sf::Vector2f mouse_pos(sf::Mouse::getPosition(window));
-	sf::Vector2f player_pos(player->c_transform->pos);
+	sf::Vector2f player_pos(player->get<CTransform>()->pos);
 	sf::Vector2f direction = mouse_pos - player_pos;
 
 	std::shared_ptr<Entity> bullet = ent_mgr.add(Entity::TAG_BULLET);
@@ -477,10 +477,10 @@ void Game::spawnBullet() {
 	bullet->add<CCollision>(new CCollision(b_conf.collision_radius));
 
 	sf::Vector2f pos(player_pos);
-	bullet->c_transform = std::make_shared<CTransform>(pos, b_conf.velocity);
-	bullet->c_transform->dir = direction;
-	bullet->c_transform->d_angle = 1;
-	bullet->c_shape->shape->setPosition(bullet->c_transform->pos);
+	bullet->add<CTransform>(new CTransform(pos, b_conf.velocity));
+	bullet->get<CTransform>()->dir = direction;
+	bullet->get<CTransform>()->d_angle = 1;
+	bullet->c_shape->shape->setPosition(bullet->get<CTransform>()->pos);
 
 	bullet->add<CLifespan>(new CLifespan(b_conf.lifespan));
 
@@ -489,9 +489,9 @@ void Game::spawnBullet() {
 
 void Game::sSpin() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
-		if (e->c_transform) {
-			if (e->c_transform->d_angle) {
-				e->c_shape->shape->rotate(e->c_transform->d_angle);
+		if (e->get<CTransform>()) {
+			if (e->get<CTransform>()->d_angle) {
+				e->c_shape->shape->rotate(e->get<CTransform>()->d_angle);
 			}
 		}
 	}
@@ -499,7 +499,7 @@ void Game::sSpin() {
 
 void Game::spawnMissle() {
 	sf::Vector2f mouse_pos(sf::Mouse::getPosition(window));
-	sf::Vector2f player_pos(player->c_transform->pos);
+	sf::Vector2f player_pos(player->get<CTransform>()->pos);
 
 	std::shared_ptr<Entity> missle = ent_mgr.add(Entity::TAG_MISSLE);
 
@@ -510,10 +510,10 @@ void Game::spawnMissle() {
 
 	missle->add<CCollision>(new CCollision(m_conf.collision_radius));
 
-	missle->c_transform = std::make_shared<CTransform>(player_pos, m_conf.velocity);
-	missle->c_transform->dir = mouse_pos - player_pos;
+	missle->add<CTransform>(new CTransform(player_pos, m_conf.velocity));
+	missle->get<CTransform>()->dir = mouse_pos - player_pos;
 
-	missle->c_shape->shape->setPosition(missle->c_transform->pos);
+	missle->c_shape->shape->setPosition(missle->get<CTransform>()->pos);
 
 	missle->add<CLifespan>(new CLifespan(m_conf.lifespan));
 
@@ -524,11 +524,11 @@ void Game::spawnMissle() {
 
 std::shared_ptr<Entity> Game::findTarget(const std::shared_ptr<Entity>& missle) {
 	EntityVec reachable;
-	sf::Vector2f dir_missle(missle->c_transform->dir);
+	sf::Vector2f dir_missle(missle->get<CTransform>()->dir);
 	sf::Vector2f dir_enemy;
 
 	for (std::shared_ptr<Entity>& enemy : ent_mgr.getEntities(Entity::TAG_ENEMY)) {
-		dir_enemy = enemy->c_transform->pos - missle->c_transform->pos;
+		dir_enemy = enemy->get<CTransform>()->pos - missle->get<CTransform>()->pos;
 
 		if (angle(dir_missle, dir_enemy) < 30) {
 			reachable.push_back(enemy);
@@ -540,7 +540,7 @@ std::shared_ptr<Entity> Game::findTarget(const std::shared_ptr<Entity>& missle) 
 	float dist;
 
 	for (std::shared_ptr<Entity>& enemy : reachable) {
-		dist = abs(squareDistance(missle->c_transform->pos, enemy->c_transform->pos));
+		dist = abs(squareDistance(missle->get<CTransform>()->pos, enemy->get<CTransform>()->pos));
 		if (dist < prev_dist) {
 			target = enemy;
 			prev_dist = dist;
@@ -591,11 +591,11 @@ void Game::sMissleGuidance() {
 
 		if (set_new_target && missle->c_target) {
 			if (missle->c_target->target) {
-				sf::Vector2f target_pos = missle->c_target->target->c_transform->pos;
-				sf::Vector2f missle_pos = missle->c_transform->pos;
+				sf::Vector2f target_pos = missle->c_target->target->get<CTransform>()->pos;
+				sf::Vector2f missle_pos = missle->get<CTransform>()->pos;
 				sf::Vector2f dir(target_pos - missle_pos);
 
-				missle->c_transform->dir = dir;
+				missle->get<CTransform>()->dir = dir;
 			}
 		}
 	}
