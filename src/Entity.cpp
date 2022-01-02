@@ -5,9 +5,7 @@ Entity::Entity(size_t _tag, size_t _id)
 	:id(_id)
 	,tag(_tag)
 	,alive(true)
-	,c_target(nullptr)
-	,c_cooldown(nullptr)
-	,components(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr)
+	,components(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr)
 	{}
 
 Entity::~Entity() {
@@ -18,5 +16,4 @@ Entity::~Entity() {
 	if (get<CLifespan>()) delete get<CLifespan>();
 	if (get<CScore>()) delete get<CScore>();
 	if (get<CTarget>()) delete get<CTarget>();
-	if (get<CCooldown>()) delete get<CCooldown>();
 }

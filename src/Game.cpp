@@ -517,7 +517,7 @@ void Game::spawnMissle() {
 
 	missle->alive = true;
 
-	missle->c_target = std::make_shared<CTarget>();
+	missle->add<CTarget>(new CTarget());
 }
 
 std::shared_ptr<Entity> Game::findTarget(const std::shared_ptr<Entity>& missle) {
@@ -560,8 +560,8 @@ void Game::sMissleGuidance() {
 		std::shared_ptr<Entity> prev_target = nullptr;
 		bool set_new_target = false;
 
-		if (missle->c_target->target) {
-			prev_target = missle->c_target->target;
+		if (missle->get<CTarget>()->target) {
+			prev_target = missle->get<CTarget>()->target;
 		}
 
 		if (!new_target) {
@@ -582,14 +582,14 @@ void Game::sMissleGuidance() {
 
 			if (set_new_target) {
 				if (new_target) {
-					missle->c_target->target = new_target;
+					missle->get<CTarget>()->target = new_target;
 				}
 			}
 		}
 
-		if (set_new_target && missle->c_target) {
-			if (missle->c_target->target) {
-				sf::Vector2f target_pos = missle->c_target->target->get<CTransform>()->pos;
+		if (set_new_target && missle->get<CTarget>()) {
+			if (missle->get<CTarget>()->target) {
+				sf::Vector2f target_pos = missle->get<CTarget>()->target->get<CTransform>()->pos;
 				sf::Vector2f missle_pos = missle->get<CTransform>()->pos;
 				sf::Vector2f dir(target_pos - missle_pos);
 

@@ -11,7 +11,6 @@
 #include "CLifespan.h"
 #include "CScore.h"
 #include "CTarget.h"
-#include "CCooldown.h"
 
 typedef std::tuple<
 	CTransform*,
@@ -20,8 +19,7 @@ typedef std::tuple<
 	CInput*,
 	CLifespan*,
 	CScore*,
-	CTarget*,
-	CCooldown*>
+	CTarget*>
 Components;
 
 class Entity {
@@ -37,9 +35,6 @@ public:
 	const size_t id;
 	const size_t tag;
 	bool alive;
-
-	std::shared_ptr<CTarget> c_target;
-	std::shared_ptr<CCooldown> c_cooldown;
 
 	Components components;
 
