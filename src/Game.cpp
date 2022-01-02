@@ -406,9 +406,7 @@ void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
 		e->c_transform->dir = dir;
 		e->c_shape->shape->setPosition(e->c_transform->pos);
 
-		e->c_lifespan = std::make_shared<CLifespan>(e_conf.child_lifespan);
-
-		//e->add<CScore>(new CScore(1));
+		e->add<CLifespan>(new CLifespan(e_conf.child_lifespan));
 
 		e->alive = true;
 	}
@@ -438,18 +436,21 @@ void Game::sLifespan() {
 }
 
 void Game::checkLifespan(std::shared_ptr<Entity>& e) {
-	if (e->c_lifespan) {
-		e->c_lifespan->remaining--;
+	if (e->get<CLifespan>()) {
+		const int lifespan = e->get<CLifespan>()->lifespan;
+		int& remaining = e->get<CLifespan>()->remaining;		
+		
+		remaining--;
 
-		if (e->c_lifespan->remaining * 3 < e->c_lifespan->lifespan) {
-			int alpha = e->c_lifespan->remaining * 255 / e->c_lifespan->lifespan*3;
+		if (remaining * 3 < lifespan) {
+			int alpha = remaining * 255 / lifespan*3;
 
 			sf::Color color = e->c_shape->shape->getFillColor();
 			color.a = alpha;
 			e->c_shape->shape->setFillColor(color);
 		}
 
-		if (e->c_lifespan->remaining <= 0) {
+		if (remaining <= 0) {
 			e->alive = false;
 		}
 	}
@@ -476,7 +477,7 @@ void Game::spawnBullet() {
 	bullet->c_transform->d_angle = 1;
 	bullet->c_shape->shape->setPosition(bullet->c_transform->pos);
 
-	bullet->c_lifespan = std::make_shared<CLifespan>(b_conf.lifespan);
+	bullet->add<CLifespan>(new CLifespan(b_conf.lifespan));
 
 	bullet->alive = true;
 }
@@ -509,8 +510,8 @@ void Game::spawnMissle() {
 	missle->c_transform->dir = mouse_pos - player_pos;
 
 	missle->c_shape->shape->setPosition(missle->c_transform->pos);
-
-	missle->c_lifespan = std::make_shared<CLifespan>(m_conf.lifespan);
+	
+	missle->add<CLifespan>(new CLifespan(m_conf.lifespan));
 
 	missle->alive = true;
 
