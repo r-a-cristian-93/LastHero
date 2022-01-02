@@ -1,5 +1,6 @@
 #include "Entity.h"
-	
+#include <iostream>
+
 Entity::Entity(size_t _tag, size_t _id)
 	:id(_id)
 	,tag(_tag)
@@ -13,5 +14,17 @@ Entity::Entity(size_t _tag, size_t _id)
 	,c_score(nullptr)
 	,c_target(nullptr)
 	,c_cooldown(nullptr)
-	{}
+	,components(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr)
+	{}	
+	
 
+
+template<class T>
+void Entity::addComponent(T& t) {
+	std::get<T> = t;
+}
+
+template<class T>
+T* Entity::getComponent() {
+	return std::get<T*>(components);	
+}

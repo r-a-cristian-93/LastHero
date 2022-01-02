@@ -6,6 +6,7 @@ public:
 	int lifespan;
 	int remaining;
 	
+	CLifespan();
 	CLifespan(int l);
 };
 

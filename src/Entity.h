@@ -2,6 +2,7 @@
 #define ENTITY
 
 #include <memory>
+#include <tuple>
 
 #include "CTransform.h"
 #include "CCollision.h"
@@ -36,8 +37,26 @@ public:
 	std::shared_ptr<CScore> c_score;
 	std::shared_ptr<CTarget> c_target;
 	std::shared_ptr<CCooldown> c_cooldown;
+
+	std::tuple<
+		CTransform*,
+		CShape*,
+		CCollision*,
+		CBox*,
+		CInput*,
+		CLifespan*,
+		CScore*,
+		CTarget*,
+		CCooldown*>
+	components;
 	
 	Entity(size_t tag, size_t id);
+	
+	template<class T>
+	void addComponent(T& t);
+	
+	template<class T>
+	T* getComponent();	
 };
 
 #endif

@@ -6,6 +6,7 @@ public:
 	int cooldown;
 	int remaining;
 	
+	CCooldown();
 	CCooldown(int c);
 };
 

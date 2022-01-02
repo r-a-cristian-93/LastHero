@@ -5,6 +5,7 @@ class CCollision {
 public:
 	int radius;	
 	
+	CCollision();
 	CCollision(int r);
 };
 
