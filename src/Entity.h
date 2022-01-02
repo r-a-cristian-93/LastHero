@@ -40,10 +40,7 @@ public:
 
 	std::shared_ptr<CTransform> c_transform;
 	std::shared_ptr<CShape> c_shape;
-	std::shared_ptr<CCollision> c_collision;
 	std::shared_ptr<CInput> c_input;
-	std::shared_ptr<CLifespan> c_lifespan;
-	std::shared_ptr<CScore> c_score;
 	std::shared_ptr<CTarget> c_target;
 	std::shared_ptr<CCooldown> c_cooldown;
 
