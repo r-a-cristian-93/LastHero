@@ -1,0 +1,50 @@
+#include "EntityManager.h"
+#include <iostream>
+
+
+EntityManager::EntityManager() 
+	:entities_counter(0)
+	{}
+
+std::shared_ptr<Entity> EntityManager::add(size_t tag) {
+	std::shared_ptr<Entity> e = std::make_shared<Entity>(tag, entities_counter++);
+	entities_to_add.push_back(e);
+	return e;
+}
+
+void EntityManager::update() {
+	
+	//remove dead entities;
+	EntityVec entities_to_keep;
+	for (std::shared_ptr<Entity> e:entities) {
+		if (e->alive) {
+			entities_to_keep.push_back(e);
+		}
+	}
+	entities = entities_to_keep;
+
+	EntityMap tagged_to_keep;
+	for (size_t tag=0; tag<entities_tagged.size(); tag++) {	
+		for (std::shared_ptr<Entity> e:entities_tagged[tag]) {
+			if (e->alive) {
+				tagged_to_keep[e->tag].push_back(e);				
+			}
+		}			
+	}
+	entities_tagged = tagged_to_keep;
+	
+	// add new entities
+	for (std::shared_ptr<Entity> e:entities_to_add) {
+		entities.push_back(e);
+		entities_tagged[e->tag].push_back(e);
+	}
+	entities_to_add.clear();
+}
+
+EntityVec EntityManager::getEntities() {
+	return entities;
+}
+
+EntityVec EntityManager::getEntities(size_t tag) {	
+	return entities_tagged[tag];
+}
