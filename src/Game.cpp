@@ -135,7 +135,7 @@ void Game::init(std::string file_name) {
 	file.close();
 
 	window.create(sf::VideoMode(app_conf.window_w, app_conf.window_h), app_conf.window_name, sf::Style::Fullscreen);
-	
+
 	window.setFramerateLimit(app_conf.max_fps);
 	window.setKeyRepeatEnabled(false);
 
@@ -179,6 +179,7 @@ void Game::spawnEnemy() {
 
 	size_t vertices = static_cast<size_t>(rand() % (e_conf.vertices_max - e_conf.vertices_min) + e_conf.vertices_min);
 	std::shared_ptr<sf::CircleShape> shape = std::make_shared<sf::CircleShape>(e_conf.shape_radius, vertices);
+
 	e->c_shape = std::make_shared<CShape>(shape);
 	shape->setOrigin(e_conf.shape_radius, e_conf.shape_radius);
 
@@ -213,7 +214,7 @@ void Game::spawnEnemy() {
 	e->c_transform->dir = {1,1};
 	e->c_shape->shape->setPosition(e->c_transform->pos);
 
-	e->c_score = std::make_shared<CScore>(vertices);
+	e->add<CScore>(new CScore(vertices));
 
 	e->alive = true;
 }
@@ -329,7 +330,10 @@ void Game::sCollision() {
 				bullet->alive = false;
 				spawnChilds(enemy);
 
-				score += enemy->c_score->score;
+				if (enemy->get<CScore>()) {
+					score += enemy->get<CScore>()->score;
+				}
+
 			}
 		}
 
@@ -339,7 +343,9 @@ void Game::sCollision() {
 				child->alive = false;
 				bullet->alive = false;
 
-				score += child->c_score->score;
+				if (child->get<CScore>()) {
+					score += child->get<CScore>()->score;
+				}
 			}
 		}
 	}
@@ -351,7 +357,9 @@ void Game::sCollision() {
 				enemy->alive = false;
 				missle->alive = false;
 
-				score += enemy->c_score->score;
+				if (enemy->get<CScore>()) {
+					score += enemy->get<CScore>()->score;
+				}
 			}
 		}
 
@@ -360,7 +368,9 @@ void Game::sCollision() {
 			if (collision) {
 				child->alive = false;
 
-				score += child->c_score->score;
+				if (child->get<CScore>()) {
+					score += child->get<CScore>()->score;
+				}
 			}
 		}
 	}
@@ -398,7 +408,7 @@ void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
 
 		e->c_lifespan = std::make_shared<CLifespan>(e_conf.child_lifespan);
 
-		e->c_score = std::make_shared<CScore>(1);
+		//e->add<CScore>(new CScore(1));
 
 		e->alive = true;
 	}

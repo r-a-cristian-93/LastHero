@@ -14,7 +14,7 @@
 #include "CTarget.h"
 #include "CCooldown.h"
 
-class Entity {	
+class Entity {
 public:
 	enum {
 		TAG_PLAYER = 0,
@@ -23,7 +23,7 @@ public:
 		TAG_CHILD = 3,
 		TAG_MISSLE = 4
 	};
-	
+
 	const size_t id;
 	const size_t tag;
 	bool alive;
@@ -49,14 +49,18 @@ public:
 		CTarget*,
 		CCooldown*>
 	components;
-	
+
 	Entity(size_t tag, size_t id);
-	
+
 	template<class T>
-	void addComponent(T& t);
-	
+	void add(T* t) {
+		std::get<T*>(components) = t;
+	}
+
 	template<class T>
-	T* getComponent();	
+	T* get() {
+		return std::get<T*>(components);
+	}
 };
 
 #endif
