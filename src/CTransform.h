@@ -15,6 +15,7 @@ public:
 	
 	CTransform();
 	CTransform(const sf::Vector2f& p, const float& v);		
+	CTransform(const sf::Vector2f& p, const sf::Vector2f& d, const float& v);		
 };
 
 #endif
