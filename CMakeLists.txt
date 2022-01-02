@@ -10,7 +10,6 @@ set(SOURCE_FILES
 	src/CTransform.cpp
 	src/CCollision.cpp
 	src/CShape.cpp
-	src/CBox.cpp
 	src/CInput.cpp
 	src/CLifespan.cpp
 	src/CScore.cpp

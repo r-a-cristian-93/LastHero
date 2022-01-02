@@ -159,7 +159,6 @@ void Game::spawnPlayer() {
 	shape->setOutlineThickness(p_conf.out_thk);
 
 	player->c_collision = std::make_shared<CCollision>(p_conf.collision_radius);
-	player->c_box = std::make_shared<CBox>(player->c_shape->shape->getLocalBounds());
 
 	sf::Vector2f pos(app_conf.window_w/2, app_conf.window_h/2);
 	player->c_transform = std::make_shared<CTransform>(pos, p_conf.velocity);
@@ -191,7 +190,6 @@ void Game::spawnEnemy() {
 	shape->setOutlineThickness(e_conf.out_thk);
 
 	e->c_collision = std::make_shared<CCollision>(e_conf.collision_radius);
-	e->c_box = std::make_shared<CBox>(e->c_shape->shape->getLocalBounds());
 
 	bool position_is_set = false;
 	sf::Vector2f pos;
@@ -395,7 +393,6 @@ void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
 		shape->setFillColor(fill_color);
 
 		e->c_collision = std::make_shared<CCollision>(radius);
-		e->c_box = std::make_shared<CBox>(e->c_shape->shape->getLocalBounds());
 
 		sf::Vector2f dir;
 		dir.x = cos((alpha*i + rotation) * PI / 180);
@@ -469,7 +466,6 @@ void Game::spawnBullet() {
 	shape->setFillColor(sf::Color(b_conf.fill_r, b_conf.fill_g, b_conf.fill_b));
 
 	bullet->c_collision = std::make_shared<CCollision>(b_conf.collision_radius);
-	bullet->c_box = std::make_shared<CBox>(bullet->c_shape->shape->getLocalBounds());
 
 	sf::Vector2f pos(player_pos);
 	bullet->c_transform = std::make_shared<CTransform>(pos, b_conf.velocity);
@@ -504,7 +500,6 @@ void Game::spawnMissle() {
 	shape->setFillColor(sf::Color(m_conf.fill_r, m_conf.fill_g, m_conf.fill_b));
 
 	missle->c_collision = std::make_shared<CCollision>(m_conf.collision_radius);
-	missle->c_box = std::make_shared<CBox>(missle->c_shape->shape->getLocalBounds());
 
 	missle->c_transform = std::make_shared<CTransform>(player_pos, m_conf.velocity);
 	missle->c_transform->dir = mouse_pos - player_pos;

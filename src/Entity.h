@@ -7,7 +7,6 @@
 #include "CTransform.h"
 #include "CCollision.h"
 #include "CShape.h"
-#include "CBox.h"
 #include "CInput.h"
 #include "CLifespan.h"
 #include "CScore.h"
@@ -18,7 +17,6 @@ typedef std::tuple<
 	CTransform*,
 	CShape*,
 	CCollision*,
-	CBox*,
 	CInput*,
 	CLifespan*,
 	CScore*,
@@ -43,7 +41,6 @@ public:
 	std::shared_ptr<CTransform> c_transform;
 	std::shared_ptr<CShape> c_shape;
 	std::shared_ptr<CCollision> c_collision;
-	std::shared_ptr<CBox> c_box;
 	std::shared_ptr<CInput> c_input;
 	std::shared_ptr<CLifespan> c_lifespan;
 	std::shared_ptr<CScore> c_score;

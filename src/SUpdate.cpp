@@ -4,7 +4,7 @@
 
 void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 	for(const std::shared_ptr<Entity>& e:entities) {
-		if (e->c_transform && e->c_box) {
+		if (e->c_transform) {
 			if (e->c_input) {
 				if (e->c_input->up) e->c_transform->dir.y = -1;
 				else if (e->c_input->down) e->c_transform->dir.y = 1;

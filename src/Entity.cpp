@@ -8,20 +8,18 @@ Entity::Entity(size_t _tag, size_t _id)
 	,c_transform(nullptr)
 	,c_shape(nullptr)
 	,c_collision(nullptr)
-	,c_box(nullptr)
 	,c_input(nullptr)
 	,c_lifespan(nullptr)
 	,c_score(nullptr)
 	,c_target(nullptr)
 	,c_cooldown(nullptr)
-	,components(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr)
+	,components(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr)
 	{}
 
 Entity::~Entity() {
 	if (get<CTransform>()) delete get<CTransform>();
 	if (get<CShape>()) delete get<CShape>();
 	if (get<CCollision>()) delete get<CCollision>();
-	if (get<CBox>()) delete get<CBox>();
 	if (get<CInput>()) delete get<CInput>();
 	if (get<CLifespan>()) delete get<CLifespan>();
 	if (get<CScore>()) delete get<CScore>();
