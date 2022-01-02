@@ -438,8 +438,8 @@ void Game::sLifespan() {
 void Game::checkLifespan(std::shared_ptr<Entity>& e) {
 	if (e->get<CLifespan>()) {
 		const int lifespan = e->get<CLifespan>()->lifespan;
-		int& remaining = e->get<CLifespan>()->remaining;		
-		
+		int& remaining = e->get<CLifespan>()->remaining;
+
 		remaining--;
 
 		if (remaining * 3 < lifespan) {
@@ -510,7 +510,7 @@ void Game::spawnMissle() {
 	missle->c_transform->dir = mouse_pos - player_pos;
 
 	missle->c_shape->shape->setPosition(missle->c_transform->pos);
-	
+
 	missle->add<CLifespan>(new CLifespan(m_conf.lifespan));
 
 	missle->alive = true;

@@ -14,6 +14,18 @@
 #include "CTarget.h"
 #include "CCooldown.h"
 
+typedef std::tuple<
+	CTransform*,
+	CShape*,
+	CCollision*,
+	CBox*,
+	CInput*,
+	CLifespan*,
+	CScore*,
+	CTarget*,
+	CCooldown*>
+Components;
+
 class Entity {
 public:
 	enum {
@@ -38,19 +50,10 @@ public:
 	std::shared_ptr<CTarget> c_target;
 	std::shared_ptr<CCooldown> c_cooldown;
 
-	std::tuple<
-		CTransform*,
-		CShape*,
-		CCollision*,
-		CBox*,
-		CInput*,
-		CLifespan*,
-		CScore*,
-		CTarget*,
-		CCooldown*>
-	components;
+	Components components;
 
 	Entity(size_t tag, size_t id);
+	~Entity();
 
 	template<class T>
 	void add(T* t) {
