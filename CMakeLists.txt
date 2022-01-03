@@ -23,6 +23,9 @@ set(SOURCE_FILES
 	src/Settings.cpp
 	src/EntityManager.cpp
 	src/Game.cpp
+	src/Action.cpp
+	src/ActionManager.cpp
+	src/ActionStream.cpp
 )
 
 add_executable(Spinners ${SOURCE_FILES})

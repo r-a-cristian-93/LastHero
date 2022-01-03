@@ -64,7 +64,9 @@ void Game::init(std::string file_name) {
 			file >> app_conf.window_w;
 			file >> app_conf.window_h;
 			file >> app_conf.max_fps;
-			file >> app_conf.fullscreen;
+			int style_bits;
+			file >> style_bits;
+			app_conf.window_style = 1 << style_bits;
 		}
 		if (word == "Font") {
 			std::string font_file_path;
@@ -134,7 +136,7 @@ void Game::init(std::string file_name) {
 
 	file.close();
 
-	window.create(sf::VideoMode(app_conf.window_w, app_conf.window_h), app_conf.window_name, sf::Style::Fullscreen);
+	window.create(sf::VideoMode(app_conf.window_w, app_conf.window_h), app_conf.window_name, app_conf.window_style);
 	window.setFramerateLimit(app_conf.max_fps);
 	window.setKeyRepeatEnabled(false);
 
@@ -143,6 +145,14 @@ void Game::init(std::string file_name) {
 	score_text.setPosition(20.0f, 20.0f);
 
 	ent_mgr = EntityManager();
+	act_mgr = ActionManager();
+
+	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
+	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
+	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
+	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::D, Action::MOVE_RIGHT);
+	act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Left, Action::FIRE_PRIMARY);
+	act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Right, Action::FIRE_SECONDARY);
 
 	spawnPlayer();
 }
@@ -216,6 +226,9 @@ void Game::sEnemySpawner() {
 
 void Game::sUserInput() {
 
+
+	//ACTIONS ARE CREATED HERE
+
 	sf::Event event;
 	while (window.pollEvent(event)) {
 		if (event.type == sf::Event::Closed) {
@@ -224,6 +237,14 @@ void Game::sUserInput() {
 		}
 
 		if (event.type == sf::Event::KeyPressed) {
+			int action_code = act_mgr.getCode(ActionManager::DEV_KEYBOARD, event.key.code);
+
+			if (action_code) {
+				Action* a = new Action(action_code, Action::TYPE_START, frame_current);
+				act_stream << a;
+				doAction(*a);
+			}
+
 			switch (event.key.code) {
 				case sf::Keyboard::W :
 					player->get<CInput>()->up = true;
@@ -261,6 +282,14 @@ void Game::sUserInput() {
 
 		if (!paused) {
 			if (event.type == sf::Event::MouseButtonPressed){
+				int action_code = act_mgr.getCode(ActionManager::DEV_MOUSE, event.mouseButton.button);
+
+				if (action_code) {
+					Action* action = new Action(action_code, Action::TYPE_START, sf::Mouse::getPosition(), frame_current);
+					act_stream << action;
+					doAction(*action);
+				}
+
 				if (event.mouseButton.button == sf::Mouse::Left) {
 					player->get<CInput>()->shoot = true;
 				}
@@ -581,4 +610,14 @@ float Game::angle(const sf::Vector2f a, const sf::Vector2f b) {
 	float mod_a_b = sqrt((a.x*a.x + a.y*a.y) * (b.x*b.x + b.y*b.y));
 
 	return acos(dot_a_b / mod_a_b) / PI * 180;
+}
+
+void Game::doAction(const Action& a) {
+	if (a.type == Action::TYPE_START) {
+		switch (a.code) {
+			case Action::MOVE_RIGHT:
+				//player->get<CInput>()->right = true;
+			break;
+		}
+	}
 }
