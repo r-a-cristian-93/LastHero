@@ -147,12 +147,16 @@ void Game::init(std::string file_name) {
 	ent_mgr = EntityManager();
 	act_mgr = ActionManager();
 
+	rpl_mgr.load();
+
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::D, Action::MOVE_RIGHT);
 	act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Left, Action::FIRE_PRIMARY);
 	act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Right, Action::FIRE_SECONDARY);
+
+	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
 
 	spawnPlayer();
 }
@@ -225,79 +229,42 @@ void Game::sEnemySpawner() {
 }
 
 void Game::sUserInput() {
-
-
-	//ACTIONS ARE CREATED HERE
-
 	sf::Event event;
+	Action* action = nullptr;
+	int action_code(Action::NONE);
+
 	while (window.pollEvent(event)) {
 		if (event.type == sf::Event::Closed) {
 			running = false;
 			window.close();
-		}
 
-		if (event.type == sf::Event::KeyPressed) {
-			int action_code = act_mgr.getCode(ActionManager::DEV_KEYBOARD, event.key.code);
+			rpl_mgr.save();
+		}
+		else if (event.type == sf::Event::KeyPressed) {
+			action_code = act_mgr.getCode(ActionManager::DEV_KEYBOARD, event.key.code);
 
 			if (action_code) {
-				Action* a = new Action(action_code, Action::TYPE_START, frame_current);
-				act_stream << a;
-				doAction(*a);
-			}
-
-			switch (event.key.code) {
-				case sf::Keyboard::W :
-					player->get<CInput>()->up = true;
-					break;
-				case sf::Keyboard::S :
-					player->get<CInput>()->down = true;
-					break;
-				case sf::Keyboard::A :
-					player->get<CInput>()->left = true;
-					break;
-				case sf::Keyboard::D :
-					player->get<CInput>()->right = true;
-					break;
-				case sf::Keyboard::Space:
-					paused = !paused;
-					break;
+				action = new Action(action_code, Action::TYPE_START, frame_current);
+				rpl_mgr.log(action);
+				doAction(action);
 			}
 		}
-		if (event.type == sf::Event::KeyReleased) {
-			switch (event.key.code) {
-				case sf::Keyboard::W :
-					player->get<CInput>()->up = false;
-					break;
-				case sf::Keyboard::S :
-					player->get<CInput>()->down = false;
-					break;
-				case sf::Keyboard::A :
-					player->get<CInput>()->left = false;
-					break;
-				case sf::Keyboard::D :
-					player->get<CInput>()->right = false;
-				break;
+		else if (event.type == sf::Event::KeyReleased) {
+			action_code = act_mgr.getCode(ActionManager::DEV_KEYBOARD, event.key.code);
+
+			if (action_code) {
+				action = new Action(action_code, Action::TYPE_END, frame_current);
+				rpl_mgr.log(action);
+				doAction(action);
 			}
 		}
+		else if (event.type == sf::Event::MouseButtonPressed && !paused){
+			action_code = act_mgr.getCode(ActionManager::DEV_MOUSE, event.mouseButton.button);
 
-		if (!paused) {
-			if (event.type == sf::Event::MouseButtonPressed){
-				int action_code = act_mgr.getCode(ActionManager::DEV_MOUSE, event.mouseButton.button);
-
-				if (action_code) {
-					Action* action = new Action(action_code, Action::TYPE_START, sf::Mouse::getPosition(), frame_current);
-					act_stream << action;
-					doAction(*action);
-				}
-
-				if (event.mouseButton.button == sf::Mouse::Left) {
-					player->get<CInput>()->shoot = true;
-				}
-			}
-			if (event.type == sf::Event::MouseButtonPressed){
-				if (event.mouseButton.button == sf::Mouse::Right) {
-					player->get<CInput>()->fire_missle = true;
-				}
+			if (action_code != 0) {
+				action = new Action(action_code, Action::TYPE_START, sf::Mouse::getPosition(), frame_current);
+				rpl_mgr.log(action);
+				doAction(action);
 			}
 		}
 	}
@@ -433,15 +400,15 @@ void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
 }
 
 void Game::sCombat() {
-	if (player->get<CInput>()->shoot) {
+	if (player->get<CInput>()->fire_primary) {
 		spawnBullet();
-		player->get<CInput>()->shoot = false;
+		player->get<CInput>()->fire_primary = false;
 	}
-	if (player->get<CInput>()->fire_missle) {
+	if (player->get<CInput>()->fire_secondary) {
 		if (ent_mgr.getEntities(Entity::TAG_MISSLE).size() == 0) {
 			spawnMissle();
 		}
-		player->get<CInput>()->fire_missle = false;
+		player->get<CInput>()->fire_secondary = false;
 	}
 }
 
@@ -612,11 +579,49 @@ float Game::angle(const sf::Vector2f a, const sf::Vector2f b) {
 	return acos(dot_a_b / mod_a_b) / PI * 180;
 }
 
-void Game::doAction(const Action& a) {
-	if (a.type == Action::TYPE_START) {
-		switch (a.code) {
+void Game::doAction(const Action* a) {
+	if (a->type == Action::TYPE_START) {
+		switch (a->code) {
+			case Action::MOVE_UP:
+				player->get<CInput>()->up = true;
+			break;
+			case Action::MOVE_LEFT:
+				player->get<CInput>()->left = true;
+			break;
+			case Action::MOVE_DOWN:
+				player->get<CInput>()->down = true;
+			break;
 			case Action::MOVE_RIGHT:
-				//player->get<CInput>()->right = true;
+				player->get<CInput>()->right = true;
+			break;
+			case Action::FIRE_PRIMARY:
+				player->get<CInput>()->fire_primary = true;
+			break;
+			case Action::FIRE_SECONDARY:
+				player->get<CInput>()->fire_secondary = true;
+			break;
+			case Action::GAME_PAUSE:
+				paused = !paused;
+			break;
+			default:
+			break;
+		}
+	}
+	if (a->type == Action::TYPE_END) {
+		switch (a->code) {
+			case Action::MOVE_UP:
+				player->get<CInput>()->up = false;
+			break;
+			case Action::MOVE_LEFT:
+				player->get<CInput>()->left = false;
+			break;
+			case Action::MOVE_DOWN:
+				player->get<CInput>()->down = false;
+			break;
+			case Action::MOVE_RIGHT:
+				player->get<CInput>()->right = false;
+			break;
+			default:
 			break;
 		}
 	}

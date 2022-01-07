@@ -26,6 +26,7 @@ set(SOURCE_FILES
 	src/Action.cpp
 	src/ActionManager.cpp
 	src/ActionStream.cpp
+	src/ReplayManager.cpp
 )
 
 add_executable(Spinners ${SOURCE_FILES})

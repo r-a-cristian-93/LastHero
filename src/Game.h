@@ -3,11 +3,13 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <deque>
 
 #include "Entity.h"
 #include "EntityManager.h"
 #include "ActionManager.h"
 #include "ActionStream.h"
+#include "ReplayManager.h"
 #include "Common.h"
 
 class Game {
@@ -21,7 +23,7 @@ class Game {
 	sf::Font font;
 	EntityManager ent_mgr;
 	ActionManager act_mgr;
-	ActionStream act_stream;
+	ReplayManager rpl_mgr;
 
 	int frame_current;
 	int frame_last_spawn;
@@ -47,7 +49,7 @@ class Game {
 	void sSpin();
 	void sMissleGuidance();
 
-	void doAction(const Action& a);
+	void doAction(const Action* a);
 
 	void checkLifespan(std::shared_ptr<Entity>& e);
 	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);

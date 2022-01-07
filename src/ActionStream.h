@@ -12,8 +12,12 @@ public:
 	std::deque<Action*> actions;
 
 	ActionStream();
-	ActionStream& operator << (Action* a);
-	ActionStream& operator >> (Action* a);
+	~ActionStream();
+	ActionStream& operator << (Action*& a);
+	ActionStream& operator >> (Action*& a);
+	
+	bool empty();
+	void clear();
 };
 
 #endif

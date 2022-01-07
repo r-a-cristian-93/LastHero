@@ -5,6 +5,6 @@ CInput::CInput()
 	,down(false)
 	,left(false)
 	,right(false)
-	,shoot(false)
-	,fire_missle(false)
+	,fire_primary(false)
+	,fire_secondary(false)
 	{}

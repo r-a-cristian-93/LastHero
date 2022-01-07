@@ -2,10 +2,13 @@
 #define ACTION_MANAGER
 
 #include <map>
+#include <deque>
 #include "Action.h"
+#include "ActionStream.h"
 
-
+//map<key, action_code>
 typedef std::map<int, int> ActionMap;
+//map <device, ActionMap>
 typedef std::map<int, ActionMap> DeviceMap;
 
 class ActionManager {
@@ -17,6 +20,8 @@ public:
 	};
 
 	DeviceMap actions;
+
+	ActionManager();
 
 	void registerAction(int device, int key, int code);
 	int getCode(int device, int key);

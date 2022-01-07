@@ -3,7 +3,7 @@
 
 class CInput {
 public:
-	bool up, down, left, right, shoot, fire_missle;
+	bool up, down, left, right, fire_primary, fire_secondary;
 	
 	CInput();	
 };

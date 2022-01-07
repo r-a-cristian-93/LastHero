@@ -14,7 +14,8 @@ public:
 		MOVE_UP,
 		MOVE_DOWN,
 		FIRE_PRIMARY,
-		FIRE_SECONDARY
+		FIRE_SECONDARY,
+		GAME_PAUSE
 	};
 
 	enum {
@@ -22,15 +23,15 @@ public:
 		TYPE_START
 	};
 
-	int code;
-	int type;
+	size_t code;
+	size_t type;
 	int frame;
 	sf::Vector2f location;
 
-	Action(int c, int t, int f);
-	Action(int c, int t, sf::Vector2i l, int f);
+	Action(size_t c, size_t t, int f);
+	Action(size_t c, size_t t, sf::Vector2i l, int f);
 
-	friend std::ostream& operator<<(std::ostream& os, const Action& a);
+	friend std::ostream& operator << (std::ostream& os, const Action* a);
 };
 
 #endif
