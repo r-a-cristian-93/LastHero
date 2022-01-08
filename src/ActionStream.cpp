@@ -3,16 +3,16 @@
 
 ActionStream::ActionStream()
 	{}
-	
+
 ActionStream::~ActionStream() {
 	clear();
-}	
+}
 
 void ActionStream::clear() {
 	for (size_t i=0; i<actions.size(); i++) {
 		delete actions[i];
 	}
-	
+
 	actions.clear();
 }
 
@@ -22,12 +22,16 @@ ActionStream& ActionStream::operator << (Action*& a) {
 }
 
 ActionStream& ActionStream::operator >> (Action*& a) {
-	if (!actions.empty()) {		
+	if (!actions.empty()) {
 		a = actions.front();
 		actions.pop_front();
 	}
-	
+
 	return *this;
+}
+
+Action& ActionStream::operator [] (int i) {
+	return *actions[i];
 }
 
 bool ActionStream::empty() {

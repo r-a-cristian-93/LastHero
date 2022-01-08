@@ -1,26 +1,7 @@
 #ifndef ENTITY
 #define ENTITY
 
-#include <memory>
-#include <tuple>
-
-#include "CTransform.h"
-#include "CCollision.h"
-#include "CShape.h"
-#include "CInput.h"
-#include "CLifespan.h"
-#include "CScore.h"
-#include "CTarget.h"
-
-typedef std::tuple<
-	CTransform*,
-	CShape*,
-	CCollision*,
-	CInput*,
-	CLifespan*,
-	CScore*,
-	CTarget*>
-Components;
+#include "Components.h"
 
 class Entity {
 public:
@@ -39,16 +20,15 @@ public:
 	Components components;
 
 	Entity(size_t tag, size_t id);
-	~Entity();
 
 	template<class T>
 	void add(T* t) {
-		std::get<T*>(components) = t;
+		components.add<T>(t);
 	}
 
 	template<class T>
 	T* get() {
-		return std::get<T*>(components);
+		return components.get<T>();
 	}
 };
 

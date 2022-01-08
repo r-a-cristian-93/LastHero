@@ -15,6 +15,7 @@ set(SOURCE_FILES
 	src/CScore.cpp
 	src/CTarget.cpp
 	src/CCooldown.cpp
+	src/CClickLocation.cpp
 	src/Entity.cpp
 	src/SLoad.cpp
 	src/SUpdate.cpp

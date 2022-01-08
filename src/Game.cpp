@@ -15,6 +15,7 @@ Game::Game(std::string file_name)
 	:score(0)
 	,running(true)
 	,paused(false)
+	,replay(false)
 	,frame_current(0)
 	,frame_last_spawn(0)
 {
@@ -43,6 +44,10 @@ void Game::run() {
 			sSpin();
 			SDraw::drawEntities(&window, ent_mgr.getEntities());
 			sUserInput();
+
+			if (replay) {
+				sPlayback();
+			}
 
 			std::string sc = std::to_string(score);
 			score_text.setString(sc);
@@ -147,8 +152,6 @@ void Game::init(std::string file_name) {
 	ent_mgr = EntityManager();
 	act_mgr = ActionManager();
 
-	rpl_mgr.load();
-
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
@@ -157,6 +160,8 @@ void Game::init(std::string file_name) {
 	act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Right, Action::FIRE_SECONDARY);
 
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
+	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::F1, Action::REPLAY_SAVE);
+	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::F2, Action::REPLAY_START);
 
 	spawnPlayer();
 }
@@ -237,15 +242,15 @@ void Game::sUserInput() {
 		if (event.type == sf::Event::Closed) {
 			running = false;
 			window.close();
-
-			rpl_mgr.save();
 		}
 		else if (event.type == sf::Event::KeyPressed) {
 			action_code = act_mgr.getCode(ActionManager::DEV_KEYBOARD, event.key.code);
 
 			if (action_code) {
 				action = new Action(action_code, Action::TYPE_START, frame_current);
-				rpl_mgr.log(action);
+				if (!replay && action_code < Action::GAME_PAUSE) {
+					rpl_mgr.log(action);
+				}
 				doAction(action);
 			}
 		}
@@ -254,7 +259,9 @@ void Game::sUserInput() {
 
 			if (action_code) {
 				action = new Action(action_code, Action::TYPE_END, frame_current);
-				rpl_mgr.log(action);
+				if (!replay && action_code < Action::GAME_PAUSE) {
+					rpl_mgr.log(action);
+				}
 				doAction(action);
 			}
 		}
@@ -263,7 +270,9 @@ void Game::sUserInput() {
 
 			if (action_code != 0) {
 				action = new Action(action_code, Action::TYPE_START, sf::Mouse::getPosition(), frame_current);
-				rpl_mgr.log(action);
+				if (!replay && action_code < Action::GAME_PAUSE) {
+					rpl_mgr.log(action);
+				}
 				doAction(action);
 			}
 		}
@@ -444,7 +453,16 @@ void Game::checkLifespan(std::shared_ptr<Entity>& e) {
 }
 
 void Game::spawnBullet() {
-	const sf::Vector2f mouse_pos(sf::Mouse::getPosition(window));
+	sf::Vector2f mouse_pos;
+
+	if (replay) {
+		mouse_pos = rpl_mgr.nextAction->location;
+	}
+	else {
+		mouse_pos = sf::Vector2f(sf::Mouse::getPosition(window));
+	}
+
+
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir = mouse_pos - pos;
 
@@ -474,7 +492,15 @@ void Game::sSpin() {
 }
 
 void Game::spawnMissle() {
-	const sf::Vector2f mouse_pos(sf::Mouse::getPosition(window));
+	sf::Vector2f mouse_pos;
+
+	if (replay) {
+		mouse_pos = rpl_mgr.nextAction->location;
+	}
+	else {
+		mouse_pos = sf::Vector2f(sf::Mouse::getPosition(window));
+	}
+
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir = mouse_pos - pos;
 
@@ -603,6 +629,14 @@ void Game::doAction(const Action* a) {
 			case Action::GAME_PAUSE:
 				paused = !paused;
 			break;
+			case Action::REPLAY_SAVE:
+				rpl_mgr.save();
+			break;
+			case Action::REPLAY_START:
+				replay = true;
+				rpl_mgr.start();
+				frame_current = 0;
+			break;
 			default:
 			break;
 		}
@@ -624,5 +658,19 @@ void Game::doAction(const Action* a) {
 			default:
 			break;
 		}
+	}
+}
+
+void Game::sPlayback() {
+
+	std::cout << rpl_mgr.cursor << " " << rpl_mgr.stream.actions.size() << std::endl;
+	if (rpl_mgr.cursor >= rpl_mgr.stream.actions.size() - 1) {
+		replay = false;
+		std::cout << "PLAYBACK STOPPPED\n";
+	}
+
+	if (rpl_mgr.nextAction->frame == frame_current) {
+		doAction(rpl_mgr.nextAction);
+		rpl_mgr.next();
 	}
 }

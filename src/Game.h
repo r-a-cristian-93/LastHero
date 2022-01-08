@@ -30,7 +30,7 @@ class Game {
 	int score;
 	sf::Text score_text;
 
-	bool paused, running;
+	bool paused, running, replay;
 
 	std::shared_ptr<Entity> player;
 
@@ -48,6 +48,7 @@ class Game {
 	void sLifespan();
 	void sSpin();
 	void sMissleGuidance();
+	void sPlayback();
 
 	void doAction(const Action* a);
 

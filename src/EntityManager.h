@@ -15,7 +15,7 @@ private:
 	EntityVec entities_to_add;
 	EntityMap entities_tagged;
 	
-	size_t entities_counter;	
+	size_t entities_counter;
 	
 public:
 	EntityManager();
