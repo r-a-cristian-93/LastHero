@@ -75,26 +75,6 @@ void SLoad::loadEntity() {
 	}
 }
 
-/*
-	const sf::Vector2f pos(app_conf.window_w/2, app_conf.window_h/2);
-
-	std::shared_ptr<sf::CircleShape> shape = std::make_shared<sf::CircleShape>(p_conf.shape_radius, p_conf.vertices);
-	shape->setOrigin(p_conf.shape_radius, p_conf.shape_radius);
-	shape->setFillColor(sf::Color(p_conf.fill_r, p_conf.fill_g, p_conf.fill_b));
-	shape->setOutlineColor(sf::Color(p_conf.out_r, p_conf.out_g, p_conf.out_b));
-	shape->setOutlineThickness(p_conf.out_thk);
-	shape->setPosition(pos);
-
-	player = ent_mgr.add(Entity::TAG_PLAYER);
-
-	player->add<CTransform>(new CTransform(pos, p_conf.velocity));
-	player->get<CTransform>()->d_angle = 2;
-	player->add<CShape>(new CShape(shape));
-	player->add<CCollision>(new CCollision(p_conf.collision_radius));
-	player->add<CInput>(new CInput());
-	player->alive = true;
-*/
-
 void SLoad::loadEntities(std::string file_name, EntityManager& em) {
 	std::ifstream file(file_name);
 
