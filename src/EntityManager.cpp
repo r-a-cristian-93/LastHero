@@ -21,7 +21,7 @@ std::shared_ptr<Entity> EntityManager::add(size_t tag) {
 	else if (tag == Entity::TAG_MISSLE) {
 		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeMissle());
 	}
-	else {
+	else if (tag == Entity::TAG_CHILD) {
 		e = std::make_shared<Entity>(tag, entities_counter++);
 	}
 
@@ -33,9 +33,6 @@ std::shared_ptr<Entity> EntityManager::add(size_t tag, size_t recipe_id) {
 	std::shared_ptr<Entity> e = nullptr;
 	if (tag == Entity::TAG_ENEMY) {
 		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeEnemy(recipe_id));
-	}
-	else {
-		e = std::make_shared<Entity>(tag, entities_counter++);
 	}
 
 	entities_to_add.push_back(e);
