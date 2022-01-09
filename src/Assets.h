@@ -1,20 +1,11 @@
-#ifndef S_LOAD
-#define S_LOAD
+#ifndef ASSETS
+#define ASSETS
 
 #include <vector>
 #include <string>
 #include <fstream>
 #include "Entity.h"
 #include "EntityManager.h"
-
-namespace SLoad {
-
-enum {
-	ENT_PLAYER,
-	ENT_BULLET,
-	ENT_MISSLE,
-	ENT_ENEMY
-};
 
 struct Dataset {
 	size_t type;
@@ -30,11 +21,22 @@ struct Dataset {
 	int out_thk;
 	size_t vertices;
 	int lifespan;
+} ;
 
-} dataset;
+class Assets {
+private:
+
+enum {
+	NONE,
+	ENT_PLAYER,
+	ENT_BULLET,
+	ENT_MISSLE,
+	ENT_ENEMY
+};
 
 	std::ifstream file;
 	std::string word;
+	Dataset dataset;
 
 	Components recipe_player;
 	Components recipe_bullet;
@@ -43,6 +45,10 @@ struct Dataset {
 
 	void loadSettings(std::string file_name);
 	void loadEntities(std::string file_name, EntityManager& em);
+
+public:
+
+	Assets();
 
 	void loadEntities();
 	void loadEntity();
@@ -56,6 +62,6 @@ struct Dataset {
 	T* get(Components& c) {
 		return std::get<T*>(c);
 	}
-}
+};
 
 #endif

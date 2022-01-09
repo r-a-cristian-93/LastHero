@@ -17,7 +17,6 @@ set(SOURCE_FILES
 	src/CCooldown.cpp
 	src/CClickLocation.cpp
 	src/Entity.cpp
-	src/SLoad.cpp
 	src/SUpdate.cpp
 	src/SDraw.cpp
 	src/SEnemySpawner.cpp
@@ -28,6 +27,7 @@ set(SOURCE_FILES
 	src/ActionManager.cpp
 	src/ActionStream.cpp
 	src/ReplayManager.cpp
+	src/Assets.cpp
 )
 
 add_executable(Spinners ${SOURCE_FILES})

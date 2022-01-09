@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "SDraw.h"
 #include "SUpdate.h"
+#include "Assets.h"
 
 float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {
 	return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
@@ -62,6 +63,9 @@ void Game::run() {
 void Game::init(std::string file_name) {
 	std::ifstream file(file_name);
 	std::string word;
+
+	Assets res;
+	res.loadEntities();
 
 	while(file >> word) {
 		if (word == "Window") {

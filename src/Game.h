@@ -11,6 +11,7 @@
 #include "ActionStream.h"
 #include "ReplayManager.h"
 #include "Common.h"
+#include "Assets.h"
 
 class Game {
 	AppConfig app_conf;
@@ -18,6 +19,8 @@ class Game {
 	EnemyConfig e_conf;
 	BulletConfig b_conf;
 	MissleConfig m_conf;
+
+	Assets assets;
 
 	sf::RenderWindow window;
 	sf::Font font;
