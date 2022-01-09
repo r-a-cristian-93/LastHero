@@ -15,9 +15,6 @@
 
 class Game {
 	AppConfig app_conf;
-	EnemyConfig e_conf;
-	BulletConfig b_conf;
-	MissleConfig m_conf;
 
 	Assets* assets;
 

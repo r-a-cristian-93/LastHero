@@ -85,45 +85,6 @@ void Game::init(std::string file_name) {
 				exit(-1);
 			}
 		}
-		if (word == "Enemy") {
-			file >> e_conf.shape_radius;
-			file >> e_conf.collision_radius;
-			file >> e_conf.velocity_min;
-			file >> e_conf.velocity_max;
-			file >> e_conf.out_r;
-			file >> e_conf.out_g;
-			file >> e_conf.out_b;
-			file >> e_conf.out_thk;
-			file >> e_conf.vertices_min;
-			file >> e_conf.vertices_max;
-			file >> e_conf.child_lifespan;
-			file >> e_conf.spawn_interval;
-		}
-		if (word == "Bullet") {
-			file >> b_conf.shape_radius;
-			file >> b_conf.collision_radius;
-			file >> b_conf.velocity;
-			file >> b_conf.fill_r;
-			file >> b_conf.fill_g;
-			file >> b_conf.fill_b;
-			file >> b_conf.out_r;
-			file >> b_conf.out_g;
-			file >> b_conf.out_b;
-			file >> b_conf.out_thk;
-			file >> b_conf.vertices;
-			file >> b_conf.lifespan;
-		}
-		if (word == "Missle") {
-			file >> m_conf.shape_radius;
-			file >> m_conf.collision_radius;
-			file >> m_conf.velocity;
-			file >> m_conf.fill_r;
-			file >> m_conf.fill_g;
-			file >> m_conf.fill_b;
-			file >> m_conf.vertices;
-			file >> m_conf.cooldown;
-			file >> m_conf.lifespan;
-		}
 	}
 
 	file.close();
@@ -168,12 +129,16 @@ void Game::spawnEnemy() {
 	const sf::Vector2f dir(rand(), rand());
 	bool position_is_valid = false;
 	sf::Vector2f pos;
+	int player_radius = player->get<CCollision>()->radius;
+
+	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, 0);
+	int radius = e->get<CCollision>()->radius;
 
 	while (!position_is_valid) {
-		pos.x = rand() % static_cast<int>(app_conf.window_w - e_conf.shape_radius*2) + e_conf.shape_radius;
-		pos.y = rand() % static_cast<int>(app_conf.window_h - e_conf.shape_radius*2) + e_conf.shape_radius;
+		pos.x = rand() % static_cast<int>(app_conf.window_w - radius*2) + radius;
+		pos.y = rand() % static_cast<int>(app_conf.window_h - radius*2) + radius;
 
-		float square_min_dist = (22*10 + e_conf.shape_radius) * (22*10 + e_conf.shape_radius);
+		float square_min_dist = (player_radius*10 + radius) * (player_radius*10 + radius);
 		float square_current_dist = squareDistance(pos, player->get<CTransform>()->pos);
 
 		if (square_current_dist > square_min_dist) {
@@ -181,15 +146,13 @@ void Game::spawnEnemy() {
 		}
 	}
 
-	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, 0);
-
 	e->get<CTransform>()->pos = pos;
 	e->get<CTransform>()->dir = dir;
 	e->get<CShape>()->shape.setPosition(pos);
 }
 
 void Game::sEnemySpawner() {
-	if (frame_current-frame_last_spawn >= e_conf.spawn_interval) {
+	if (frame_current-frame_last_spawn >= 100) {
 		spawnEnemy();
 
 		frame_last_spawn = frame_current;
@@ -346,6 +309,7 @@ void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
 	const float alpha = 360 / vertices;
 	const float radius = parent->get<CShape>()->shape.getRadius() / vertices;
 	const float vel = parent->get<CTransform>()->max_velocity / 2;
+	const int lifespan = static_cast<int>(radius) * 6;
 	const sf::Color fill_color = parent->get<CShape>()->shape.getFillColor();
 	sf::Vector2f dir;
 	sf::Vector2f pos;
@@ -367,7 +331,7 @@ void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
 		e->get<CTransform>()->d_angle = vel;
 		e->add<CShape>(c_shape);
 		e->add<CCollision>(new CCollision(radius));
-		e->add<CLifespan>(new CLifespan(e_conf.child_lifespan));
+		e->add<CLifespan>(new CLifespan(lifespan));
 		e->alive = true;
 	}
 }
