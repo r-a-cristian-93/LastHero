@@ -27,11 +27,11 @@ void Assets::loadEntity() {
 		if (word == "_END") break;
 		else if (word == "type") {
 			file >> word;
-			if (word == "player") data_ent.type = ENT_PLAYER;
-			else if (word == "bullet") data_ent.type = ENT_BULLET;
-			else if (word == "missle") data_ent.type = ENT_MISSLE;
-			else if (word == "enemy") data_ent.type = ENT_ENEMY;
-			else data_ent.type = NONE;
+			if (word == "player") data_ent.type = Entity::TAG_PLAYER;
+			else if (word == "bullet") data_ent.type = Entity::TAG_BULLET;
+			else if (word == "missle") data_ent.type = Entity::TAG_MISSLE;
+			else if (word == "enemy") data_ent.type = Entity::TAG_ENEMY;
+			else data_ent.type = Entity::NONE;
 		}
 		else if (word == "radius") file >> data_ent.radius;
 		else if (word == "velocity") file >> data_ent.velocity;
@@ -47,7 +47,7 @@ void Assets::loadEntity() {
 	}
 
 	switch (data_ent.type) {
-		case ENT_PLAYER: {
+		case Entity::TAG_PLAYER: {
 			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
 			shape.setOrigin(data_ent.radius, data_ent.radius);
 			shape.setFillColor(sf::Color(data_ent.fill_r, data_ent.fill_g, data_ent.fill_b));
@@ -60,7 +60,7 @@ void Assets::loadEntity() {
 			recipe_player.add<CInput>(new CInput());
 		}
 		break;
-		case ENT_BULLET: {
+		case Entity::TAG_BULLET: {
 			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
 			shape.setOrigin(data_ent.radius, data_ent.radius);
 			shape.setFillColor(sf::Color(data_ent.fill_r, data_ent.fill_g, data_ent.fill_b));
@@ -71,7 +71,7 @@ void Assets::loadEntity() {
 			recipe_bullet.add<CLifespan>(new CLifespan(data_ent.lifespan));
 		}
 		break;
-		case ENT_MISSLE: {
+		case Entity::TAG_MISSLE: {
 			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
 			shape.setOrigin(data_ent.radius, data_ent.radius);
 			shape.setFillColor(sf::Color(data_ent.fill_r, data_ent.fill_g, data_ent.fill_b));
@@ -81,7 +81,7 @@ void Assets::loadEntity() {
 			recipe_missle.add<CCollision>(new CCollision(data_ent.radius));
 		}
 		break;
-		case ENT_ENEMY: {
+		case Entity::TAG_ENEMY: {
 			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
 			shape.setOrigin(data_ent.radius, data_ent.radius);
 			shape.setFillColor(sf::Color(data_ent.fill_r, data_ent.fill_g, data_ent.fill_b));

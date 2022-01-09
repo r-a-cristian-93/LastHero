@@ -24,15 +24,6 @@ struct EntityDataset {
 
 class Assets {
 private:
-
-enum {
-	NONE,
-	ENT_PLAYER,
-	ENT_BULLET,
-	ENT_MISSLE,
-	ENT_ENEMY
-};
-
 	std::ifstream file;
 	std::string word;
 	EntityDataset data_ent;

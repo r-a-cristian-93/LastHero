@@ -6,11 +6,12 @@
 class Entity {
 public:
 	enum {
-		TAG_PLAYER = 0,
-		TAG_ENEMY = 1,
-		TAG_BULLET = 2,
-		TAG_CHILD = 3,
-		TAG_MISSLE = 4
+		NONE,
+		TAG_PLAYER,
+		TAG_ENEMY,
+		TAG_BULLET,
+		TAG_MISSLE,
+		TAG_CHILD,
 	};
 
 	const size_t id;
