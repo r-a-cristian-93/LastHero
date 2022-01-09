@@ -4,8 +4,9 @@
 class CInput {
 public:
 	bool up, down, left, right, fire_primary, fire_secondary;
-	
-	CInput();	
+
+	CInput();
+	CInput(const CInput& c);
 };
 
 #endif

@@ -8,6 +8,7 @@
 #include "CLifespan.h"
 #include "CScore.h"
 #include "CTarget.h"
+#include <iostream>
 
 class Components {
 	std::tuple<
@@ -46,6 +47,23 @@ public:
 		add<CLifespan>(c_l);
 		add<CScore>(c_s);
 		add<CTarget>(c_tg);
+	}
+
+	Components(Components& c) {
+		if (c.get<CTransform>())
+			add<CTransform>(new CTransform(*c.get<CTransform>()));
+		if (c.get<CShape>())
+			add<CShape>(new CShape(*c.get<CShape>()));
+		if (c.get<CCollision>())
+			add<CCollision>(new CCollision(*c.get<CCollision>()));
+		if (c.get<CInput>())
+			add<CInput>(new CInput(*c.get<CInput>()));
+		if (c.get<CLifespan>())
+			add<CLifespan>(new CLifespan(*c.get<CLifespan>()));
+		if (c.get<CScore>())
+			add<CScore>(new CScore(*c.get<CScore>()));
+		if (c.get<CTarget>())
+			add<CTarget>(new CTarget(*c.get<CTarget>()));
 	}
 
 	~Components() {

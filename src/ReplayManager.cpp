@@ -10,7 +10,6 @@ ReplayManager::ReplayManager()
 
 
 void ReplayManager::log(Action*& a) {
-	std::cout << "LOG\n";
 	stream << a;
 }
 

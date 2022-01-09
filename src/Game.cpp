@@ -11,7 +11,6 @@ float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {
 	return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
 }
 
-
 Game::Game(std::string file_name)
 	:score(0)
 	,running(true)
@@ -64,9 +63,6 @@ void Game::init(std::string file_name) {
 	std::ifstream file(file_name);
 	std::string word;
 
-	Assets res;
-	res.loadEntities();
-
 	while(file >> word) {
 		if (word == "Window") {
 			file >> app_conf.window_name;
@@ -88,19 +84,6 @@ void Game::init(std::string file_name) {
 				std::cerr << "Could not load font!\n";
 				exit(-1);
 			}
-		}
-		if (word == "Player") {
-			file >> p_conf.shape_radius;
-			file >> p_conf.collision_radius;
-			file >> p_conf.velocity;
-			file >> p_conf.fill_r;
-			file >> p_conf.fill_g;
-			file >> p_conf.fill_b;
-			file >> p_conf.out_r;
-			file >> p_conf.out_g;
-			file >> p_conf.out_b;
-			file >> p_conf.out_thk;
-			file >> p_conf.vertices;
 		}
 		if (word == "Enemy") {
 			file >> e_conf.shape_radius;
@@ -153,7 +136,9 @@ void Game::init(std::string file_name) {
 	score_text.setFillColor(sf::Color(app_conf.font_r, app_conf.font_g, app_conf.font_b));
 	score_text.setPosition(20.0f, 20.0f);
 
-	ent_mgr = EntityManager();
+
+	assets = new Assets();
+	ent_mgr = EntityManager(assets);
 	act_mgr = ActionManager();
 
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
@@ -173,21 +158,10 @@ void Game::init(std::string file_name) {
 void Game::spawnPlayer() {
 	const sf::Vector2f pos(app_conf.window_w/2, app_conf.window_h/2);
 
-	std::shared_ptr<sf::CircleShape> shape = std::make_shared<sf::CircleShape>(p_conf.shape_radius, p_conf.vertices);
-	shape->setOrigin(p_conf.shape_radius, p_conf.shape_radius);
-	shape->setFillColor(sf::Color(p_conf.fill_r, p_conf.fill_g, p_conf.fill_b));
-	shape->setOutlineColor(sf::Color(p_conf.out_r, p_conf.out_g, p_conf.out_b));
-	shape->setOutlineThickness(p_conf.out_thk);
-	shape->setPosition(pos);
-
 	player = ent_mgr.add(Entity::TAG_PLAYER);
 
-	player->add<CTransform>(new CTransform(pos, p_conf.velocity));
-	player->get<CTransform>()->d_angle = 2;
-	player->add<CShape>(new CShape(shape));
-	player->add<CCollision>(new CCollision(p_conf.collision_radius));
-	player->add<CInput>(new CInput());
-	player->alive = true;
+	player->get<CTransform>()->pos = pos;
+	player->get<CShape>()->shape.setPosition(pos);
 }
 
 void Game::spawnEnemy() {
@@ -204,7 +178,7 @@ void Game::spawnEnemy() {
 		pos.x = rand() % static_cast<int>(app_conf.window_w - e_conf.shape_radius*2) + e_conf.shape_radius;
 		pos.y = rand() % static_cast<int>(app_conf.window_h - e_conf.shape_radius*2) + e_conf.shape_radius;
 
-		float square_min_dist = (p_conf.shape_radius*10 + e_conf.shape_radius) * (p_conf.shape_radius*10 + e_conf.shape_radius);
+		float square_min_dist = (22*10 + e_conf.shape_radius) * (22*10 + e_conf.shape_radius);
 		float square_current_dist = squareDistance(pos, player->get<CTransform>()->pos);
 
 		if (square_current_dist > square_min_dist) {
@@ -212,18 +186,19 @@ void Game::spawnEnemy() {
 		}
 	}
 
-	std::shared_ptr<sf::CircleShape> shape = std::make_shared<sf::CircleShape>(e_conf.shape_radius, vertices);
-	shape->setOrigin(e_conf.shape_radius, e_conf.shape_radius);
-	shape->setFillColor(sf::Color(r, g, b));
-	shape->setOutlineColor(sf::Color(e_conf.out_r, e_conf.out_g, e_conf.out_b));
-	shape->setOutlineThickness(e_conf.out_thk);
-	shape->setPosition(pos);
+	CShape* c_shape = new CShape(sf::CircleShape(e_conf.shape_radius, vertices));
+	sf::CircleShape& shape = c_shape->shape;
+	shape.setOrigin(e_conf.shape_radius, e_conf.shape_radius);
+	shape.setFillColor(sf::Color(r, g, b));
+	shape.setOutlineColor(sf::Color(e_conf.out_r, e_conf.out_g, e_conf.out_b));
+	shape.setOutlineThickness(e_conf.out_thk);
+	shape.setPosition(pos);
 
 	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY);
 
 	e->add<CTransform>(new CTransform(pos, dir, vel));
 	e->get<CTransform>()->d_angle = vel;
-	e->add<CShape>(new CShape(shape));
+	e->add<CShape>(c_shape);
 	e->add<CCollision>(new CCollision(e_conf.collision_radius));
 	e->add<CScore>(new CScore(vertices));
 	e->alive = true;
@@ -382,12 +357,12 @@ void Game::sCollision() {
 }
 
 void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
-	const size_t vertices = parent->get<CShape>()->shape->getPointCount();
-	const float rotation = parent->get<CShape>()->shape->getRotation();
+	const size_t vertices = parent->get<CShape>()->shape.getPointCount();
+	const float rotation = parent->get<CShape>()->shape.getRotation();
 	const float alpha = 360 / vertices;
-	const float radius = parent->get<CShape>()->shape->getRadius() / vertices;
+	const float radius = parent->get<CShape>()->shape.getRadius() / vertices;
 	const float vel = parent->get<CTransform>()->max_velocity / 2;
-	const sf::Color fill_color = parent->get<CShape>()->shape->getFillColor();
+	const sf::Color fill_color = parent->get<CShape>()->shape.getFillColor();
 	sf::Vector2f dir;
 	sf::Vector2f pos;
 
@@ -396,16 +371,17 @@ void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
 		dir.y = sin((alpha*i + rotation) * PI / 180);
 		pos = parent->get<CTransform>()->pos + dir*(radius*2);
 
-		std::shared_ptr<sf::CircleShape> shape = std::make_shared<sf::CircleShape>(radius, vertices);
-		shape->setOrigin(radius, radius);
-		shape->setFillColor(fill_color);
-		shape->setPosition(pos);
+		CShape* c_shape = new CShape(sf::CircleShape(radius, vertices));
+		sf::CircleShape& shape = c_shape->shape;
+		shape.setOrigin(radius, radius);
+		shape.setFillColor(fill_color);
+		shape.setPosition(pos);
 
 		std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_CHILD);
 
 		e->add<CTransform>(new CTransform(pos, dir, vel));
 		e->get<CTransform>()->d_angle = vel;
-		e->add<CShape>(new CShape(shape));
+		e->add<CShape>(c_shape);
 		e->add<CCollision>(new CCollision(radius));
 		e->add<CLifespan>(new CLifespan(e_conf.child_lifespan));
 		e->alive = true;
@@ -445,9 +421,9 @@ void Game::checkLifespan(std::shared_ptr<Entity>& e) {
 		if (remaining * 3 < lifespan) {
 			int alpha = remaining * 255 / lifespan*3;
 
-			sf::Color color = e->get<CShape>()->shape->getFillColor();
+			sf::Color color = e->get<CShape>()->shape.getFillColor();
 			color.a = alpha;
-			e->get<CShape>()->shape->setFillColor(color);
+			e->get<CShape>()->shape.setFillColor(color);
 		}
 
 		if (remaining <= 0) {
@@ -470,16 +446,17 @@ void Game::spawnBullet() {
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir = mouse_pos - pos;
 
-	std::shared_ptr<sf::CircleShape> shape = std::make_shared<sf::CircleShape>(b_conf.shape_radius, b_conf.vertices);
-	shape->setOrigin(b_conf.shape_radius, b_conf.shape_radius);
-	shape->setFillColor(sf::Color(b_conf.fill_r, b_conf.fill_g, b_conf.fill_b));
-	shape->setPosition(pos);
+	CShape* c_shape = new CShape(sf::CircleShape(b_conf.shape_radius, b_conf.vertices));
+	sf::CircleShape& shape = c_shape->shape;
+	shape.setOrigin(b_conf.shape_radius, b_conf.shape_radius);
+	shape.setFillColor(sf::Color(b_conf.fill_r, b_conf.fill_g, b_conf.fill_b));
+	shape.setPosition(pos);
 
 	std::shared_ptr<Entity> bullet = ent_mgr.add(Entity::TAG_BULLET);
 
 	bullet->add<CTransform>(new CTransform(pos, dir, b_conf.velocity));
 	bullet->get<CTransform>()->d_angle = 1;
-	bullet->add<CShape>(new CShape(shape));
+	bullet->add<CShape>(c_shape);
 	bullet->add<CCollision>(new CCollision(b_conf.collision_radius));
 	bullet->add<CLifespan>(new CLifespan(b_conf.lifespan));
 	bullet->alive = true;
@@ -489,7 +466,7 @@ void Game::sSpin() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
 		if (e->get<CTransform>()) {
 			if (e->get<CTransform>()->d_angle) {
-				e->get<CShape>()->shape->rotate(e->get<CTransform>()->d_angle);
+				e->get<CShape>()->shape.rotate(e->get<CTransform>()->d_angle);
 			}
 		}
 	}
@@ -508,15 +485,16 @@ void Game::spawnMissle() {
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir = mouse_pos - pos;
 
-	std::shared_ptr<sf::CircleShape> shape = std::make_shared<sf::CircleShape>(m_conf.shape_radius, m_conf.vertices);
-	shape->setOrigin(m_conf.shape_radius, m_conf.shape_radius);
-	shape->setFillColor(sf::Color(m_conf.fill_r, m_conf.fill_g, m_conf.fill_b));
-	shape->setPosition(pos);
+	CShape* c_shape = new CShape(sf::CircleShape(m_conf.shape_radius, m_conf.vertices));
+	sf::CircleShape& shape = c_shape->shape;
+	shape.setOrigin(m_conf.shape_radius, m_conf.shape_radius);
+	shape.setFillColor(sf::Color(m_conf.fill_r, m_conf.fill_g, m_conf.fill_b));
+	shape.setPosition(pos);
 
 	std::shared_ptr<Entity> missle = ent_mgr.add(Entity::TAG_MISSLE);
 
 	missle->add<CTransform>(new CTransform(pos, dir, m_conf.velocity));
-	missle->add<CShape>(new CShape(shape));
+	missle->add<CShape>(c_shape);
 	missle->add<CCollision>(new CCollision(m_conf.collision_radius));
 	missle->add<CLifespan>(new CLifespan(m_conf.lifespan));
 	missle->add<CTarget>(new CTarget());

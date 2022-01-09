@@ -15,12 +15,11 @@
 
 class Game {
 	AppConfig app_conf;
-	PlayerConfig p_conf;
 	EnemyConfig e_conf;
 	BulletConfig b_conf;
 	MissleConfig m_conf;
 
-	Assets assets;
+	Assets* assets;
 
 	sf::RenderWindow window;
 	sf::Font font;

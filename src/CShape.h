@@ -6,10 +6,10 @@
 
 class CShape {
 public:
-	std::shared_ptr<sf::CircleShape> shape;
+	sf::CircleShape shape;
 
 	CShape();
-	CShape(std::shared_ptr<sf::CircleShape>& s);
+	CShape(const sf::CircleShape& s);
 };
 
 #endif

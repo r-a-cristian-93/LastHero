@@ -19,7 +19,8 @@ public:
 
 	Components components;
 
-	Entity(size_t tag, size_t id);
+	Entity(size_t _tag, size_t _id);
+	Entity(size_t _tag, size_t _id, Components& _components);
 
 	template<class T>
 	void add(T* t) {

@@ -3,9 +3,10 @@
 
 class CCollision {
 public:
-	int radius;	
-	
+	int radius;
+
 	CCollision();
+	CCollision(const CCollision& c);
 	CCollision(int r);
 };
 

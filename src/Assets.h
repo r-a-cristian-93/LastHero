@@ -5,9 +5,8 @@
 #include <string>
 #include <fstream>
 #include "Entity.h"
-#include "EntityManager.h"
 
-struct Dataset {
+struct EntityDataset {
 	size_t type;
 	int id;
 	int radius;
@@ -36,19 +35,12 @@ enum {
 
 	std::ifstream file;
 	std::string word;
-	Dataset dataset;
+	EntityDataset data_ent;
 
 	Components recipe_player;
 	Components recipe_bullet;
 	Components recipe_missle;
-	std::map<int, Components> recipe_enemies;
-
-	void loadSettings(std::string file_name);
-	void loadEntities(std::string file_name, EntityManager& em);
-
-public:
-
-	Assets();
+	std::map<int, Components> recipe_enemy;
 
 	void loadEntities();
 	void loadEntity();
@@ -58,10 +50,15 @@ public:
 		std::get<T*>(c) = t;
 	}
 
+public:
+	Assets();
+
 	template<class T>
-	T* get(Components& c) {
+	const T* get(Components& c) {
 		return std::get<T*>(c);
 	}
+
+	Components& getRecipePlayer();
 };
 
 #endif

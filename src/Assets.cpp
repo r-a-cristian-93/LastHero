@@ -4,7 +4,13 @@
 #include "Assets.h"
 #include "Settings.h"
 
-Assets::Assets() {}
+Assets::Assets() {
+	loadEntities();
+}
+
+Components& Assets::getRecipePlayer() {
+	return recipe_player;
+}
 
 void Assets::loadEntities() {
 	file.open("res/entities.cfg");
@@ -21,37 +27,72 @@ void Assets::loadEntity() {
 		if (word == "_END") break;
 		else if (word == "type") {
 			file >> word;
-			if (word == "player") dataset.type = ENT_PLAYER;
-			else if (word == "bullet") dataset.type = ENT_BULLET;
-			else if (word == "missle") dataset.type = ENT_MISSLE;
-			else if (word == "enemy") dataset.type = ENT_ENEMY;
-			else dataset.type = NONE;
+			if (word == "player") data_ent.type = ENT_PLAYER;
+			else if (word == "bullet") data_ent.type = ENT_BULLET;
+			else if (word == "missle") data_ent.type = ENT_MISSLE;
+			else if (word == "enemy") data_ent.type = ENT_ENEMY;
+			else data_ent.type = NONE;
 		}
-		else if (word == "radius") file >> dataset.radius;
-		else if (word == "velocity") file >> dataset.velocity;
-		else if (word == "fill_r") file >> dataset.fill_r;
-		else if (word == "fill_g") file >> dataset.fill_g;
-		else if (word == "fill_b") file >> dataset.fill_b;
-		else if (word == "out_r") file >> dataset.out_r;
-		else if (word == "out_g") file >> dataset.out_g;
-		else if (word == "out_b") file >> dataset.out_b;
-		else if (word == "out_thk") file >> dataset.out_thk;
-		else if (word == "vertices") file >> dataset.vertices;
-		else if (word == "lifespan") file >> dataset.lifespan;
+		else if (word == "radius") file >> data_ent.radius;
+		else if (word == "velocity") file >> data_ent.velocity;
+		else if (word == "fill_r") file >> data_ent.fill_r;
+		else if (word == "fill_g") file >> data_ent.fill_g;
+		else if (word == "fill_b") file >> data_ent.fill_b;
+		else if (word == "out_r") file >> data_ent.out_r;
+		else if (word == "out_g") file >> data_ent.out_g;
+		else if (word == "out_b") file >> data_ent.out_b;
+		else if (word == "out_thk") file >> data_ent.out_thk;
+		else if (word == "vertices") file >> data_ent.vertices;
+		else if (word == "lifespan") file >> data_ent.lifespan;
 	}
 
-	switch (dataset.type) {
-		case ENT_PLAYER:
-			std::shared_ptr<sf::CircleShape> shape = std::make_shared<sf::CircleShape>(dataset.radius, dataset.vertices);
-			shape->setOrigin(dataset.radius, dataset.radius);
-			shape->setFillColor(sf::Color(dataset.fill_r, dataset.fill_g, dataset.fill_b));
-			shape->setOutlineColor(sf::Color(dataset.out_r, dataset.out_g, dataset.out_b));
-			shape->setOutlineThickness(dataset.out_thk);
+	switch (data_ent.type) {
+		case ENT_PLAYER: {
+			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
+			shape.setOrigin(data_ent.radius, data_ent.radius);
+			shape.setFillColor(sf::Color(data_ent.fill_r, data_ent.fill_g, data_ent.fill_b));
+			shape.setOutlineColor(sf::Color(data_ent.out_r, data_ent.out_g, data_ent.out_b));
+			shape.setOutlineThickness(data_ent.out_thk);
 
-			recipe_player.add<CTransform>(new CTransform(dataset.velocity));
+			recipe_player.add<CTransform>(new CTransform(data_ent.velocity));
 			recipe_player.add<CShape>(new CShape(shape));
-			recipe_player.add<CCollision>(new CCollision(dataset.radius));
+			recipe_player.add<CCollision>(new CCollision(data_ent.radius));
 			recipe_player.add<CInput>(new CInput());
+		}
+		break;
+		case ENT_BULLET: {
+			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
+			shape.setOrigin(data_ent.radius, data_ent.radius);
+			shape.setFillColor(sf::Color(data_ent.fill_r, data_ent.fill_g, data_ent.fill_b));
+
+			recipe_bullet.add<CTransform>(new CTransform(data_ent.velocity));
+			recipe_bullet.add<CShape>(new CShape(shape));
+			recipe_bullet.add<CCollision>(new CCollision(data_ent.radius));
+			recipe_bullet.add<CLifespan>(new CLifespan(data_ent.lifespan));
+		}
+		break;
+		case ENT_MISSLE: {
+			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
+			shape.setOrigin(data_ent.radius, data_ent.radius);
+			shape.setFillColor(sf::Color(data_ent.fill_r, data_ent.fill_g, data_ent.fill_b));
+
+			recipe_missle.add<CTransform>(new CTransform(data_ent.velocity));
+			recipe_missle.add<CShape>(new CShape(shape));
+			recipe_missle.add<CCollision>(new CCollision(data_ent.radius));
+		}
+		break;
+		case ENT_ENEMY: {
+			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
+			shape.setOrigin(data_ent.radius, data_ent.radius);
+			shape.setFillColor(sf::Color(data_ent.fill_r, data_ent.fill_g, data_ent.fill_b));
+			shape.setOutlineColor(sf::Color(data_ent.out_r, data_ent.out_g, data_ent.out_b));
+			shape.setOutlineThickness(data_ent.out_thk);
+
+			recipe_enemy[data_ent.id].add<CTransform>(new CTransform(data_ent.velocity));
+			recipe_enemy[data_ent.id].add<CShape>(new CShape(shape));
+			recipe_enemy[data_ent.id].add<CCollision>(new CCollision(data_ent.radius));
+			recipe_enemy[data_ent.id].add<CInput>(new CInput());
+		}
 		break;
 	}
 }

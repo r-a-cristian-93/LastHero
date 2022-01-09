@@ -11,6 +11,7 @@ public:
 	std::shared_ptr<Entity> target;
 	
 	CTarget();
+	CTarget(const CTarget& c);
 	CTarget(std::shared_ptr<Entity> t);
 };
 

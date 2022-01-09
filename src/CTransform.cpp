@@ -8,6 +8,14 @@ CTransform::CTransform()
 	,d_angle(0)
 	{}
 
+CTransform::CTransform(const CTransform& c)
+	:max_velocity(c.max_velocity)
+	,pos(c.pos)
+	,dir(c.dir)
+	,vel(c.vel)
+	,d_angle(c.d_angle)
+	{}
+
 CTransform::CTransform(const float& v)
 	:max_velocity(v)
 	,pos(0, 0)
