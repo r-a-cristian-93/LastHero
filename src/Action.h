@@ -5,6 +5,7 @@
 #include <iostream>
 
 class Action {
+
 public:
 	//action codes
 	enum {
@@ -34,11 +35,19 @@ public:
 		TYPE_START
 	};
 
-	size_t code;
-	size_t type;
-	int frame;
+	size_t* code;
+	size_t* type;
+	int* frame;
+	size_t* ent_tag;
+	size_t* ent_id;
+	float* pos_x;
+	float* pos_y;
+	float* dir_x;
+	float* dir_y;
+
 	sf::Vector2f location;
 
+	Action();
 	Action(size_t c, size_t t, int f);
 	Action(size_t c, size_t t, sf::Vector2i l, int f);
 

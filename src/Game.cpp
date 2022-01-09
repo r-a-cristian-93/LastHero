@@ -517,8 +517,8 @@ float Game::angle(const sf::Vector2f a, const sf::Vector2f b) {
 }
 
 void Game::doAction(const Action* a) {
-	if (a->type == Action::TYPE_START) {
-		switch (a->code) {
+	if (*a->type == Action::TYPE_START) {
+		switch (*a->code) {
 			case Action::MOVE_UP:
 				player->get<CInput>()->up = true;
 			break;
@@ -552,8 +552,8 @@ void Game::doAction(const Action* a) {
 			break;
 		}
 	}
-	if (a->type == Action::TYPE_END) {
-		switch (a->code) {
+	if (*a->type == Action::TYPE_END) {
+		switch (*a->code) {
 			case Action::MOVE_UP:
 				player->get<CInput>()->up = false;
 			break;
@@ -580,7 +580,7 @@ void Game::sPlayback() {
 		std::cout << "PLAYBACK STOPPPED\n";
 	}
 
-	if (rpl_mgr.nextAction->frame == frame_current) {
+	if (*rpl_mgr.nextAction->frame == frame_current) {
 		doAction(rpl_mgr.nextAction);
 		rpl_mgr.next();
 	}
