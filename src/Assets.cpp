@@ -12,6 +12,18 @@ Components& Assets::getRecipePlayer() {
 	return recipe_player;
 }
 
+Components& Assets::getRecipeBullet() {
+	return recipe_bullet;
+}
+
+Components& Assets::getRecipeMissle() {
+	return recipe_missle;
+}
+
+Components& Assets::getRecipeEnemy(size_t recipe_id) {
+	return recipe_enemy[recipe_id];
+}
+
 void Assets::loadEntities() {
 	file.open("res/entities.cfg");
 
@@ -33,6 +45,7 @@ void Assets::loadEntity() {
 			else if (word == "enemy") data_ent.type = Entity::TAG_ENEMY;
 			else data_ent.type = Entity::NONE;
 		}
+		else if (word == "id") file >> data_ent.id;
 		else if (word == "radius") file >> data_ent.radius;
 		else if (word == "velocity") file >> data_ent.velocity;
 		else if (word == "fill_r") file >> data_ent.fill_r;
@@ -79,6 +92,7 @@ void Assets::loadEntity() {
 			recipe_missle.add<CTransform>(new CTransform(data_ent.velocity));
 			recipe_missle.add<CShape>(new CShape(shape));
 			recipe_missle.add<CCollision>(new CCollision(data_ent.radius));
+			recipe_missle.add<CTarget>(new CTarget());
 		}
 		break;
 		case Entity::TAG_ENEMY: {
@@ -91,7 +105,7 @@ void Assets::loadEntity() {
 			recipe_enemy[data_ent.id].add<CTransform>(new CTransform(data_ent.velocity));
 			recipe_enemy[data_ent.id].add<CShape>(new CShape(shape));
 			recipe_enemy[data_ent.id].add<CCollision>(new CCollision(data_ent.radius));
-			recipe_enemy[data_ent.id].add<CInput>(new CInput());
+			recipe_enemy[data_ent.id].add<CScore>(new CScore(data_ent.vertices));
 		}
 		break;
 	}

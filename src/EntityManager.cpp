@@ -13,9 +13,26 @@ EntityManager::EntityManager(Assets* _assets)
 std::shared_ptr<Entity> EntityManager::add(size_t tag) {
 	std::shared_ptr<Entity> e = nullptr;
 	if (tag == Entity::TAG_PLAYER) {
-		std::cout << "ADDING PLAYER\n";
 		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipePlayer());
-		std::cout << "CREATED PLAYER\n";
+	}
+	else if (tag == Entity::TAG_BULLET) {
+		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeBullet());
+	}
+	else if (tag == Entity::TAG_MISSLE) {
+		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeMissle());
+	}
+	else {
+		e = std::make_shared<Entity>(tag, entities_counter++);
+	}
+
+	entities_to_add.push_back(e);
+	return e;
+}
+
+std::shared_ptr<Entity> EntityManager::add(size_t tag, size_t recipe_id) {
+	std::shared_ptr<Entity> e = nullptr;
+	if (tag == Entity::TAG_ENEMY) {
+		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeEnemy(recipe_id));
 	}
 	else {
 		e = std::make_shared<Entity>(tag, entities_counter++);

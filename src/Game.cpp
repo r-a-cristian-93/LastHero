@@ -165,12 +165,7 @@ void Game::spawnPlayer() {
 }
 
 void Game::spawnEnemy() {
-	const size_t vertices = static_cast<size_t>(rand() % (e_conf.vertices_max - e_conf.vertices_min) + e_conf.vertices_min);
-	const float vel = rand() % (e_conf.velocity_max - e_conf.velocity_min) + e_conf.velocity_min;
 	const sf::Vector2f dir(rand(), rand());
-	const int r = rand() % 255;
-	const int g = rand() % 200 + 55;
-	const int b = rand() % 55 + 100;
 	bool position_is_valid = false;
 	sf::Vector2f pos;
 
@@ -186,22 +181,11 @@ void Game::spawnEnemy() {
 		}
 	}
 
-	CShape* c_shape = new CShape(sf::CircleShape(e_conf.shape_radius, vertices));
-	sf::CircleShape& shape = c_shape->shape;
-	shape.setOrigin(e_conf.shape_radius, e_conf.shape_radius);
-	shape.setFillColor(sf::Color(r, g, b));
-	shape.setOutlineColor(sf::Color(e_conf.out_r, e_conf.out_g, e_conf.out_b));
-	shape.setOutlineThickness(e_conf.out_thk);
-	shape.setPosition(pos);
+	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, 0);
 
-	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY);
-
-	e->add<CTransform>(new CTransform(pos, dir, vel));
-	e->get<CTransform>()->d_angle = vel;
-	e->add<CShape>(c_shape);
-	e->add<CCollision>(new CCollision(e_conf.collision_radius));
-	e->add<CScore>(new CScore(vertices));
-	e->alive = true;
+	e->get<CTransform>()->pos = pos;
+	e->get<CTransform>()->dir = dir;
+	e->get<CShape>()->shape.setPosition(pos);
 }
 
 void Game::sEnemySpawner() {
@@ -442,24 +426,14 @@ void Game::spawnBullet() {
 		mouse_pos = sf::Vector2f(sf::Mouse::getPosition(window));
 	}
 
-
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir = mouse_pos - pos;
 
-	CShape* c_shape = new CShape(sf::CircleShape(b_conf.shape_radius, b_conf.vertices));
-	sf::CircleShape& shape = c_shape->shape;
-	shape.setOrigin(b_conf.shape_radius, b_conf.shape_radius);
-	shape.setFillColor(sf::Color(b_conf.fill_r, b_conf.fill_g, b_conf.fill_b));
-	shape.setPosition(pos);
-
 	std::shared_ptr<Entity> bullet = ent_mgr.add(Entity::TAG_BULLET);
 
-	bullet->add<CTransform>(new CTransform(pos, dir, b_conf.velocity));
-	bullet->get<CTransform>()->d_angle = 1;
-	bullet->add<CShape>(c_shape);
-	bullet->add<CCollision>(new CCollision(b_conf.collision_radius));
-	bullet->add<CLifespan>(new CLifespan(b_conf.lifespan));
-	bullet->alive = true;
+	bullet->get<CTransform>()->pos = pos;
+	bullet->get<CTransform>()->dir = dir;
+	bullet->get<CShape>()->shape.setPosition(pos);
 }
 
 void Game::sSpin() {
@@ -485,20 +459,11 @@ void Game::spawnMissle() {
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir = mouse_pos - pos;
 
-	CShape* c_shape = new CShape(sf::CircleShape(m_conf.shape_radius, m_conf.vertices));
-	sf::CircleShape& shape = c_shape->shape;
-	shape.setOrigin(m_conf.shape_radius, m_conf.shape_radius);
-	shape.setFillColor(sf::Color(m_conf.fill_r, m_conf.fill_g, m_conf.fill_b));
-	shape.setPosition(pos);
-
 	std::shared_ptr<Entity> missle = ent_mgr.add(Entity::TAG_MISSLE);
 
-	missle->add<CTransform>(new CTransform(pos, dir, m_conf.velocity));
-	missle->add<CShape>(c_shape);
-	missle->add<CCollision>(new CCollision(m_conf.collision_radius));
-	missle->add<CLifespan>(new CLifespan(m_conf.lifespan));
-	missle->add<CTarget>(new CTarget());
-	missle->alive = true;
+	missle->get<CTransform>()->pos = pos;
+	missle->get<CTransform>()->dir = dir;
+	missle->get<CShape>()->shape.setPosition(pos);
 }
 
 std::shared_ptr<Entity> Game::findTarget(const std::shared_ptr<Entity>& missle) {

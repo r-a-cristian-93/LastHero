@@ -8,7 +8,7 @@
 
 struct EntityDataset {
 	size_t type;
-	int id;
+	size_t id;
 	int radius;
 	int velocity;
 	int fill_r;
@@ -50,6 +50,9 @@ public:
 	}
 
 	Components& getRecipePlayer();
+	Components& getRecipeBullet();
+	Components& getRecipeMissle();
+	Components& getRecipeEnemy(size_t recipe_id);
 };
 
 #endif
