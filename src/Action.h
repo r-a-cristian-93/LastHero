@@ -40,16 +40,13 @@ public:
 	int* frame;
 	size_t* ent_tag;
 	size_t* ent_id;
-	float* pos_x;
-	float* pos_y;
-	float* dir_x;
-	float* dir_y;
-
-	sf::Vector2f location;
+	sf::Vector2f* pos;
+	sf::Vector2f* dir;
 
 	Action();
 	Action(size_t c, size_t t, int f);
-	Action(size_t c, size_t t, sf::Vector2i l, int f);
+	Action(size_t c, size_t t, int f, sf::Vector2i p);
+	Action(size_t c, size_t t, int f, sf::Vector2i p, sf::Vector2f d);
 
 	friend std::ostream& operator << (std::ostream& os, const Action* a);
 };

@@ -14,11 +14,8 @@
 #include "Assets.h"
 
 class Game {
-	AppConfig app_conf;
-
 	Assets* assets;
 
-	sf::RenderWindow window;
 	sf::Font font;
 	EntityManager ent_mgr;
 	ActionManager act_mgr;
@@ -28,8 +25,6 @@ class Game {
 	int frame_last_spawn;
 	int score;
 	sf::Text score_text;
-
-	bool paused, running, replay;
 
 	std::shared_ptr<Entity> player;
 
@@ -57,6 +52,10 @@ class Game {
 	float angle(const sf::Vector2f a, const sf::Vector2f b);
 
 public:
+	sf::RenderWindow window;
+	AppConfig app_conf;
+	bool paused, running, replay;
+	
 	Game(std::string file_name);
 
 	void run();

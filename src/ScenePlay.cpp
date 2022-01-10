@@ -1,107 +1,16 @@
-#include <fstream>
-#include <iostream>
+#include "ScenePlay.h"
 #include <cmath>
-
-#include "Game.h"
-#include "SDraw.h"
 #include "SUpdate.h"
-#include "Assets.h"
+#include "SDraw.h"
 
-float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {
-	return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
-}
-
-Game::Game(std::string file_name)
-	:score(0)
-	,running(true)
-	,paused(false)
-	,replay(false)
-	,frame_current(0)
-	,frame_last_spawn(0)
+ScenePlay::ScenePlay(Game* g, std::string lp)
+	:Scene(g)
+	,level_path(lp)
 {
-	init(file_name);
+	init();
 }
 
-void Game::run() {
-	sf::Event event;
-
-	sf::FloatRect lim(0,0,app_conf.window_w,app_conf.window_h);
-
-	while(running) {
-		if (window.isOpen()) {
-
-			window.clear();
-			if (!paused) {
-				ent_mgr.update();
-				sEnemySpawner();
-				sLifespan();
-				sMissleGuidance();
-				SUpdate::updatePosition(ent_mgr.getEntities(), lim);
-				sCollision();
-				sCombat();
-			}
-
-			sSpin();
-			SDraw::drawEntities(&window, ent_mgr.getEntities());
-			sUserInput();
-
-			if (replay) {
-				sPlayback();
-			}
-
-			std::string sc = std::to_string(score);
-			score_text.setString(sc);
-
-			window.draw(score_text);
-			window.display();
-		}
-		frame_current++;
-	}
-}
-
-void Game::init(std::string file_name) {
-	std::ifstream file(file_name);
-	std::string word;
-
-	while(file >> word) {
-		if (word == "Window") {
-			file >> app_conf.window_name;
-			file >> app_conf.window_w;
-			file >> app_conf.window_h;
-			file >> app_conf.max_fps;
-			int style_bits;
-			file >> style_bits;
-			app_conf.window_style = 1 << style_bits;
-		}
-		if (word == "Font") {
-			std::string font_file_path;
-			file >> font_file_path;
-			file >> app_conf.font_size;
-			file >> app_conf.font_r;
-			file >> app_conf.font_g;
-			file >> app_conf.font_b;
-			if (!font.loadFromFile(font_file_path)) {
-				std::cerr << "Could not load font!\n";
-				exit(-1);
-			}
-		}
-	}
-
-	file.close();
-
-	window.create(sf::VideoMode(app_conf.window_w, app_conf.window_h), app_conf.window_name, app_conf.window_style);
-	window.setFramerateLimit(app_conf.max_fps);
-	window.setKeyRepeatEnabled(false);
-
-	score_text = sf::Text("0", font, app_conf.font_size);
-	score_text.setFillColor(sf::Color(app_conf.font_r, app_conf.font_g, app_conf.font_b));
-	score_text.setPosition(20.0f, 20.0f);
-
-
-	assets = new Assets();
-	ent_mgr = EntityManager(assets);
-	act_mgr = ActionManager();
-
+void ScenePlay::init() {
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
@@ -112,12 +21,41 @@ void Game::init(std::string file_name) {
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::F1, Action::REPLAY_SAVE);
 	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::F2, Action::REPLAY_START);
-
-	spawnPlayer();
+	
+	load_level();
 }
 
-void Game::spawnPlayer() {
-	const sf::Vector2f pos(app_conf.window_w/2, app_conf.window_h/2);
+void ScenePlay::load_level() {
+
+
+}
+
+void ScenePlay::update() {
+	sf::FloatRect lim(0, 0, game->app_conf.window_w, game->app_conf.window_h);
+	
+	if (!paused) {
+		ent_mgr.update();
+		sEnemySpawner();
+		sLifespan();
+		sMissleGuidance();
+		SUpdate::updatePosition(ent_mgr.getEntities(), lim);
+		sCollision();
+		sCombat();
+	}
+
+	sSpin();
+	SDraw::drawEntities(&game->window, ent_mgr.getEntities());
+
+
+	std::string sc = std::to_string(score);
+	score_text.setString(sc);
+}
+
+
+
+
+void ScenePlay::spawnPlayer() {
+	const sf::Vector2f pos(game->app_conf.window_w/2, game->app_conf.window_h/2);
 
 	player = ent_mgr.add(Entity::TAG_PLAYER);
 
@@ -125,7 +63,7 @@ void Game::spawnPlayer() {
 	player->get<CShape>()->shape.setPosition(pos);
 }
 
-void Game::spawnEnemy() {
+void ScenePlay::spawnEnemy() {
 	const sf::Vector2f dir(rand(), rand());
 	bool position_is_valid = false;
 	sf::Vector2f pos;
@@ -135,8 +73,8 @@ void Game::spawnEnemy() {
 	int radius = e->get<CCollision>()->radius;
 
 	while (!position_is_valid) {
-		pos.x = rand() % static_cast<int>(app_conf.window_w - radius*2) + radius;
-		pos.y = rand() % static_cast<int>(app_conf.window_h - radius*2) + radius;
+		pos.x = rand() % static_cast<int>(game->app_conf.window_w - radius*2) + radius;
+		pos.y = rand() % static_cast<int>(game->app_conf.window_h - radius*2) + radius;
 
 		float square_min_dist = (player_radius*10 + radius) * (player_radius*10 + radius);
 		float square_current_dist = squareDistance(pos, player->get<CTransform>()->pos);
@@ -151,32 +89,27 @@ void Game::spawnEnemy() {
 	e->get<CShape>()->shape.setPosition(pos);
 }
 
-void Game::sEnemySpawner() {
-	if (frame_current-frame_last_spawn >= 100) {
+void ScenePlay::sEnemySpawner() {
+	if (frame_current % 100 == 0) {
 		spawnEnemy();
-
-		frame_last_spawn = frame_current;
 	}
 }
 
-void Game::sUserInput() {
+void ScenePlay::sUserInput() {
 	sf::Event event;
 	Action* action = nullptr;
 	int action_code = Action::NONE;
 
-	while (window.pollEvent(event)) {
+	while (game->window.pollEvent(event)) {
 		if (event.type == sf::Event::Closed) {
-			running = false;
-			window.close();
+			game->running = false;
+			game->window.close();
 		}
 		else if (event.type == sf::Event::KeyPressed) {
 			action_code = act_mgr.getCode(ActionManager::DEV_KEYBOARD, event.key.code);
 
 			if (action_code) {
 				action = new Action(action_code, Action::TYPE_START, frame_current);
-				if (!replay && action_code < Action::GAME_PAUSE) {
-					rpl_mgr.log(action);
-				}
 				doAction(action);
 			}
 		}
@@ -185,9 +118,6 @@ void Game::sUserInput() {
 
 			if (action_code) {
 				action = new Action(action_code, Action::TYPE_END, frame_current);
-				if (!replay && action_code < Action::GAME_PAUSE) {
-					rpl_mgr.log(action);
-				}
 				doAction(action);
 			}
 		}
@@ -196,16 +126,13 @@ void Game::sUserInput() {
 
 			if (action_code != 0) {
 				action = new Action(action_code, Action::TYPE_START, frame_current, sf::Mouse::getPosition());
-				if (!replay && action_code < Action::GAME_PAUSE) {
-					rpl_mgr.log(action);
-				}
 				doAction(action);
 			}
 		}
 	}
 }
 
-bool checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entity>& b) {
+bool ScenePlay::checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entity>& b) {
 	float square_distance = squareDistance(a->get<CTransform>()->pos, b->get<CTransform>()->pos);
 
 	if (a->get<CCollision>() && b->get<CCollision>()) {
@@ -226,7 +153,7 @@ bool checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entity>& b) {
 }
 
 
-void Game::sCollision() {
+void ScenePlay::sCollision() {
 	bool collision = false;
 
 	//what kills player
@@ -303,7 +230,7 @@ void Game::sCollision() {
 	}
 }
 
-void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
+void ScenePlay::spawnChilds(const std::shared_ptr<Entity>& parent) {
 	const size_t vertices = parent->get<CShape>()->shape.getPointCount();
 	const float rotation = parent->get<CShape>()->shape.getRotation();
 	const float alpha = 360 / vertices;
@@ -336,7 +263,7 @@ void Game::spawnChilds(const std::shared_ptr<Entity>& parent) {
 	}
 }
 
-void Game::sCombat() {
+void ScenePlay::sCombat() {
 	if (player->get<CInput>()->fire_primary) {
 		spawnBullet();
 		player->get<CInput>()->fire_primary = false;
@@ -349,7 +276,7 @@ void Game::sCombat() {
 	}
 }
 
-void Game::sLifespan() {
+void ScenePlay::sLifespan() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_BULLET)) {
 		checkLifespan(e);
 	}
@@ -359,7 +286,7 @@ void Game::sLifespan() {
 	}
 }
 
-void Game::checkLifespan(std::shared_ptr<Entity>& e) {
+void ScenePlay::checkLifespan(std::shared_ptr<Entity>& e) {
 	if (e->get<CLifespan>()) {
 		const int lifespan = e->get<CLifespan>()->lifespan;
 		int& remaining = e->get<CLifespan>()->remaining;
@@ -380,15 +307,11 @@ void Game::checkLifespan(std::shared_ptr<Entity>& e) {
 	}
 }
 
-void Game::spawnBullet() {
+void ScenePlay::spawnBullet() {
 	sf::Vector2f mouse_pos;
 
-	if (replay) {
-		mouse_pos = *rpl_mgr.nextAction->pos;
-	}
-	else {
-		mouse_pos = sf::Vector2f(sf::Mouse::getPosition(window));
-	}
+	mouse_pos = sf::Vector2f(sf::Mouse::getPosition(game->window));
+
 
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir = mouse_pos - pos;
@@ -400,7 +323,7 @@ void Game::spawnBullet() {
 	bullet->get<CShape>()->shape.setPosition(pos);
 }
 
-void Game::sSpin() {
+void ScenePlay::sSpin() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
 		if (e->get<CTransform>()) {
 			if (e->get<CTransform>()->d_angle) {
@@ -410,15 +333,10 @@ void Game::sSpin() {
 	}
 }
 
-void Game::spawnMissle() {
+void ScenePlay::spawnMissle() {
 	sf::Vector2f mouse_pos;
 
-	if (replay) {
-		mouse_pos = *rpl_mgr.nextAction->pos;
-	}
-	else {
-		mouse_pos = sf::Vector2f(sf::Mouse::getPosition(window));
-	}
+	mouse_pos = sf::Vector2f(sf::Mouse::getPosition(game->window));
 
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir = mouse_pos - pos;
@@ -430,7 +348,7 @@ void Game::spawnMissle() {
 	missle->get<CShape>()->shape.setPosition(pos);
 }
 
-std::shared_ptr<Entity> Game::findTarget(const std::shared_ptr<Entity>& missle) {
+std::shared_ptr<Entity> ScenePlay::findTarget(const std::shared_ptr<Entity>& missle) {
 	EntityVec reachable;
 	sf::Vector2f dir_missle(missle->get<CTransform>()->dir);
 	sf::Vector2f dir_enemy;
@@ -444,7 +362,7 @@ std::shared_ptr<Entity> Game::findTarget(const std::shared_ptr<Entity>& missle) 
 	}
 
 	std::shared_ptr<Entity> target;
-	float prev_dist(app_conf.window_w*app_conf.window_w);
+	float prev_dist(game->app_conf.window_w*game->app_conf.window_w);
 	float dist;
 
 	for (std::shared_ptr<Entity>& enemy : reachable) {
@@ -463,7 +381,7 @@ std::shared_ptr<Entity> Game::findTarget(const std::shared_ptr<Entity>& missle) 
 	}
 }
 
-void Game::sMissleGuidance() {
+void ScenePlay::sMissleGuidance() {
 	for (std::shared_ptr<Entity>& missle : ent_mgr.getEntities(Entity::TAG_MISSLE)) {
 
 		std::shared_ptr<Entity> new_target = findTarget(missle);
@@ -509,14 +427,14 @@ void Game::sMissleGuidance() {
 	}
 }
 
-float Game::angle(const sf::Vector2f a, const sf::Vector2f b) {
+float ScenePlay::angle(const sf::Vector2f a, const sf::Vector2f b) {
 	float dot_a_b = a.x*b.x + a.y*b.y;
 	float mod_a_b = sqrt((a.x*a.x + a.y*a.y) * (b.x*b.x + b.y*b.y));
 
 	return acos(dot_a_b / mod_a_b) / PI * 180;
 }
 
-void Game::doAction(const Action* a) {
+void ScenePlay::doAction(const Action* a) {
 	if (*a->type == Action::TYPE_START) {
 		switch (*a->code) {
 			case Action::MOVE_UP:
@@ -539,14 +457,6 @@ void Game::doAction(const Action* a) {
 			break;
 			case Action::GAME_PAUSE:
 				paused = !paused;
-			break;
-			case Action::REPLAY_SAVE:
-				rpl_mgr.save();
-			break;
-			case Action::REPLAY_START:
-				replay = true;
-				rpl_mgr.start();
-				frame_current = 0;
 			break;
 			default:
 			break;
@@ -572,16 +482,6 @@ void Game::doAction(const Action* a) {
 	}
 }
 
-void Game::sPlayback() {
-
-	std::cout << rpl_mgr.cursor << " " << rpl_mgr.stream.actions.size() << std::endl;
-	if (rpl_mgr.cursor >= rpl_mgr.stream.actions.size() - 1) {
-		replay = false;
-		std::cout << "PLAYBACK STOPPPED\n";
-	}
-
-	if (*rpl_mgr.nextAction->frame == frame_current) {
-		doAction(rpl_mgr.nextAction);
-		rpl_mgr.next();
-	}
+float ScenePlay::squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {
+	return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
 }

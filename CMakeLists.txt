@@ -28,6 +28,8 @@ set(SOURCE_FILES
 	src/ActionStream.cpp
 	src/ReplayManager.cpp
 	src/Assets.cpp
+	src/Scene.cpp
+	src/ScenePlay.cpp
 )
 
 add_executable(Spinners ${SOURCE_FILES})

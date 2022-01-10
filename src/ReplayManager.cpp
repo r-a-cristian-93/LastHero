@@ -39,7 +39,7 @@ void ReplayManager::load() {
 
 	while (file >> code) {
 		file >> type >> frame >> x >> y;
-		action = new Action(code, type, sf::Vector2i(x,y), frame);
+		action = new Action(code, type, frame, sf::Vector2i(x,y));
 		stream << action;
 	}
 
