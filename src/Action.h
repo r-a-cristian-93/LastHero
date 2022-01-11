@@ -37,16 +37,15 @@ public:
 
 	size_t* code;
 	size_t* type;
-	int* frame;
 	size_t* ent_tag;
 	size_t* ent_id;
 	sf::Vector2f* pos;
 	sf::Vector2f* dir;
 
 	Action();
-	Action(size_t c, size_t t, int f);
-	Action(size_t c, size_t t, int f, sf::Vector2i p);
-	Action(size_t c, size_t t, int f, sf::Vector2i p, sf::Vector2f d);
+	Action(size_t c, size_t t);
+	Action(size_t c, size_t t, sf::Vector2i p);
+	Action(size_t c, size_t t, sf::Vector2i p, sf::Vector2f d);
 
 	friend std::ostream& operator << (std::ostream& os, const Action* a);
 };

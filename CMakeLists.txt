@@ -26,7 +26,6 @@ set(SOURCE_FILES
 	src/Action.cpp
 	src/ActionManager.cpp
 	src/ActionStream.cpp
-	src/ReplayManager.cpp
 	src/Assets.cpp
 	src/Scene.cpp
 	src/ScenePlay.cpp

@@ -11,18 +11,20 @@ ScenePlay::ScenePlay(Game* g, std::string lp)
 }
 
 void ScenePlay::init() {
-	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
-	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
-	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
-	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::D, Action::MOVE_RIGHT);
-	act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Left, Action::FIRE_PRIMARY);
-	act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Right, Action::FIRE_SECONDARY);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::D, Action::MOVE_RIGHT);
+	game->act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Left, Action::FIRE_PRIMARY);
+	game->act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Right, Action::FIRE_SECONDARY);
 
-	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
-	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::F1, Action::REPLAY_SAVE);
-	act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::F2, Action::REPLAY_START);
-	
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::F1, Action::REPLAY_SAVE);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::F2, Action::REPLAY_START);
+
 	load_level();
+	spawnPlayer();
+	std::cout << "created ScenePlaye\n";
 }
 
 void ScenePlay::load_level() {
@@ -32,7 +34,7 @@ void ScenePlay::load_level() {
 
 void ScenePlay::update() {
 	sf::FloatRect lim(0, 0, game->app_conf.window_w, game->app_conf.window_h);
-	
+
 	if (!paused) {
 		ent_mgr.update();
 		sEnemySpawner();
@@ -46,13 +48,10 @@ void ScenePlay::update() {
 	sSpin();
 	SDraw::drawEntities(&game->window, ent_mgr.getEntities());
 
-
-	std::string sc = std::to_string(score);
-	score_text.setString(sc);
+	frame_current++;
+	//std::string sc = std::to_string(score);
+	//score_text.setString(sc);
 }
-
-
-
 
 void ScenePlay::spawnPlayer() {
 	const sf::Vector2f pos(game->app_conf.window_w/2, game->app_conf.window_h/2);
@@ -92,43 +91,6 @@ void ScenePlay::spawnEnemy() {
 void ScenePlay::sEnemySpawner() {
 	if (frame_current % 100 == 0) {
 		spawnEnemy();
-	}
-}
-
-void ScenePlay::sUserInput() {
-	sf::Event event;
-	Action* action = nullptr;
-	int action_code = Action::NONE;
-
-	while (game->window.pollEvent(event)) {
-		if (event.type == sf::Event::Closed) {
-			game->running = false;
-			game->window.close();
-		}
-		else if (event.type == sf::Event::KeyPressed) {
-			action_code = act_mgr.getCode(ActionManager::DEV_KEYBOARD, event.key.code);
-
-			if (action_code) {
-				action = new Action(action_code, Action::TYPE_START, frame_current);
-				doAction(action);
-			}
-		}
-		else if (event.type == sf::Event::KeyReleased) {
-			action_code = act_mgr.getCode(ActionManager::DEV_KEYBOARD, event.key.code);
-
-			if (action_code) {
-				action = new Action(action_code, Action::TYPE_END, frame_current);
-				doAction(action);
-			}
-		}
-		else if (event.type == sf::Event::MouseButtonPressed && !paused){
-			action_code = act_mgr.getCode(ActionManager::DEV_MOUSE, event.mouseButton.button);
-
-			if (action_code != 0) {
-				action = new Action(action_code, Action::TYPE_START, frame_current, sf::Mouse::getPosition());
-				doAction(action);
-			}
-		}
 	}
 }
 

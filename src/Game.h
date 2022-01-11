@@ -9,56 +9,38 @@
 #include "EntityManager.h"
 #include "ActionManager.h"
 #include "ActionStream.h"
-#include "ReplayManager.h"
 #include "Common.h"
 #include "Assets.h"
+#include "Scene.h"
+
+class Scene;
 
 class Game {
-	Assets* assets;
-
-	sf::Font font;
-	EntityManager ent_mgr;
-	ActionManager act_mgr;
-	ReplayManager rpl_mgr;
-
-	int frame_current;
-	int frame_last_spawn;
-	int score;
-	sf::Text score_text;
-
-	std::shared_ptr<Entity> player;
+private:
+	bool running;
+	Scene* current_scene;
+	std::map<size_t, Scene*> scenes;
 
 	void init(std::string file_name);
-	void spawnPlayer();
-	void spawnEnemy();
-	void spawnBullet();
-	void spawnChilds(const std::shared_ptr<Entity>& parent);
-	void spawnMissle();
 
-	void sEnemySpawner();
 	void sUserInput();
-	void sCollision();
-	void sCombat();
-	void sLifespan();
-	void sSpin();
-	void sMissleGuidance();
-	void sPlayback();
-
-	void doAction(const Action* a);
-
-	void checkLifespan(std::shared_ptr<Entity>& e);
-	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);
-
-	float angle(const sf::Vector2f a, const sf::Vector2f b);
 
 public:
+	enum {
+		NONE,
+		SCENE_MENU,
+		SCENE_PLAY
+	};
+
 	sf::RenderWindow window;
 	AppConfig app_conf;
-	bool paused, running, replay;
-	
-	Game(std::string file_name);
+	ActionManager act_mgr;
+	Assets* assets;
 
+	void setScene(size_t id);
 	void run();
+
+	Game(std::string file_name);
 };
 
 #endif

@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include <iostream>
 
 Scene::Scene() {}
 
@@ -9,9 +10,9 @@ Scene::Scene(Game* g)
 	,has_ended(false)
 {
 	init();
+	std::cout << "created Scene\n";
 }
 
 void Scene::init() {
-	ent_mgr = EntityManager();
-	act_mgr = ActionManager();
+	ent_mgr = EntityManager(game->assets);
 }
