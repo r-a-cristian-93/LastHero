@@ -22,14 +22,65 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::F1, Action::REPLAY_SAVE);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::F2, Action::REPLAY_START);
 
-	load_level();
 	spawnPlayer();
 	std::cout << "created ScenePlaye\n";
+	load_level("res/level_001.cfg");
 }
 
-void ScenePlay::load_level() {
+void ScenePlay::load_level(std::string path) {
+	std::ifstream file(path);
+	std::string word;
 
+	std::cout << "loading level " << path << std::endl;
 
+	int frame, recipe_id, pos_x, pos_y, dir_x, dir_y;
+	size_t tag, code, type;
+
+	ActionStream action_stream;
+
+	while (file >> word) {
+		if (word == "_ACT") {
+			while (file >> word) {
+				if (word == "_END") break;
+				else if (word == "code") {
+					file >> word;
+					if (word == "spawn") code = Action::SPAWN_ENEMY;
+				}
+				else if (word == "type") {
+					file >> word;
+					if (word == "start") type = Action::TYPE_START;
+					else if (word == "end") type = Action::TYPE_END;
+				}
+				else if (word == "frame") file >> frame;
+				else if (word == "entity") {
+					file >> word;
+					if (word == "enemy") {
+						tag = Entity::TAG_ENEMY;
+						file >> recipe_id;
+					}
+				}
+				else if (word == "pos") file >> pos_x >> pos_y;
+				else if (word == "dir") file >> dir_x >> dir_y;
+			}
+
+			Action* action = new Action(code, type);
+			action->ent_tag = new size_t(tag);
+			action->ent_id = new size_t(recipe_id);
+			action->pos = new sf::Vector2f(pos_x, pos_y);
+			action->dir = new sf::Vector2f(dir_x, dir_y);
+
+			action_stream << action;
+
+			std::cout << "Action loaded \n";
+		}
+	}
+
+	while (!action_stream.empty()) {
+		Action* action;
+		action_stream >> action;
+		std::cout << "ACTION\n";
+		doAction(action);
+	}
 }
 
 void ScenePlay::update() {
@@ -37,7 +88,7 @@ void ScenePlay::update() {
 
 	if (!paused) {
 		ent_mgr.update();
-		sEnemySpawner();
+		//sEnemySpawner();
 		sLifespan();
 		sMissleGuidance();
 		SUpdate::updatePosition(ent_mgr.getEntities(), lim);
@@ -83,6 +134,19 @@ void ScenePlay::spawnEnemy() {
 		}
 	}
 
+	e->get<CTransform>()->pos = pos;
+	e->get<CTransform>()->dir = dir;
+	e->get<CShape>()->shape.setPosition(pos);
+}
+
+void ScenePlay::spawnEnemy(size_t tag, size_t recipe_id, sf::Vector2f pos, sf::Vector2f dir) {
+	std::cout << "spawn recipe enemy\n";
+	int player_radius = player->get<CCollision>()->radius;
+
+	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, recipe_id);
+	int radius = e->get<CCollision>()->radius;
+
+	std::cout << pos.x << " " << pos.y << std::endl;
 	e->get<CTransform>()->pos = pos;
 	e->get<CTransform>()->dir = dir;
 	e->get<CShape>()->shape.setPosition(pos);
@@ -419,6 +483,10 @@ void ScenePlay::doAction(const Action* a) {
 			break;
 			case Action::GAME_PAUSE:
 				paused = !paused;
+			break;
+			case Action::SPAWN_ENEMY:
+				std::cout << "doAction\n";
+				spawnEnemy(*a->ent_tag, *a->ent_id, *a->pos, *a->dir);
 			break;
 			default:
 			break;

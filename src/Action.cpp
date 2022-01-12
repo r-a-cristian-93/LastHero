@@ -20,7 +20,7 @@ Action::Action(size_t c, size_t t, sf::Vector2i p)
 	,pos(new sf::Vector2f(p))
 	{}
 
-Action::Action(size_t c, size_t t, sf::Vector2i p, sf::Vector2f d)
+Action::Action(size_t c, size_t t, sf::Vector2f p, sf::Vector2f d)
 	:code(new size_t(c))
 	,type(new size_t(t))
 	,pos(new sf::Vector2f(p))

@@ -45,7 +45,7 @@ public:
 	Action();
 	Action(size_t c, size_t t);
 	Action(size_t c, size_t t, sf::Vector2i p);
-	Action(size_t c, size_t t, sf::Vector2i p, sf::Vector2f d);
+	Action(size_t c, size_t t, sf::Vector2f p, sf::Vector2f d);
 
 	friend std::ostream& operator << (std::ostream& os, const Action* a);
 };

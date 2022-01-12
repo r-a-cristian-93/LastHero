@@ -11,10 +11,11 @@ class ScenePlay: public Scene {
 	std::shared_ptr<Entity> player;
 
 	void init();
-	void load_level();
+	void load_level(std::string path);
 
 	void spawnPlayer();
 	void spawnEnemy();
+	void spawnEnemy(size_t tag, size_t recipe_id, sf::Vector2f pos, sf::Vector2f dir);
 	void spawnBullet();
 	void spawnChilds(const std::shared_ptr<Entity>& parent);
 	void spawnMissle();
