@@ -22,16 +22,18 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::F1, Action::REPLAY_SAVE);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::F2, Action::REPLAY_START);
 
+	score_widget = &interface.add();
+	score_widget->setText("Score: ", game->assets->getFont(Assets::FONT_COURIER), 20);
+	score_widget->text->setFillColor({255, 50, 50});
+	score_widget->text->setPosition(10, 10);
+
 	spawnPlayer();
-	std::cout << "created ScenePlaye\n";
 	load_level("res/level_001.cfg");
 }
 
 void ScenePlay::load_level(std::string path) {
 	std::ifstream file(path);
 	std::string word;
-
-	std::cout << "loading level " << path << std::endl;
 
 	int frame, recipe_id, pos_x, pos_y, dir_x, dir_y;
 	size_t tag, code, type;
@@ -70,15 +72,12 @@ void ScenePlay::load_level(std::string path) {
 			action->dir = new sf::Vector2f(dir_x, dir_y);
 
 			action_stream << action;
-
-			std::cout << "Action loaded \n";
 		}
 	}
 
 	while (!action_stream.empty()) {
 		Action* action;
 		action_stream >> action;
-		std::cout << "ACTION\n";
 		doAction(action);
 	}
 }
@@ -95,13 +94,16 @@ void ScenePlay::update() {
 		sCollision();
 		sCombat();
 	}
-
 	sSpin();
+
+	//update score
+	score_text = "Score: " + std::to_string(score);
+	score_widget->setText(score_text);
+
 	SDraw::drawEntities(&game->window, ent_mgr.getEntities());
+	SDraw::drawInterface(&game->window, interface.getWidgets());
 
 	frame_current++;
-	//std::string sc = std::to_string(score);
-	//score_text.setString(sc);
 }
 
 void ScenePlay::spawnPlayer() {
@@ -140,13 +142,11 @@ void ScenePlay::spawnEnemy() {
 }
 
 void ScenePlay::spawnEnemy(size_t tag, size_t recipe_id, sf::Vector2f pos, sf::Vector2f dir) {
-	std::cout << "spawn recipe enemy\n";
 	int player_radius = player->get<CCollision>()->radius;
 
 	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, recipe_id);
 	int radius = e->get<CCollision>()->radius;
 
-	std::cout << pos.x << " " << pos.y << std::endl;
 	e->get<CTransform>()->pos = pos;
 	e->get<CTransform>()->dir = dir;
 	e->get<CShape>()->shape.setPosition(pos);
@@ -485,7 +485,6 @@ void ScenePlay::doAction(const Action* a) {
 				paused = !paused;
 			break;
 			case Action::SPAWN_ENEMY:
-				std::cout << "doAction\n";
 				spawnEnemy(*a->ent_tag, *a->ent_id, *a->pos, *a->dir);
 			break;
 			default:

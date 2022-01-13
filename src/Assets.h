@@ -33,8 +33,11 @@ private:
 	Components recipe_missle;
 	std::map<int, Components> recipe_enemy;
 
+	std::map<size_t, sf::Font> fonts;
+
 	void loadEntities();
 	void loadEntity();
+	void loadFonts();
 
 	template<class T>
 	void add(Components& c, T* t) {
@@ -42,6 +45,12 @@ private:
 	}
 
 public:
+	enum {
+		NONE,
+		FONT_COURIER,
+		FONT_MILITARY
+	};
+
 	Assets();
 
 	template<class T>
@@ -53,6 +62,8 @@ public:
 	Components& getRecipeBullet();
 	Components& getRecipeMissle();
 	Components& getRecipeEnemy(size_t recipe_id);
+	sf::Font& getFont(size_t name);
+
 };
 
 #endif

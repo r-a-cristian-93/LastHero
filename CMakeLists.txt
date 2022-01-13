@@ -29,6 +29,8 @@ set(SOURCE_FILES
 	src/Assets.cpp
 	src/Scene.cpp
 	src/ScenePlay.cpp
+	src/Interface.cpp
+	src/Widget.cpp
 )
 
 add_executable(Spinners ${SOURCE_FILES})

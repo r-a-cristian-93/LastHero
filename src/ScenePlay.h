@@ -2,11 +2,15 @@
 #define SCENE_PLAY
 
 #include "Scene.h"
+#include "Interface.h"
 
 class ScenePlay: public Scene {
 	std::string level_path;
+
+	Interface interface;
+	Widget* score_widget;
+	std::string score_text;
 	int score;
-	sf::Text score_text;
 
 	std::shared_ptr<Entity> player;
 

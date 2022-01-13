@@ -6,6 +6,7 @@
 
 Assets::Assets() {
 	loadEntities();
+	loadFonts();
 }
 
 Components& Assets::getRecipePlayer() {
@@ -24,6 +25,10 @@ Components& Assets::getRecipeEnemy(size_t recipe_id) {
 	return recipe_enemy[recipe_id];
 }
 
+sf::Font& Assets::getFont(size_t name) {
+	return fonts[name];
+}
+
 void Assets::loadEntities() {
 	file.open("res/entities.cfg");
 
@@ -32,6 +37,8 @@ void Assets::loadEntities() {
 			loadEntity();
 		}
 	}
+
+	file.close();
 }
 
 void Assets::loadEntity() {
@@ -108,5 +115,15 @@ void Assets::loadEntity() {
 			recipe_enemy[data_ent.id].add<CScore>(new CScore(data_ent.vertices));
 		}
 		break;
+	}
+}
+
+void Assets::loadFonts() {
+	if (!fonts[FONT_COURIER].loadFromFile("res/courier.ttf")) {
+		std::cout << "Can't load font COURIER\n";
+	}
+
+	if (!fonts[FONT_MILITARY].loadFromFile("res/military.ttf")) {
+		std::cout << "Can't load font MILITARY\n";
 	}
 }
