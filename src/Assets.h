@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include "Entity.h"
+#include "Border.h"
 
 struct EntityDataset {
 	size_t type;
@@ -26,7 +27,6 @@ class Assets {
 private:
 	std::ifstream file;
 	std::string word;
-	EntityDataset data_ent;
 
 	Components recipe_player;
 	Components recipe_bullet;
@@ -34,10 +34,18 @@ private:
 	std::map<int, Components> recipe_enemy;
 
 	std::map<size_t, sf::Font> fonts;
+	std::map<size_t, sf::Texture> textures;
+	std::map<size_t, Border> borders;
 
 	void loadEntities();
-	void loadEntity();
 	void loadFonts();
+	void loadTextures();
+	void loadSprites();
+
+	void loadEntity();
+	void loadBorders();
+	void loadRect(sf::IntRect& rect);
+	sf::IntRect loadRect();
 
 	template<class T>
 	void add(Components& c, T* t) {
@@ -48,7 +56,10 @@ public:
 	enum {
 		NONE,
 		FONT_COURIER,
-		FONT_MILITARY
+		FONT_MILITARY,
+		TEX_GUI,
+		BORDER_SLICK,
+		BORDER_THICK
 	};
 
 	Assets();
@@ -63,6 +74,7 @@ public:
 	Components& getRecipeMissle();
 	Components& getRecipeEnemy(size_t recipe_id);
 	sf::Font& getFont(size_t name);
+	Border& getBorder(size_t name);
 
 };
 

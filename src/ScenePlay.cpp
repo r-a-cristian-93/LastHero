@@ -6,6 +6,12 @@
 ScenePlay::ScenePlay(Game* g, std::string lp)
 	:Scene(g)
 	,level_path(lp)
+	,status_widget(nullptr)
+	,score_widget(nullptr)
+	,wave_widget(nullptr)
+	,score(0)
+	,wave_current(0)
+	,wave_total(0)
 {
 	init();
 }
@@ -19,13 +25,26 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Right, Action::FIRE_SECONDARY);
 
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::F1, Action::REPLAY_SAVE);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::F2, Action::REPLAY_START);
 
-	score_widget = &interface.add();
+//	status_widget = interface.add();
+//	status_widget->setSize(game->app_conf.window_w,20);
+//	status_widget->setBackground(sf::Color(0,100,50), 0);
+//	status_widget->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
+//	int w = status_widget->border->getSprite(Border::TOP_LEFT).getTextureRect().width;
+//	std::cout << "status_widget W " << w << std::endl;
+
+	score_widget = interface.add();
 	score_widget->setText("Score: ", game->assets->getFont(Assets::FONT_COURIER), 20);
 	score_widget->text->setFillColor({255, 50, 50});
 	score_widget->text->setPosition(10, 10);
+
+	wave_widget = interface.add();
+	wave_widget->setText("Wave: ", game->assets->getFont(Assets::FONT_COURIER), 20);
+	wave_widget->text->setFillColor({255, 50, 50});
+	wave_widget->text->setPosition(200, 10);
+	wave_widget->setSize(game->app_conf.window_w,40);
+	wave_widget->setBackground(sf::Color(0,100,50), 4);
+	wave_widget->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
 
 	spawnPlayer();
 	load_level("res/level_001.cfg");
@@ -96,9 +115,13 @@ void ScenePlay::update() {
 	}
 	sSpin();
 
-	//update score
+	//update score_widget
 	score_text = "Score: " + std::to_string(score);
 	score_widget->setText(score_text);
+
+	//update wave_widget
+	wave_text = "Wave: " + std::to_string(wave_current) + "/" + std::to_string(wave_total);
+	wave_widget->setText(wave_text);
 
 	SDraw::drawEntities(&game->window, ent_mgr.getEntities());
 	SDraw::drawInterface(&game->window, interface.getWidgets());

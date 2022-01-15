@@ -16,9 +16,6 @@ protected:
 	int frame_current;
 	bool paused, has_ended;
 
-	//void sRender() = 0;
-
-	void simulate(int i) ;
 	void init();
 
 public:
@@ -27,6 +24,7 @@ public:
 
 	Scene();
 	Scene(Game* g);
+	virtual ~Scene() {}
 };
 
 #endif

@@ -8,10 +8,6 @@
 #include "Assets.h"
 #include "ScenePlay.h"
 
-float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {
-	return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
-}
-
 Game::Game(std::string file_name)
 	:running(false)
 {
@@ -32,33 +28,18 @@ void Game::init(std::string file_name) {
 			file >> style_bits;
 			app_conf.window_style = 1 << style_bits;
 		}
-/*		if (word == "Font") {
-			std::string font_file_path;
-			file >> font_file_path;
-			file >> app_conf.font_size;
-			file >> app_conf.font_r;
-			file >> app_conf.font_g;
-			file >> app_conf.font_b;
-			if (!font.loadFromFile(font_file_path)) {
-				std::cerr << "Could not load font!\n";
-				exit(-1);
-			}
-		}*/
 	}
 
 	file.close();
 
+	//load texture after creating the window causes sementation fault;
+	assets = new Assets();
+
 	window.create(sf::VideoMode(app_conf.window_w, app_conf.window_h), app_conf.window_name, app_conf.window_style);
 	window.setFramerateLimit(app_conf.max_fps);
 	window.setKeyRepeatEnabled(false);
-/*
-	score_text = sf::Text("0", font, app_conf.font_size);
-	score_text.setFillColor(sf::Color(app_conf.font_r, app_conf.font_g, app_conf.font_b));
-	score_text.setPosition(20.0f, 20.0f);
-*/
 
 	act_mgr = ActionManager();
-	assets = new Assets();
 	scenes[2] = new ScenePlay(this, "res/level_001.cfg");
 
 	setScene(2);
@@ -123,5 +104,14 @@ void Game::sUserInput() {
 
 void Game::setScene(size_t id) {
 	current_scene = scenes[id];
-	std::cout << "scene set:" << id << std::endl;
+}
+
+Game::~Game() {
+	for (size_t i=0; i<scenes.size(); i++) {
+		if (scenes[i]) {
+			delete scenes[i];
+		}
+	}
+
+	scenes.clear();
 }

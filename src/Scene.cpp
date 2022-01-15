@@ -10,7 +10,6 @@ Scene::Scene(Game* g)
 	,has_ended(false)
 {
 	init();
-	std::cout << "created Scene\n";
 }
 
 void Scene::init() {

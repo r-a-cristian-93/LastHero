@@ -8,9 +8,15 @@ class ScenePlay: public Scene {
 	std::string level_path;
 
 	Interface interface;
+	Widget* status_widget;
+
 	Widget* score_widget;
 	std::string score_text;
 	int score;
+
+	Widget* wave_widget;
+	std::string wave_text;
+	int wave_current, wave_total;
 
 	std::shared_ptr<Entity> player;
 

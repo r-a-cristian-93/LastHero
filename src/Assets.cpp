@@ -7,6 +7,8 @@
 Assets::Assets() {
 	loadEntities();
 	loadFonts();
+	loadTextures();
+	loadSprites();
 }
 
 Components& Assets::getRecipePlayer() {
@@ -29,6 +31,10 @@ sf::Font& Assets::getFont(size_t name) {
 	return fonts[name];
 }
 
+Border& Assets::getBorder(size_t name) {
+	return borders[name];
+}
+
 void Assets::loadEntities() {
 	file.open("res/entities.cfg");
 
@@ -42,6 +48,8 @@ void Assets::loadEntities() {
 }
 
 void Assets::loadEntity() {
+	EntityDataset data_ent;
+
 	while (file >> word) {
 		if (word == "_END") break;
 		else if (word == "type") {
@@ -126,4 +134,80 @@ void Assets::loadFonts() {
 	if (!fonts[FONT_MILITARY].loadFromFile("res/military.ttf")) {
 		std::cout << "Can't load font MILITARY\n";
 	}
+}
+
+void Assets::loadTextures() {
+	if (!textures[TEX_GUI].loadFromFile("res/images/gui.png")) {
+		std::cout << "Can't load texture res/images/gui.png";
+	}
+}
+
+void Assets::loadSprites() {
+	file.open("res/gui.cfg");
+
+	while (file >> word) {
+		if (word == "_BORDERS") {
+			loadBorders();
+		}
+	}
+
+	std::cout << "Loaded borders: " << borders.size() << std::endl;
+	int w = borders[BORDER_SLICK].getSprite(Border::TOP_LEFT).getTextureRect().width;
+	std::cout << "W " << w << std::endl;
+
+	file.close();
+}
+
+void Assets::loadBorders() {
+	size_t id = 0;
+
+	while (file >> word) {
+		if (word == "_END") break;
+		else if (word == "name") {
+			file >> word;
+			if (word == "slick") id = BORDER_SLICK;
+			else if (word == "thick") id = BORDER_THICK;
+			///borders[id] = new Border();
+		}
+		else if (word == "top_left") {
+			borders[id].setSprite(Border::TOP_LEFT, sf::Sprite(textures[TEX_GUI], loadRect()));
+		}
+		else if (word == "top_center") {
+			borders[id].setSprite(Border::TOP_CENTER, sf::Sprite(textures[TEX_GUI], loadRect()));
+		}
+		else if (word == "top_right") {
+			borders[id].setSprite(Border::TOP_RIGHT, sf::Sprite(textures[TEX_GUI], loadRect()));
+		}
+		else if (word == "bottom_left") {
+			borders[id].setSprite(Border::BOTTOM_LEFT, sf::Sprite(textures[TEX_GUI], loadRect()));
+		}
+		else if (word == "bottom_center") {
+			borders[id].setSprite(Border::BOTTOM_CENTER, sf::Sprite(textures[TEX_GUI], loadRect()));
+		}
+		else if (word == "bottom_right") {
+			borders[id].setSprite(Border::BOTTOM_RIGHT, sf::Sprite(textures[TEX_GUI], loadRect()));
+		}
+		else if (word == "middle_left") {
+			borders[id].setSprite(Border::MIDDLE_LEFT, sf::Sprite(textures[TEX_GUI], loadRect()));
+		}
+		else if (word == "middle_right") {
+			borders[id].setSprite(Border::MIDDLE_RIGHT, sf::Sprite(textures[TEX_GUI], loadRect()));
+		}
+	}
+}
+
+void Assets::loadRect(sf::IntRect& rect) {
+	file >> rect.left;
+	file >> rect.top;
+	file >> rect.width;
+	file >> rect.height;
+}
+
+sf::IntRect Assets::loadRect() {
+	sf::IntRect rect;
+	file >> rect.left;
+	file >> rect.top;
+	file >> rect.width;
+	file >> rect.height;
+	return rect;
 }

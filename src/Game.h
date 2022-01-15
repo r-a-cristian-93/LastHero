@@ -41,6 +41,7 @@ public:
 	void run();
 
 	Game(std::string file_name);
+	~Game();
 };
 
 #endif
