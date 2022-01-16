@@ -31,6 +31,7 @@ set(SOURCE_FILES
 	src/ScenePlay.cpp
 	src/Interface.cpp
 	src/Widget.cpp
+	src/WidgetBox.cpp
 	src/Border.cpp
 )
 

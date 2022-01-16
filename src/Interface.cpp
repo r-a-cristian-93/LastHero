@@ -4,9 +4,8 @@
 Interface::Interface() {
 }
 
-Widget* Interface::add() {
-	widgets.push_back(new Widget());
-	return widgets.back();
+void Interface::add(Widget* widget) {
+	widgets.push_back(widget);
 }
 
 WidgetVec& Interface::getWidgets() {

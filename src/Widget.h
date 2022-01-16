@@ -2,29 +2,26 @@
 #define	WIDGET
 
 #include "SFML/Graphics.hpp"
-#include "Border.h"
 
 class Widget {
-public:
-	Widget* child;
+protected:
+	std::vector<Widget*> childs;
 
-	sf::Vector2i pos;
+	sf::Vector2i pos_rel;
+	sf::Vector2i pos_abs;
 	sf::Vector2i size;
+	std::vector<sf::Drawable*> drawables;
 
-	std::string str;
-	sf::Text* text;
-	sf::Sprite* background;
-	Border* border;
+	void updateChildPos(Widget& child);
 
-	void setText(std::string t, sf::Font& font, unsigned int size);
-	void setText(std::string t);
-	void setBackground(sf::Texture& tex, int offset);
-	void setBackground(sf::Sprite& sprite, sf::Vector2i offset);
-	void setBorder(Border& b);
-	void update();
+public:
+	void setPosRel(sf::Vector2i pos);
+	virtual void setPosAbs(sf::Vector2i pos) = 0;
+	void setSize(sf::Vector2i s);
 
-	void setPosition(int x, int y);
-	void setSize(int x, int y);
+	void addChild(Widget* child);
+	std::vector<sf::Drawable*>& getDrawables();
+	std::vector<Widget*>& getChilds();
 
 	Widget();
 	~Widget();

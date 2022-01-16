@@ -15,27 +15,14 @@ void SDraw::drawInterface(sf::RenderWindow* w, const WidgetVec& widgets) {
 	}
 }
 
-void SDraw::drawWidget(sf::RenderWindow* w, const Widget& widget) {
-	if (widget.background) {
-		w->draw(*(widget.background));
+void SDraw::drawWidget(sf::RenderWindow* w, Widget& widget) {
+	for (sf::Drawable* d:widget.getDrawables()) {
+		w->draw(*d);
 	}
 
-	if (widget.border) {
-		w->draw(widget.border->getSprite(Border::TOP_LEFT));
-		w->draw(widget.border->getSprite(Border::TOP_CENTER));
-		w->draw(widget.border->getSprite(Border::TOP_RIGHT));
-		w->draw(widget.border->getSprite(Border::BOTTOM_LEFT));
-		w->draw(widget.border->getSprite(Border::BOTTOM_CENTER));
-		w->draw(widget.border->getSprite(Border::BOTTOM_RIGHT));
-		w->draw(widget.border->getSprite(Border::MIDDLE_LEFT));
-		w->draw(widget.border->getSprite(Border::MIDDLE_RIGHT));
-	}
-
-	if (widget.text) {
-		w->draw(*(widget.text));
-	}
-
-	if (widget.child) {
-		drawWidget(w, *(widget.child));
+	if (!widget.getChilds().empty()) {
+		for (Widget* child:widget.getChilds()) {
+			drawWidget(w, *(child));
+		}
 	}
 }

@@ -2,19 +2,18 @@
 #define INTERFACE
 
 #include "Widget.h"
+#include "WidgetBox.h"
 
 typedef std::vector<Widget*> WidgetVec;
 
 class Interface {
 	WidgetVec widgets;
 
-	void deleteWidget(Widget*& widget);
-
 public:
 	Interface();
 	~Interface();
 
-	Widget* add();
+	void add(Widget* widget);
 	WidgetVec& getWidgets();
 };
 

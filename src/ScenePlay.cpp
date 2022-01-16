@@ -26,6 +26,23 @@ void ScenePlay::init() {
 
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
 
+
+	WidgetBox* test_ico = new WidgetBox();
+	test_ico->setSize(sf::Vector2i(40,40));
+	test_ico->setPosRel(sf::Vector2i(-10,-10));
+	test_ico->setBackground(game->assets->getSprite(Assets::SPRITE_ICON_SKULL), sf::Vector2i(0,0));
+
+	WidgetBox* test_box = new WidgetBox();
+	test_box->setSize(sf::Vector2i(100,100));
+	test_box->setPosAbs(sf::Vector2i(200,10));
+	test_box->setBackground(game->assets->getTexture(Assets::TEX_FILL_DARK_GREEN), 0);
+	test_box->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
+	test_box->addChild(test_ico);
+
+	interface.add(test_box);
+
+
+/*
 	score_widget = interface.add();
 	score_widget->setText("Score: ", game->assets->getFont(Assets::FONT_COURIER), 20);
 	score_widget->text->setFillColor({255, 50, 50});
@@ -45,7 +62,7 @@ void ScenePlay::init() {
 	sf::Sprite& s = game->assets->getSprite(Assets::SPRITE_ICON_SKULL);
 	skull->setBackground(s, sf::Vector2i(-10,-5));
 	wave_widget->child = skull;
-
+*/
 	spawnPlayer();
 	load_level("res/level_001.cfg");
 }
@@ -114,7 +131,7 @@ void ScenePlay::update() {
 		sCombat();
 	}
 	sSpin();
-
+/*
 	//update score_widget
 	score_text = "Score: " + std::to_string(score);
 	score_widget->setText(score_text);
@@ -122,7 +139,7 @@ void ScenePlay::update() {
 	//update wave_widget
 	wave_text = "Wave: " + std::to_string(wave_current) + " of " + std::to_string(wave_total);
 	wave_widget->setText(wave_text);
-
+*/
 	SDraw::drawEntities(&game->window, ent_mgr.getEntities());
 	SDraw::drawInterface(&game->window, interface.getWidgets());
 
