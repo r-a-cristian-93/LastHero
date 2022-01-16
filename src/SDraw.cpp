@@ -16,10 +16,6 @@ void SDraw::drawInterface(sf::RenderWindow* w, const WidgetVec& widgets) {
 }
 
 void SDraw::drawWidget(sf::RenderWindow* w, const Widget& widget) {
-	if (widget.child) {
-		drawWidget(w, *(widget.child));
-	}
-
 	if (widget.background) {
 		w->draw(*(widget.background));
 	}
@@ -37,5 +33,9 @@ void SDraw::drawWidget(sf::RenderWindow* w, const Widget& widget) {
 
 	if (widget.text) {
 		w->draw(*(widget.text));
+	}
+
+	if (widget.child) {
+		drawWidget(w, *(widget.child));
 	}
 }

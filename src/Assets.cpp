@@ -7,8 +7,7 @@
 Assets::Assets() {
 	loadEntities();
 	loadFonts();
-	loadTextures();
-	loadSprites();
+	loadGUI();
 }
 
 Components& Assets::getRecipePlayer() {
@@ -33,6 +32,14 @@ sf::Font& Assets::getFont(size_t name) {
 
 Border& Assets::getBorder(size_t name) {
 	return borders[name];
+}
+
+sf::Texture& Assets::getTexture(size_t name) {
+	return textures[name];
+}
+
+sf::Sprite& Assets::getSprite(size_t name) {
+	return sprites[name];
 }
 
 void Assets::loadEntities() {
@@ -136,18 +143,18 @@ void Assets::loadFonts() {
 	}
 }
 
-void Assets::loadTextures() {
-	if (!textures[TEX_GUI].loadFromFile("res/images/gui.png")) {
-		std::cout << "Can't load texture res/images/gui.png";
-	}
-}
-
-void Assets::loadSprites() {
+void Assets::loadGUI() {
 	file.open("res/gui.cfg");
 
 	while (file >> word) {
-		if (word == "_BORDERS") {
+		if (word == "_TEXTURE") {
+			loadTexture();
+		}
+		else if (word == "_BORDERS") {
 			loadBorders();
+		}
+		else if (word == "_SPRITE") {
+			loadSprite();
 		}
 	}
 
@@ -215,4 +222,60 @@ void Assets::loadBorderRepeatable(size_t id, size_t texture_name, size_t sprite_
 	sf::Texture tex = makeRepeatable(textures[TEX_GUI], rect);
 	borders[id].setTexture(texture_name, tex);
 	borders[id].setSprite(sprite_name, sf::Sprite(borders[id].getTexture(texture_name), rect));
+}
+
+void Assets::loadTexture() {
+	size_t id = 0;
+	unsigned int w, h;
+	std::string* path;
+	sf::Color* color(nullptr);
+
+	while (file >> word) {
+		if (word == "_END") break;
+		else if (word == "name") {
+			file >> word;
+			if (word == "gui") id = Assets::TEX_GUI;
+			else if (word == "dark_green") id = Assets::TEX_FILL_DARK_GREEN;
+		}
+		else if (word == "path") {
+			path = new std::string();
+			file >> *path;
+		}
+		else if (word == "size") file >> w >> h;
+		else if (word == "color") {
+			size_t r, g ,b;
+			file >> r >> g >> b;
+			color = new sf::Color(r, g, b);
+		}
+	}
+
+	if (color) {
+		sf::Image img;
+		sf::Texture tex;
+		img.create(w, h, *color);
+		tex.loadFromImage(img);
+		tex.setRepeated(true);
+		textures[id] = tex;
+		delete color;
+	}
+	else if (path) {
+		if (!textures[id].loadFromFile(*path)) {
+			std::cout << "Can't load texture " << path << std::endl;
+		}
+	}
+}
+
+void Assets::loadSprite() {
+	size_t id = 0;
+
+	while (file >> word) {
+		if (word == "_END") break;
+		else if (word == "name") {
+			file >> word;
+			if (word == "icon_skull") id = SPRITE_ICON_SKULL;
+		}
+		else if (word == "rectangle") {
+			sprites[id] = sf::Sprite(textures[TEX_GUI], loadRect());
+		}
+	}
 }

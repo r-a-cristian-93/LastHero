@@ -26,13 +26,6 @@ void ScenePlay::init() {
 
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
 
-//	status_widget = interface.add();
-//	status_widget->setSize(game->app_conf.window_w,20);
-//	status_widget->setBackground(sf::Color(0,100,50), 0);
-//	status_widget->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
-//	int w = status_widget->border->getSprite(Border::TOP_LEFT).getTextureRect().width;
-//	std::cout << "status_widget W " << w << std::endl;
-
 	score_widget = interface.add();
 	score_widget->setText("Score: ", game->assets->getFont(Assets::FONT_COURIER), 20);
 	score_widget->text->setFillColor({255, 50, 50});
@@ -40,12 +33,18 @@ void ScenePlay::init() {
 
 	wave_widget = interface.add();
 	wave_widget->setPosition(150,10);
+	wave_widget->setSize(200,25);
+	wave_widget->setBackground(game->assets->getTexture(Assets::TEX_FILL_DARK_GREEN), 10);
+	wave_widget->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
 	wave_widget->setText("Wave: ", game->assets->getFont(Assets::FONT_COURIER), 20);
 	wave_widget->text->setFillColor({255, 255, 255});
-	wave_widget->text->setPosition(200, 10);
-	wave_widget->setSize(game->app_conf.window_w/2,30);
-	wave_widget->setBackground(sf::Color(22,25,23), 4);
-	wave_widget->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
+	wave_widget->text->setPosition(180, 8);
+
+	Widget* skull = new Widget();
+	skull->setPosition(150,10);
+	sf::Sprite& s = game->assets->getSprite(Assets::SPRITE_ICON_SKULL);
+	skull->setBackground(s, sf::Vector2i(-10,-5));
+	wave_widget->child = skull;
 
 	spawnPlayer();
 	load_level("res/level_001.cfg");

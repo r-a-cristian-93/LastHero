@@ -13,12 +13,13 @@ public:
 
 	std::string str;
 	sf::Text* text;
-	sf::RectangleShape* background;
+	sf::Sprite* background;
 	Border* border;
 
 	void setText(std::string t, sf::Font& font, unsigned int size);
 	void setText(std::string t);
-	void setBackground(sf::Color color, int offset);
+	void setBackground(sf::Texture& tex, int offset);
+	void setBackground(sf::Sprite& sprite, sf::Vector2i offset);
 	void setBorder(Border& b);
 	void update();
 

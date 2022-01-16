@@ -33,13 +33,18 @@ void Widget::setText(std::string t) {
 	}
 }
 
-void Widget::setBackground(sf::Color color, int offset) {
+void Widget::setBackground(sf::Texture& tex, int offset) {
 	if (!background) {
-		background = new sf::RectangleShape(sf::Vector2f(size.x-offset*2, size.y-offset*2));
+		background = new sf::Sprite(tex, sf::IntRect(0, 0, size.x-offset*2, size.y-offset*2));
 		background->setPosition(pos.x+offset, pos.y+offset);
 	}
+}
 
-	background->setFillColor(color);
+void Widget::setBackground(sf::Sprite& sprite, sf::Vector2i offset) {
+	if (!background) {
+		background = new sf::Sprite(sprite);
+		background->setPosition(pos.x+offset.x, pos.y+offset.y);
+	}
 }
 
 void Widget::setBorder(Border& b) {

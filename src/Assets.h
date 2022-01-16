@@ -35,23 +35,20 @@ private:
 
 	std::map<size_t, sf::Font> fonts;
 	std::map<size_t, sf::Texture> textures;
+	std::map<size_t, sf::Sprite> sprites;
 	std::map<size_t, Border> borders;
 
 	void loadEntities();
 	void loadFonts();
-	void loadTextures();
-	void loadSprites();
+	void loadGUI();
 
 	void loadEntity();
+	void loadTexture();
+	void loadSprite();
 	void loadBorders();
 	void loadBorderRepeatable(size_t id, size_t texture_name, size_t sprite_name);
 	sf::IntRect loadRect();
 	sf::Texture makeRepeatable(const sf::Texture& original, sf::IntRect& rect);
-
-	template<class T>
-	void add(Components& c, T* t) {
-		std::get<T*>(c) = t;
-	}
 
 public:
 	enum {
@@ -59,8 +56,10 @@ public:
 		FONT_COURIER,
 		FONT_MILITARY,
 		TEX_GUI,
+		TEX_FILL_DARK_GREEN,
 		BORDER_SLICK,
-		BORDER_THICK
+		BORDER_THICK,
+		SPRITE_ICON_SKULL
 	};
 
 	Assets();
@@ -76,6 +75,8 @@ public:
 	Components& getRecipeEnemy(size_t recipe_id);
 	sf::Font& getFont(size_t name);
 	Border& getBorder(size_t name);
+	sf::Texture& getTexture(size_t name);
+	sf::Sprite& getSprite(size_t name);
 
 };
 
