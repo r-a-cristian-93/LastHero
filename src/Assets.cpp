@@ -151,10 +151,6 @@ void Assets::loadSprites() {
 		}
 	}
 
-	std::cout << "Loaded borders: " << borders.size() << std::endl;
-	int w = borders[BORDER_SLICK].getSprite(Border::TOP_LEFT).getTextureRect().width;
-	std::cout << "W " << w << std::endl;
-
 	file.close();
 }
 
@@ -167,13 +163,12 @@ void Assets::loadBorders() {
 			file >> word;
 			if (word == "slick") id = BORDER_SLICK;
 			else if (word == "thick") id = BORDER_THICK;
-			///borders[id] = new Border();
 		}
 		else if (word == "top_left") {
 			borders[id].setSprite(Border::TOP_LEFT, sf::Sprite(textures[TEX_GUI], loadRect()));
 		}
 		else if (word == "top_center") {
-			borders[id].setSprite(Border::TOP_CENTER, sf::Sprite(textures[TEX_GUI], loadRect()));
+			loadBorderRepeatable(id, Border::TEX_TOP_CENTER, Border::TOP_CENTER);
 		}
 		else if (word == "top_right") {
 			borders[id].setSprite(Border::TOP_RIGHT, sf::Sprite(textures[TEX_GUI], loadRect()));
@@ -182,25 +177,18 @@ void Assets::loadBorders() {
 			borders[id].setSprite(Border::BOTTOM_LEFT, sf::Sprite(textures[TEX_GUI], loadRect()));
 		}
 		else if (word == "bottom_center") {
-			borders[id].setSprite(Border::BOTTOM_CENTER, sf::Sprite(textures[TEX_GUI], loadRect()));
+			loadBorderRepeatable(id, Border::TEX_BOTTOM_CENTER, Border::BOTTOM_CENTER);
 		}
 		else if (word == "bottom_right") {
 			borders[id].setSprite(Border::BOTTOM_RIGHT, sf::Sprite(textures[TEX_GUI], loadRect()));
 		}
 		else if (word == "middle_left") {
-			borders[id].setSprite(Border::MIDDLE_LEFT, sf::Sprite(textures[TEX_GUI], loadRect()));
+			loadBorderRepeatable(id, Border::TEX_MIDDLE_LEFT, Border::MIDDLE_LEFT);
 		}
 		else if (word == "middle_right") {
-			borders[id].setSprite(Border::MIDDLE_RIGHT, sf::Sprite(textures[TEX_GUI], loadRect()));
+			loadBorderRepeatable(id, Border::TEX_MIDDLE_RIGHT, Border::MIDDLE_RIGHT);
 		}
 	}
-}
-
-void Assets::loadRect(sf::IntRect& rect) {
-	file >> rect.left;
-	file >> rect.top;
-	file >> rect.width;
-	file >> rect.height;
 }
 
 sf::IntRect Assets::loadRect() {
@@ -210,4 +198,21 @@ sf::IntRect Assets::loadRect() {
 	file >> rect.width;
 	file >> rect.height;
 	return rect;
+}
+
+sf::Texture Assets::makeRepeatable(const sf::Texture& original, sf::IntRect& rect) {
+	sf::Image img = original.copyToImage();
+	sf::Texture tex;
+	tex.loadFromImage(img, rect);
+	tex.setRepeated(true);
+	rect.left = 0;
+	rect.top = 0;
+	return tex;
+}
+
+void Assets::loadBorderRepeatable(size_t id, size_t texture_name, size_t sprite_name) {
+	sf::IntRect rect = loadRect();
+	sf::Texture tex = makeRepeatable(textures[TEX_GUI], rect);
+	borders[id].setTexture(texture_name, tex);
+	borders[id].setSprite(sprite_name, sf::Sprite(borders[id].getTexture(texture_name), rect));
 }

@@ -3,10 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 
-typedef std::map<size_t, sf::Sprite> SpriteMap;
-
 class Border {
-	SpriteMap sprites;
+	std::map<size_t, sf::Sprite> sprites;
+	std::map<size_t, sf::Texture> textures;
 
 public:
 	enum {
@@ -19,10 +18,16 @@ public:
 		BOTTOM_RIGHT,
 		MIDDLE_LEFT,
 		MIDDLE_RIGHT,
+		TEX_TOP_CENTER,
+		TEX_BOTTOM_CENTER,
+		TEX_MIDDLE_LEFT,
+		TEX_MIDDLE_RIGHT
 	};
 
-	void setSprite(size_t place, sf::Sprite sprite);
+	void setSprite(size_t name, sf::Sprite sprite);
+	void setTexture(size_t name, sf::Texture texture);
 	sf::Sprite& getSprite(size_t name);
+	sf::Texture& getTexture(size_t name);
 
 	Border();
 	Border(const Border& b);

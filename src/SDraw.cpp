@@ -28,6 +28,11 @@ void SDraw::drawWidget(sf::RenderWindow* w, const Widget& widget) {
 		w->draw(widget.border->getSprite(Border::TOP_LEFT));
 		w->draw(widget.border->getSprite(Border::TOP_CENTER));
 		w->draw(widget.border->getSprite(Border::TOP_RIGHT));
+		w->draw(widget.border->getSprite(Border::BOTTOM_LEFT));
+		w->draw(widget.border->getSprite(Border::BOTTOM_CENTER));
+		w->draw(widget.border->getSprite(Border::BOTTOM_RIGHT));
+		w->draw(widget.border->getSprite(Border::MIDDLE_LEFT));
+		w->draw(widget.border->getSprite(Border::MIDDLE_RIGHT));
 	}
 
 	if (widget.text) {

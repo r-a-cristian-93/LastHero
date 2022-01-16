@@ -39,11 +39,12 @@ void ScenePlay::init() {
 	score_widget->text->setPosition(10, 10);
 
 	wave_widget = interface.add();
+	wave_widget->setPosition(150,10);
 	wave_widget->setText("Wave: ", game->assets->getFont(Assets::FONT_COURIER), 20);
-	wave_widget->text->setFillColor({255, 50, 50});
+	wave_widget->text->setFillColor({255, 255, 255});
 	wave_widget->text->setPosition(200, 10);
-	wave_widget->setSize(game->app_conf.window_w,40);
-	wave_widget->setBackground(sf::Color(0,100,50), 4);
+	wave_widget->setSize(game->app_conf.window_w/2,30);
+	wave_widget->setBackground(sf::Color(22,25,23), 4);
 	wave_widget->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
 
 	spawnPlayer();
@@ -120,7 +121,7 @@ void ScenePlay::update() {
 	score_widget->setText(score_text);
 
 	//update wave_widget
-	wave_text = "Wave: " + std::to_string(wave_current) + "/" + std::to_string(wave_total);
+	wave_text = "Wave: " + std::to_string(wave_current) + " of " + std::to_string(wave_total);
 	wave_widget->setText(wave_text);
 
 	SDraw::drawEntities(&game->window, ent_mgr.getEntities());

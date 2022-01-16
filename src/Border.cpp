@@ -7,12 +7,18 @@ Border::Border(const Border& b)
 	:sprites(b.sprites)
 	{}
 
-void Border::setSprite(size_t place, sf::Sprite sprite) {
-	std::cout << "add border " << place << std::endl;
-	sprites[place] = sprite;
+void Border::setSprite(size_t name, sf::Sprite sprite) {
+	sprites[name] = sprite;
 }
 
 sf::Sprite& Border::getSprite(size_t name) {
 	return sprites[name];
 }
 
+void Border::setTexture(size_t name, sf::Texture texture) {
+	textures[name] = texture;
+}
+
+sf::Texture& Border::getTexture(size_t name) {
+	return textures[name];
+}

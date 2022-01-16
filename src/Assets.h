@@ -44,8 +44,9 @@ private:
 
 	void loadEntity();
 	void loadBorders();
-	void loadRect(sf::IntRect& rect);
+	void loadBorderRepeatable(size_t id, size_t texture_name, size_t sprite_name);
 	sf::IntRect loadRect();
+	sf::Texture makeRepeatable(const sf::Texture& original, sf::IntRect& rect);
 
 	template<class T>
 	void add(Components& c, T* t) {
