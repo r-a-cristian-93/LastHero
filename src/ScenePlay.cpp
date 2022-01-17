@@ -26,22 +26,36 @@ void ScenePlay::init() {
 
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
 
+	// coins widget
+	WidgetBox* w_health_ico = new WidgetBox();
+	w_health_ico->setSize(sf::Vector2i(40,40));
+	w_health_ico->setPosRel(sf::Vector2i(-10,-10));
+	w_health_ico->setBackground(game->assets->getSprite(Assets::SPRITE_ICON_HART), sf::Vector2i(0,0));
 
-	WidgetBox* test_ico = new WidgetBox();
-	test_ico->setSize(sf::Vector2i(40,40));
-	test_ico->setPosRel(sf::Vector2i(-10,-10));
-	test_ico->setBackground(game->assets->getSprite(Assets::SPRITE_ICON_SKULL), sf::Vector2i(0,0));
+	WidgetBox* w_health = new WidgetBox();
+	w_health->setSize(sf::Vector2i(100,25));
+	w_health->setPosAbs(sf::Vector2i(20,10));
+	w_health->setBackground(game->assets->getTexture(Assets::TEX_FILL_DARK_GREEN), 10);
+	w_health->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
+	w_health->addChild(w_health_ico);
 
-	WidgetBox* test_box = new WidgetBox();
-	test_box->setSize(sf::Vector2i(100,100));
-	test_box->setPosAbs(sf::Vector2i(200,10));
-	test_box->setBackground(game->assets->getTexture(Assets::TEX_FILL_DARK_GREEN), 0);
-	test_box->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
-	test_box->addChild(test_ico);
 
-	interface.add(test_box);
+	// waves widget
+	WidgetBox* w_waves_ico = new WidgetBox();
+	w_waves_ico->setSize(sf::Vector2i(40,40));
+	w_waves_ico->setPosRel(sf::Vector2i(-10,-10));
+	w_waves_ico->setBackground(game->assets->getSprite(Assets::SPRITE_ICON_SKULL), sf::Vector2i(0,0));
 
-	test_box->setPosAbs(sf::Vector2i(300,100));
+	WidgetBox* w_waves = new WidgetBox();
+	w_waves->setSize(sf::Vector2i(100,25));
+	w_waves->setPosAbs(sf::Vector2i(150,10));
+	w_waves->setBackground(game->assets->getTexture(Assets::TEX_FILL_DARK_GREEN), 10);
+	w_waves->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
+	w_waves->addChild(w_waves_ico);
+
+	interface.add(w_health);
+	interface.add(w_waves);
+
 
 
 /*

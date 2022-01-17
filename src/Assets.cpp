@@ -273,6 +273,7 @@ void Assets::loadSprite() {
 		else if (word == "name") {
 			file >> word;
 			if (word == "icon_skull") id = SPRITE_ICON_SKULL;
+			if (word == "icon_hart") id = SPRITE_ICON_HART;
 		}
 		else if (word == "rectangle") {
 			sprites[id] = sf::Sprite(textures[TEX_GUI], loadRect());
