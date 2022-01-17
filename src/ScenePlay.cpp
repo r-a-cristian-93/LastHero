@@ -41,6 +41,8 @@ void ScenePlay::init() {
 
 	interface.add(test_box);
 
+	test_box->setPosAbs(sf::Vector2i(300,100));
+
 
 /*
 	score_widget = interface.add();
