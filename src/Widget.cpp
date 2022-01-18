@@ -38,10 +38,7 @@ void Widget::addChild(Widget* child) {
 }
 
 void Widget::updateChildPos(Widget& child) {
-	std::cout << "update child pos\n";
-	std::cout << pos_abs.x << "x" << pos_abs.y << std::endl;
 	child.setPosAbs(pos_abs);
-	std::cout << child.pos_abs.x << "x" << child.pos_abs.y << std::endl;
 }
 
 std::vector<sf::Drawable*>& Widget::getDrawables() {

@@ -21,6 +21,10 @@ struct EntityDataset {
 	int out_thk;
 	size_t vertices;
 	int lifespan;
+	int experience;
+	int level;
+	int stats_base[CStats::COUNT];
+	int stats_per_level[CStats::COUNT];
 } ;
 
 class Assets {

@@ -37,6 +37,7 @@ class ScenePlay: public Scene {
 	void sSpin();
 	void sMissleGuidance();
 	void sPlayback();
+	void sLevelUp();
 
 	void checkLifespan(std::shared_ptr<Entity>& e);
 	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);

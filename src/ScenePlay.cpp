@@ -26,11 +26,20 @@ void ScenePlay::init() {
 
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
 
-	// coins widget
+	spawnPlayer();
+	load_level("res/level_001.cfg");
+
+	// health widget
 	WidgetBox* w_health_ico = new WidgetBox();
 	w_health_ico->setSize(sf::Vector2i(40,40));
 	w_health_ico->setPosRel(sf::Vector2i(-10,-10));
 	w_health_ico->setBackground(game->assets->getSprite(Assets::SPRITE_ICON_HART), sf::Vector2i(0,0));
+
+	WidgetText* w_health_text = new WidgetText();
+	w_health_text->setPosRel(sf::Vector2i(40, -2));
+	int health = player->get<CStats>()->initial[CStats::HEALTH];
+	w_health_text->setText(std::to_string(health), game->assets->getFont(Assets::FONT_COURIER), 20);
+	w_health_text->setPosAbs(sf::Vector2i(100,100));
 
 	WidgetBox* w_health = new WidgetBox();
 	w_health->setSize(sf::Vector2i(100,25));
@@ -38,7 +47,7 @@ void ScenePlay::init() {
 	w_health->setBackground(game->assets->getTexture(Assets::TEX_FILL_DARK_GREEN), 10);
 	w_health->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
 	w_health->addChild(w_health_ico);
-
+	w_health->addChild(w_health_text);
 
 	// waves widget
 	WidgetBox* w_waves_ico = new WidgetBox();
@@ -55,32 +64,6 @@ void ScenePlay::init() {
 
 	interface.add(w_health);
 	interface.add(w_waves);
-
-
-
-/*
-	score_widget = interface.add();
-	score_widget->setText("Score: ", game->assets->getFont(Assets::FONT_COURIER), 20);
-	score_widget->text->setFillColor({255, 50, 50});
-	score_widget->text->setPosition(10, 10);
-
-	wave_widget = interface.add();
-	wave_widget->setPosition(150,10);
-	wave_widget->setSize(200,25);
-	wave_widget->setBackground(game->assets->getTexture(Assets::TEX_FILL_DARK_GREEN), 10);
-	wave_widget->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
-	wave_widget->setText("Wave: ", game->assets->getFont(Assets::FONT_COURIER), 20);
-	wave_widget->text->setFillColor({255, 255, 255});
-	wave_widget->text->setPosition(180, 8);
-
-	Widget* skull = new Widget();
-	skull->setPosition(150,10);
-	sf::Sprite& s = game->assets->getSprite(Assets::SPRITE_ICON_SKULL);
-	skull->setBackground(s, sf::Vector2i(-10,-5));
-	wave_widget->child = skull;
-*/
-	spawnPlayer();
-	load_level("res/level_001.cfg");
 }
 
 void ScenePlay::load_level(std::string path) {
@@ -140,6 +123,7 @@ void ScenePlay::update() {
 	if (!paused) {
 		ent_mgr.update();
 		//sEnemySpawner();
+		sLevelUp();
 		sLifespan();
 		sMissleGuidance();
 		SUpdate::updatePosition(ent_mgr.getEntities(), lim);
@@ -169,6 +153,12 @@ void ScenePlay::spawnPlayer() {
 
 	player->get<CTransform>()->pos = pos;
 	player->get<CShape>()->shape.setPosition(pos);
+
+	//set initial stats
+	CStats& stats = *player->get<CStats>();
+	for (int i=0; i<CStats::COUNT; i++) {
+		stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
+	}
 }
 
 void ScenePlay::spawnEnemy() {
@@ -565,6 +555,10 @@ void ScenePlay::doAction(const Action* a) {
 			break;
 		}
 	}
+}
+
+void ScenePlay::sLevelUp() {
+
 }
 
 float ScenePlay::squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {

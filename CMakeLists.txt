@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16.3)
 project(Spinners)
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 find_package(SFML 2.5 COMPONENTS system window graphics audio REQUIRED)
 
@@ -15,6 +16,7 @@ set(SOURCE_FILES
 	src/CScore.cpp
 	src/CTarget.cpp
 	src/CCooldown.cpp
+	src/CStats.cpp
 	src/CClickLocation.cpp
 	src/Entity.cpp
 	src/SUpdate.cpp
@@ -32,6 +34,7 @@ set(SOURCE_FILES
 	src/Interface.cpp
 	src/Widget.cpp
 	src/WidgetBox.cpp
+	src/WidgetText.cpp
 	src/Border.cpp
 )
 

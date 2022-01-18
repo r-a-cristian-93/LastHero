@@ -3,6 +3,7 @@
 
 #include "Widget.h"
 #include "WidgetBox.h"
+#include "WidgetText.h"
 
 typedef std::vector<Widget*> WidgetVec;
 

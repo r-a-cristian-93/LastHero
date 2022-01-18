@@ -79,6 +79,18 @@ void Assets::loadEntity() {
 		else if (word == "out_thk") file >> data_ent.out_thk;
 		else if (word == "vertices") file >> data_ent.vertices;
 		else if (word == "lifespan") file >> data_ent.lifespan;
+		else if (word == "experience") file >> data_ent.experience;
+		else if (word == "level") file >> data_ent.level;
+		else if (word == "stats_base") {
+			for (int i=0; i<CStats::COUNT; i++) {
+				file >> data_ent.stats_base[i];
+			}
+		}
+		else if (word == "stats_per_level") {
+			for (int i=0; i<CStats::COUNT; i++) {
+				file >> data_ent.stats_per_level[i];
+			}
+		}
 	}
 
 	switch (data_ent.type) {
@@ -89,10 +101,20 @@ void Assets::loadEntity() {
 			shape.setOutlineColor(sf::Color(data_ent.out_r, data_ent.out_g, data_ent.out_b));
 			shape.setOutlineThickness(data_ent.out_thk);
 
+			CStats stats;
+			stats.experience = data_ent.experience;
+			stats.level = data_ent.level;
+
+			for (int i=0; i<CStats::COUNT; i++) {
+				stats.base[i] = data_ent.stats_base[i];
+				stats.per_level[i] = data_ent.stats_per_level[i];
+			}
+
 			recipe_player.add<CTransform>(new CTransform(data_ent.velocity));
 			recipe_player.add<CShape>(new CShape(shape));
 			recipe_player.add<CCollision>(new CCollision(data_ent.radius));
 			recipe_player.add<CInput>(new CInput());
+			recipe_player.add<CStats>(new CStats(stats));
 		}
 		break;
 		case Entity::TAG_BULLET: {

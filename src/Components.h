@@ -8,7 +8,7 @@
 #include "CLifespan.h"
 #include "CScore.h"
 #include "CTarget.h"
-#include <iostream>
+#include "CStats.h"
 
 class Components {
 	std::tuple<
@@ -18,7 +18,8 @@ class Components {
 		CInput*,
 		CLifespan*,
 		CScore*,
-		CTarget*> components;
+		CTarget*,
+		CStats*> components;
 
 public:
 	Components() {
@@ -29,6 +30,7 @@ public:
 		add<CLifespan>(nullptr);
 		add<CScore>(nullptr);
 		add<CTarget>(nullptr);
+		add<CStats>(nullptr);
 	}
 
 	Components(
@@ -38,7 +40,8 @@ public:
 		CInput* c_i,
 		CLifespan* c_l,
 		CScore* c_s,
-		CTarget* c_tg)
+		CTarget* c_tg,
+		CStats* c_h)
 	{
 		add<CTransform>(c_tr);
 		add<CShape>(c_sh);
@@ -47,6 +50,7 @@ public:
 		add<CLifespan>(c_l);
 		add<CScore>(c_s);
 		add<CTarget>(c_tg);
+		add<CStats>(c_h);
 	}
 
 	Components(Components& c) {
@@ -64,6 +68,8 @@ public:
 			add<CScore>(new CScore(*c.get<CScore>()));
 		if (c.get<CTarget>())
 			add<CTarget>(new CTarget(*c.get<CTarget>()));
+		if (c.get<CStats>())
+			add<CStats>(new CStats(*c.get<CStats>()));
 	}
 
 	~Components() {
@@ -74,6 +80,7 @@ public:
 		if (get<CLifespan>()) delete get<CLifespan>();
 		if (get<CScore>()) delete get<CScore>();
 		if (get<CTarget>()) delete get<CTarget>();
+		if (get<CStats>()) delete get<CStats>();
 	}
 
 	template<class T>
