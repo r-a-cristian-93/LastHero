@@ -141,7 +141,7 @@ void ScenePlay::update() {
 
 	if (!paused) {
 		ent_mgr.update();
-		//sEnemySpawner();
+		sEnemySpawner();
 		sLevelUp();
 		sLifespan();
 		sMissleGuidance();
@@ -176,7 +176,7 @@ void ScenePlay::spawnEnemy() {
 	sf::Vector2f pos;
 	int player_radius = player->get<CCollision>()->radius;
 
-	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, 0);
+	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, 1);
 	int radius = e->get<CCollision>()->radius;
 
 	while (!position_is_valid) {
@@ -194,13 +194,15 @@ void ScenePlay::spawnEnemy() {
 	e->get<CTransform>()->pos = pos;
 	e->get<CTransform>()->dir = dir;
 	e->get<CShape>()->shape.setPosition(pos);
+
+	setStatsInitial(*e);
+	setStatsEffective(*e);
 }
 
 void ScenePlay::spawnEnemy(size_t tag, size_t recipe_id, sf::Vector2f pos, sf::Vector2f dir) {
 	int player_radius = player->get<CCollision>()->radius;
 
 	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, recipe_id);
-	int radius = e->get<CCollision>()->radius;
 
 	e->get<CTransform>()->pos = pos;
 	e->get<CTransform>()->dir = dir;
