@@ -32,14 +32,13 @@ void ScenePlay::init() {
 	// health widget
 	WidgetBox* w_health_ico = new WidgetBox();
 	w_health_ico->setSize(sf::Vector2i(40,40));
-	w_health_ico->setPosRel(sf::Vector2i(-10,-10));
+	w_health_ico->setPosRel(sf::Vector2i(-10,-8));
 	w_health_ico->setBackground(game->assets->getSprite(Assets::SPRITE_ICON_HART), sf::Vector2i(0,0));
 
-	WidgetText* w_health_text = new WidgetText();
+	w_health_text = new WidgetText();
 	w_health_text->setPosRel(sf::Vector2i(40, -2));
-	int health = player->get<CStats>()->initial[CStats::HEALTH];
+	int health = player->get<CStats>()->effective[CStats::HEALTH];
 	w_health_text->setText(std::to_string(health), game->assets->getFont(Assets::FONT_COURIER), 20);
-	w_health_text->setPosAbs(sf::Vector2i(100,100));
 
 	WidgetBox* w_health = new WidgetBox();
 	w_health->setSize(sf::Vector2i(100,25));
@@ -49,20 +48,40 @@ void ScenePlay::init() {
 	w_health->addChild(w_health_ico);
 	w_health->addChild(w_health_text);
 
+	// defence widget
+	WidgetBox* w_defence_ico = new WidgetBox();
+	w_defence_ico->setSize(sf::Vector2i(40,40));
+	w_defence_ico->setPosRel(sf::Vector2i(-10,-8));
+	w_defence_ico->setBackground(game->assets->getSprite(Assets::SPRITE_ICON_HELMET), sf::Vector2i(0,0));
+
+	w_defence_text = new WidgetText();
+	w_defence_text->setPosRel(sf::Vector2i(40, -2));
+	int defence = player->get<CStats>()->effective[CStats::DEFENCE];
+	w_defence_text->setText(std::to_string(defence), game->assets->getFont(Assets::FONT_COURIER), 20);
+
+	WidgetBox* w_defence = new WidgetBox();
+	w_defence->setSize(sf::Vector2i(100,25));
+	w_defence->setPosAbs(sf::Vector2i(150,10));
+	w_defence->setBackground(game->assets->getTexture(Assets::TEX_FILL_DARK_GREEN), 10);
+	w_defence->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
+	w_defence->addChild(w_defence_ico);
+	w_defence->addChild(w_defence_text);
+
 	// waves widget
 	WidgetBox* w_waves_ico = new WidgetBox();
 	w_waves_ico->setSize(sf::Vector2i(40,40));
-	w_waves_ico->setPosRel(sf::Vector2i(-10,-10));
+	w_waves_ico->setPosRel(sf::Vector2i(-10,-8));
 	w_waves_ico->setBackground(game->assets->getSprite(Assets::SPRITE_ICON_SKULL), sf::Vector2i(0,0));
 
 	WidgetBox* w_waves = new WidgetBox();
 	w_waves->setSize(sf::Vector2i(100,25));
-	w_waves->setPosAbs(sf::Vector2i(150,10));
+	w_waves->setPosAbs(sf::Vector2i(280,10));
 	w_waves->setBackground(game->assets->getTexture(Assets::TEX_FILL_DARK_GREEN), 10);
 	w_waves->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
 	w_waves->addChild(w_waves_ico);
 
 	interface.add(w_health);
+	interface.add(w_defence);
 	interface.add(w_waves);
 }
 
@@ -129,17 +148,10 @@ void ScenePlay::update() {
 		SUpdate::updatePosition(ent_mgr.getEntities(), lim);
 		sCollision();
 		sCombat();
+		sInterface();
 	}
 	sSpin();
-/*
-	//update score_widget
-	score_text = "Score: " + std::to_string(score);
-	score_widget->setText(score_text);
 
-	//update wave_widget
-	wave_text = "Wave: " + std::to_string(wave_current) + " of " + std::to_string(wave_total);
-	wave_widget->setText(wave_text);
-*/
 	SDraw::drawEntities(&game->window, ent_mgr.getEntities());
 	SDraw::drawInterface(&game->window, interface.getWidgets());
 
@@ -154,11 +166,8 @@ void ScenePlay::spawnPlayer() {
 	player->get<CTransform>()->pos = pos;
 	player->get<CShape>()->shape.setPosition(pos);
 
-	//set initial stats
-	CStats& stats = *player->get<CStats>();
-	for (int i=0; i<CStats::COUNT; i++) {
-		stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
-	}
+	setStatsInitial(*player);
+	setStatsEffective(*player);
 }
 
 void ScenePlay::spawnEnemy() {
@@ -196,6 +205,9 @@ void ScenePlay::spawnEnemy(size_t tag, size_t recipe_id, sf::Vector2f pos, sf::V
 	e->get<CTransform>()->pos = pos;
 	e->get<CTransform>()->dir = dir;
 	e->get<CShape>()->shape.setPosition(pos);
+
+	setStatsInitial(*e);
+	setStatsEffective(*e);
 }
 
 void ScenePlay::sEnemySpawner() {
@@ -232,18 +244,57 @@ void ScenePlay::sCollision() {
 	for (std::shared_ptr<Entity>& enemy : ent_mgr.getEntities(Entity::TAG_ENEMY)) {
 		collision = checkCollision(player, enemy);
 		if (collision) {
-			player->alive = false;
-			score /= 2;
-			spawnPlayer();
+			enemy->alive = false;
+			spawnChilds(enemy);
+
+			int enemy_atk = enemy->get<CStats>()->effective[CStats::ATTACK];
+			int& player_hp = player->get<CStats>()->effective[CStats::HEALTH];
+			int& player_def = player->get<CStats>()->effective[CStats::DEFENCE];
+
+			if (player_def > 0) {
+				player_def -= enemy_atk;
+
+				if (player_def < 0) {
+					player_hp -= player_def;
+					player_def = 0;
+				}
+			}
+			else {
+				player_hp -= enemy_atk;
+			}
+
+			if (player_hp <= 0) {
+				player->alive = false;
+				spawnPlayer();
+			}
 		}
 	}
 
 	for (std::shared_ptr<Entity>& child : ent_mgr.getEntities(Entity::TAG_CHILD)) {
 		collision = checkCollision(player, child);
 		if (collision) {
-			player->alive = false;
-			score /= 2;
-			spawnPlayer();
+			child->alive = false;
+
+			int child_atk = child->get<CStats>()->effective[CStats::ATTACK];
+			int& player_hp = player->get<CStats>()->effective[CStats::HEALTH];
+			int& player_def = player->get<CStats>()->effective[CStats::DEFENCE];
+
+			if (player_def > 0) {
+				player_def -= child_atk;
+
+				if (player_def < 0) {
+					player_hp -= player_def;
+					player_def = 0;
+				}
+			}
+			else {
+				player_hp -= child_atk;
+			}
+
+			if (player_hp <= 0) {
+				player->alive = false;
+				spawnPlayer();
+			}
 		}
 	}
 
@@ -324,6 +375,9 @@ void ScenePlay::spawnChilds(const std::shared_ptr<Entity>& parent) {
 		shape.setFillColor(fill_color);
 		shape.setPosition(pos);
 
+		CStats* c_stats = new CStats();
+		c_stats->effective[CStats::ATTACK] = vertices;
+
 		std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_CHILD);
 
 		e->add<CTransform>(new CTransform(pos, dir, vel));
@@ -331,6 +385,7 @@ void ScenePlay::spawnChilds(const std::shared_ptr<Entity>& parent) {
 		e->add<CShape>(c_shape);
 		e->add<CCollision>(new CCollision(radius));
 		e->add<CLifespan>(new CLifespan(lifespan));
+		e->add<CStats>(c_stats);
 		e->alive = true;
 	}
 }
@@ -557,8 +612,36 @@ void ScenePlay::doAction(const Action* a) {
 	}
 }
 
+
+void ScenePlay::setStatsInitial(Entity& entity) {
+	CStats& stats = *entity.get<CStats>();
+	for (int i=0; i<CStats::COUNT; i++) {
+		stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
+	}
+}
+
+void ScenePlay::setStatsEffective(Entity& entity) {
+	CStats& stats = *entity.get<CStats>();
+	for (int i=0; i<CStats::COUNT; i++) {
+		stats.effective[i] = stats.initial[i];
+	}
+}
+
 void ScenePlay::sLevelUp() {
 
+}
+
+void ScenePlay::sInterface() {
+	if (player) {
+		if (w_health_text) {
+			int health = player->get<CStats>()->effective[CStats::HEALTH];
+			w_health_text->setText(std::to_string(health));
+		}
+		if (w_defence_text) {
+			int defence = player->get<CStats>()->effective[CStats::DEFENCE];
+			w_defence_text->setText(std::to_string(defence));
+		}
+	}
 }
 
 float ScenePlay::squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {

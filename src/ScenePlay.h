@@ -10,6 +10,9 @@ class ScenePlay: public Scene {
 	Interface interface;
 	Widget* status_widget;
 
+	WidgetText* w_health_text;
+	WidgetText* w_defence_text;
+
 	Widget* score_widget;
 	std::string score_text;
 	int score;
@@ -38,8 +41,11 @@ class ScenePlay: public Scene {
 	void sMissleGuidance();
 	void sPlayback();
 	void sLevelUp();
+	void sInterface();
 
 	void checkLifespan(std::shared_ptr<Entity>& e);
+	void setStatsInitial(Entity& entity);
+	void setStatsEffective(Entity& entity);
 	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);
 
 	float angle(const sf::Vector2f a, const sf::Vector2f b);

@@ -146,10 +146,20 @@ void Assets::loadEntity() {
 			shape.setOutlineColor(sf::Color(data_ent.out_r, data_ent.out_g, data_ent.out_b));
 			shape.setOutlineThickness(data_ent.out_thk);
 
+			CStats stats;
+			stats.experience = data_ent.experience;
+			stats.level = data_ent.level;
+
+			for (int i=0; i<CStats::COUNT; i++) {
+				stats.base[i] = data_ent.stats_base[i];
+				stats.per_level[i] = data_ent.stats_per_level[i];
+			}
+
 			recipe_enemy[data_ent.id].add<CTransform>(new CTransform(data_ent.velocity));
 			recipe_enemy[data_ent.id].add<CShape>(new CShape(shape));
 			recipe_enemy[data_ent.id].add<CCollision>(new CCollision(data_ent.radius));
 			recipe_enemy[data_ent.id].add<CScore>(new CScore(data_ent.vertices));
+			recipe_enemy[data_ent.id].add<CStats>(new CStats(stats));
 		}
 		break;
 	}
@@ -296,6 +306,7 @@ void Assets::loadSprite() {
 			file >> word;
 			if (word == "icon_skull") id = SPRITE_ICON_SKULL;
 			if (word == "icon_hart") id = SPRITE_ICON_HART;
+			if (word == "icon_helmet") id = SPRITE_ICON_HELMET;
 		}
 		else if (word == "rectangle") {
 			sprites[id] = sf::Sprite(textures[TEX_GUI], loadRect());

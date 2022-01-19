@@ -5,7 +5,7 @@ class CStats {
 public:
 	enum {
 		HEALTH,
-		SHIELD,
+		DEFENCE,
 		ATTACK,
 		COUNT
 	};
