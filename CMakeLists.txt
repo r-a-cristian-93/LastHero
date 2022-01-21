@@ -29,6 +29,7 @@ set(SOURCE_FILES
 	src/ActionManager.cpp
 	src/ActionStream.cpp
 	src/Assets.cpp
+	src/Animation.cpp
 	src/Scene.cpp
 	src/ScenePlay.cpp
 	src/Interface.cpp

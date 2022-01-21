@@ -257,7 +257,7 @@ void ScenePlay::sCollision() {
 				player_def -= enemy_atk;
 
 				if (player_def < 0) {
-					player_hp -= player_def;
+					player_hp -= -player_def;
 					player_def = 0;
 				}
 			}
@@ -285,7 +285,7 @@ void ScenePlay::sCollision() {
 				player_def -= child_atk;
 
 				if (player_def < 0) {
-					player_hp -= player_def;
+					player_hp -= -player_def;
 					player_def = 0;
 				}
 			}
