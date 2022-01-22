@@ -51,7 +51,7 @@ private:
 	void loadTexture();
 	void loadSprite();
 	void loadBorders();
-	void loadBorderRepeatable(std::string border_name, std::string sprite_name, std::string texture_name);
+	void loadBorderRepeatable(std::string border_name, size_t sprite_name, std::string texture_name);
 	sf::IntRect loadRect();
 	sf::Texture makeRepeatable(const sf::Texture& original, sf::IntRect& rect);
 

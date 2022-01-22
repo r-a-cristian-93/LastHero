@@ -207,28 +207,28 @@ void Assets::loadBorders() {
 			file >> border_name;
 		}
 		else if (word == "top_left") {
-			borders[border_name].setSprite(word, sf::Sprite(textures[texture_name], loadRect()));
+			borders[border_name].setSprite(Border::TOP_LEFT, sf::Sprite(textures[texture_name], loadRect()));
 		}
 		else if (word == "top_center") {
-			loadBorderRepeatable(border_name, word, texture_name);
+			loadBorderRepeatable(border_name, Border::TOP_CENTER, texture_name);
 		}
 		else if (word == "top_right") {
-			borders[border_name].setSprite(word, sf::Sprite(textures[texture_name], loadRect()));
+			borders[border_name].setSprite(Border::TOP_RIGHT, sf::Sprite(textures[texture_name], loadRect()));
 		}
 		else if (word == "bottom_left") {
-			borders[border_name].setSprite(word, sf::Sprite(textures[texture_name], loadRect()));
+			borders[border_name].setSprite(Border::BOTTOM_LEFT, sf::Sprite(textures[texture_name], loadRect()));
 		}
 		else if (word == "bottom_center") {
-			loadBorderRepeatable(border_name, word, texture_name);
+			loadBorderRepeatable(border_name, Border::BOTTOM_CENTER, texture_name);
 		}
 		else if (word == "bottom_right") {
-			borders[border_name].setSprite(word, sf::Sprite(textures[texture_name], loadRect()));
+			borders[border_name].setSprite(Border::BOTTOM_RIGHT, sf::Sprite(textures[texture_name], loadRect()));
 		}
 		else if (word == "middle_left") {
-			loadBorderRepeatable(border_name, word, texture_name);
+			loadBorderRepeatable(border_name, Border::MIDDLE_LEFT, texture_name);
 		}
 		else if (word == "middle_right") {
-			loadBorderRepeatable(border_name, word, texture_name);
+			loadBorderRepeatable(border_name, Border::MIDDLE_RIGHT, texture_name);
 		}
 		else {
 			std::cout << "In file: " << file_path << " unknown key: " << word << std::endl;
@@ -255,7 +255,7 @@ sf::Texture Assets::makeRepeatable(const sf::Texture& original, sf::IntRect& rec
 	return tex;
 }
 
-void Assets::loadBorderRepeatable(std::string border_name, std::string sprite_name, std::string texture_name) {
+void Assets::loadBorderRepeatable(std::string border_name, size_t sprite_name, std::string texture_name) {
 	sf::IntRect rect = loadRect();
 	sf::Texture tex = makeRepeatable(textures[texture_name], rect);
 	borders[border_name].setTexture(sprite_name, tex);
