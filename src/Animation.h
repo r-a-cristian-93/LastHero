@@ -12,9 +12,9 @@ class Animation {
 public:
 	enum {
 		NONE,
-		ANIM_ONCE,
-		ANIM_LOOP,
-		ANIM_SWING,
+		PLAY_ONCE,
+		PLAY_LOOP,
+		PLAY_SWING,
 	};
 
 	Animation(std::vector<sf::Sprite> sprites, size_t speed, size_t type);

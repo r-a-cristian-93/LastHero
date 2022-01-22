@@ -6,14 +6,14 @@
 class AnimationSet {
 public:
 	enum {
-		ASET_SPAWN,
-		ASET_STANCE,
-		ASET_MOVE_LEFT,
-		ASET_MOVE_RIGHT,
-		ASET_FIRE_PRIMARY,
-		ASET_FIRE_SECONDARY,
-		ASET_HIT,
-		ASET_DIE
+		ANIM_SPAWN,
+		ANIM_STANCE,
+		ANIM_MOVE_LEFT,
+		ANIM_MOVE_RIGHT,
+		ANIM_FIRE_PRIMARY,
+		ANIM_FIRE_SECONDARY,
+		ANIM_HIT,
+		ANIM_DIE
 	};
 
 	std::map<size_t, Animation> animations;

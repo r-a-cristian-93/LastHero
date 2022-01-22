@@ -30,15 +30,15 @@ sf::Font& Assets::getFont(size_t name) {
 	return fonts[name];
 }
 
-Border& Assets::getBorder(size_t name) {
+Border& Assets::getBorder(std::string name) {
 	return borders[name];
 }
 
-sf::Texture& Assets::getTexture(size_t name) {
+sf::Texture& Assets::getTexture(std::string name) {
 	return textures[name];
 }
 
-sf::Sprite& Assets::getSprite(size_t name) {
+sf::Sprite& Assets::getSprite(std::string name) {
 	return sprites[name];
 }
 
@@ -176,7 +176,8 @@ void Assets::loadFonts() {
 }
 
 void Assets::loadGUI() {
-	file.open("res/gui.cfg");
+	file_path = "res/gui.cfg";
+	file.open(file_path);
 
 	while (file >> word) {
 		if (word == "_TEXTURE") {
@@ -195,37 +196,43 @@ void Assets::loadGUI() {
 
 void Assets::loadBorders() {
 	size_t id = 0;
+	std::string texture_name;
+	std::string border_name;
 
 	while (file >> word) {
 		if (word == "_END") break;
+		else if (word == "texture") {
+			file >> texture_name;
+		}
 		else if (word == "name") {
-			file >> word;
-			if (word == "slick") id = BORDER_SLICK;
-			else if (word == "thick") id = BORDER_THICK;
+			file >> border_name;
 		}
 		else if (word == "top_left") {
-			borders[id].setSprite(Border::TOP_LEFT, sf::Sprite(textures[TEX_GUI], loadRect()));
+			borders[border_name].setSprite(word, sf::Sprite(textures[texture_name], loadRect()));
 		}
 		else if (word == "top_center") {
-			loadBorderRepeatable(id, Border::TEX_TOP_CENTER, Border::TOP_CENTER);
+			loadBorderRepeatable(border_name, word, texture_name);
 		}
 		else if (word == "top_right") {
-			borders[id].setSprite(Border::TOP_RIGHT, sf::Sprite(textures[TEX_GUI], loadRect()));
+			borders[border_name].setSprite(word, sf::Sprite(textures[texture_name], loadRect()));
 		}
 		else if (word == "bottom_left") {
-			borders[id].setSprite(Border::BOTTOM_LEFT, sf::Sprite(textures[TEX_GUI], loadRect()));
+			borders[border_name].setSprite(word, sf::Sprite(textures[texture_name], loadRect()));
 		}
 		else if (word == "bottom_center") {
-			loadBorderRepeatable(id, Border::TEX_BOTTOM_CENTER, Border::BOTTOM_CENTER);
+			loadBorderRepeatable(border_name, word, texture_name);
 		}
 		else if (word == "bottom_right") {
-			borders[id].setSprite(Border::BOTTOM_RIGHT, sf::Sprite(textures[TEX_GUI], loadRect()));
+			borders[border_name].setSprite(word, sf::Sprite(textures[texture_name], loadRect()));
 		}
 		else if (word == "middle_left") {
-			loadBorderRepeatable(id, Border::TEX_MIDDLE_LEFT, Border::MIDDLE_LEFT);
+			loadBorderRepeatable(border_name, word, texture_name);
 		}
 		else if (word == "middle_right") {
-			loadBorderRepeatable(id, Border::TEX_MIDDLE_RIGHT, Border::MIDDLE_RIGHT);
+			loadBorderRepeatable(border_name, word, texture_name);
+		}
+		else {
+			std::cout << "In file: " << file_path << " unknown key: " << word << std::endl;
 		}
 	}
 }
@@ -249,15 +256,16 @@ sf::Texture Assets::makeRepeatable(const sf::Texture& original, sf::IntRect& rec
 	return tex;
 }
 
-void Assets::loadBorderRepeatable(size_t id, size_t texture_name, size_t sprite_name) {
+void Assets::loadBorderRepeatable(std::string border_name, std::string sprite_name, std::string texture_name) {
+	std::cout << border_name << " " << sprite_name << " " << texture_name << std::endl;
 	sf::IntRect rect = loadRect();
-	sf::Texture tex = makeRepeatable(textures[TEX_GUI], rect);
-	borders[id].setTexture(texture_name, tex);
-	borders[id].setSprite(sprite_name, sf::Sprite(borders[id].getTexture(texture_name), rect));
+	sf::Texture tex = makeRepeatable(textures[texture_name], rect);
+	borders[border_name].setTexture(sprite_name, tex);
+	borders[border_name].setSprite(sprite_name, sf::Sprite(borders[border_name].getTexture(sprite_name), rect));
 }
 
 void Assets::loadTexture() {
-	size_t id = 0;
+	std::string name("");
 	unsigned int w, h;
 	std::string* path;
 	sf::Color* color(nullptr);
@@ -265,9 +273,7 @@ void Assets::loadTexture() {
 	while (file >> word) {
 		if (word == "_END") break;
 		else if (word == "name") {
-			file >> word;
-			if (word == "gui") id = Assets::TEX_GUI;
-			else if (word == "dark_green") id = Assets::TEX_FILL_DARK_GREEN;
+			file >> name;
 		}
 		else if (word == "path") {
 			path = new std::string();
@@ -287,29 +293,30 @@ void Assets::loadTexture() {
 		img.create(w, h, *color);
 		tex.loadFromImage(img);
 		tex.setRepeated(true);
-		textures[id] = tex;
+		textures[name] = tex;
 		delete color;
 	}
 	else if (path) {
-		if (!textures[id].loadFromFile(*path)) {
+		if (!textures[name].loadFromFile(*path)) {
 			std::cout << "Can't load texture " << path << std::endl;
 		}
 	}
 }
 
 void Assets::loadSprite() {
-	size_t id = 0;
+	std::string texture_name("");
+	std::string sprite_name("");
 
 	while (file >> word) {
 		if (word == "_END") break;
+		else if (word == "texture") {
+			file >> texture_name;
+		}
 		else if (word == "name") {
-			file >> word;
-			if (word == "icon_skull") id = SPRITE_ICON_SKULL;
-			if (word == "icon_hart") id = SPRITE_ICON_HART;
-			if (word == "icon_helmet") id = SPRITE_ICON_HELMET;
+			file >> sprite_name;
 		}
 		else if (word == "rectangle") {
-			sprites[id] = sf::Sprite(textures[TEX_GUI], loadRect());
+			sprites[sprite_name] = sf::Sprite(textures[texture_name], loadRect());
 		}
 	}
 }

@@ -29,6 +29,7 @@ struct EntityDataset {
 
 class Assets {
 private:
+	std::string file_path;
 	std::ifstream file;
 	std::string word;
 
@@ -38,9 +39,9 @@ private:
 	std::map<int, Components> recipe_enemy;
 
 	std::map<size_t, sf::Font> fonts;
-	std::map<size_t, sf::Texture> textures;
-	std::map<size_t, sf::Sprite> sprites;
-	std::map<size_t, Border> borders;
+	std::map<std::string, sf::Texture> textures;
+	std::map<std::string, sf::Sprite> sprites;
+	std::map<std::string, Border> borders;
 
 	void loadEntities();
 	void loadFonts();
@@ -50,7 +51,7 @@ private:
 	void loadTexture();
 	void loadSprite();
 	void loadBorders();
-	void loadBorderRepeatable(size_t id, size_t texture_name, size_t sprite_name);
+	void loadBorderRepeatable(std::string border_name, std::string sprite_name, std::string texture_name);
 	sf::IntRect loadRect();
 	sf::Texture makeRepeatable(const sf::Texture& original, sf::IntRect& rect);
 
@@ -58,14 +59,7 @@ public:
 	enum {
 		NONE,
 		FONT_COURIER,
-		FONT_MILITARY,
-		TEX_GUI,
-		TEX_FILL_DARK_GREEN,
-		BORDER_SLICK,
-		BORDER_THICK,
-		SPRITE_ICON_SKULL,
-		SPRITE_ICON_HART,
-		SPRITE_ICON_HELMET
+		FONT_MILITARY
 	};
 
 	Assets();
@@ -80,9 +74,9 @@ public:
 	Components& getRecipeMissle();
 	Components& getRecipeEnemy(size_t recipe_id);
 	sf::Font& getFont(size_t name);
-	Border& getBorder(size_t name);
-	sf::Texture& getTexture(size_t name);
-	sf::Sprite& getSprite(size_t name);
+	Border& getBorder(std::string name);
+	sf::Texture& getTexture(std::string name);
+	sf::Sprite& getSprite(std::string name);
 
 };
 

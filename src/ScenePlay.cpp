@@ -33,7 +33,7 @@ void ScenePlay::init() {
 	WidgetBox* w_health_ico = new WidgetBox();
 	w_health_ico->setSize(sf::Vector2i(40,40));
 	w_health_ico->setPosRel(sf::Vector2i(-10,-8));
-	w_health_ico->setBackground(game->assets->getSprite(Assets::SPRITE_ICON_HART), sf::Vector2i(0,0));
+	w_health_ico->setBackground(game->assets->getSprite("icon_hart"), sf::Vector2i(0,0));
 
 	w_health_text = new WidgetText();
 	w_health_text->setPosRel(sf::Vector2i(40, -2));
@@ -43,8 +43,8 @@ void ScenePlay::init() {
 	WidgetBox* w_health = new WidgetBox();
 	w_health->setSize(sf::Vector2i(100,25));
 	w_health->setPosAbs(sf::Vector2i(20,10));
-	w_health->setBackground(game->assets->getTexture(Assets::TEX_FILL_DARK_GREEN), 10);
-	w_health->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
+	w_health->setBackground(game->assets->getTexture("dark_green"), 10);
+	w_health->setBorder(game->assets->getBorder("slick"));
 	w_health->addChild(w_health_ico);
 	w_health->addChild(w_health_text);
 
@@ -52,7 +52,7 @@ void ScenePlay::init() {
 	WidgetBox* w_defence_ico = new WidgetBox();
 	w_defence_ico->setSize(sf::Vector2i(40,40));
 	w_defence_ico->setPosRel(sf::Vector2i(-10,-8));
-	w_defence_ico->setBackground(game->assets->getSprite(Assets::SPRITE_ICON_HELMET), sf::Vector2i(0,0));
+	w_defence_ico->setBackground(game->assets->getSprite("icon_helmet"), sf::Vector2i(0,0));
 
 	w_defence_text = new WidgetText();
 	w_defence_text->setPosRel(sf::Vector2i(40, -2));
@@ -62,8 +62,8 @@ void ScenePlay::init() {
 	WidgetBox* w_defence = new WidgetBox();
 	w_defence->setSize(sf::Vector2i(100,25));
 	w_defence->setPosAbs(sf::Vector2i(150,10));
-	w_defence->setBackground(game->assets->getTexture(Assets::TEX_FILL_DARK_GREEN), 10);
-	w_defence->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
+	w_defence->setBackground(game->assets->getTexture("dark_green"), 10);
+	w_defence->setBorder(game->assets->getBorder("slick"));
 	w_defence->addChild(w_defence_ico);
 	w_defence->addChild(w_defence_text);
 
@@ -71,13 +71,13 @@ void ScenePlay::init() {
 	WidgetBox* w_waves_ico = new WidgetBox();
 	w_waves_ico->setSize(sf::Vector2i(40,40));
 	w_waves_ico->setPosRel(sf::Vector2i(-10,-8));
-	w_waves_ico->setBackground(game->assets->getSprite(Assets::SPRITE_ICON_SKULL), sf::Vector2i(0,0));
+	w_waves_ico->setBackground(game->assets->getSprite("icon_skull"), sf::Vector2i(0,0));
 
 	WidgetBox* w_waves = new WidgetBox();
 	w_waves->setSize(sf::Vector2i(100,25));
 	w_waves->setPosAbs(sf::Vector2i(280,10));
-	w_waves->setBackground(game->assets->getTexture(Assets::TEX_FILL_DARK_GREEN), 10);
-	w_waves->setBorder(game->assets->getBorder(Assets::BORDER_SLICK));
+	w_waves->setBackground(game->assets->getTexture("dark_green"), 10);
+	w_waves->setBorder(game->assets->getBorder("slick"));
 	w_waves->addChild(w_waves_ico);
 
 	interface.add(w_health);
