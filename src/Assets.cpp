@@ -195,7 +195,6 @@ void Assets::loadGUI() {
 }
 
 void Assets::loadBorders() {
-	size_t id = 0;
 	std::string texture_name;
 	std::string border_name;
 
@@ -257,7 +256,6 @@ sf::Texture Assets::makeRepeatable(const sf::Texture& original, sf::IntRect& rec
 }
 
 void Assets::loadBorderRepeatable(std::string border_name, std::string sprite_name, std::string texture_name) {
-	std::cout << border_name << " " << sprite_name << " " << texture_name << std::endl;
 	sf::IntRect rect = loadRect();
 	sf::Texture tex = makeRepeatable(textures[texture_name], rect);
 	borders[border_name].setTexture(sprite_name, tex);
@@ -284,6 +282,9 @@ void Assets::loadTexture() {
 			size_t r, g ,b;
 			file >> r >> g >> b;
 			color = new sf::Color(r, g, b);
+		}
+		else {
+			std::cout << "In file: " << file_path << " unknown key: " << word << std::endl;
 		}
 	}
 
@@ -317,6 +318,9 @@ void Assets::loadSprite() {
 		}
 		else if (word == "rectangle") {
 			sprites[sprite_name] = sf::Sprite(textures[texture_name], loadRect());
+		}
+		else {
+			std::cout << "In file: " << file_path << " unknown key: " << word << std::endl;
 		}
 	}
 }
