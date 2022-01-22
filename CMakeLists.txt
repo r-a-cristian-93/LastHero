@@ -18,6 +18,7 @@ set(SOURCE_FILES
 	src/CCooldown.cpp
 	src/CStats.cpp
 	src/CClickLocation.cpp
+	src/CAnimation.cpp
 	src/Entity.cpp
 	src/SUpdate.cpp
 	src/SDraw.cpp
@@ -30,6 +31,7 @@ set(SOURCE_FILES
 	src/ActionStream.cpp
 	src/Assets.cpp
 	src/Animation.cpp
+	src/AnimationSet.cpp
 	src/Scene.cpp
 	src/ScenePlay.cpp
 	src/Interface.cpp

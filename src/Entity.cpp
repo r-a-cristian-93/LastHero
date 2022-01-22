@@ -4,7 +4,7 @@ Entity::Entity(size_t _tag, size_t _id)
 	:id(_id)
 	,tag(_tag)
 	,alive(true)
-	,components(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr)
+	,components()
 	{}
 
 Entity::Entity(size_t _tag, size_t _id, Components& _components)

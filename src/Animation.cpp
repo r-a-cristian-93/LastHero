@@ -11,9 +11,9 @@ Animation::Animation(std::vector<sf::Sprite> spr, size_t speed, size_t t)
 
 void Animation::update() {
 	frames_alive++;
-	instant_frame = (frames_alive / speed) % frames;
+	active_frame = (frames_alive / speed) % frames;
 }
 
 sf::Sprite& Animation::getSprite() {
-	return sprites[instant_frame];
+	return sprites[active_frame];
 }

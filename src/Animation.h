@@ -5,14 +5,14 @@
 
 class Animation {
 	std::vector<sf::Sprite> sprites;
-	size_t frames, frames_alive, instant_frame;
+	size_t frames, frames_alive, active_frame;
 	size_t speed;
 	size_t type;
 
 public:
 	enum {
 		NONE,
-		ANIM_ONE,
+		ANIM_ONCE,
 		ANIM_LOOP,
 		ANIM_SWING,
 	};

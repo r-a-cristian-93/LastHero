@@ -9,6 +9,7 @@
 #include "CScore.h"
 #include "CTarget.h"
 #include "CStats.h"
+#include "CAnimation.h"
 
 class Components {
 	std::tuple<
@@ -19,7 +20,8 @@ class Components {
 		CLifespan*,
 		CScore*,
 		CTarget*,
-		CStats*> components;
+		CStats*,
+		CAnimation*> components;
 
 public:
 	Components() {
@@ -31,6 +33,7 @@ public:
 		add<CScore>(nullptr);
 		add<CTarget>(nullptr);
 		add<CStats>(nullptr);
+		add<CAnimation>(nullptr);
 	}
 
 	Components(
@@ -41,7 +44,8 @@ public:
 		CLifespan* c_l,
 		CScore* c_s,
 		CTarget* c_tg,
-		CStats* c_h)
+		CStats* c_h,
+		CAnimation* c_a)
 	{
 		add<CTransform>(c_tr);
 		add<CShape>(c_sh);
@@ -51,6 +55,7 @@ public:
 		add<CScore>(c_s);
 		add<CTarget>(c_tg);
 		add<CStats>(c_h);
+		add<CAnimation>(c_a);
 	}
 
 	Components(Components& c) {
@@ -70,6 +75,8 @@ public:
 			add<CTarget>(new CTarget(*c.get<CTarget>()));
 		if (c.get<CStats>())
 			add<CStats>(new CStats(*c.get<CStats>()));
+		if (c.get<CAnimation>())
+			add<CAnimation>(new CAnimation(*c.get<CAnimation>()));
 	}
 
 	~Components() {
@@ -81,6 +88,7 @@ public:
 		if (get<CScore>()) delete get<CScore>();
 		if (get<CTarget>()) delete get<CTarget>();
 		if (get<CStats>()) delete get<CStats>();
+		if (get<CAnimation>()) delete get<CAnimation>();
 	}
 
 	template<class T>
