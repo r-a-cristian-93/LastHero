@@ -181,9 +181,10 @@ void Assets::loadAnimationSet(std::string path, AnimationSet& anim_set) {
 }
 
 void Assets::loadAnimation(AnimationSet& anim_set) {
-	size_t type, speed, play;
-	std::string texture_name;
+	size_t type(0), speed(0), play(0);
+	std::string texture_name("");
 	std::vector<sf::IntRect> rects;
+	float origin_x(0), origin_y(0);
 
 	while (file_two >> word) {
 		if (word == "_END") break;
@@ -210,6 +211,9 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 		else if (word == "speed") {
 			file_two >> speed;
 		}
+		else if (word == "origin") {
+			file_two >> origin_x >> origin_y;
+		}
 		else if (word == "frame") {
 			rects.push_back(loadRect(file_two));
 		}
@@ -218,6 +222,7 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 	std::vector<sf::Sprite> sprites;
 	for (int i=0; i<rects.size(); i++) {
 		sprites.push_back(sf::Sprite(textures[texture_name], rects[i]));
+		sprites.back().setOrigin(origin_x, origin_y);
 	}
 
 	anim_set.animations[type] = Animation(sprites, speed, play);
