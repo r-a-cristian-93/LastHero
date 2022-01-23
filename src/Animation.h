@@ -4,12 +4,12 @@
 #include <SFML/Graphics.hpp>
 
 class Animation {
+public:
 	std::vector<sf::Sprite> sprites;
 	size_t frames, frames_alive, active_frame;
 	size_t speed;
-	size_t type;
+	size_t play;
 
-public:
 	enum {
 		NONE,
 		PLAY_ONCE,
@@ -17,7 +17,8 @@ public:
 		PLAY_SWING,
 	};
 
-	Animation(std::vector<sf::Sprite> sprites, size_t speed, size_t type);
+	Animation();
+	Animation(std::vector<sf::Sprite> sprites, size_t speed, size_t play);
 
 	void update();
 	bool hasEnded();

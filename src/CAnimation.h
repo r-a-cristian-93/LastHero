@@ -6,10 +6,11 @@
 class CAnimation {
 public:
 	AnimationSet anim_set;
-	Animation* active_animation;
+	Animation* active_anim;
 
 	CAnimation();
 	CAnimation(const CAnimation& c);
+	CAnimation(const AnimationSet& a);
 };
 
 #endif

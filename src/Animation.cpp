@@ -1,10 +1,18 @@
 #include "Animation.h"
 
-Animation::Animation(std::vector<sf::Sprite> spr, size_t speed, size_t t)
+Animation::Animation()
 	:frames_alive(0)
+	,active_frame(0)
 	,speed(0)
-	,type(t)
-	,sprites(spr)
+	,play(0)
+	{}
+
+Animation::Animation(std::vector<sf::Sprite> _sprites, size_t _speed, size_t _play)
+	:frames_alive(0)
+	,active_frame(0)
+	,speed(_speed)
+	,play(_play)
+	,sprites(_sprites)
 {
 	frames = sprites.size();
 }

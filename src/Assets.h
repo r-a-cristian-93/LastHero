@@ -25,12 +25,13 @@ struct EntityDataset {
 	int level;
 	int stats_base[CStats::COUNT];
 	int stats_per_level[CStats::COUNT];
+	AnimationSet animation_set;
 } ;
 
 class Assets {
 private:
 	std::string file_path;
-	std::ifstream file;
+	std::ifstream file, file_two;
 	std::string word;
 
 	Components recipe_player;
@@ -52,7 +53,9 @@ private:
 	void loadSprite();
 	void loadBorders();
 	void loadBorderRepeatable(std::string border_name, size_t sprite_name, std::string texture_name);
-	sf::IntRect loadRect();
+	void loadAnimationSet(std::string path, AnimationSet& animation_set);
+	void loadAnimation(AnimationSet& anim_set);
+	sf::IntRect loadRect(std::ifstream& f);
 	sf::Texture makeRepeatable(const sf::Texture& original, sf::IntRect& rect);
 
 public:

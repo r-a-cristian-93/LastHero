@@ -151,6 +151,7 @@ void ScenePlay::update() {
 		sInterface();
 	}
 	sSpin();
+	sAnimation();
 
 	SDraw::drawEntities(&game->window, ent_mgr.getEntities());
 	SDraw::drawInterface(&game->window, interface.getWidgets());
@@ -645,6 +646,15 @@ void ScenePlay::sInterface() {
 		}
 	}
 }
+
+void ScenePlay::sAnimation() {
+	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
+		if (e->get<CAnimation>()) {
+			e->get<CAnimation>()->active_anim->update();
+		}
+	}
+}
+
 
 float ScenePlay::squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {
 	return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);

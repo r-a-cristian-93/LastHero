@@ -42,6 +42,7 @@ class ScenePlay: public Scene {
 	void sPlayback();
 	void sLevelUp();
 	void sInterface();
+	void sAnimation();
 
 	void checkLifespan(std::shared_ptr<Entity>& e);
 	void setStatsInitial(Entity& entity);

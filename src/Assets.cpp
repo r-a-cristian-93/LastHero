@@ -5,9 +5,9 @@
 #include "Settings.h"
 
 Assets::Assets() {
+	loadGUI();
 	loadEntities();
 	loadFonts();
-	loadGUI();
 }
 
 Components& Assets::getRecipePlayer() {
@@ -91,6 +91,10 @@ void Assets::loadEntity() {
 				file >> data_ent.stats_per_level[i];
 			}
 		}
+		else if (word == "animation") {
+			file >> word;
+			loadAnimationSet(word, data_ent.animation_set);
+		}
 	}
 
 	switch (data_ent.type) {
@@ -115,6 +119,7 @@ void Assets::loadEntity() {
 			recipe_player.add<CCollision>(new CCollision(data_ent.radius));
 			recipe_player.add<CInput>(new CInput());
 			recipe_player.add<CStats>(new CStats(stats));
+			recipe_player.add<CAnimation>(new CAnimation(data_ent.animation_set));
 		}
 		break;
 		case Entity::TAG_BULLET: {
@@ -165,6 +170,61 @@ void Assets::loadEntity() {
 	}
 }
 
+void Assets::loadAnimationSet(std::string path, AnimationSet& anim_set) {
+	file_two.open(path);
+
+	while (file_two >> word) {
+		if (word == "_ANIM") {
+			loadAnimation(anim_set);
+		}
+	}
+}
+
+void Assets::loadAnimation(AnimationSet& anim_set) {
+	size_t type, speed, play;
+	std::string texture_name;
+	std::vector<sf::IntRect> rects;
+
+	while (file_two >> word) {
+		if (word == "_END") break;
+		else if (word == "texture") {
+			file_two >> texture_name;
+		}
+		else if (word == "type") {
+			file_two >> word;
+			if (word == "spawn") type = AnimationSet::ANIM_SPAWN;
+			else if (word == "stance") type = AnimationSet::ANIM_STANCE;
+			else if (word == "move_left") type = AnimationSet::ANIM_MOVE_LEFT;
+			else if (word == "move_right") type = AnimationSet::ANIM_MOVE_RIGHT;
+			else if (word == "fire_primary") type = AnimationSet::ANIM_FIRE_PRIMARY;
+			else if (word == "fire_secondary") type = AnimationSet::ANIM_FIRE_SECONDARY;
+			else if (word == "hit") type = AnimationSet::ANIM_HIT;
+			else if (word == "die") type = AnimationSet::ANIM_DIE;
+		}
+		else if (word == "play") {
+			file_two >> word;
+			if (word == "once") play = Animation::PLAY_ONCE;
+			else if (word == "loop") play = Animation::PLAY_LOOP;
+			else if (word == "swing") play = Animation::PLAY_SWING;
+		}
+		else if (word == "speed") {
+			file_two >> speed;
+		}
+		else if (word == "frame") {
+			rects.push_back(loadRect(file_two));
+		}
+	}
+
+	std::vector<sf::Sprite> sprites;
+	for (int i=0; i<rects.size(); i++) {
+		sprites.push_back(sf::Sprite(textures[texture_name], rects[i]));
+	}
+
+	anim_set.animations[type] = Animation(sprites, speed, play);
+}
+
+
+
 void Assets::loadFonts() {
 	if (!fonts[FONT_COURIER].loadFromFile("res/courier.ttf")) {
 		std::cout << "Can't load font COURIER\n";
@@ -207,22 +267,22 @@ void Assets::loadBorders() {
 			file >> border_name;
 		}
 		else if (word == "top_left") {
-			borders[border_name].setSprite(Border::TOP_LEFT, sf::Sprite(textures[texture_name], loadRect()));
+			borders[border_name].setSprite(Border::TOP_LEFT, sf::Sprite(textures[texture_name], loadRect(file)));
 		}
 		else if (word == "top_center") {
 			loadBorderRepeatable(border_name, Border::TOP_CENTER, texture_name);
 		}
 		else if (word == "top_right") {
-			borders[border_name].setSprite(Border::TOP_RIGHT, sf::Sprite(textures[texture_name], loadRect()));
+			borders[border_name].setSprite(Border::TOP_RIGHT, sf::Sprite(textures[texture_name], loadRect(file)));
 		}
 		else if (word == "bottom_left") {
-			borders[border_name].setSprite(Border::BOTTOM_LEFT, sf::Sprite(textures[texture_name], loadRect()));
+			borders[border_name].setSprite(Border::BOTTOM_LEFT, sf::Sprite(textures[texture_name], loadRect(file)));
 		}
 		else if (word == "bottom_center") {
 			loadBorderRepeatable(border_name, Border::BOTTOM_CENTER, texture_name);
 		}
 		else if (word == "bottom_right") {
-			borders[border_name].setSprite(Border::BOTTOM_RIGHT, sf::Sprite(textures[texture_name], loadRect()));
+			borders[border_name].setSprite(Border::BOTTOM_RIGHT, sf::Sprite(textures[texture_name], loadRect(file)));
 		}
 		else if (word == "middle_left") {
 			loadBorderRepeatable(border_name, Border::MIDDLE_LEFT, texture_name);
@@ -236,12 +296,12 @@ void Assets::loadBorders() {
 	}
 }
 
-sf::IntRect Assets::loadRect() {
+sf::IntRect Assets::loadRect(std::ifstream& f) {
 	sf::IntRect rect;
-	file >> rect.left;
-	file >> rect.top;
-	file >> rect.width;
-	file >> rect.height;
+	f >> rect.left;
+	f >> rect.top;
+	f >> rect.width;
+	f >> rect.height;
 	return rect;
 }
 
@@ -256,7 +316,7 @@ sf::Texture Assets::makeRepeatable(const sf::Texture& original, sf::IntRect& rec
 }
 
 void Assets::loadBorderRepeatable(std::string border_name, size_t sprite_name, std::string texture_name) {
-	sf::IntRect rect = loadRect();
+	sf::IntRect rect = loadRect(file);
 	sf::Texture tex = makeRepeatable(textures[texture_name], rect);
 	borders[border_name].setTexture(sprite_name, tex);
 	borders[border_name].setSprite(sprite_name, sf::Sprite(borders[border_name].getTexture(sprite_name), rect));
@@ -317,7 +377,7 @@ void Assets::loadSprite() {
 			file >> sprite_name;
 		}
 		else if (word == "rectangle") {
-			sprites[sprite_name] = sf::Sprite(textures[texture_name], loadRect());
+			sprites[sprite_name] = sf::Sprite(textures[texture_name], loadRect(file));
 		}
 		else {
 			std::cout << "In file: " << file_path << " unknown key: " << word << std::endl;

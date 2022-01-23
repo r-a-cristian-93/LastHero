@@ -6,6 +6,9 @@ void SDraw::drawEntities(sf::RenderWindow* w, const EntityVec& entities) {
 		if (e->get<CShape>()) {
 			w->draw(e->get<CShape>()->shape);
 		}
+		if (e->get<CAnimation>()) {
+			w->draw(e->get<CAnimation>()->active_anim->getSprite());
+		}
 	}
 }
 
