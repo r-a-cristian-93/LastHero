@@ -396,6 +396,7 @@ void ScenePlay::spawnChilds(const std::shared_ptr<Entity>& parent) {
 void ScenePlay::sCombat() {
 	if (player->get<CInput>()->fire_primary) {
 		spawnBullet();
+		player->get<CAnimation>()->active_anim = &player->get<CAnimation>()->anim_set.animations[AnimationSet::ANIM_FIRE_PRIMARY];
 		player->get<CInput>()->fire_primary = false;
 	}
 	if (player->get<CInput>()->fire_secondary) {
@@ -651,6 +652,11 @@ void ScenePlay::sAnimation() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
 		if (e->get<CAnimation>()) {
 			e->get<CAnimation>()->active_anim->update();
+			if (e->get<CAnimation>()->active_anim->hasEnded()) {
+				// TO DO: first determine facing direction
+				e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[0];
+			}
+
 			if (e->get<CTransform>()) {
 				e->get<CAnimation>()->active_anim->getSprite().setPosition(e->get<CTransform>()->pos);
 			}

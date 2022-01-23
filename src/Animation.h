@@ -9,6 +9,7 @@ public:
 	size_t frames, frames_alive, active_frame;
 	size_t speed;
 	size_t play;
+	bool has_ended;
 
 	enum {
 		NONE,
