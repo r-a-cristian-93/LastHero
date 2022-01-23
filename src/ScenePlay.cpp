@@ -455,7 +455,7 @@ void ScenePlay::spawnBullet() {
 
 void ScenePlay::sSpin() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
-		if (e->get<CTransform>()) {
+		if (e->get<CTransform>() && e->get<CShape>()) {
 			if (e->get<CTransform>()->d_angle) {
 				e->get<CShape>()->shape.rotate(e->get<CTransform>()->d_angle);
 			}
