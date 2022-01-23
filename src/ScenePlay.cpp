@@ -651,7 +651,9 @@ void ScenePlay::sAnimation() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
 		if (e->get<CAnimation>()) {
 			e->get<CAnimation>()->active_anim->update();
-			e->get<CAnimation>()->active_anim->getSprite().setPosition(e->get<CTransform>()->pos);
+			if (e->get<CTransform>()) {
+				e->get<CAnimation>()->active_anim->getSprite().setPosition(e->get<CTransform>()->pos);
+			}
 		}
 	}
 }
