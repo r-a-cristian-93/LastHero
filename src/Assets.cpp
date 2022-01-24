@@ -184,6 +184,7 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 	size_t type(0), speed(0), play(0);
 	std::string texture_name("");
 	std::vector<sf::IntRect> rects;
+	size_t flip_x(0), flip_y(0);
 	float origin_x(0), origin_y(0);
 
 	while (file_two >> word) {
@@ -195,8 +196,14 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 			file_two >> word;
 			if (word == "spawn") type = AnimationSet::ANIM_SPAWN;
 			else if (word == "stance") type = AnimationSet::ANIM_STANCE;
-			else if (word == "move_left") type = AnimationSet::ANIM_MOVE_LEFT;
-			else if (word == "move_right") type = AnimationSet::ANIM_MOVE_RIGHT;
+			else if (word == "move_n") type = AnimationSet::ANIM_MOVE_N;
+			else if (word == "move_s") type = AnimationSet::ANIM_MOVE_S;
+			else if (word == "move_e") type = AnimationSet::ANIM_MOVE_E;
+			else if (word == "move_w") type = AnimationSet::ANIM_MOVE_W;
+			else if (word == "move_ne") type = AnimationSet::ANIM_MOVE_NE;
+			else if (word == "move_nw") type = AnimationSet::ANIM_MOVE_NW;
+			else if (word == "move_se") type = AnimationSet::ANIM_MOVE_SE;
+			else if (word == "move_sw") type = AnimationSet::ANIM_MOVE_SW;
 			else if (word == "fire_primary") type = AnimationSet::ANIM_FIRE_PRIMARY;
 			else if (word == "fire_secondary") type = AnimationSet::ANIM_FIRE_SECONDARY;
 			else if (word == "hit") type = AnimationSet::ANIM_HIT;
@@ -214,6 +221,9 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 		else if (word == "origin") {
 			file_two >> origin_x >> origin_y;
 		}
+		else if (word == "flip") {
+			file_two >> flip_x >> flip_y;
+		}
 		else if (word == "frame") {
 			rects.push_back(loadRect(file_two));
 		}
@@ -221,6 +231,9 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 
 	std::vector<sf::Sprite> sprites;
 	for (int i=0; i<rects.size(); i++) {
+		if (flip_x) flipRectX(rects[i]);
+		if (flip_y) flipRectY(rects[i]);
+
 		sprites.push_back(sf::Sprite(textures[texture_name], rects[i]));
 		sprites.back().setOrigin(origin_x, origin_y);
 	}
@@ -228,7 +241,15 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 	anim_set.animations[type] = Animation(sprites, speed, play);
 }
 
+void Assets::flipRectX(sf::IntRect& rect) {
+	rect.left += rect.width;
+	rect.width = -rect.width;
+}
 
+void Assets::flipRectY(sf::IntRect& rect) {
+	rect.top += rect.height;
+	rect.height = -rect.height;
+}
 
 void Assets::loadFonts() {
 	if (!fonts[FONT_COURIER].loadFromFile("res/courier.ttf")) {

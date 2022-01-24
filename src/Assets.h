@@ -57,6 +57,8 @@ private:
 	void loadAnimation(AnimationSet& anim_set);
 	sf::IntRect loadRect(std::ifstream& f);
 	sf::Texture makeRepeatable(const sf::Texture& original, sf::IntRect& rect);
+	void flipRectX(sf::IntRect& rect);
+	void flipRectY(sf::IntRect& rect);
 
 public:
 	enum {

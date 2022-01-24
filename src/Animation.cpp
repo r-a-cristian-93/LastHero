@@ -14,7 +14,7 @@ Animation::Animation(std::vector<sf::Sprite> _sprites, size_t _speed, size_t _pl
 	,active_frame(0)
 	,speed(_speed)
 	,play(_play)
-	,has_ended(false)
+	,has_ended(true)
 	,sprites(_sprites)
 {
 	frames = sprites.size();

@@ -21,6 +21,7 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::D, Action::MOVE_RIGHT);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Space, Action::FIRE_PRIMARY);
 	game->act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Left, Action::FIRE_PRIMARY);
 	game->act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Right, Action::FIRE_SECONDARY);
 
@@ -654,9 +655,26 @@ void ScenePlay::sAnimation() {
 			e->get<CAnimation>()->active_anim->update();
 			if (e->get<CAnimation>()->active_anim->hasEnded()) {
 				// TO DO: first determine facing direction
-				e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[0];
+				if (e->get<CTransform>()) {
+					sf::Vector2f& dir = e->get<CTransform>()->dir;
+					size_t anim(0);
+
+					if (dir.x == 0 && dir.y < 0) anim = AnimationSet::ANIM_MOVE_N;
+					else if (dir.x == 0 && dir.y > 0) anim = AnimationSet::ANIM_MOVE_S;
+					else if (dir.x > 0 && dir.y == 0) anim = AnimationSet::ANIM_MOVE_E;
+					else if (dir.x < 0 && dir.y == 0) anim = AnimationSet::ANIM_MOVE_W;
+					else if (dir.x > 0 && dir.y < 0) anim = AnimationSet::ANIM_MOVE_NE;
+					else if (dir.x < 0 && dir.y < 0) anim = AnimationSet::ANIM_MOVE_NW;
+					else if (dir.x > 0 && dir.y > 0) anim = AnimationSet::ANIM_MOVE_SE;
+					else if (dir.x < 0 && dir.y > 0) anim = AnimationSet::ANIM_MOVE_SW;
+
+					if (e->get<CAnimation>()->active_anim != &e->get<CAnimation>()->anim_set.animations[anim]) {
+						e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[anim];
+					}
+				}
 			}
 
+			// update animation sprite position
 			if (e->get<CTransform>()) {
 				e->get<CAnimation>()->active_anim->getSprite().setPosition(e->get<CTransform>()->pos);
 			}
