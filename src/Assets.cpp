@@ -181,7 +181,8 @@ void Assets::loadAnimationSet(std::string path, AnimationSet& anim_set) {
 }
 
 void Assets::loadAnimation(AnimationSet& anim_set) {
-	size_t type(0), speed(0), play(0);
+	size_t state(1), facing(1);
+	size_t speed(0), play(0);
 	std::string texture_name("");
 	std::vector<sf::IntRect> rects;
 	size_t flip_x(0), flip_y(0);
@@ -194,20 +195,19 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 		}
 		else if (word == "type") {
 			file_two >> word;
-			if (word == "spawn") type = AnimationSet::ANIM_SPAWN;
-			else if (word == "stance") type = AnimationSet::ANIM_STANCE;
-			else if (word == "move_n") type = AnimationSet::ANIM_MOVE_N;
-			else if (word == "move_s") type = AnimationSet::ANIM_MOVE_S;
-			else if (word == "move_e") type = AnimationSet::ANIM_MOVE_E;
-			else if (word == "move_w") type = AnimationSet::ANIM_MOVE_W;
-			else if (word == "move_ne") type = AnimationSet::ANIM_MOVE_NE;
-			else if (word == "move_nw") type = AnimationSet::ANIM_MOVE_NW;
-			else if (word == "move_se") type = AnimationSet::ANIM_MOVE_SE;
-			else if (word == "move_sw") type = AnimationSet::ANIM_MOVE_SW;
-			else if (word == "fire_primary") type = AnimationSet::ANIM_FIRE_PRIMARY;
-			else if (word == "fire_secondary") type = AnimationSet::ANIM_FIRE_SECONDARY;
-			else if (word == "hit") type = AnimationSet::ANIM_HIT;
-			else if (word == "die") type = AnimationSet::ANIM_DIE;
+			if (word == "stand") state = Entity::STATE_STAND;
+			else if (word == "move") state = Entity::STATE_MOVE;
+			else if (word == "die") state = Entity::STATE_DIE;
+
+			file_two >> word;
+			if (word == "N") facing = Entity::FACING_N;
+			else if (word == "S") facing = Entity::FACING_S;
+			else if (word == "E") facing = Entity::FACING_E;
+			else if (word == "W") facing = Entity::FACING_W;
+			else if (word == "NE") facing = Entity::FACING_NE;
+			else if (word == "NW") facing = Entity::FACING_NW;
+			else if (word == "SE") facing = Entity::FACING_SE;
+			else if (word == "SW") facing = Entity::FACING_SW;
 		}
 		else if (word == "play") {
 			file_two >> word;
@@ -237,8 +237,7 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 		sprites.push_back(sf::Sprite(textures[texture_name], rects[i]));
 		sprites.back().setOrigin(origin_x, origin_y);
 	}
-
-	anim_set.animations[type] = Animation(sprites, speed, play);
+	anim_set.animations[state][facing] = Animation(sprites, speed, play);
 }
 
 void Assets::flipRectX(sf::IntRect& rect) {

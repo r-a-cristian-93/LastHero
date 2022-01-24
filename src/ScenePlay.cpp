@@ -397,7 +397,6 @@ void ScenePlay::spawnChilds(const std::shared_ptr<Entity>& parent) {
 void ScenePlay::sCombat() {
 	if (player->get<CInput>()->fire_primary) {
 		spawnBullet();
-		player->get<CAnimation>()->active_anim = &player->get<CAnimation>()->anim_set.animations[AnimationSet::ANIM_FIRE_PRIMARY];
 		player->get<CInput>()->fire_primary = false;
 	}
 	if (player->get<CInput>()->fire_secondary) {
@@ -649,27 +648,42 @@ void ScenePlay::sInterface() {
 	}
 }
 
+void ScenePlay::updateState(std::shared_ptr<Entity>& e) {
+	if (e->get<CTransform>()) {
+		sf::Vector2f& dir = e->get<CTransform>()->dir;
+		size_t& facing = e->facing;
+		size_t& state = e->state;
+
+		if (dir.x || dir.y) {
+			state = Entity::STATE_MOVE;
+
+			if (dir.x == 0 && dir.y < 0) facing = Entity::FACING_N;
+			else if (dir.x == 0 && dir.y > 0) facing = Entity::FACING_S;
+			else if (dir.x > 0 && dir.y == 0) facing = Entity::FACING_E;
+			else if (dir.x < 0 && dir.y == 0) facing = Entity::FACING_W;
+			else if (dir.x > 0 && dir.y < 0) facing = Entity::FACING_NE;
+			else if (dir.x < 0 && dir.y < 0) facing = Entity::FACING_NW;
+			else if (dir.x > 0 && dir.y > 0) facing = Entity::FACING_SE;
+			else if (dir.x < 0 && dir.y > 0) facing = Entity::FACING_SW;
+		}
+		else {
+			state = Entity::STATE_STAND;
+		}
+	}
+}
+
 void ScenePlay::sAnimation() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
 		if (e->get<CAnimation>()) {
 			e->get<CAnimation>()->active_anim->update();
 			if (e->get<CAnimation>()->active_anim->hasEnded()) {
-				// TO DO: first determine facing direction
 				if (e->get<CTransform>()) {
-					sf::Vector2f& dir = e->get<CTransform>()->dir;
-					size_t anim(0);
+					updateState(e);
+					size_t& facing = e->facing;
+					size_t& state = e->state;
 
-					if (dir.x == 0 && dir.y < 0) anim = AnimationSet::ANIM_MOVE_N;
-					else if (dir.x == 0 && dir.y > 0) anim = AnimationSet::ANIM_MOVE_S;
-					else if (dir.x > 0 && dir.y == 0) anim = AnimationSet::ANIM_MOVE_E;
-					else if (dir.x < 0 && dir.y == 0) anim = AnimationSet::ANIM_MOVE_W;
-					else if (dir.x > 0 && dir.y < 0) anim = AnimationSet::ANIM_MOVE_NE;
-					else if (dir.x < 0 && dir.y < 0) anim = AnimationSet::ANIM_MOVE_NW;
-					else if (dir.x > 0 && dir.y > 0) anim = AnimationSet::ANIM_MOVE_SE;
-					else if (dir.x < 0 && dir.y > 0) anim = AnimationSet::ANIM_MOVE_SW;
-
-					if (e->get<CAnimation>()->active_anim != &e->get<CAnimation>()->anim_set.animations[anim]) {
-						e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[anim];
+					if (e->get<CAnimation>()->active_anim != &e->get<CAnimation>()->anim_set.animations[state][facing]) {
+						e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
 					}
 				}
 			}
@@ -681,7 +695,6 @@ void ScenePlay::sAnimation() {
 		}
 	}
 }
-
 
 float ScenePlay::squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {
 	return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);

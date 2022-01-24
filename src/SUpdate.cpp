@@ -5,11 +5,11 @@
 void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 	for(const std::shared_ptr<Entity>& e:entities) {
 		if (e->get<CTransform>()) {
-		
+
 			sf::Vector2f& dir = e->get<CTransform>()->dir;
 			sf::Vector2f& vel = e->get<CTransform>()->vel;
 			sf::Vector2f& pos = e->get<CTransform>()->pos;
-			
+
 			if (e->get<CInput>()) {
 				if (e->get<CInput>()->up) dir.y = -1;
 				else if (e->get<CInput>()->down) dir.y = 1;
@@ -21,14 +21,14 @@ void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 			}
 
 			if (dir.x || dir.y) {
-				
+
 				//set velocity according to direction and max_velocity;
 				float alpha_rad = atan2f(dir.y, dir.x);
 				vel.x = cos(alpha_rad) * e->get<CTransform>()->max_velocity;
 				vel.y = sin(alpha_rad) * e->get<CTransform>()->max_velocity;
 
 				//chech if it collides with boundaries
-				if (e->get<CCollision>()) {					
+				if (e->get<CCollision>()) {
 					const int r = e->get<CCollision>()->radius;
 					sf::Vector2f pos_future = pos + vel;
 
@@ -40,7 +40,7 @@ void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 						bounds = {pos_future.x-r, pos_future.y-r, pos_future.x+r, pos_future.y+r};
 					}
 
-					if (bounds.left <= limits.left || bounds.width >= limits.width) {						
+					if (bounds.left <= limits.left || bounds.width >= limits.width) {
 						if (e->get<CInput>()) {
 							dir.x = 0;
 							vel.x = 0;
