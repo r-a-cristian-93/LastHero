@@ -648,37 +648,12 @@ void ScenePlay::sInterface() {
 	}
 }
 
-void ScenePlay::updateState(std::shared_ptr<Entity>& e) {
-	if (e->get<CTransform>()) {
-		sf::Vector2f& dir = e->get<CTransform>()->dir;
-		size_t& facing = e->facing;
-		size_t& state = e->state;
-
-		if (dir.x || dir.y) {
-			state = Entity::STATE_MOVE;
-
-			if (dir.x == 0 && dir.y < 0) facing = Entity::FACING_N;
-			else if (dir.x == 0 && dir.y > 0) facing = Entity::FACING_S;
-			else if (dir.x > 0 && dir.y == 0) facing = Entity::FACING_E;
-			else if (dir.x < 0 && dir.y == 0) facing = Entity::FACING_W;
-			else if (dir.x > 0 && dir.y < 0) facing = Entity::FACING_NE;
-			else if (dir.x < 0 && dir.y < 0) facing = Entity::FACING_NW;
-			else if (dir.x > 0 && dir.y > 0) facing = Entity::FACING_SE;
-			else if (dir.x < 0 && dir.y > 0) facing = Entity::FACING_SW;
-		}
-		else {
-			state = Entity::STATE_STAND;
-		}
-	}
-}
-
 void ScenePlay::sAnimation() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
-		if (e->get<CAnimation>()) {
+		if (e->get<CAnimation>() && e->facing != 0) {
 			e->get<CAnimation>()->active_anim->update();
 			if (e->get<CAnimation>()->active_anim->hasEnded()) {
 				if (e->get<CTransform>()) {
-					updateState(e);
 					size_t& facing = e->facing;
 					size_t& state = e->state;
 

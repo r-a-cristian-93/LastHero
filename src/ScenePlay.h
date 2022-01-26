@@ -48,7 +48,6 @@ class ScenePlay: public Scene {
 	void setStatsInitial(Entity& entity);
 	void setStatsEffective(Entity& entity);
 	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);
-	void updateState(std::shared_ptr<Entity>& e);
 
 	float angle(const sf::Vector2f a, const sf::Vector2f b);
 	float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b);

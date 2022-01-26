@@ -21,6 +21,17 @@ void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 			}
 
 			if (dir.x || dir.y) {
+				e->state = Entity::STATE_MOVE;
+
+				//set cardinal direction
+				if (dir.x == 0 && dir.y < 0) e->facing = Entity::FACING_N;
+				else if (dir.x == 0 && dir.y > 0) e->facing = Entity::FACING_S;
+				else if (dir.x > 0 && dir.y == 0) e->facing = Entity::FACING_E;
+				else if (dir.x < 0 && dir.y == 0) e->facing = Entity::FACING_W;
+				else if (dir.x > 0 && dir.y < 0) e->facing = Entity::FACING_NE;
+				else if (dir.x < 0 && dir.y < 0) e->facing = Entity::FACING_NW;
+				else if (dir.x > 0 && dir.y > 0) e->facing = Entity::FACING_SE;
+				else if (dir.x < 0 && dir.y > 0) e->facing = Entity::FACING_SW;
 
 				//set velocity according to direction and max_velocity;
 				float alpha_rad = atan2f(dir.y, dir.x);
@@ -77,6 +88,9 @@ void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 				if (e->get<CShape>()) {
 					e->get<CShape>()->shape.move(vel);
 				}
+			}
+			else {
+				e->state = Entity::STATE_STAND;
 			}
 		}
 	}
