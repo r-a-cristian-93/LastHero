@@ -22,14 +22,14 @@ public:
 
 
 	enum {
-		FACING_N = 1,
-		FACING_S,
-		FACING_E,
-		FACING_W,
+		FACING_E = 1,
 		FACING_NE,
+		FACING_N,
 		FACING_NW,
-		FACING_SE,
-		FACING_SW
+		FACING_W,
+		FACING_SW,
+		FACING_S,
+		FACING_SE
 	};
 
 	const size_t id;

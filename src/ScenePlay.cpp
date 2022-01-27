@@ -654,8 +654,15 @@ void ScenePlay::sAnimation() {
 			e->get<CAnimation>()->active_anim->update();
 			if (e->get<CAnimation>()->active_anim->hasEnded()) {
 				if (e->get<CTransform>()) {
-					size_t& facing = e->facing;
-					size_t& state = e->state;
+					sf::Vector2f e_pos(e->get<CTransform>()->pos);
+					sf::Vector2f m_pos(sf::Mouse::getPosition(game->window));
+
+					float c1, c2;
+					c1 = m_pos.y - e_pos.y;
+					c2 = m_pos.x - e_pos.x;
+					float deg = - ((atan2(-c1, -c2)/ PI * 180 ) - 180);
+					float facing = ceil((deg + 22.5)/45);
+					if (facing >8) facing = 1;
 
 					if (e->get<CAnimation>()->active_anim != &e->get<CAnimation>()->anim_set.animations[state][facing]) {
 						e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
