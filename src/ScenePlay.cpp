@@ -664,8 +664,8 @@ void ScenePlay::sAnimation() {
 					float facing = ceil((deg + 22.5)/45);
 					if (facing >8) facing = 1;
 
-					if (e->get<CAnimation>()->active_anim != &e->get<CAnimation>()->anim_set.animations[state][facing]) {
-						e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
+					if (e->get<CAnimation>()->active_anim != &e->get<CAnimation>()->anim_set.animations[e->state][facing]) {
+						e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[e->state][facing];
 					}
 				}
 			}

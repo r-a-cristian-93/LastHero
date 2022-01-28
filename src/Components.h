@@ -58,7 +58,7 @@ public:
 		add<CAnimation>(c_a);
 	}
 
-	Components(Components& c) {
+	Components(const Components& c) {
 		if (c.get<CTransform>())
 			add<CTransform>(new CTransform(*c.get<CTransform>()));
 		if (c.get<CShape>())
@@ -97,7 +97,7 @@ public:
 	}
 
 	template<class T>
-	T* get() {
+	T* get() const {
 		return std::get<T*>(components);
 	}
 } ;
