@@ -28,6 +28,10 @@ void Game::init(std::string file_name) {
 			file >> style_bits;
 			app_conf.window_style = 1 << style_bits;
 		}
+		if (word == "World") {
+			file >> app_conf.world_w;
+			file >> app_conf.world_h;
+		}
 	}
 
 	file.close();
@@ -35,9 +39,12 @@ void Game::init(std::string file_name) {
 	//load texture after creating the window causes sementation fault;
 	assets = new Assets();
 
-	window.create(sf::VideoMode(app_conf.window_w, app_conf.window_h), app_conf.window_name, app_conf.window_style);
+	window.create(sf::VideoMode(app_conf.world_w, app_conf.world_h), app_conf.window_name, app_conf.window_style);
 	window.setFramerateLimit(app_conf.max_fps);
 	window.setKeyRepeatEnabled(false);
+	window.setView(view);
+	window.setSize({app_conf.window_w, app_conf.window_h});
+	window.setPosition({100,100});
 
 	act_mgr = ActionManager();
 	scenes[2] = new ScenePlay(this, "res/level_001.cfg");

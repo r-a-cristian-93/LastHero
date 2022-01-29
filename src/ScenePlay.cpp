@@ -138,7 +138,7 @@ void ScenePlay::load_level(std::string path) {
 }
 
 void ScenePlay::update() {
-	sf::FloatRect lim(0, 0, game->app_conf.window_w, game->app_conf.window_h);
+	sf::FloatRect lim(0, 0, game->app_conf.world_w, game->app_conf.world_h);
 
 	if (!paused) {
 		ent_mgr.update();
@@ -153,6 +153,7 @@ void ScenePlay::update() {
 	}
 	sSpin();
 	sAnimation();
+	sView();
 
 	SDraw::drawEntities(&game->window, ent_mgr.getEntities());
 	SDraw::drawInterface(&game->window, interface.getWidgets());
@@ -439,10 +440,7 @@ void ScenePlay::checkLifespan(std::shared_ptr<Entity>& e) {
 }
 
 void ScenePlay::spawnBullet() {
-	sf::Vector2f mouse_pos;
-
-	mouse_pos = sf::Vector2f(sf::Mouse::getPosition(game->window));
-
+	sf::Vector2f mouse_pos = game->window.mapPixelToCoords(sf::Mouse::getPosition(game->window));
 
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir = mouse_pos - pos;
@@ -465,9 +463,7 @@ void ScenePlay::sSpin() {
 }
 
 void ScenePlay::spawnMissle() {
-	sf::Vector2f mouse_pos;
-
-	mouse_pos = sf::Vector2f(sf::Mouse::getPosition(game->window));
+	sf::Vector2f mouse_pos = game->window.mapPixelToCoords(sf::Mouse::getPosition(game->window));
 
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir = mouse_pos - pos;
@@ -655,7 +651,7 @@ void ScenePlay::sAnimation() {
 			if (e->get<CAnimation>()->active_anim->hasEnded()) {
 				if (e->get<CTransform>()) {
 					sf::Vector2f e_pos(e->get<CTransform>()->pos);
-					sf::Vector2f m_pos(sf::Mouse::getPosition(game->window));
+					sf::Vector2f m_pos = game->window.mapPixelToCoords(sf::Mouse::getPosition(game->window));
 
 					float c1, c2;
 					c1 = m_pos.y - e_pos.y;
@@ -676,6 +672,21 @@ void ScenePlay::sAnimation() {
 			}
 		}
 	}
+}
+
+void ScenePlay::sView() {
+	sf::Vector2f pos = player->get<CTransform>()->pos;
+	int w = game->app_conf.window_w;
+	int h = game->app_conf.window_h;
+
+	sf::FloatRect rect(pos.x-w/2, pos.y-h/2, w, h);
+	if (rect.left < 0) rect.left = 0;
+	if (rect.top < 0) rect.top = 0;
+	if (rect.left + rect.width > game->app_conf.world_w) rect.left = game->app_conf.world_w - w;
+	if (rect.top + rect.height > game->app_conf.world_h) rect.top = game->app_conf.world_h - h;
+
+	game->view.reset(rect);
+	game->window.setView(game->view);
 }
 
 float ScenePlay::squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {

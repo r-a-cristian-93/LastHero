@@ -33,6 +33,7 @@ public:
 	};
 
 	sf::RenderWindow window;
+	sf::View view;
 	AppConfig app_conf;
 	ActionManager act_mgr;
 	Assets* assets;

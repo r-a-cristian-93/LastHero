@@ -9,6 +9,7 @@
 struct AppConfig {
 	std::string window_name;
 	int window_w, window_h;
+	int world_w, world_h;
 	int max_fps;
 	int window_style;
 	int font_size;
