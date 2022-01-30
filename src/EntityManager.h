@@ -25,7 +25,7 @@ public:
 	EntityManager(Assets* _assets);
 	void update();
 	std::shared_ptr<Entity> add(size_t tag);
-	std::shared_ptr<Entity> add(size_t tag, size_t recipe_id);
+	std::shared_ptr<Entity> add(size_t tag, std::string& recipe_name);
 	EntityVec getEntities();
 	EntityVec getEntities(size_t tag);
 };

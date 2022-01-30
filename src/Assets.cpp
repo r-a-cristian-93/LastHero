@@ -22,8 +22,8 @@ Components& Assets::getRecipeMissle() {
 	return recipe_missle;
 }
 
-Components& Assets::getRecipeEnemy(size_t recipe_id) {
-	return recipe_enemy[recipe_id];
+Components& Assets::getRecipeEnemy(std::string& recipe_name) {
+	return recipe_enemy[recipe_name];
 }
 
 sf::Font& Assets::getFont(size_t name) {
@@ -67,7 +67,7 @@ void Assets::loadEntity() {
 			else if (word == "enemy") data_ent.type = Entity::TAG_ENEMY;
 			else data_ent.type = Entity::NONE;
 		}
-		else if (word == "id") file >> data_ent.id;
+		else if (word == "name") file >> data_ent.name;
 		else if (word == "radius") file >> data_ent.radius;
 		else if (word == "velocity") file >> data_ent.velocity;
 		else if (word == "fill") {
@@ -163,11 +163,11 @@ void Assets::loadEntity() {
 				stats.per_level[i] = data_ent.stats_per_level[i];
 			}
 
-			recipe_enemy[data_ent.id].add<CTransform>(new CTransform(data_ent.velocity));
-			recipe_enemy[data_ent.id].add<CShape>(new CShape(shape));
-			recipe_enemy[data_ent.id].add<CCollision>(new CCollision(data_ent.radius));
-			recipe_enemy[data_ent.id].add<CScore>(new CScore(data_ent.vertices));
-			recipe_enemy[data_ent.id].add<CStats>(new CStats(stats));
+			recipe_enemy[data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
+			recipe_enemy[data_ent.name].add<CShape>(new CShape(shape));
+			recipe_enemy[data_ent.name].add<CCollision>(new CCollision(data_ent.radius));
+			recipe_enemy[data_ent.name].add<CScore>(new CScore(data_ent.vertices));
+			recipe_enemy[data_ent.name].add<CStats>(new CStats(stats));
 		}
 		break;
 	}

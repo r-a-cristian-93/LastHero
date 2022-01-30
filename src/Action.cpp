@@ -4,7 +4,7 @@ Action::Action()
 	:code(nullptr)
 	,type(nullptr)
 	,ent_tag(nullptr)
-	,ent_id(nullptr)
+	,ent_name(nullptr)
 	,pos(nullptr)
 	,dir(nullptr)
 	{}

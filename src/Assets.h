@@ -9,7 +9,7 @@
 
 struct EntityDataset {
 	size_t type;
-	size_t id;
+	std::string name;
 	int radius;
 	int velocity;
 	sf::Color fill;
@@ -33,7 +33,7 @@ private:
 	Components recipe_player;
 	Components recipe_bullet;
 	Components recipe_missle;
-	std::map<int, Components> recipe_enemy;
+	std::map<std::string, Components> recipe_enemy;
 
 	std::map<size_t, sf::Font> fonts;
 	std::map<std::string, sf::Texture> textures;
@@ -73,7 +73,7 @@ public:
 	Components& getRecipePlayer();
 	Components& getRecipeBullet();
 	Components& getRecipeMissle();
-	Components& getRecipeEnemy(size_t recipe_id);
+	Components& getRecipeEnemy(std::string& recipe_name);
 	sf::Font& getFont(size_t name);
 	Border& getBorder(std::string name);
 	sf::Texture& getTexture(std::string name);

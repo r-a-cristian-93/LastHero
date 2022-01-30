@@ -96,7 +96,10 @@ void ScenePlay::load_level(std::string path) {
 	std::ifstream file(path);
 	std::string word;
 
-	int frame, recipe_id, pos_x, pos_y, dir_x, dir_y;
+	sf::IntRect bg_rect(0,0,0,0);
+
+	int frame, pos_x, pos_y, dir_x, dir_y;
+	std::string enemy_name;
 	size_t tag, code, type;
 
 	ActionStream action_stream;
@@ -104,14 +107,14 @@ void ScenePlay::load_level(std::string path) {
 	while (file >> word) {
 		if (word == "_HEADER") {
 			while (file>>word) {
-				sf::IntRect rect(0,0,0,0);
-				if (word == "size")	{
-					file >> rect.width >> rect.height;
+				if (word == "_END") break;
+				else if (word == "size")	{
+					file >> bg_rect.width >> bg_rect.height;
 				}
-				if (word == "background") {
+				else if (word == "background") {
 					file >> word;
 					bg_tex = new sf::Texture();
-					bg_tex->loadFromFile(word, rect);
+					bg_tex->loadFromFile(word, bg_rect);
 					bg_sprite = sf::Sprite(*bg_tex);
 				}
 			}
@@ -133,7 +136,7 @@ void ScenePlay::load_level(std::string path) {
 					file >> word;
 					if (word == "enemy") {
 						tag = Entity::TAG_ENEMY;
-						file >> recipe_id;
+						file >> enemy_name;
 					}
 				}
 				else if (word == "pos") file >> pos_x >> pos_y;
@@ -142,11 +145,12 @@ void ScenePlay::load_level(std::string path) {
 
 			Action* action = new Action(code, type);
 			action->ent_tag = new size_t(tag);
-			action->ent_id = new size_t(recipe_id);
+			action->ent_name = new std::string(enemy_name);
 			action->pos = new sf::Vector2f(pos_x, pos_y);
 			action->dir = new sf::Vector2f(dir_x, dir_y);
 
 			action_stream << action;
+			std::cout << "action loaded " << enemy_name << std::endl;
 		}
 	}
 
@@ -154,6 +158,7 @@ void ScenePlay::load_level(std::string path) {
 		Action* action;
 		action_stream >> action;
 		doAction(action);
+		std::cout << "spawn level enemy\n";
 	}
 }
 
@@ -205,7 +210,8 @@ void ScenePlay::spawnEnemy() {
 	sf::Vector2f pos;
 	int player_radius = player->get<CCollision>()->radius;
 
-	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, 1);
+	std::string recipe("triangle_green");
+	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, recipe);
 	int radius = e->get<CCollision>()->radius;
 
 	while (!position_is_valid) {
@@ -228,10 +234,10 @@ void ScenePlay::spawnEnemy() {
 	setStatsEffective(*e);
 }
 
-void ScenePlay::spawnEnemy(size_t tag, size_t recipe_id, sf::Vector2f pos, sf::Vector2f dir) {
+void ScenePlay::spawnEnemy(size_t tag, std::string& recipe_name, sf::Vector2f& pos, sf::Vector2f& dir) {
 	int player_radius = player->get<CCollision>()->radius;
 
-	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, recipe_id);
+	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, recipe_name);
 
 	e->get<CTransform>()->pos = pos;
 	e->get<CTransform>()->dir = dir;
@@ -612,7 +618,7 @@ void ScenePlay::doAction(const Action* a) {
 				paused = !paused;
 			break;
 			case Action::SPAWN_ENEMY:
-				spawnEnemy(*a->ent_tag, *a->ent_id, *a->pos, *a->dir);
+				spawnEnemy(*a->ent_tag, *a->ent_name, *a->pos, *a->dir);
 			break;
 			default:
 			break;

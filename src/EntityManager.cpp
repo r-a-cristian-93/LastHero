@@ -29,10 +29,10 @@ std::shared_ptr<Entity> EntityManager::add(size_t tag) {
 	return e;
 }
 
-std::shared_ptr<Entity> EntityManager::add(size_t tag, size_t recipe_id) {
+std::shared_ptr<Entity> EntityManager::add(size_t tag, std::string& recipe_name) {
 	std::shared_ptr<Entity> e = nullptr;
 	if (tag == Entity::TAG_ENEMY) {
-		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeEnemy(recipe_id));
+		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeEnemy(recipe_name));
 	}
 
 	entities_to_add.push_back(e);
