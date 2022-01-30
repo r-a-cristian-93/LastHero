@@ -203,7 +203,7 @@ void ScenePlay::spawnPlayer() {
 }
 
 void ScenePlay::spawnEnemy() {
-	sf::Vector2f dir(rand()%10, rand()%10);
+	sf::Vector2f dir(rand()%10+1, rand()%10+1);
 	if (rand()%2 == 0) dir.x *= -1;
 	if (rand()%2 == 0) dir.y *= -1;
 
