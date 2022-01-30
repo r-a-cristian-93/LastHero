@@ -12,12 +12,8 @@ struct EntityDataset {
 	size_t id;
 	int radius;
 	int velocity;
-	int fill_r;
-	int fill_g;
-	int fill_b;
-	int out_r;
-	int out_g;
-	int out_b;
+	sf::Color fill;
+	sf::Color outline;
 	int out_thk;
 	size_t vertices;
 	int lifespan;

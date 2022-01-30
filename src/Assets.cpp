@@ -70,13 +70,16 @@ void Assets::loadEntity() {
 		else if (word == "id") file >> data_ent.id;
 		else if (word == "radius") file >> data_ent.radius;
 		else if (word == "velocity") file >> data_ent.velocity;
-		else if (word == "fill_r") file >> data_ent.fill_r;
-		else if (word == "fill_g") file >> data_ent.fill_g;
-		else if (word == "fill_b") file >> data_ent.fill_b;
-		else if (word == "out_r") file >> data_ent.out_r;
-		else if (word == "out_g") file >> data_ent.out_g;
-		else if (word == "out_b") file >> data_ent.out_b;
-		else if (word == "out_thk") file >> data_ent.out_thk;
+		else if (word == "fill") {
+			int r, g, b;
+			file >> r >> g >> b;
+			data_ent.fill = sf::Color(r,g,b);
+		}
+		else if (word == "outline") {
+			int r, g, b;
+			file >> r >> g >> b >> data_ent.out_thk;
+			data_ent.outline = sf::Color(r,g,b);
+		}
 		else if (word == "vertices") file >> data_ent.vertices;
 		else if (word == "lifespan") file >> data_ent.lifespan;
 		else if (word == "experience") file >> data_ent.experience;
@@ -101,8 +104,8 @@ void Assets::loadEntity() {
 		case Entity::TAG_PLAYER: {
 			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
 			shape.setOrigin(data_ent.radius, data_ent.radius);
-			shape.setFillColor(sf::Color(data_ent.fill_r, data_ent.fill_g, data_ent.fill_b));
-			shape.setOutlineColor(sf::Color(data_ent.out_r, data_ent.out_g, data_ent.out_b));
+			shape.setFillColor(data_ent.fill);
+			shape.setOutlineColor(data_ent.outline);
 			shape.setOutlineThickness(data_ent.out_thk);
 
 			CStats stats;
@@ -125,7 +128,7 @@ void Assets::loadEntity() {
 		case Entity::TAG_BULLET: {
 			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
 			shape.setOrigin(data_ent.radius, data_ent.radius);
-			shape.setFillColor(sf::Color(data_ent.fill_r, data_ent.fill_g, data_ent.fill_b));
+			shape.setFillColor(data_ent.fill);
 
 			recipe_bullet.add<CTransform>(new CTransform(data_ent.velocity));
 			recipe_bullet.add<CShape>(new CShape(shape));
@@ -136,7 +139,7 @@ void Assets::loadEntity() {
 		case Entity::TAG_MISSLE: {
 			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
 			shape.setOrigin(data_ent.radius, data_ent.radius);
-			shape.setFillColor(sf::Color(data_ent.fill_r, data_ent.fill_g, data_ent.fill_b));
+			shape.setFillColor(data_ent.fill);
 
 			recipe_missle.add<CTransform>(new CTransform(data_ent.velocity));
 			recipe_missle.add<CShape>(new CShape(shape));
@@ -147,8 +150,8 @@ void Assets::loadEntity() {
 		case Entity::TAG_ENEMY: {
 			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
 			shape.setOrigin(data_ent.radius, data_ent.radius);
-			shape.setFillColor(sf::Color(data_ent.fill_r, data_ent.fill_g, data_ent.fill_b));
-			shape.setOutlineColor(sf::Color(data_ent.out_r, data_ent.out_g, data_ent.out_b));
+			shape.setFillColor(data_ent.fill);
+			shape.setOutlineColor(data_ent.outline);
 			shape.setOutlineThickness(data_ent.out_thk);
 
 			CStats stats;
