@@ -89,7 +89,7 @@ void ScenePlay::init() {
 	interface.add(w_defence);
 	interface.add(w_waves);
 
-	gui_view.reset(sf::FloatRect(0 ,0, game->app_conf.window_w, game->app_conf.window_h));
+	gui_view.reset(sf::FloatRect(0 ,0, game->app_conf.game_w, game->app_conf.game_h));
 }
 
 void ScenePlay::load_level(std::string path) {
@@ -710,8 +710,8 @@ void ScenePlay::sView() {
 	}
 
 	//update view position
-	int w = game->app_conf.window_w;
-	int h = game->app_conf.window_h;
+	int w = game->app_conf.game_w;
+	int h = game->app_conf.game_h;
 	sf::FloatRect world(bg_sprite.getLocalBounds());
 	sf::FloatRect rect(cam.pos.x-w/2, cam.pos.y-h/2, w, h);
 

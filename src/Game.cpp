@@ -28,6 +28,10 @@ void Game::init(std::string file_name) {
 			file >> style_bits;
 			app_conf.window_style = 1 << style_bits;
 		}
+		if (word == "Game") {
+			file >> app_conf.game_w;
+			file >> app_conf.game_h;
+		}
 		if (word == "Camera") {
 			file >> app_conf.cam_speed >> app_conf.cam_treshold;
 		}
@@ -42,7 +46,6 @@ void Game::init(std::string file_name) {
 	window.setFramerateLimit(app_conf.max_fps);
 	window.setKeyRepeatEnabled(false);
 	window.setView(view);
-	window.setPosition({100,100});
 
 	act_mgr = ActionManager();
 	scenes[2] = new ScenePlay(this, "res/level_001.cfg");
