@@ -9,6 +9,7 @@ class ScenePlay: public Scene {
 
 	Interface interface;
 	Widget* status_widget;
+	sf::View gui_view;
 
 	WidgetText* w_health_text;
 	WidgetText* w_defence_text;

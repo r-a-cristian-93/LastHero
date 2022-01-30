@@ -84,6 +84,8 @@ void ScenePlay::init() {
 	interface.add(w_health);
 	interface.add(w_defence);
 	interface.add(w_waves);
+
+	gui_view.reset(sf::FloatRect(0 ,0, game->app_conf.window_w, game->app_conf.window_h));
 }
 
 void ScenePlay::load_level(std::string path) {
@@ -156,7 +158,11 @@ void ScenePlay::update() {
 	sView();
 
 	SDraw::drawEntities(&game->window, ent_mgr.getEntities());
+
+	//change view in order to keep the interface relative to window
+	game->window.setView(gui_view);
 	SDraw::drawInterface(&game->window, interface.getWidgets());
+	game->window.setView(game->view);
 
 	frame_current++;
 }

@@ -392,6 +392,7 @@ void Assets::loadTexture() {
 void Assets::loadSprite() {
 	std::string texture_name("");
 	std::string sprite_name("");
+	sf::Vector2f origin(0, 0);
 
 	while (file >> word) {
 		if (word == "_END") break;
@@ -403,6 +404,10 @@ void Assets::loadSprite() {
 		}
 		else if (word == "rectangle") {
 			sprites[sprite_name] = sf::Sprite(textures[texture_name], loadRect(file));
+		}
+		else if (word == "origin") {
+			file >> origin.x >> origin.y;
+			sprites[sprite_name].setOrigin(origin);
 		}
 		else {
 			std::cout << "In file: " << file_path << " unknown key: " << word << std::endl;
