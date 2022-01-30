@@ -26,6 +26,18 @@ Components& Assets::getRecipeEnemy(std::string& recipe_name) {
 	return recipe_enemy[recipe_name];
 }
 
+Components& Assets::getRecipeEnemyRand() {
+	std::map<std::string, Components>::iterator it;
+	int k = recipe_enemy.size() - rand() % recipe_enemy.size();
+
+	for (it = recipe_enemy.begin(); it != recipe_enemy.end(); it++) {
+		k--;
+		if (k <= 0) {
+			return it->second;
+		}
+	}
+}
+
 sf::Font& Assets::getFont(size_t name) {
 	return fonts[name];
 }

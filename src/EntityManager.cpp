@@ -15,6 +15,9 @@ std::shared_ptr<Entity> EntityManager::add(size_t tag) {
 	if (tag == Entity::TAG_PLAYER) {
 		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipePlayer());
 	}
+	else if (tag == Entity::TAG_ENEMY) {
+		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeEnemyRand());
+	}
 	else if (tag == Entity::TAG_BULLET) {
 		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeBullet());
 	}

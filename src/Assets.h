@@ -74,6 +74,7 @@ public:
 	Components& getRecipeBullet();
 	Components& getRecipeMissle();
 	Components& getRecipeEnemy(std::string& recipe_name);
+	Components& getRecipeEnemyRand();
 	sf::Font& getFont(size_t name);
 	Border& getBorder(std::string name);
 	sf::Texture& getTexture(std::string name);

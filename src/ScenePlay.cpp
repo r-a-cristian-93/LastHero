@@ -150,7 +150,6 @@ void ScenePlay::load_level(std::string path) {
 			action->dir = new sf::Vector2f(dir_x, dir_y);
 
 			action_stream << action;
-			std::cout << "action loaded " << enemy_name << std::endl;
 		}
 	}
 
@@ -158,7 +157,6 @@ void ScenePlay::load_level(std::string path) {
 		Action* action;
 		action_stream >> action;
 		doAction(action);
-		std::cout << "spawn level enemy\n";
 	}
 }
 
@@ -205,13 +203,15 @@ void ScenePlay::spawnPlayer() {
 }
 
 void ScenePlay::spawnEnemy() {
-	const sf::Vector2f dir(rand(), rand());
+	sf::Vector2f dir(rand()%10, rand()%10);
+	if (rand()%2 == 0) dir.x *= -1;
+	if (rand()%2 == 0) dir.y *= -1;
+
 	bool position_is_valid = false;
 	sf::Vector2f pos;
 	int player_radius = player->get<CCollision>()->radius;
 
-	std::string recipe("triangle_green");
-	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, recipe);
+	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY);
 	int radius = e->get<CCollision>()->radius;
 
 	while (!position_is_valid) {
@@ -229,6 +229,7 @@ void ScenePlay::spawnEnemy() {
 	e->get<CTransform>()->pos = pos;
 	e->get<CTransform>()->dir = dir;
 	e->get<CShape>()->shape.setPosition(pos);
+	e->get<CStats>()->level = rand() % 10;
 
 	setStatsInitial(*e);
 	setStatsEffective(*e);
