@@ -12,6 +12,7 @@ ScenePlay::ScenePlay(Game* g, std::string lp)
 	,score(0)
 	,wave_current(0)
 	,wave_total(0)
+	,bg_tex(nullptr)
 {
 	init();
 }
@@ -98,6 +99,21 @@ void ScenePlay::load_level(std::string path) {
 	ActionStream action_stream;
 
 	while (file >> word) {
+		if (word == "_HEADER") {
+			while (file>>word) {
+				sf::IntRect rect(0,0,0,0);
+				if (word == "size")	{
+					file >> rect.width >> rect.height;
+				}
+				if (word == "background") {
+					file >> word;
+					bg_tex = new sf::Texture();
+					bg_tex->loadFromFile(word, rect);
+					bg_sprite = sf::Sprite(*bg_tex);
+				}
+			}
+
+		}
 		if (word == "_ACT") {
 			while (file >> word) {
 				if (word == "_END") break;
@@ -140,7 +156,7 @@ void ScenePlay::load_level(std::string path) {
 }
 
 void ScenePlay::update() {
-	sf::FloatRect lim(0, 0, game->app_conf.world_w, game->app_conf.world_h);
+	sf::FloatRect lim(bg_sprite.getLocalBounds());
 
 	if (!paused) {
 		ent_mgr.update();
@@ -156,6 +172,8 @@ void ScenePlay::update() {
 	sSpin();
 	sAnimation();
 	sView();
+
+	game->window.draw(bg_sprite);
 
 	SDraw::drawEntities(&game->window, ent_mgr.getEntities());
 
@@ -685,11 +703,13 @@ void ScenePlay::sView() {
 	int w = game->app_conf.window_w;
 	int h = game->app_conf.window_h;
 
+	sf::FloatRect world(bg_sprite.getLocalBounds());
+
 	sf::FloatRect rect(pos.x-w/2, pos.y-h/2, w, h);
 	if (rect.left < 0) rect.left = 0;
 	if (rect.top < 0) rect.top = 0;
-	if (rect.left + rect.width > game->app_conf.world_w) rect.left = game->app_conf.world_w - w;
-	if (rect.top + rect.height > game->app_conf.world_h) rect.top = game->app_conf.world_h - h;
+	if (rect.left + rect.width > world.width) rect.left = world.width - w;
+	if (rect.top + rect.height > world.height) rect.top = world.height - h;
 
 	game->view.reset(rect);
 	game->window.setView(game->view);

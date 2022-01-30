@@ -9,13 +9,12 @@
 struct AppConfig {
 	std::string window_name;
 	int window_w, window_h;
-	int world_w, world_h;
 	int max_fps;
 	int window_style;
 	int font_size;
 	int font_r, font_g, font_b;
 };
-	
+
 
 struct PlayerConfig {
 	int velocity;
@@ -41,7 +40,7 @@ struct BulletConfig {
 	float shape_radius;
 	int collision_radius;
 	int fill_r, fill_g, fill_b;
-	int out_r, out_g, out_b, out_thk;	
+	int out_r, out_g, out_b, out_thk;
 	int lifespan;
 	size_t vertices;
 };

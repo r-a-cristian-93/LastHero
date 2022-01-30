@@ -22,6 +22,9 @@ class ScenePlay: public Scene {
 	std::string wave_text;
 	int wave_current, wave_total;
 
+	sf::Texture* bg_tex;
+	sf::Sprite bg_sprite;
+
 	std::shared_ptr<Entity> player;
 
 	void init();
