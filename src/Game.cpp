@@ -28,6 +28,9 @@ void Game::init(std::string file_name) {
 			file >> style_bits;
 			app_conf.window_style = 1 << style_bits;
 		}
+		if (word == "Camera") {
+			file >> app_conf.cam_speed >> app_conf.cam_treshold;
+		}
 	}
 
 	file.close();

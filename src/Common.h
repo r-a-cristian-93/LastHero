@@ -13,6 +13,7 @@ struct AppConfig {
 	int window_style;
 	int font_size;
 	int font_r, font_g, font_b;
+	float cam_speed, cam_treshold;
 };
 
 

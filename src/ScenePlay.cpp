@@ -115,7 +115,6 @@ void ScenePlay::load_level(std::string path) {
 					bg_sprite = sf::Sprite(*bg_tex);
 				}
 			}
-
 		}
 		if (word == "_ACT") {
 			while (file >> word) {
@@ -702,20 +701,26 @@ void ScenePlay::sAnimation() {
 }
 
 void ScenePlay::sView() {
-	sf::Vector2f pos = player->get<CTransform>()->pos;
+	//update camera position
+	cam.target = player->get<CTransform>()->pos;
+	float square_delta = squareDistance(cam.pos, cam.target);
+
+	if (square_delta > game->app_conf.cam_treshold) {
+		cam.pos += ((cam.target - cam.pos) / game->app_conf.cam_speed);
+	}
+
+	//update view position
 	int w = game->app_conf.window_w;
 	int h = game->app_conf.window_h;
-
 	sf::FloatRect world(bg_sprite.getLocalBounds());
+	sf::FloatRect rect(cam.pos.x-w/2, cam.pos.y-h/2, w, h);
 
-	sf::FloatRect rect(pos.x-w/2, pos.y-h/2, w, h);
 	if (rect.left < 0) rect.left = 0;
 	if (rect.top < 0) rect.top = 0;
 	if (rect.left + rect.width > world.width) rect.left = world.width - w;
 	if (rect.top + rect.height > world.height) rect.top = world.height - h;
 
 	game->view.reset(rect);
-	game->window.setView(game->view);
 }
 
 float ScenePlay::squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {

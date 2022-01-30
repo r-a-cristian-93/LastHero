@@ -4,9 +4,14 @@
 #include "Scene.h"
 #include "Interface.h"
 
+struct Camera {
+	sf::Vector2f pos, target;
+};
+
 class ScenePlay: public Scene {
 	std::string level_path;
 
+	Camera cam;
 	Interface interface;
 	Widget* status_widget;
 	sf::View gui_view;
