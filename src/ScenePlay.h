@@ -64,6 +64,7 @@ public:
 
 	ScenePlay();
 	ScenePlay(Game* g, std::string lp);
+	~ScenePlay();
 };
 
 #endif

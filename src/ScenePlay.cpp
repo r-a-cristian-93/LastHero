@@ -16,6 +16,9 @@ ScenePlay::ScenePlay(Game* g, std::string lp)
 {
 	init();
 }
+ScenePlay::~ScenePlay() {
+	delete bg_tex;
+}
 
 void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
