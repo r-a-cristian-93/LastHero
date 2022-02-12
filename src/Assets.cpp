@@ -211,8 +211,8 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 		}
 		else if (word == "type") {
 			file_two >> word;
-			if (word == "stand") state = Entity::STATE_IDLE;
-			else if (word == "move") state = Entity::STATE_RUN;
+			if (word == "idle") state = Entity::STATE_IDLE;
+			else if (word == "run") state = Entity::STATE_RUN;
 			else if (word == "die") state = Entity::STATE_DIE;
 		}
 		else if (word == "play") {
