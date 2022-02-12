@@ -196,12 +196,13 @@ void Assets::loadAnimationSet(std::string path, AnimationSet& anim_set) {
 }
 
 void Assets::loadAnimation(AnimationSet& anim_set) {
-	size_t state(1), facing(1);
-	size_t speed(0), play(0);
+	size_t state(Entity::STATE_STAND);
+	size_t play(0), frames(0);
 	std::string texture_name("");
 	std::vector<sf::IntRect> rects;
+	std::vector<size_t> frame_time;
 	size_t flip_x(0), flip_y(0);
-	float origin_x(0), origin_y(0);
+	sf::Vector2f origin(0,0), frame_size(0,0), frame_offset(0,0);
 
 	while (file_two >> word) {
 		if (word == "_END") break;
@@ -213,16 +214,6 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 			if (word == "stand") state = Entity::STATE_STAND;
 			else if (word == "move") state = Entity::STATE_MOVE;
 			else if (word == "die") state = Entity::STATE_DIE;
-
-			file_two >> word;
-			if (word == "N") facing = Entity::FACING_N;
-			else if (word == "S") facing = Entity::FACING_S;
-			else if (word == "E") facing = Entity::FACING_E;
-			else if (word == "W") facing = Entity::FACING_W;
-			else if (word == "NE") facing = Entity::FACING_NE;
-			else if (word == "NW") facing = Entity::FACING_NW;
-			else if (word == "SE") facing = Entity::FACING_SE;
-			else if (word == "SW") facing = Entity::FACING_SW;
 		}
 		else if (word == "play") {
 			file_two >> word;
@@ -230,29 +221,41 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 			else if (word == "loop") play = Animation::PLAY_LOOP;
 			else if (word == "swing") play = Animation::PLAY_SWING;
 		}
-		else if (word == "speed") {
-			file_two >> speed;
+		else if (word == "frames") {
+			file_two >> frames;
 		}
 		else if (word == "origin") {
-			file_two >> origin_x >> origin_y;
+			file_two >> origin.x >> origin.y;
+		}
+		else if (word == "frame_size") {
+			file_two >> frame_size.x >> frame_size.y;
+		}
+		else if (word == "frame_offset") {
+			file_two >> frame_offset.x >> frame_offset.y;
 		}
 		else if (word == "flip") {
 			file_two >> flip_x >> flip_y;
 		}
-		else if (word == "frame") {
-			rects.push_back(loadRect(file_two));
+		else if (word == "frame_time") {
+			for (int i=0; i<frames; i++) {
+				size_t f_t;
+				file_two >> f_t;
+				frame_time.push_back(f_t);
+			}
 		}
 	}
 
-	std::vector<sf::Sprite> sprites;
-	for (int i=0; i<rects.size(); i++) {
-		if (flip_x) flipRectX(rects[i]);
-		if (flip_y) flipRectY(rects[i]);
+	for (int dir=0; dir<8; dir++) {
+		std::vector<sf::Sprite> sprites;
 
-		sprites.push_back(sf::Sprite(textures[texture_name], rects[i]));
-		sprites.back().setOrigin(origin_x, origin_y);
+		for (int f=0; f<frames; f++) {
+			sf::IntRect rect(origin.x+frame_size.x*f, origin.y + frame_size.y*(dir), frame_size.x, frame_size.y);
+			sprites.push_back(sf::Sprite(textures[texture_name], rect));
+			sprites.back().setOrigin(frame_offset.x, frame_offset.y);
+		}
+
+		anim_set.animations[state][dir+1] = Animation(sprites, frame_time, play);
 	}
-	anim_set.animations[state][facing] = Animation(sprites, speed, play);
 }
 
 void Assets::flipRectX(sf::IntRect& rect) {
