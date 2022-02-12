@@ -21,7 +21,7 @@ void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 			}
 
 			if (dir.x || dir.y) {
-				e->state = Entity::STATE_MOVE;
+				e->state = Entity::STATE_RUN;
 
 				//set velocity according to direction and max_velocity;
 				float alpha_rad = atan2f(dir.y, dir.x);
@@ -80,7 +80,7 @@ void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 				}
 			}
 			else {
-				e->state = Entity::STATE_STAND;
+				e->state = Entity::STATE_IDLE;
 			}
 		}
 	}

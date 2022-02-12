@@ -5,7 +5,7 @@ Entity::Entity(size_t _tag, size_t _id)
 	,tag(_tag)
 	,alive(true)
 	,facing(FACING_E)
-	,state(STATE_STAND)
+	,state(STATE_IDLE)
 	,components()
 	{}
 
@@ -14,6 +14,6 @@ Entity::Entity(size_t _tag, size_t _id, Components& _components)
 	,tag(_tag)
 	,alive(true)
 	,facing(FACING_E)
-	,state(STATE_STAND)
+	,state(STATE_IDLE)
 	,components(_components)
 	{}

@@ -15,8 +15,8 @@ public:
 	};
 
 	enum {
-		STATE_STAND = 1,
-		STATE_MOVE,
+		STATE_IDLE = 1,
+		STATE_RUN,
 		STATE_DIE
 	};
 

@@ -196,7 +196,7 @@ void Assets::loadAnimationSet(std::string path, AnimationSet& anim_set) {
 }
 
 void Assets::loadAnimation(AnimationSet& anim_set) {
-	size_t state(Entity::STATE_STAND);
+	size_t state(Entity::STATE_IDLE);
 	size_t play(0), frames(0);
 	std::string texture_name("");
 	std::vector<sf::IntRect> rects;
@@ -211,8 +211,8 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 		}
 		else if (word == "type") {
 			file_two >> word;
-			if (word == "stand") state = Entity::STATE_STAND;
-			else if (word == "move") state = Entity::STATE_MOVE;
+			if (word == "stand") state = Entity::STATE_IDLE;
+			else if (word == "move") state = Entity::STATE_RUN;
 			else if (word == "die") state = Entity::STATE_DIE;
 		}
 		else if (word == "play") {
