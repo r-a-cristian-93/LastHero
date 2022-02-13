@@ -5,7 +5,7 @@
 void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 	for(const std::shared_ptr<Entity>& e:entities) {
 		if (e->get<CTransform>()) {
-
+			sf::Vector2f& prev_dir = e->get<CTransform>()->prev_dir;
 			sf::Vector2f& dir = e->get<CTransform>()->dir;
 			sf::Vector2f& vel = e->get<CTransform>()->vel;
 			sf::Vector2f& pos = e->get<CTransform>()->pos;
@@ -78,6 +78,8 @@ void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 				if (e->get<CShape>()) {
 					e->get<CShape>()->shape.move(vel);
 				}
+
+				prev_dir = dir;
 			}
 			else {
 				e->state = Entity::STATE_IDLE;

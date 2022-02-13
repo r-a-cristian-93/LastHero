@@ -203,7 +203,7 @@ void ScenePlay::spawnPlayer() {
 }
 
 void ScenePlay::spawnEnemy() {
-	sf::Vector2f dir(rand()%10+1, rand()%10+1);
+	sf::Vector2f dir(rand()%2, rand()%2);
 	if (rand()%2 == 0) dir.x *= -1;
 	if (rand()%2 == 0) dir.y *= -1;
 
@@ -475,8 +475,9 @@ void ScenePlay::checkLifespan(std::shared_ptr<Entity>& e) {
 void ScenePlay::spawnBullet() {
 	sf::Vector2f mouse_pos = game->window.mapPixelToCoords(sf::Mouse::getPosition(game->window));
 
+
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
-	const sf::Vector2f dir = mouse_pos - pos;
+	const sf::Vector2f dir(player->get<CTransform>()->prev_dir);
 
 	std::shared_ptr<Entity> bullet = ent_mgr.add(Entity::TAG_BULLET);
 
@@ -684,11 +685,11 @@ void ScenePlay::sAnimation() {
 			if (e->get<CAnimation>()->active_anim->hasEnded()) {
 				if (e->get<CTransform>()) {
 					sf::Vector2f e_pos(e->get<CTransform>()->pos);
-					sf::Vector2f m_pos = game->window.mapPixelToCoords(sf::Mouse::getPosition(game->window));
+					sf::Vector2f e_dir(e_pos + e->get<CTransform>()->prev_dir);
 
 					float c1, c2;
-					c1 = m_pos.y - e_pos.y;
-					c2 = m_pos.x - e_pos.x;
+					c1 = e_dir.y - e_pos.y;
+					c2 = e_dir.x - e_pos.x;
 					float deg = - ((atan2(-c1, -c2)/ PI * 180 ) - 180);
 					float facing = ceil((deg + 22.5)/45);
 					if (facing >8) facing = 1;

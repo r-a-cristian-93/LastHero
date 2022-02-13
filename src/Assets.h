@@ -11,7 +11,7 @@ struct EntityDataset {
 	size_t type;
 	std::string name;
 	int radius;
-	int velocity;
+	float velocity;
 	sf::Color fill;
 	sf::Color outline;
 	int out_thk;
