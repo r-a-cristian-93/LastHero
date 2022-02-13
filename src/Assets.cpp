@@ -180,6 +180,9 @@ void Assets::loadEntity() {
 			recipe_enemy[data_ent.name].add<CCollision>(new CCollision(data_ent.radius));
 			recipe_enemy[data_ent.name].add<CScore>(new CScore(data_ent.vertices));
 			recipe_enemy[data_ent.name].add<CStats>(new CStats(stats));
+			if (data_ent.animation_set.animations.size() > 0) {
+				recipe_enemy[data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
+			}
 		}
 		break;
 	}
@@ -193,6 +196,8 @@ void Assets::loadAnimationSet(std::string path, AnimationSet& anim_set) {
 			loadAnimation(anim_set);
 		}
 	}
+
+	file_two.close();
 }
 
 void Assets::loadAnimation(AnimationSet& anim_set) {
