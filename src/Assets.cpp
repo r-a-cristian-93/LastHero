@@ -146,6 +146,9 @@ void Assets::loadEntity() {
 			recipe_bullet.add<CShape>(new CShape(shape));
 			recipe_bullet.add<CCollision>(new CCollision(data_ent.radius));
 			recipe_bullet.add<CLifespan>(new CLifespan(data_ent.lifespan));
+			if (data_ent.animation_set.animations.size() > 0) {
+				recipe_bullet.add<CAnimation>(new CAnimation(data_ent.animation_set));
+			}
 		}
 		break;
 		case Entity::TAG_MISSLE: {

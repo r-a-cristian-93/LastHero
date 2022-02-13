@@ -473,9 +473,6 @@ void ScenePlay::checkLifespan(std::shared_ptr<Entity>& e) {
 }
 
 void ScenePlay::spawnBullet() {
-	sf::Vector2f mouse_pos = game->window.mapPixelToCoords(sf::Mouse::getPosition(game->window));
-
-
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir(player->get<CTransform>()->prev_dir);
 
