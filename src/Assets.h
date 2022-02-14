@@ -22,6 +22,7 @@ struct EntityDataset {
 	int stats_base[CStats::COUNT];
 	int stats_per_level[CStats::COUNT];
 	AnimationSet animation_set;
+	sf::Color color_mod = {255, 255, 255, 255};
 } ;
 
 class Assets {

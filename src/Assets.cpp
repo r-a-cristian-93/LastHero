@@ -110,6 +110,11 @@ void Assets::loadEntity() {
 			file >> word;
 			loadAnimationSet(word, data_ent.animation_set);
 		}
+		else if (word == "color_mod") {
+			int r, g, b, a;
+			file >> r >> g >> b >> a;
+			data_ent.color_mod = sf::Color(r,g,b,a);
+		}
 	}
 
 	switch (data_ent.type) {
@@ -135,6 +140,7 @@ void Assets::loadEntity() {
 			recipe_player.add<CInput>(new CInput());
 			recipe_player.add<CStats>(new CStats(stats));
 			recipe_player.add<CAnimation>(new CAnimation(data_ent.animation_set));
+			recipe_player.get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
 		}
 		break;
 		case Entity::TAG_BULLET: {
@@ -148,6 +154,7 @@ void Assets::loadEntity() {
 			recipe_bullet.add<CLifespan>(new CLifespan(data_ent.lifespan));
 			if (data_ent.animation_set.animations.size() > 0) {
 				recipe_bullet.add<CAnimation>(new CAnimation(data_ent.animation_set));
+				recipe_bullet.get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
 			}
 		}
 		break;
@@ -185,6 +192,7 @@ void Assets::loadEntity() {
 			recipe_enemy[data_ent.name].add<CStats>(new CStats(stats));
 			if (data_ent.animation_set.animations.size() > 0) {
 				recipe_enemy[data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
+				recipe_enemy[data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
 			}
 		}
 		break;

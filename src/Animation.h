@@ -3,9 +3,11 @@
 
 #include <SFML/Graphics.hpp>
 
+typedef std::vector<sf::Sprite> SpritesVec;
+
 class Animation {
 public:
-	std::vector<sf::Sprite> sprites;
+	SpritesVec sprites;
 	std::vector<size_t> frame_time;
 	size_t total_frames, frames_alive, frames_changed, active_frame, previous_acrive_frame;
 	size_t play;
