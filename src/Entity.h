@@ -9,7 +9,7 @@ public:
 		NONE,
 		TAG_PLAYER,
 		TAG_ENEMY,
-		TAG_BULLET,
+		TAG_PROJECTILE,
 		TAG_MISSLE,
 		TAG_CHILD,
 	};

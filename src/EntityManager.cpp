@@ -12,20 +12,12 @@ EntityManager::EntityManager(Assets* _assets)
 
 std::shared_ptr<Entity> EntityManager::add(size_t tag) {
 	std::shared_ptr<Entity> e = nullptr;
-	if (tag == Entity::TAG_PLAYER) {
-		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipePlayer());
-	}
-	else if (tag == Entity::TAG_ENEMY) {
-		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeEnemyRand());
-	}
-	else if (tag == Entity::TAG_BULLET) {
-		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeBullet());
-	}
-	else if (tag == Entity::TAG_MISSLE) {
-		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeMissle());
-	}
-	else if (tag == Entity::TAG_CHILD) {
+
+	if (tag == Entity::TAG_CHILD) {
 		e = std::make_shared<Entity>(tag, entities_counter++);
+	}
+	else {
+		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeRand(tag));
 	}
 
 	entities_to_add.push_back(e);
@@ -34,9 +26,7 @@ std::shared_ptr<Entity> EntityManager::add(size_t tag) {
 
 std::shared_ptr<Entity> EntityManager::add(size_t tag, std::string& recipe_name) {
 	std::shared_ptr<Entity> e = nullptr;
-	if (tag == Entity::TAG_ENEMY) {
-		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeEnemy(recipe_name));
-	}
+	e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipe(tag, recipe_name));
 
 	entities_to_add.push_back(e);
 	return e;

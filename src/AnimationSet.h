@@ -9,6 +9,7 @@ typedef std::map<size_t, Animation> AnimMapDirection;
 class AnimationSet {
 public:
 	AnimMapState animations;
+	sf::Color color_mod;
 
 	AnimationSet();
 	AnimationSet(const AnimationSet& set);

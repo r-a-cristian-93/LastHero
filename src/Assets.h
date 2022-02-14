@@ -31,10 +31,7 @@ private:
 	std::ifstream file, file_two;
 	std::string word;
 
-	Components recipe_player;
-	Components recipe_bullet;
-	Components recipe_missle;
-	std::map<std::string, Components> recipe_enemy;
+	std::map<size_t, std::map<std::string, Components>> recipe;
 
 	std::map<size_t, sf::Font> fonts;
 	std::map<std::string, sf::Texture> textures;
@@ -71,11 +68,8 @@ public:
 		return std::get<T*>(c);
 	}
 
-	Components& getRecipePlayer();
-	Components& getRecipeBullet();
-	Components& getRecipeMissle();
-	Components& getRecipeEnemy(std::string& recipe_name);
-	Components& getRecipeEnemyRand();
+	Components& getRecipe(size_t tag, std::string& recipe_name);
+	Components& getRecipeRand(size_t tag);
 	sf::Font& getFont(size_t name);
 	Border& getBorder(std::string name);
 	sf::Texture& getTexture(std::string name);

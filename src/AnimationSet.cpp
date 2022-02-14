@@ -4,9 +4,12 @@ AnimationSet::AnimationSet() {}
 
 AnimationSet::AnimationSet(const AnimationSet& set)
 	:animations(set.animations)
+	,color_mod(set.color_mod)
 	{}
 
 void AnimationSet::setColorMod(sf::Color color) {
+	color_mod = color;
+
 	AnimMapState::iterator state_it;
 	for (state_it = animations.begin(); state_it != animations.end(); state_it++) {
 		AnimMapDirection::iterator dir_it;

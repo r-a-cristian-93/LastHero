@@ -193,6 +193,8 @@ void ScenePlay::update() {
 void ScenePlay::spawnPlayer() {
 	const sf::Vector2f pos(game->app_conf.window_w/2, game->app_conf.window_h/2);
 
+
+	std::string r_name = "cowboy";
 	player = ent_mgr.add(Entity::TAG_PLAYER);
 
 	player->get<CTransform>()->pos = pos;
@@ -337,7 +339,7 @@ void ScenePlay::sCollision() {
 	}
 
 	//what kills enemies
-	for (std::shared_ptr<Entity>& bullet : ent_mgr.getEntities(Entity::TAG_BULLET)) {
+	for (std::shared_ptr<Entity>& bullet : ent_mgr.getEntities(Entity::TAG_PROJECTILE)) {
 		for (std::shared_ptr<Entity>& enemy : ent_mgr.getEntities(Entity::TAG_ENEMY)) {
 			collision = checkCollision(bullet, enemy);
 			if (collision) {
@@ -415,7 +417,6 @@ void ScenePlay::spawnChilds(const std::shared_ptr<Entity>& parent) {
 
 		CStats* c_stats = new CStats();
 		c_stats->effective[CStats::ATTACK] = vertices;
-
 		std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_CHILD);
 
 		e->add<CTransform>(new CTransform(pos, dir, vel));
@@ -442,7 +443,7 @@ void ScenePlay::sCombat() {
 }
 
 void ScenePlay::sLifespan() {
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_BULLET)) {
+	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_PROJECTILE)) {
 		checkLifespan(e);
 	}
 
@@ -459,11 +460,17 @@ void ScenePlay::checkLifespan(std::shared_ptr<Entity>& e) {
 		remaining--;
 
 		if (remaining * 3 < lifespan) {
-			int alpha = remaining * 255 / lifespan*3;
-
 			sf::Color color = e->get<CShape>()->shape.getFillColor();
-			color.a = alpha;
+			color.a = remaining * color.a / lifespan*3;
+
 			e->get<CShape>()->shape.setFillColor(color);
+
+			if (e->get<CAnimation>()) {
+				sf::Color color = e->get<CAnimation>()->anim_set.color_mod;
+				color.a = remaining * color.a / lifespan*3;
+
+				e->get<CAnimation>()->anim_set.setColorMod(color);
+			}
 		}
 
 		if (remaining <= 0) {
@@ -476,7 +483,8 @@ void ScenePlay::spawnBullet() {
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir(player->get<CTransform>()->prev_dir);
 
-	std::shared_ptr<Entity> bullet = ent_mgr.add(Entity::TAG_BULLET);
+	std::string r_name = "glowing_bullet_white";
+	std::shared_ptr<Entity> bullet = ent_mgr.add(Entity::TAG_PROJECTILE, r_name);
 
 	bullet->get<CTransform>()->pos = pos;
 	bullet->get<CTransform>()->dir = dir;
