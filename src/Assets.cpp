@@ -155,6 +155,10 @@ void Assets::loadEntity() {
 			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
 			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(data_ent.radius));
 			recipe[data_ent.type][data_ent.name].add<CTarget>(new CTarget());
+			if (data_ent.animation_set.animations.size() > 0) {
+				recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
+				recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
+			}
 		}
 		break;
 		case Entity::TAG_ENEMY: {
