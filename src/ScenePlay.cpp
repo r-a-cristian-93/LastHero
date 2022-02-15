@@ -90,6 +90,8 @@ void ScenePlay::init() {
 	interface.add(w_waves);
 
 	gui_view.reset(sf::FloatRect(0 ,0, game->app_conf.game_w, game->app_conf.game_h));
+
+	glitter = ParticlesEmitter({100, 100}, {100, 255, 255}, 99, 10);
 }
 
 void ScenePlay::load_level(std::string path) {
@@ -181,6 +183,9 @@ void ScenePlay::update() {
 	game->window.draw(bg_sprite);
 
 	SDraw::drawEntities(&game->window, ent_mgr.getEntities());
+
+	glitter.update();
+	game->window.draw(glitter);
 
 	//change view in order to keep the interface relative to window
 	game->window.setView(gui_view);
