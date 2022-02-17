@@ -49,7 +49,6 @@ void Game::init(std::string file_name) {
 	window.create(sf::VideoMode(app_conf.window_w, app_conf.window_h), app_conf.window_name, app_conf.window_style);
 	window.setFramerateLimit(app_conf.max_fps);
 	window.setKeyRepeatEnabled(false);
-	window.setView(view);
 
 	act_mgr = ActionManager();
 	scenes[2] = new ScenePlay(this, "res/level_001.cfg");
