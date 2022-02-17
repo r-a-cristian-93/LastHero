@@ -72,7 +72,8 @@ void Game::run() {
 			sUserInput();
 
 			screen_tex.display();
-			window.draw(screen_sprite, &assets->getShader("desaturate"));
+			//window.draw(screen_sprite, &assets->getShader("pixelizer"));
+			window.draw(screen_sprite);
 			window.display();
 		}
 	}

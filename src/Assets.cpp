@@ -448,6 +448,9 @@ void Assets::loadShaders() {
 	shaders["blur"].loadFromFile("res/shaders/blur.frag", sf::Shader::Fragment);
 	shaders["predator"].loadFromFile("res/shaders/predator.frag", sf::Shader::Fragment);
 	shaders["sobel"].loadFromFile("res/shaders/sobel.frag", sf::Shader::Fragment);
+	shaders["pixelizer"].loadFromFile("res/shaders/pixelizer.frag", sf::Shader::Fragment);
+	shaders["dream_vision"].loadFromFile("res/shaders/dream_vision.frag", sf::Shader::Fragment);
+	shaders["bloom"].loadFromFile("res/shaders/bloom.frag", sf::Shader::Fragment);
 
 }
 
