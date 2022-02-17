@@ -72,7 +72,7 @@ void Game::run() {
 			sUserInput();
 
 			screen_tex.display();
-			window.draw(screen_sprite, &assets->getShader("sobel"));
+			window.draw(screen_sprite, &assets->getShader("desaturate"));
 			window.display();
 		}
 	}
