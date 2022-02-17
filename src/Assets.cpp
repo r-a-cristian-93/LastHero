@@ -8,6 +8,7 @@ Assets::Assets() {
 	loadGUI();
 	loadEntities();
 	loadFonts();
+	loadShaders();
 }
 
 Components& Assets::getRecipe(size_t tag, std::string& recipe_name) {
@@ -439,4 +440,17 @@ void Assets::loadSprite() {
 			std::cout << "In file: " << file_path << " unknown key: " << word << std::endl;
 		}
 	}
+}
+
+void Assets::loadShaders() {
+	shaders["desaturate"].loadFromFile("res/shaders/desaturate.frag", sf::Shader::Fragment);
+	shaders["rainbow"].loadFromFile("res/shaders/rainbow.frag", sf::Shader::Fragment);
+	shaders["blur"].loadFromFile("res/shaders/blur.frag", sf::Shader::Fragment);
+	shaders["predator"].loadFromFile("res/shaders/predator.frag", sf::Shader::Fragment);
+	shaders["sobel"].loadFromFile("res/shaders/sobel.frag", sf::Shader::Fragment);
+
+}
+
+sf::Shader& Assets::getShader(std::string name) {
+	return 	shaders[name];
 }

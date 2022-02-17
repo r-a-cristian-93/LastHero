@@ -9,9 +9,9 @@
 
 
 namespace SDraw {
-	void drawEntities(sf::RenderWindow* w, const EntityVec& entities);
-	void drawInterface(sf::RenderWindow* w, const WidgetVec& widget);
-	void drawWidget(sf::RenderWindow* w, Widget& widget);
+	void drawEntities(sf::RenderTarget* w, const EntityVec& entities);
+	void drawInterface(sf::RenderTarget* w, const WidgetVec& widget);
+	void drawWidget(sf::RenderTarget* w, Widget& widget);
 }
 
 #endif

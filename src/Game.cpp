@@ -42,6 +42,10 @@ void Game::init(std::string file_name) {
 	//load texture after creating the window causes sementation fault;
 	assets = new Assets();
 
+	screen_tex.create(app_conf.window_w, app_conf.window_h);
+	screen_tex.setView(view);
+	screen_sprite = sf::Sprite(screen_tex.getTexture());
+
 	window.create(sf::VideoMode(app_conf.window_w, app_conf.window_h), app_conf.window_name, app_conf.window_style);
 	window.setFramerateLimit(app_conf.max_fps);
 	window.setKeyRepeatEnabled(false);
@@ -62,12 +66,14 @@ void Game::run() {
 
 	while(running) {
 		if (window.isOpen()) {
-
+			screen_tex.clear();
 			window.clear();
 
 			current_scene->update();
 			sUserInput();
 
+			screen_tex.display();
+			window.draw(screen_sprite, &assets->getShader("sobel"));
 			window.display();
 		}
 	}

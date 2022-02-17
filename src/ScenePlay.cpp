@@ -180,17 +180,19 @@ void ScenePlay::update() {
 	sAnimation();
 	sView();
 
-	game->window.draw(bg_sprite);
+	game->screen_tex.draw(bg_sprite);
 
-	SDraw::drawEntities(&game->window, ent_mgr.getEntities());
+	SDraw::drawEntities(&game->screen_tex, ent_mgr.getEntities());
 
 	glitter.update();
-	game->window.draw(glitter);
+
+	game->screen_tex.draw(glitter);
+	game->screen_tex.display();
 
 	//change view in order to keep the interface relative to window
-	game->window.setView(gui_view);
-	SDraw::drawInterface(&game->window, interface.getWidgets());
-	game->window.setView(game->view);
+	game->screen_tex.setView(gui_view);
+	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
+	game->screen_tex.setView(game->view);
 
 	frame_current++;
 }

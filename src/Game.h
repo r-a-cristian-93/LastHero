@@ -33,6 +33,8 @@ public:
 	};
 
 	sf::RenderWindow window;
+	sf::RenderTexture screen_tex;
+	sf::Sprite screen_sprite;
 	sf::View view;
 	AppConfig app_conf;
 	ActionManager act_mgr;

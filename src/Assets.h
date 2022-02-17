@@ -37,10 +37,12 @@ private:
 	std::map<std::string, sf::Texture> textures;
 	std::map<std::string, sf::Sprite> sprites;
 	std::map<std::string, Border> borders;
+	std::map<std::string, sf::Shader> shaders;
 
 	void loadEntities();
 	void loadFonts();
 	void loadGUI();
+	void loadShaders();
 
 	void loadEntity();
 	void loadTexture();
@@ -74,6 +76,7 @@ public:
 	Border& getBorder(std::string name);
 	sf::Texture& getTexture(std::string name);
 	sf::Sprite& getSprite(std::string name);
+	sf::Shader& getShader(std::string name);
 
 };
 

@@ -1,7 +1,7 @@
 #include "SDraw.h"
 #include <iostream>
 
-void SDraw::drawEntities(sf::RenderWindow* w, const EntityVec& entities) {
+void SDraw::drawEntities(sf::RenderTarget* w, const EntityVec& entities) {
 	for(const std::shared_ptr<Entity>& e:entities) {
 		if (e->get<CShape>()) {
 			w->draw(e->get<CShape>()->shape);
@@ -12,13 +12,13 @@ void SDraw::drawEntities(sf::RenderWindow* w, const EntityVec& entities) {
 	}
 }
 
-void SDraw::drawInterface(sf::RenderWindow* w, const WidgetVec& widgets) {
+void SDraw::drawInterface(sf::RenderTarget* w, const WidgetVec& widgets) {
 	for(Widget* widget:widgets) {
 		drawWidget(w, *widget);
 	}
 }
 
-void SDraw::drawWidget(sf::RenderWindow* w, Widget& widget) {
+void SDraw::drawWidget(sf::RenderTarget* w, Widget& widget) {
 	for (sf::Drawable* d:widget.getDrawables()) {
 		w->draw(*d);
 	}
