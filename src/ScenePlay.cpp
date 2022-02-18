@@ -352,13 +352,11 @@ void ScenePlay::sCollision() {
 				enemy->alive = false;
 				projectile->alive = false;
 				sf::Vector2f g_pos = projectile->get<CTransform>()->pos;
-				sf::Color g_color(255,255,255);
-				if (projectile->get<CShape>()) {
-					g_color - projectile->get<CShape>()->shape.getFillColor();
-				}
-				//glitter = ParticlesEmitter(g_pos, g_color, 20, 5);
+
+				glitter = ParticlesEmitter(g_pos, {255,255,255}, 20, 5);
+
 				spawnExplosion(g_pos);
-				spawnChilds(enemy);
+				//spawnChilds(enemy);
 
 				if (enemy->get<CScore>()) {
 					score += enemy->get<CScore>()->score;
@@ -473,6 +471,10 @@ void ScenePlay::sLifespan() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_CHILD)) {
 		checkLifespan(e);
 	}
+
+	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_SFX)) {
+		checkLifespan(e);
+	}
 }
 
 void ScenePlay::checkLifespan(std::shared_ptr<Entity>& e) {
@@ -483,10 +485,12 @@ void ScenePlay::checkLifespan(std::shared_ptr<Entity>& e) {
 		remaining--;
 
 		if (remaining * 3 < lifespan) {
-			sf::Color color = e->get<CShape>()->shape.getFillColor();
-			color.a = remaining * color.a / lifespan*3;
+			if (e->get<CShape>()) {
+				sf::Color color = e->get<CShape>()->shape.getFillColor();
+				color.a = remaining * color.a / lifespan*3;
 
-			e->get<CShape>()->shape.setFillColor(color);
+				e->get<CShape>()->shape.setFillColor(color);
+			}
 
 			if (e->get<CAnimation>()) {
 				sf::Color color = e->get<CAnimation>()->anim_set.color_mod;
