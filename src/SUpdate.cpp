@@ -82,7 +82,9 @@ void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
 				prev_dir = dir;
 			}
 			else {
-				e->state = Entity::STATE_IDLE;
+				if (e->state != Entity::STATE_DIE) {
+					e->state = Entity::STATE_IDLE;
+				}
 			}
 		}
 	}

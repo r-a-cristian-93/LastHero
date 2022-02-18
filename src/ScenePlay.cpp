@@ -90,8 +90,6 @@ void ScenePlay::init() {
 	interface.add(w_waves);
 
 	gui_view.reset(sf::FloatRect(0 ,0, game->app_conf.game_w, game->app_conf.game_h));
-
-	glitter = ParticlesEmitter({100, 100}, {100, 255, 255}, 99, 10);
 }
 
 void ScenePlay::load_level(std::string path) {
@@ -184,10 +182,11 @@ void ScenePlay::update() {
 
 	SDraw::drawEntities(&game->screen_tex, ent_mgr.getEntities());
 
-	glitter.update();
 
-	game->screen_tex.draw(glitter);
-	game->screen_tex.display();
+	if (glitter.m_lifetime >=0) {
+		glitter.update();
+		game->screen_tex.draw(glitter);
+	}
 
 	//change view in order to keep the interface relative to window
 	game->screen_tex.setView(gui_view);
@@ -346,12 +345,19 @@ void ScenePlay::sCollision() {
 	}
 
 	//what kills enemies
-	for (std::shared_ptr<Entity>& bullet : ent_mgr.getEntities(Entity::TAG_PROJECTILE)) {
+	for (std::shared_ptr<Entity>& projectile : ent_mgr.getEntities(Entity::TAG_PROJECTILE)) {
 		for (std::shared_ptr<Entity>& enemy : ent_mgr.getEntities(Entity::TAG_ENEMY)) {
-			collision = checkCollision(bullet, enemy);
+			collision = checkCollision(projectile, enemy);
 			if (collision) {
 				enemy->alive = false;
-				bullet->alive = false;
+				projectile->alive = false;
+				sf::Vector2f g_pos = projectile->get<CTransform>()->pos;
+				sf::Color g_color(255,255,255);
+				if (projectile->get<CShape>()) {
+					g_color - projectile->get<CShape>()->shape.getFillColor();
+				}
+				//glitter = ParticlesEmitter(g_pos, g_color, 20, 5);
+				spawnExplosion(g_pos);
 				spawnChilds(enemy);
 
 				if (enemy->get<CScore>()) {
@@ -362,10 +368,10 @@ void ScenePlay::sCollision() {
 		}
 
 		for (std::shared_ptr<Entity>& child : ent_mgr.getEntities(Entity::TAG_CHILD)) {
-			collision = checkCollision(bullet, child);
+			collision = checkCollision(projectile, child);
 			if (collision) {
 				child->alive = false;
-				bullet->alive = false;
+				projectile->alive = false;
 
 				if (child->get<CScore>()) {
 					score += child->get<CScore>()->score;
@@ -434,6 +440,16 @@ void ScenePlay::spawnChilds(const std::shared_ptr<Entity>& parent) {
 		e->add<CStats>(c_stats);
 		e->alive = true;
 	}
+}
+
+void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
+	std::string recipe = "glowing_bullet_explosion";
+	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_SFX, recipe);
+
+	e->add<CTransform>(new CTransform(pos, 0));
+
+	e->state = Entity::STATE_DIE;
+	e->alive = true;
 }
 
 void ScenePlay::sCombat() {
@@ -698,13 +714,16 @@ void ScenePlay::sAnimation() {
 				if (e->get<CTransform>()) {
 					sf::Vector2f e_pos(e->get<CTransform>()->pos);
 					sf::Vector2f e_dir(e_pos + e->get<CTransform>()->prev_dir);
+					size_t max_directions = e->get<CAnimation>()->anim_set.animations[e->state].size();
 
 					float c1, c2;
 					c1 = e_dir.y - e_pos.y;
 					c2 = e_dir.x - e_pos.x;
+
 					float deg = - ((atan2(-c1, -c2)/ PI * 180 ) - 180);
-					float facing = ceil((deg + 22.5)/45);
-					if (facing >8) facing = 1;
+					float facing = ceil( deg*max_directions/360.0f + 0.5f );	// float facing = ceil(  (deg + 180/max_directions) / (360/max_directions)  );
+
+					if (facing > max_directions) facing = 1;
 
 					if (e->get<CAnimation>()->active_anim != &e->get<CAnimation>()->anim_set.animations[e->state][facing]) {
 						e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[e->state][facing];

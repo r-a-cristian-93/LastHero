@@ -12,6 +12,7 @@ public:
 		TAG_PROJECTILE,
 		TAG_MISSLE,
 		TAG_CHILD,
+		TAG_SFX,
 	};
 
 	enum {

@@ -13,6 +13,7 @@ class ParticlesEmitter: public sf::Drawable {
 	float m_size;
 	sf::Color m_color;
 
+
 	void resetParticles(size_t count, float size) {
 		m_particles = std::vector<Particle>(count);
 		m_vertices = sf::VertexArray(sf::Quads, count*4);
@@ -34,7 +35,7 @@ class ParticlesEmitter: public sf::Drawable {
 		unsigned char alpha = rand()%155 + 100;
 		sf::Color color = {m_color.r, m_color.g, m_color.b, alpha};
 
-		if (first) color.a = 0;
+		//if (first) color.a = 0;
 
 		m_vertices[4*index + 0].color = color;
 		m_vertices[4*index + 1].color = color;
@@ -43,10 +44,12 @@ class ParticlesEmitter: public sf::Drawable {
 
 		m_particles[index].velocity = sf::Vector2f( ((float)rand()/RAND_MAX) * 10 - 5, ((float)rand()/RAND_MAX) * 10 - 5 );
 
-		m_particles[index].lifetime = rand()%60 + 30;
+		m_particles[index].lifetime = 4;
 	}
 
 public:
+	int m_lifetime = 20;
+
 	ParticlesEmitter() {}
 
 	ParticlesEmitter(sf::Vector2f position, sf::Color color, size_t count, float size)
@@ -61,10 +64,12 @@ public:
     }
 
 	void update() {
+		m_lifetime--;
+
 		for (std::size_t index=0; index<m_particles.size(); index++) {
-			if (m_particles[index].lifetime == 0) {
+			/*if (m_particles[index].lifetime == 0) {
 				resetParticle(index, false);
-			}
+			}*/
 
 			m_vertices[4*index + 0].position += m_particles[index].velocity;
 			m_vertices[4*index + 1].position += m_particles[index].velocity;

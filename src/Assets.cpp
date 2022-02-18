@@ -66,6 +66,7 @@ void Assets::loadEntity() {
 			else if (word == "projectile") data_ent.type = Entity::TAG_PROJECTILE;
 			else if (word == "missle") data_ent.type = Entity::TAG_MISSLE;
 			else if (word == "enemy") data_ent.type = Entity::TAG_ENEMY;
+			else if (word == "sfx") data_ent.type = Entity::TAG_SFX;
 			else data_ent.type = Entity::NONE;
 		}
 		else if (word == "name") file >> data_ent.name;
@@ -189,6 +190,22 @@ void Assets::loadEntity() {
 			}
 		}
 		break;
+		case Entity::TAG_SFX: {
+			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
+			shape.setOrigin(data_ent.radius, data_ent.radius);
+			shape.setFillColor(data_ent.fill);
+			shape.setOutlineColor(data_ent.outline);
+			shape.setOutlineThickness(data_ent.out_thk);
+
+			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
+			recipe[data_ent.type][data_ent.name].add<CLifespan>(new CLifespan(data_ent.lifespan));
+
+			if (data_ent.animation_set.animations.size() > 0) {
+				recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
+				recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
+			}
+		}
+		break;
 	}
 }
 
@@ -211,6 +228,7 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 	std::vector<sf::IntRect> rects;
 	std::vector<size_t> frame_time;
 	size_t flip_x(0), flip_y(0);
+	size_t directions(8);
 	sf::Vector2f origin(0,0), frame_size(0,0), frame_offset(0,0);
 
 	while (file_two >> word) {
@@ -229,6 +247,9 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 			if (word == "once") play = Animation::PLAY_ONCE;
 			else if (word == "loop") play = Animation::PLAY_LOOP;
 			else if (word == "swing") play = Animation::PLAY_SWING;
+		}
+		else if (word == "directions") {
+			file_two >> directions;
 		}
 		else if (word == "frames") {
 			file_two >> frames;
@@ -254,7 +275,7 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 		}
 	}
 
-	for (int dir=0; dir<8; dir++) {
+	for (int dir=0; dir<directions; dir++) {
 		std::vector<sf::Sprite> sprites;
 
 		for (int f=0; f<frames; f++) {

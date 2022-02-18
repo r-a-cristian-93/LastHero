@@ -44,6 +44,7 @@ class ScenePlay: public Scene {
 	void spawnBullet();
 	void spawnChilds(const std::shared_ptr<Entity>& parent);
 	void spawnMissle();
+	void spawnExplosion(sf::Vector2f& pos);
 
 	void sEnemySpawner();
 	void sCollision();
