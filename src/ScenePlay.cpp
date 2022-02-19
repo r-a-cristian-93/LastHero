@@ -204,7 +204,7 @@ void ScenePlay::spawnPlayer() {
 	player = ent_mgr.add(Entity::TAG_PLAYER);
 
 	player->get<CTransform>()->pos = pos;
-	player->get<CShape>()->shape.setPosition(pos);
+	player->get<CShape>()->shape.setPosition(pos + player->get<CCollision>()->offset[player->facing]);
 
 	setStatsInitial(*player);
 	setStatsEffective(*player);
@@ -236,7 +236,7 @@ void ScenePlay::spawnEnemy() {
 
 	e->get<CTransform>()->pos = pos;
 	e->get<CTransform>()->dir = dir;
-	e->get<CShape>()->shape.setPosition(pos);
+	e->get<CShape>()->shape.setPosition(pos + e->get<CCollision>()->offset[e->facing]);
 	e->get<CStats>()->level = rand() % 10;
 
 	setStatsInitial(*e);
@@ -250,7 +250,7 @@ void ScenePlay::spawnEnemy(size_t tag, std::string& recipe_name, sf::Vector2f& p
 
 	e->get<CTransform>()->pos = pos;
 	e->get<CTransform>()->dir = dir;
-	e->get<CShape>()->shape.setPosition(pos);
+	e->get<CShape>()->shape.setPosition(pos + e->get<CCollision>()->offset[e->facing]);
 
 	setStatsInitial(*e);
 	setStatsEffective(*e);
@@ -263,9 +263,12 @@ void ScenePlay::sEnemySpawner() {
 }
 
 bool ScenePlay::checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entity>& b) {
-	float square_distance = squareDistance(a->get<CTransform>()->pos, b->get<CTransform>()->pos);
-
 	if (a->get<CCollision>() && b->get<CCollision>()) {
+		sf::Vector2f pos_a = a->get<CTransform>()->pos + a->get<CCollision>()->offset[a->facing];
+		sf::Vector2f pos_b = b->get<CTransform>()->pos + b->get<CCollision>()->offset[b->facing];
+
+		float square_distance = squareDistance(pos_a, pos_b);
+
 		int square_radius =
 			(a->get<CCollision>()->radius + b->get<CCollision>()->radius) *
 			(a->get<CCollision>()->radius + b->get<CCollision>()->radius);

@@ -120,6 +120,14 @@ void Assets::loadEntity() {
 				data_ent.projectile_spawn[i].y = dy;
 			}
 		}
+		else if (word == "collision_offset") {
+			for (int i=1; i<=8; i++) {
+				float dx, dy;
+				file >> dx >> dy;
+				data_ent.collision_offset[i].x = dx;
+				data_ent.collision_offset[i].y = dy;
+			}
+		}
 	}
 
 	switch (data_ent.type) {
@@ -142,9 +150,12 @@ void Assets::loadEntity() {
 			CWeapon weapon(data_ent.weapon_primary, data_ent.weapon_secondary);
 			weapon.projectile_spawn = data_ent.projectile_spawn;
 
+			CCollision collision(data_ent.radius);
+			collision.offset = data_ent.collision_offset;
+
 			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
 			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
-			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(data_ent.radius));
+			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(collision));
 			recipe[data_ent.type][data_ent.name].add<CInput>(new CInput());
 			recipe[data_ent.type][data_ent.name].add<CStats>(new CStats(stats));
 			recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
@@ -198,9 +209,12 @@ void Assets::loadEntity() {
 				stats.per_level[i] = data_ent.stats_per_level[i];
 			}
 
+			CCollision collision(data_ent.radius);
+			collision.offset = data_ent.collision_offset;
+
 			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
 			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
-			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(data_ent.radius));
+			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(collision));
 			recipe[data_ent.type][data_ent.name].add<CScore>(new CScore(data_ent.vertices));
 			recipe[data_ent.type][data_ent.name].add<CStats>(new CStats(stats));
 			if (data_ent.animation_set.animations.size() > 0) {
