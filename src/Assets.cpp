@@ -25,6 +25,7 @@ Components& Assets::getRecipeRand(size_t tag) {
 			return it->second;
 		}
 	}
+	return recipe[tag][""];
 }
 
 sf::Font& Assets::getFont(size_t name) {
@@ -472,7 +473,9 @@ void Assets::loadShaders() {
 	shaders["pixelizer"].loadFromFile("res/shaders/pixelizer.frag", sf::Shader::Fragment);
 	shaders["dream_vision"].loadFromFile("res/shaders/dream_vision.frag", sf::Shader::Fragment);
 	shaders["bloom"].loadFromFile("res/shaders/bloom.frag", sf::Shader::Fragment);
-
+	shaders["crt-vga"].loadFromFile("res/shaders/crt-vga.vert", "res/shaders/crt-vga.frag");
+	shaders["crt-geom"].loadFromFile("res/shaders/crt-geom.vert", "res/shaders/crt-geom.frag");
+	shaders["crt-mattias"].loadFromFile("res/shaders/crt-mattias.vert", "res/shaders/crt-mattias.frag");
 }
 
 sf::Shader& Assets::getShader(std::string name) {

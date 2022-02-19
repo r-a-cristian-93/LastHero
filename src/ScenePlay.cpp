@@ -353,10 +353,7 @@ void ScenePlay::sCollision() {
 				projectile->alive = false;
 				sf::Vector2f g_pos = projectile->get<CTransform>()->pos;
 
-				glitter = ParticlesEmitter(g_pos, {255,255,255}, 20, 5);
-
 				spawnExplosion(g_pos);
-				//spawnChilds(enemy);
 
 				if (enemy->get<CScore>()) {
 					score += enemy->get<CScore>()->score;

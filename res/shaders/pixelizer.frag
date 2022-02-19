@@ -7,13 +7,14 @@ uniform vec4 colDiffuse;
 // NOTE: Add here your custom variables
 
 // NOTE: Render size values must be passed from code
-const float renderWidth = 800;
-const float renderHeight = 600;
+const float renderWidth = 1366;
+const float renderHeight = 768;
+float pixelWidth = 2.0;
+float pixelHeight = 2.0;
 
-float pixelWidth = 5.0;
-float pixelHeight = 5.0;
 
 void main() {
+
 	vec2 fragTexCoord = gl_TexCoord[0].xy;
 	vec4 fragColor = texture2D(texture0, gl_TexCoord[0].xy);
 
