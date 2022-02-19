@@ -19,10 +19,10 @@ set(SOURCE_FILES
 	src/CStats.cpp
 	src/CClickLocation.cpp
 	src/CAnimation.cpp
+	src/CWeapon.cpp
 	src/Entity.cpp
 	src/SUpdate.cpp
 	src/SDraw.cpp
-	src/SEnemySpawner.cpp
 	src/Settings.cpp
 	src/EntityManager.cpp
 	src/Game.cpp

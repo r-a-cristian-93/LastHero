@@ -449,7 +449,9 @@ void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
 
 void ScenePlay::sCombat() {
 	if (player->get<CInput>()->fire_primary) {
-		spawnBullet();
+		if (player->get<CWeapon>()) {
+			spawnBullet();
+		}
 		player->get<CInput>()->fire_primary = false;
 	}
 	if (player->get<CInput>()->fire_secondary) {
@@ -506,13 +508,14 @@ void ScenePlay::checkLifespan(std::shared_ptr<Entity>& e) {
 void ScenePlay::spawnBullet() {
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir(player->get<CTransform>()->prev_dir);
+	const sf::Vector2f offset(player->get<CWeapon>()->projectile_spawn[player->facing]);
 
-	std::string r_name = "glowing_bullet_white";
+	std::string& r_name = player->get<CWeapon>()->primary;
 	std::shared_ptr<Entity> bullet = ent_mgr.add(Entity::TAG_PROJECTILE, r_name);
 
-	bullet->get<CTransform>()->pos = pos;
+	bullet->get<CTransform>()->pos = pos + offset;
 	bullet->get<CTransform>()->dir = dir;
-	bullet->get<CShape>()->shape.setPosition(pos);
+	bullet->get<CShape>()->shape.setPosition(pos + offset);
 }
 
 void ScenePlay::sSpin() {
@@ -725,6 +728,8 @@ void ScenePlay::sAnimation() {
 					float facing = ceil( deg*max_directions/360.0f + 0.5f );	// float facing = ceil(  (deg + 180/max_directions) / (360/max_directions)  );
 
 					if (facing > max_directions) facing = 1;
+
+					e->facing = facing;
 
 					if (e->get<CAnimation>()->active_anim != &e->get<CAnimation>()->anim_set.animations[e->state][facing]) {
 						e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[e->state][facing];

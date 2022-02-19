@@ -10,6 +10,7 @@
 #include "CTarget.h"
 #include "CStats.h"
 #include "CAnimation.h"
+#include "CWeapon.h"
 
 class Components {
 	std::tuple<
@@ -21,7 +22,8 @@ class Components {
 		CScore*,
 		CTarget*,
 		CStats*,
-		CAnimation*> components;
+		CAnimation*,
+		CWeapon*> components;
 
 public:
 	Components() {
@@ -34,6 +36,7 @@ public:
 		add<CTarget>(nullptr);
 		add<CStats>(nullptr);
 		add<CAnimation>(nullptr);
+		add<CWeapon>(nullptr);
 	}
 
 	Components(
@@ -45,6 +48,7 @@ public:
 		CScore* c_s,
 		CTarget* c_tg,
 		CStats* c_h,
+		CWeapon* c_w,
 		CAnimation* c_a)
 	{
 		add<CTransform>(c_tr);
@@ -55,6 +59,7 @@ public:
 		add<CScore>(c_s);
 		add<CTarget>(c_tg);
 		add<CStats>(c_h);
+		add<CWeapon>(c_w);
 		add<CAnimation>(c_a);
 	}
 
@@ -77,6 +82,8 @@ public:
 			add<CStats>(new CStats(*c.get<CStats>()));
 		if (c.get<CAnimation>())
 			add<CAnimation>(new CAnimation(*c.get<CAnimation>()));
+		if (c.get<CWeapon>())
+			add<CWeapon>(new CWeapon(*c.get<CWeapon>()));
 	}
 
 	~Components() {
@@ -89,6 +96,7 @@ public:
 		if (get<CTarget>()) delete get<CTarget>();
 		if (get<CStats>()) delete get<CStats>();
 		if (get<CAnimation>()) delete get<CAnimation>();
+		if (get<CWeapon>()) delete get<CWeapon>();
 	}
 
 	template<class T>

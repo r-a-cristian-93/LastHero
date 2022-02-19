@@ -23,6 +23,9 @@ struct EntityDataset {
 	int stats_per_level[CStats::COUNT];
 	AnimationSet animation_set;
 	sf::Color color_mod = {255, 255, 255, 255};
+	std::string weapon_primary;
+	std::string weapon_secondary;
+	std::map<size_t, sf::Vector2f> projectile_spawn;
 } ;
 
 class Assets {

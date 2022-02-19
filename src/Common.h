@@ -15,6 +15,7 @@ struct AppConfig {
 	int font_size;
 	int font_r, font_g, font_b;
 	float cam_speed, cam_treshold;
+	int directions = 8;
 };
 
 #endif

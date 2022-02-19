@@ -106,6 +106,20 @@ void Assets::loadEntity() {
 			file >> r >> g >> b >> a;
 			data_ent.color_mod = sf::Color(r,g,b,a);
 		}
+		else if (word == "weapon_primary") {
+			file >> data_ent.weapon_primary;
+		}
+		else if (word == "weapon_secondary") {
+			file >> data_ent.weapon_secondary;
+		}
+		else if (word == "projectile_spawn") {
+			for (int i=1; i<=8; i++) {
+				float dx, dy;
+				file >> dx >> dy;
+				data_ent.projectile_spawn[i].x = dx;
+				data_ent.projectile_spawn[i].y = dy;
+			}
+		}
 	}
 
 	switch (data_ent.type) {
@@ -125,6 +139,9 @@ void Assets::loadEntity() {
 				stats.per_level[i] = data_ent.stats_per_level[i];
 			}
 
+			CWeapon weapon(data_ent.weapon_primary, data_ent.weapon_secondary);
+			weapon.projectile_spawn = data_ent.projectile_spawn;
+
 			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
 			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
 			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(data_ent.radius));
@@ -132,6 +149,7 @@ void Assets::loadEntity() {
 			recipe[data_ent.type][data_ent.name].add<CStats>(new CStats(stats));
 			recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
 			recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
+			recipe[data_ent.type][data_ent.name].add<CWeapon>(new CWeapon(weapon));
 		}
 		break;
 		case Entity::TAG_PROJECTILE: {
