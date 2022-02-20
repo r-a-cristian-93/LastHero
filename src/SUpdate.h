@@ -7,7 +7,7 @@
 #include "EntityManager.h"
 
 namespace SUpdate {
-	void updatePosition(const EntityVec& entities, sf::FloatRect& limits);
+	void updatePosition(const EntityVec& entities, const sf::FloatRect& limits);
 }
 
 #endif

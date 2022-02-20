@@ -2,7 +2,7 @@
 #include <cmath>
 #include <iostream>
 
-void SUpdate::updatePosition(const EntityVec& entities, sf::FloatRect& limits) {
+void SUpdate::updatePosition(const EntityVec& entities, const sf::FloatRect& limits) {
 	for(const std::shared_ptr<Entity>& e:entities) {
 		if (e->get<CTransform>()) {
 			sf::Vector2f& prev_dir = e->get<CTransform>()->prev_dir;

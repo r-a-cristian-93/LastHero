@@ -39,6 +39,7 @@ set(SOURCE_FILES
 	src/WidgetBox.cpp
 	src/WidgetText.cpp
 	src/Border.cpp
+	src/Tilemap.cpp
 )
 
 add_executable(Spinners ${SOURCE_FILES})

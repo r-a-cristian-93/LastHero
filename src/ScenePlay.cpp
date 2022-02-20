@@ -12,13 +12,10 @@ ScenePlay::ScenePlay(Game* g, std::string lp)
 	,score(0)
 	,wave_current(0)
 	,wave_total(0)
-	,bg_tex(nullptr)
 {
 	init();
 }
-ScenePlay::~ScenePlay() {
-	delete bg_tex;
-}
+ScenePlay::~ScenePlay() {}
 
 void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
@@ -26,6 +23,8 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::D, Action::MOVE_RIGHT);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Space, Action::FIRE_PRIMARY);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::FIRE_PRIMARY);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::FIRE_SECONDARY);
 	game->act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Left, Action::FIRE_PRIMARY);
 	game->act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Right, Action::FIRE_SECONDARY);
 
@@ -96,7 +95,9 @@ void ScenePlay::load_level(std::string path) {
 	std::ifstream file(path);
 	std::string word;
 
-	sf::IntRect bg_rect(0,0,0,0);
+	sf::Vector2u tile_size(0, 0), map_size(0, 0);
+	std::string texture_name = "";
+	int* level_layer;
 
 	int frame, pos_x, pos_y, dir_x, dir_y;
 	std::string enemy_name;
@@ -109,14 +110,20 @@ void ScenePlay::load_level(std::string path) {
 			while (file>>word) {
 				if (word == "_END") break;
 				else if (word == "size")	{
-					file >> bg_rect.width >> bg_rect.height;
+					file >> map_size.x >> map_size.y;
+					level_layer = new int[map_size.x*map_size.y];
 				}
-				else if (word == "background") {
-					file >> word;
-					bg_tex = new sf::Texture();
-					bg_tex->loadFromFile(word, bg_rect);
-					bg_sprite = sf::Sprite(*bg_tex);
+				else if (word == "tile_size") {
+					file >> tile_size.x >> tile_size.y;
 				}
+				else if (word == "texture") {
+					file >> texture_name;
+				}
+			}
+		}
+		if (word == "_LAYER") {
+			for (int t = 0; t < map_size.x*map_size.y; t++) {
+				file >> level_layer[t];
 			}
 		}
 		if (word == "_ACT") {
@@ -153,6 +160,10 @@ void ScenePlay::load_level(std::string path) {
 		}
 	}
 
+	map_ground.setTexture(game->assets->getTexture(texture_name));
+	map_ground.loadLevel(tile_size, level_layer, map_size);
+	delete level_layer;
+
 	while (!action_stream.empty()) {
 		Action* action;
 		action_stream >> action;
@@ -161,15 +172,13 @@ void ScenePlay::load_level(std::string path) {
 }
 
 void ScenePlay::update() {
-	sf::FloatRect lim(bg_sprite.getLocalBounds());
-
 	if (!paused) {
 		ent_mgr.update();
 		sEnemySpawner();
 		sLevelUp();
 		sLifespan();
 		sMissleGuidance();
-		SUpdate::updatePosition(ent_mgr.getEntities(), lim);
+		SUpdate::updatePosition(ent_mgr.getEntities(), map_ground.getBounds());
 		sCollision();
 		sCombat();
 		sInterface();
@@ -178,10 +187,9 @@ void ScenePlay::update() {
 	sAnimation();
 	sView();
 
-	game->screen_tex.draw(bg_sprite);
+	game->screen_tex.draw(map_ground);
 
 	SDraw::drawEntities(&game->screen_tex, ent_mgr.getEntities());
-
 
 	if (glitter.m_lifetime >=0) {
 		glitter.update();
@@ -760,8 +768,12 @@ void ScenePlay::sView() {
 	//update view position
 	int w = game->app_conf.game_w;
 	int h = game->app_conf.game_h;
-	sf::FloatRect world(bg_sprite.getLocalBounds());
+	sf::FloatRect world = map_ground.getBounds();
 	sf::FloatRect rect(cam.pos.x-w/2, cam.pos.y-h/2, w, h);
+
+	//fix weird lines between map tiles when moving
+	rect.left = round(rect.left);
+	rect.top = round(rect.top);
 
 	if (rect.left < 0) rect.left = 0;
 	if (rect.top < 0) rect.top = 0;

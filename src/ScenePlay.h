@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Interface.h"
 #include "ParticlesEmitter.h"
+#include "Tilemap.h"
 
 struct Camera {
 	sf::Vector2f pos, target;
@@ -13,6 +14,7 @@ class ScenePlay: public Scene {
 	ParticlesEmitter glitter;
 
 	std::string level_path;
+	Tilemap map_ground;
 
 	Camera cam;
 	Interface interface;
@@ -29,9 +31,6 @@ class ScenePlay: public Scene {
 	Widget* wave_widget;
 	std::string wave_text;
 	int wave_current, wave_total;
-
-	sf::Texture* bg_tex;
-	sf::Sprite bg_sprite;
 
 	std::shared_ptr<Entity> player;
 
