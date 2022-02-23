@@ -467,17 +467,15 @@ void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
 }
 
 void ScenePlay::sCombat() {
-	if (player->get<CInput>()->fire_primary) {
-		if (player->get<CWeapon>()) {
-			spawnBullet();
+	if (player->get<CWeapon>()) {
+		if (player->get<CInput>()->fire_primary) {
+			spawnBullet(player->get<CWeapon>()->primary);
+			player->get<CInput>()->fire_primary = false;
 		}
-		player->get<CInput>()->fire_primary = false;
-	}
-	if (player->get<CInput>()->fire_secondary) {
-		if (ent_mgr.getEntities(Entity::TAG_MISSLE).size() == 0) {
-			spawnMissle();
+		else if (player->get<CInput>()->fire_secondary) {
+			spawnBullet(player->get<CWeapon>()->secondary);
+			player->get<CInput>()->fire_secondary = false;
 		}
-		player->get<CInput>()->fire_secondary = false;
 	}
 }
 
@@ -524,13 +522,12 @@ void ScenePlay::checkLifespan(std::shared_ptr<Entity>& e) {
 	}
 }
 
-void ScenePlay::spawnBullet() {
+void ScenePlay::spawnBullet(std::string& recipe_name) {
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir(player->get<CTransform>()->prev_dir);
 	const sf::Vector2f offset(player->get<CWeapon>()->projectile_spawn[player->facing]);
 
-	std::string& r_name = player->get<CWeapon>()->primary;
-	std::shared_ptr<Entity> bullet = ent_mgr.add(Entity::TAG_PROJECTILE, r_name);
+	std::shared_ptr<Entity> bullet = ent_mgr.add(Entity::TAG_PROJECTILE, recipe_name);
 
 	bullet->get<CTransform>()->pos = pos + offset;
 	bullet->get<CTransform>()->dir = dir;
