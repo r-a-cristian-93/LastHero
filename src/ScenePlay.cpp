@@ -213,9 +213,6 @@ void ScenePlay::spawnPlayer() {
 
 	player->get<CTransform>()->pos = pos;
 	player->get<CShape>()->shape.setPosition(pos + player->get<CCollision>()->offset[player->facing]);
-
-	setStatsInitial(*player);
-	setStatsEffective(*player);
 }
 
 void ScenePlay::spawnEnemy() {
@@ -246,9 +243,6 @@ void ScenePlay::spawnEnemy() {
 	e->get<CTransform>()->dir = dir;
 	e->get<CShape>()->shape.setPosition(pos + e->get<CCollision>()->offset[e->facing]);
 	e->get<CStats>()->level = rand() % 10;
-
-	setStatsInitial(*e);
-	setStatsEffective(*e);
 }
 
 void ScenePlay::spawnEnemy(size_t tag, std::string& recipe_name, sf::Vector2f& pos, sf::Vector2f& dir) {
@@ -259,9 +253,6 @@ void ScenePlay::spawnEnemy(size_t tag, std::string& recipe_name, sf::Vector2f& p
 	e->get<CTransform>()->pos = pos;
 	e->get<CTransform>()->dir = dir;
 	e->get<CShape>()->shape.setPosition(pos + e->get<CCollision>()->offset[e->facing]);
-
-	setStatsInitial(*e);
-	setStatsEffective(*e);
 }
 
 void ScenePlay::sEnemySpawner() {
@@ -360,16 +351,33 @@ void ScenePlay::sCollision() {
 		for (std::shared_ptr<Entity>& enemy : ent_mgr.getEntities(Entity::TAG_ENEMY)) {
 			collision = checkCollision(projectile, enemy);
 			if (collision) {
-				enemy->alive = false;
 				projectile->alive = false;
-				sf::Vector2f g_pos = projectile->get<CTransform>()->pos;
+				spawnExplosion(projectile->get<CTransform>()->pos);
 
-				spawnExplosion(g_pos);
+				int projectile_atk = projectile->get<CStats>()->effective[CStats::ATTACK];
+				int& enemy_hp = enemy->get<CStats>()->effective[CStats::HEALTH];
+				int& enemy_def = enemy->get<CStats>()->effective[CStats::DEFENCE];
 
-				if (enemy->get<CScore>()) {
-					score += enemy->get<CScore>()->score;
+				if (enemy_def > 0) {
+					enemy_def -= projectile_atk;
+
+					if (enemy_def < 0) {
+						enemy_hp -= -enemy_def;
+						enemy_def = 0;
+					}
+				}
+				else {
+					enemy_hp -= projectile_atk;
 				}
 
+				if (enemy_hp <= 0) {
+					enemy->alive = false;
+
+					if (enemy->get<CScore>()) {
+						score += enemy->get<CScore>()->score;
+
+					}
+				}
 			}
 		}
 
@@ -686,21 +694,6 @@ void ScenePlay::doAction(const Action* a) {
 			default:
 			break;
 		}
-	}
-}
-
-
-void ScenePlay::setStatsInitial(Entity& entity) {
-	CStats& stats = *entity.get<CStats>();
-	for (int i=0; i<CStats::COUNT; i++) {
-		stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
-	}
-}
-
-void ScenePlay::setStatsEffective(Entity& entity) {
-	CStats& stats = *entity.get<CStats>();
-	for (int i=0; i<CStats::COUNT; i++) {
-		stats.effective[i] = stats.initial[i];
 	}
 }
 

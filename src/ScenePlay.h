@@ -58,8 +58,6 @@ class ScenePlay: public Scene {
 	void sView();
 
 	void checkLifespan(std::shared_ptr<Entity>& e);
-	void setStatsInitial(Entity& entity);
-	void setStatsEffective(Entity& entity);
 	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);
 
 	float angle(const sf::Vector2f a, const sf::Vector2f b);

@@ -145,6 +145,8 @@ void Assets::loadEntity() {
 			for (int i=0; i<CStats::COUNT; i++) {
 				stats.base[i] = data_ent.stats_base[i];
 				stats.per_level[i] = data_ent.stats_per_level[i];
+				stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
+				stats.effective[i] = stats.initial[i];
 			}
 
 			CWeapon weapon(data_ent.weapon_primary, data_ent.weapon_secondary);
@@ -168,10 +170,24 @@ void Assets::loadEntity() {
 			shape.setOrigin(data_ent.radius, data_ent.radius);
 			shape.setFillColor(data_ent.fill);
 
+			CStats stats;
+			stats.experience = data_ent.experience;
+			stats.level = data_ent.level;
+
+			for (int i=0; i<CStats::COUNT; i++) {
+				stats.base[i] = data_ent.stats_base[i];
+				stats.per_level[i] = data_ent.stats_per_level[i];
+				stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
+				stats.effective[i] = stats.initial[i];
+			}
+
 			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
 			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
 			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(data_ent.radius));
 			recipe[data_ent.type][data_ent.name].add<CLifespan>(new CLifespan(data_ent.lifespan));
+			recipe[data_ent.type][data_ent.name].add<CStats>(new CStats(stats));
+
+
 			if (data_ent.animation_set.animations.size() > 0) {
 				recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
 				recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
@@ -207,6 +223,8 @@ void Assets::loadEntity() {
 			for (int i=0; i<CStats::COUNT; i++) {
 				stats.base[i] = data_ent.stats_base[i];
 				stats.per_level[i] = data_ent.stats_per_level[i];
+				stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
+				stats.effective[i] = stats.initial[i];
 			}
 
 			CCollision collision(data_ent.radius);
