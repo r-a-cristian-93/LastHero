@@ -128,6 +128,9 @@ void Assets::loadEntity() {
 				data_ent.collision_offset[i].y = dy;
 			}
 		}
+		else if (word == "prio") {
+			file >> data_ent.prio;
+		}
 	}
 
 	switch (data_ent.type) {
@@ -162,6 +165,7 @@ void Assets::loadEntity() {
 			recipe[data_ent.type][data_ent.name].add<CStats>(new CStats(stats));
 			recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
 			recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
+			recipe[data_ent.type][data_ent.name].get<CAnimation>()->prio = data_ent.prio;
 			recipe[data_ent.type][data_ent.name].add<CWeapon>(new CWeapon(weapon));
 		}
 		break;
@@ -191,6 +195,7 @@ void Assets::loadEntity() {
 			if (data_ent.animation_set.animations.size() > 0) {
 				recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
 				recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
+				recipe[data_ent.type][data_ent.name].get<CAnimation>()->prio = data_ent.prio;
 			}
 		}
 		break;
@@ -206,6 +211,7 @@ void Assets::loadEntity() {
 			if (data_ent.animation_set.animations.size() > 0) {
 				recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
 				recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
+				recipe[data_ent.type][data_ent.name].get<CAnimation>()->prio = data_ent.prio;
 			}
 		}
 		break;
@@ -238,6 +244,7 @@ void Assets::loadEntity() {
 			if (data_ent.animation_set.animations.size() > 0) {
 				recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
 				recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
+				recipe[data_ent.type][data_ent.name].get<CAnimation>()->prio = data_ent.prio;
 			}
 		}
 		break;
@@ -254,6 +261,7 @@ void Assets::loadEntity() {
 			if (data_ent.animation_set.animations.size() > 0) {
 				recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
 				recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
+				recipe[data_ent.type][data_ent.name].get<CAnimation>()->prio = data_ent.prio;
 			}
 		}
 		break;

@@ -287,7 +287,7 @@ bool ScenePlay::checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entit
 
 void ScenePlay::sCollision() {
 	bool collision = false;
-
+/*
 	//what kills player
 	for (std::shared_ptr<Entity>& enemy : ent_mgr.getEntities(Entity::TAG_ENEMY)) {
 		collision = checkCollision(player, enemy);
@@ -345,7 +345,7 @@ void ScenePlay::sCollision() {
 			}
 		}
 	}
-
+*/
 	//what kills enemies
 	for (std::shared_ptr<Entity>& projectile : ent_mgr.getEntities(Entity::TAG_PROJECTILE)) {
 		for (std::shared_ptr<Entity>& enemy : ent_mgr.getEntities(Entity::TAG_ENEMY)) {

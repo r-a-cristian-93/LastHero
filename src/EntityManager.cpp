@@ -61,10 +61,10 @@ void EntityManager::update() {
 	entities_to_add.clear();
 }
 
-EntityVec EntityManager::getEntities() {
+EntityVec& EntityManager::getEntities() {
 	return entities;
 }
 
-EntityVec EntityManager::getEntities(size_t tag) {
+EntityVec& EntityManager::getEntities(size_t tag) {
 	return entities_tagged[tag];
 }

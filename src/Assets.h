@@ -27,6 +27,7 @@ struct EntityDataset {
 	std::string weapon_secondary;
 	std::map<size_t, sf::Vector2f> projectile_spawn;
 	std::map<size_t, sf::Vector2f> collision_offset;
+	size_t prio = 0;
 } ;
 
 class Assets {

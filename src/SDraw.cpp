@@ -1,11 +1,17 @@
 #include "SDraw.h"
 #include <iostream>
+#include <algorithm>
 
-void SDraw::drawEntities(sf::RenderTarget* w, const EntityVec& entities) {
-	for(const std::shared_ptr<Entity>& e:entities) {
+void SDraw::drawEntities(sf::RenderTarget* w, EntityVec& entities) {
+	std::sort(entities.begin(), entities.end(), comparePosition);
+
+	for (const std::shared_ptr<Entity>& e:entities) {
+#ifdef DRAW_COLLISION_BOX
 		if (e->get<CShape>()) {
 			w->draw(e->get<CShape>()->shape);
 		}
+#endif
+
 		if (e->get<CAnimation>()) {
 			w->draw(e->get<CAnimation>()->active_anim->getSprite());
 		}
@@ -13,7 +19,7 @@ void SDraw::drawEntities(sf::RenderTarget* w, const EntityVec& entities) {
 }
 
 void SDraw::drawInterface(sf::RenderTarget* w, const WidgetVec& widgets) {
-	for(Widget* widget:widgets) {
+	for (Widget* widget:widgets) {
 		drawWidget(w, *widget);
 	}
 }
@@ -28,4 +34,19 @@ void SDraw::drawWidget(sf::RenderTarget* w, Widget& widget) {
 			drawWidget(w, *(child));
 		}
 	}
+}
+
+
+bool SDraw::comparePosition(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
+	if (a->get<CAnimation>() && b->get<CAnimation>()) {
+		if (a->get<CAnimation>()->prio != b->get<CAnimation>()->prio) {
+			return (a->get<CAnimation>()->prio < b->get<CAnimation>()->prio);
+		}
+	}
+
+	if (a->get<CTransform>() && b->get<CTransform>()) {
+		return (a->get<CTransform>()->pos.y < b->get<CTransform>()->pos.y);
+	}
+
+	return false;
 }

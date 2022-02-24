@@ -7,6 +7,7 @@ class CAnimation {
 public:
 	AnimationSet anim_set;
 	Animation* active_anim;
+	size_t prio;
 
 	CAnimation();
 	CAnimation(const CAnimation& c);

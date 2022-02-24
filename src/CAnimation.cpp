@@ -4,6 +4,7 @@ CAnimation::CAnimation() {}
 
 CAnimation::CAnimation(const CAnimation& c)
 	:anim_set(c.anim_set)
+	,prio(c.prio)
 {
 	const size_t state = anim_set.animations.begin()->first;
 	active_anim = &anim_set.animations[state][1];
