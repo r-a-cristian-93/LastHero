@@ -46,4 +46,4 @@ add_executable(Spinners ${SOURCE_FILES})
 target_link_libraries(Spinners sfml-graphics sfml-audio)
 include_directories(${PROJECT_SOURCE_DIR})
 
-#target_compile_definitions(Spinners PUBLIC DRAW_COLLISION_BOX)
+target_compile_definitions(Spinners PUBLIC DRAW_COLLISION_BOX)

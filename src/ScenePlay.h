@@ -46,7 +46,8 @@ class ScenePlay: public Scene {
 	void spawnExplosion(sf::Vector2f& pos);
 
 	void sEnemySpawner();
-	void sCollision();
+	void sCollisionCheck();
+	void sCollisionSolve();
 	void sCombat();
 	void sLifespan();
 	void sSpin();

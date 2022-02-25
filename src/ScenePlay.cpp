@@ -177,9 +177,10 @@ void ScenePlay::update() {
 		sEnemySpawner();
 		sLevelUp();
 		sLifespan();
-		sMissleGuidance();
+		//sMissleGuidance();
 		SUpdate::updatePosition(ent_mgr.getEntities(), map_ground.getBounds());
-		sCollision();
+		sCollisionCheck();
+		sCollisionSolve();
 		sCombat();
 		sInterface();
 	}
@@ -284,136 +285,71 @@ bool ScenePlay::checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entit
 	}
 }
 
+void ScenePlay::sCollisionCheck() {
+	EntityVec& entities = ent_mgr.getEntities();
 
-void ScenePlay::sCollision() {
-	bool collision = false;
-/*
-	//what kills player
-	for (std::shared_ptr<Entity>& enemy : ent_mgr.getEntities(Entity::TAG_ENEMY)) {
-		collision = checkCollision(player, enemy);
-		if (collision) {
-			enemy->alive = false;
-			spawnChilds(enemy);
-
-			int enemy_atk = enemy->get<CStats>()->effective[CStats::ATTACK];
-			int& player_hp = player->get<CStats>()->effective[CStats::HEALTH];
-			int& player_def = player->get<CStats>()->effective[CStats::DEFENCE];
-
-			if (player_def > 0) {
-				player_def -= enemy_atk;
-
-				if (player_def < 0) {
-					player_hp -= -player_def;
-					player_def = 0;
-				}
-			}
-			else {
-				player_hp -= enemy_atk;
-			}
-
-			if (player_hp <= 0) {
-				player->alive = false;
-				spawnPlayer();
-			}
+	// clear colliders
+	for (size_t i=0; i<entities.size(); i++) {
+		if (entities[i]->get<CCollision>()) {
+			entities[i]->get<CCollision>()->colliders.clear();
 		}
 	}
 
-	for (std::shared_ptr<Entity>& child : ent_mgr.getEntities(Entity::TAG_CHILD)) {
-		collision = checkCollision(player, child);
-		if (collision) {
-			child->alive = false;
-
-			int child_atk = child->get<CStats>()->effective[CStats::ATTACK];
-			int& player_hp = player->get<CStats>()->effective[CStats::HEALTH];
-			int& player_def = player->get<CStats>()->effective[CStats::DEFENCE];
-
-			if (player_def > 0) {
-				player_def -= child_atk;
-
-				if (player_def < 0) {
-					player_hp -= -player_def;
-					player_def = 0;
-				}
-			}
-			else {
-				player_hp -= child_atk;
-			}
-
-			if (player_hp <= 0) {
-				player->alive = false;
-				spawnPlayer();
+	for (size_t i=0; i<entities.size(); i++) {
+		for (size_t j=i+1; j<entities.size(); j++) {
+			if (checkCollision(entities[i], entities[j])) {
+				entities[i]->get<CCollision>()->colliders.push_back(entities[j]);
+				entities[j]->get<CCollision>()->colliders.push_back(entities[i]);
 			}
 		}
 	}
-*/
-	//what kills enemies
-	for (std::shared_ptr<Entity>& projectile : ent_mgr.getEntities(Entity::TAG_PROJECTILE)) {
-		for (std::shared_ptr<Entity>& enemy : ent_mgr.getEntities(Entity::TAG_ENEMY)) {
-			collision = checkCollision(projectile, enemy);
-			if (collision) {
-				projectile->alive = false;
-				spawnExplosion(projectile->get<CTransform>()->pos);
+}
 
-				int projectile_atk = projectile->get<CStats>()->effective[CStats::ATTACK];
-				int& enemy_hp = enemy->get<CStats>()->effective[CStats::HEALTH];
-				int& enemy_def = enemy->get<CStats>()->effective[CStats::DEFENCE];
+void ScenePlay::sCollisionSolve() {
+	for (std::shared_ptr<Entity>& entity : ent_mgr.getEntities()) {
 
-				if (enemy_def > 0) {
-					enemy_def -= projectile_atk;
+		// if it's not a projectile and has CCollision
+		if (!entity->get<CLifespan>() && entity->get<CCollision>()) {
+			EntityVec& colliders = entity->get<CCollision>()->colliders;
 
-					if (enemy_def < 0) {
-						enemy_hp -= -enemy_def;
-						enemy_def = 0;
+			// if collided with something
+			if (colliders.size() > 0) {
+				for (std::shared_ptr<Entity>& collider : colliders) {
+					// if it's a collider apply damage and kill collider
+					if (collider->get<CLifespan>()) {
+						collider->alive = false;
+						spawnExplosion(collider->get<CTransform>()->pos);
+
+						int collider_atk = collider->get<CStats>()->effective[CStats::ATTACK];
+						int& entity_hp = entity->get<CStats>()->effective[CStats::HEALTH];
+						int& entity_def = entity->get<CStats>()->effective[CStats::DEFENCE];
+
+						if (entity_def > 0) {
+							entity_def -= collider_atk;
+
+							if (entity_def < 0) {
+								entity_hp -= -entity_def;
+								entity_def = 0;
+							}
+						}
+						else {
+							entity_hp -= collider_atk;
+						}
+
+						if (entity_hp <= 0) {
+							entity->alive = false;
+
+							if (entity->get<CScore>()) {
+								score += entity->get<CScore>()->score;
+
+							}
+						}
 					}
-				}
-				else {
-					enemy_hp -= projectile_atk;
-				}
 
-				if (enemy_hp <= 0) {
-					enemy->alive = false;
-
-					if (enemy->get<CScore>()) {
-						score += enemy->get<CScore>()->score;
-
+					//else move to previous position
+					else {
+						entity->get<CTransform>()->pos = entity->get<CTransform>()->prev_pos;
 					}
-				}
-			}
-		}
-
-		for (std::shared_ptr<Entity>& child : ent_mgr.getEntities(Entity::TAG_CHILD)) {
-			collision = checkCollision(projectile, child);
-			if (collision) {
-				child->alive = false;
-				projectile->alive = false;
-
-				if (child->get<CScore>()) {
-					score += child->get<CScore>()->score;
-				}
-			}
-		}
-	}
-
-	for (std::shared_ptr<Entity>& missle : ent_mgr.getEntities(Entity::TAG_MISSLE)) {
-		for (std::shared_ptr<Entity>& enemy : ent_mgr.getEntities(Entity::TAG_ENEMY)) {
-			collision = checkCollision(missle, enemy);
-			if (collision) {
-				enemy->alive = false;
-				missle->alive = false;
-
-				if (enemy->get<CScore>()) {
-					score += enemy->get<CScore>()->score;
-				}
-			}
-		}
-
-		for (std::shared_ptr<Entity>& child : ent_mgr.getEntities(Entity::TAG_CHILD)) {
-			collision = checkCollision(missle, child);
-			if (collision) {
-				child->alive = false;
-
-				if (child->get<CScore>()) {
-					score += child->get<CScore>()->score;
 				}
 			}
 		}

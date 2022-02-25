@@ -6,9 +6,12 @@ void SUpdate::updatePosition(const EntityVec& entities, const sf::FloatRect& lim
 	for(const std::shared_ptr<Entity>& e:entities) {
 		if (e->get<CTransform>()) {
 			sf::Vector2f& prev_dir = e->get<CTransform>()->prev_dir;
+			sf::Vector2f& prev_pos = e->get<CTransform>()->prev_pos;
 			sf::Vector2f& dir = e->get<CTransform>()->dir;
 			sf::Vector2f& vel = e->get<CTransform>()->vel;
 			sf::Vector2f& pos = e->get<CTransform>()->pos;
+
+			prev_pos = pos;
 
 			if (e->get<CInput>()) {
 				if (e->get<CInput>()->up) dir.y = -1;
@@ -79,6 +82,7 @@ void SUpdate::updatePosition(const EntityVec& entities, const sf::FloatRect& lim
 					e->get<CShape>()->shape.setPosition(pos + e->get<CCollision>()->offset[e->facing]);
 				}
 
+				//updates only if there is a change in direction
 				prev_dir = dir;
 			}
 			else {

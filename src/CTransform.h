@@ -10,6 +10,7 @@ public:
 
 	sf::Vector2f pos;
 	sf::Vector2f dir;
+	sf::Vector2f prev_pos;
 	sf::Vector2f prev_dir;
 	sf::Vector2f vel;
 	int d_angle;
