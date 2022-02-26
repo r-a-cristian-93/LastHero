@@ -353,7 +353,6 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 	size_t dir_row = 0;
 	for (size_t dir : directions) {
 		std::vector<sf::Sprite> sprites;
-		std::cout << dir << ", " ;
 
 		for (int f=0; f<frames; f++) {
 			sf::IntRect rect(origin.x+frame_size.x*f, origin.y + frame_size.y*(dir_row), frame_size.x, frame_size.y);
@@ -364,7 +363,6 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 		anim_set.animations[state][dir] = Animation(sprites, frame_time, play);
 		dir_row++;
 	}
-	std::cout << "\n";
 }
 
 void Assets::flipRectX(sf::IntRect& rect) {

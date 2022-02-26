@@ -712,11 +712,7 @@ void ScenePlay::sAnimation() {
 				e->get<CAnimation>()->active_anim->getSprite().setPosition(e->get<CTransform>()->pos);
 			}
 		}
-
-		std::cout << "anim " << e->state << " " << e->facing << std::endl;
-
 	}
-	//exit(0);
 }
 
 void ScenePlay::sView() {
