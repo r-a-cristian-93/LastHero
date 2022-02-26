@@ -23,7 +23,7 @@ void SUpdate::updatePosition(const EntityVec& entities, const sf::FloatRect& lim
 				else dir.x = 0;
 			}
 
-			if (dir.x || dir.y) {
+			if ((dir.x || dir.y) && e->get<CTransform>()->max_velocity) {
 				e->state = Entity::STATE_RUN;
 
 				//set velocity according to direction and max_velocity;

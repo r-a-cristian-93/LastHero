@@ -39,7 +39,7 @@ class ScenePlay: public Scene {
 
 	void spawnPlayer();
 	void spawnEnemy();
-	void spawnEnemy(size_t tag, std::string& recipe_name, sf::Vector2f& pos, sf::Vector2f& dir);
+	void spawnEnemy(size_t tag, std::string& recipe_name, sf::Vector2f& pos, size_t state, size_t facing);
 	void spawnBullet(std::string& recipe_name);
 	void spawnChilds(const std::shared_ptr<Entity>& parent);
 	void spawnMissle();

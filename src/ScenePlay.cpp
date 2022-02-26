@@ -101,7 +101,7 @@ void ScenePlay::load_level(std::string path) {
 
 	int frame, pos_x, pos_y, dir_x, dir_y;
 	std::string enemy_name;
-	size_t tag, code, type;
+	size_t tag, code, type, state, facing;
 
 	ActionStream action_stream;
 
@@ -147,14 +147,31 @@ void ScenePlay::load_level(std::string path) {
 					}
 				}
 				else if (word == "pos") file >> pos_x >> pos_y;
-				else if (word == "dir") file >> dir_x >> dir_y;
+				else if (word == "state") {
+					file >> word;
+					if (word == "idle") state = Entity::STATE_IDLE;
+					else if (word == "run") state = Entity::STATE_RUN;
+					else if (word == "die") state = Entity::STATE_DIE;
+				}
+				else if (word == "facing") {
+					file >> word;
+					if (word == "E") facing = Entity::FACING_E;
+					else if (word == "NE") facing = Entity::FACING_NE;
+					else if (word == "N") facing = Entity::FACING_N;
+					else if (word == "NW") facing = Entity::FACING_NW;
+					else if (word == "W") facing = Entity::FACING_W;
+					else if (word == "SW") facing = Entity::FACING_SW;
+					else if (word == "S") facing = Entity::FACING_S;
+					else if (word == "SE") facing = Entity::FACING_SE;
+				}
 			}
 
 			Action* action = new Action(code, type);
 			action->ent_tag = new size_t(tag);
 			action->ent_name = new std::string(enemy_name);
 			action->pos = new sf::Vector2f(pos_x, pos_y);
-			action->dir = new sf::Vector2f(dir_x, dir_y);
+			action->state = new size_t(state);
+			action->facing = new size_t(facing);
 
 			action_stream << action;
 		}
@@ -174,7 +191,7 @@ void ScenePlay::load_level(std::string path) {
 void ScenePlay::update() {
 	if (!paused) {
 		ent_mgr.update();
-		sEnemySpawner();
+		//sEnemySpawner();
 		sLevelUp();
 		sLifespan();
 		//sMissleGuidance();
@@ -246,13 +263,29 @@ void ScenePlay::spawnEnemy() {
 	e->get<CStats>()->level = rand() % 10;
 }
 
-void ScenePlay::spawnEnemy(size_t tag, std::string& recipe_name, sf::Vector2f& pos, sf::Vector2f& dir) {
+void ScenePlay::spawnEnemy(size_t tag, std::string& recipe_name, sf::Vector2f& pos, size_t state, size_t facing) {
 	int player_radius = player->get<CCollision>()->radius;
+	sf::Vector2f dir(0, 0);
+
+	switch (facing) {
+		case Entity::FACING_E: dir = {1, 0}; break;
+		case Entity::FACING_NE: dir = {1, -1}; break;
+		case Entity::FACING_N: dir = {0, -1}; break;
+		case Entity::FACING_NW: dir = {-1, -1}; break;
+		case Entity::FACING_W: dir = {-1, 0}; break;
+		case Entity::FACING_SW: dir = {-1, 1}; break;
+		case Entity::FACING_S: dir = {0, 1}; break;
+		case Entity::FACING_SE: dir = {1, 1}; break;
+	}
 
 	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, recipe_name);
 
 	e->get<CTransform>()->pos = pos;
 	e->get<CTransform>()->dir = dir;
+	e->state = state;
+	e->facing = facing;
+	e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
+
 	e->get<CShape>()->shape.setPosition(pos + e->get<CCollision>()->offset[e->facing]);
 }
 
@@ -604,7 +637,7 @@ void ScenePlay::doAction(const Action* a) {
 				paused = !paused;
 			break;
 			case Action::SPAWN_ENEMY:
-				spawnEnemy(*a->ent_tag, *a->ent_name, *a->pos, *a->dir);
+				spawnEnemy(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
 			break;
 			default:
 			break;
@@ -652,7 +685,7 @@ void ScenePlay::sAnimation() {
 		if (e->get<CAnimation>() && e->facing != 0) {
 			e->get<CAnimation>()->active_anim->update();
 			if (e->get<CAnimation>()->active_anim->hasEnded()) {
-				if (e->get<CTransform>()) {
+				if (e->get<CTransform>() && e->get<CTransform>()->max_velocity) {
 					sf::Vector2f e_pos(e->get<CTransform>()->pos);
 					sf::Vector2f e_dir(e_pos + e->get<CTransform>()->prev_dir);
 					size_t max_directions = e->get<CAnimation>()->anim_set.animations[e->state].size();
@@ -664,7 +697,7 @@ void ScenePlay::sAnimation() {
 					float deg = - ((atan2(-c1, -c2)/ PI * 180 ) - 180);
 					float facing = ceil( deg*max_directions/360.0f + 0.5f );	// float facing = ceil(  (deg + 180/max_directions) / (360/max_directions)  );
 
-					if (facing > max_directions) facing = 1;
+					if (facing > max_directions) facing = e->get<CAnimation>()->anim_set.animations[e->state].begin()->first;
 
 					e->facing = facing;
 
@@ -679,7 +712,11 @@ void ScenePlay::sAnimation() {
 				e->get<CAnimation>()->active_anim->getSprite().setPosition(e->get<CTransform>()->pos);
 			}
 		}
+
+		std::cout << "anim " << e->state << " " << e->facing << std::endl;
+
 	}
+	//exit(0);
 }
 
 void ScenePlay::sView() {

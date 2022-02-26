@@ -287,7 +287,7 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 	std::vector<sf::IntRect> rects;
 	std::vector<size_t> frame_time;
 	size_t flip_x(0), flip_y(0);
-	size_t directions(8);
+	std::vector<size_t> directions = {1, 2, 3, 4, 5, 6, 7, 8};
 	sf::Vector2f origin(0,0), frame_size(0,0), frame_offset(0,0);
 
 	while (file_two >> word) {
@@ -308,7 +308,22 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 			else if (word == "swing") play = Animation::PLAY_SWING;
 		}
 		else if (word == "directions") {
-			file_two >> directions;
+			size_t n(0);
+			file_two >> n;
+			directions.clear();
+
+			for (int i=0; i<n; i++) {
+				file_two >> word;
+
+				if (word == "E") directions.push_back(Entity::FACING_E);
+				else if (word == "NE") directions.push_back(Entity::FACING_NE);
+				else if (word == "N") directions.push_back(Entity::FACING_N);
+				else if (word == "NW") directions.push_back(Entity::FACING_NW);
+				else if (word == "W") directions.push_back(Entity::FACING_W);
+				else if (word == "SW") directions.push_back(Entity::FACING_SW);
+				else if (word == "S") directions.push_back(Entity::FACING_S);
+				else if (word == "SE") directions.push_back(Entity::FACING_SE);
+			}
 		}
 		else if (word == "frames") {
 			file_two >> frames;
@@ -334,17 +349,22 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 		}
 	}
 
-	for (int dir=0; dir<directions; dir++) {
+
+	size_t dir_row = 0;
+	for (size_t dir : directions) {
 		std::vector<sf::Sprite> sprites;
+		std::cout << dir << ", " ;
 
 		for (int f=0; f<frames; f++) {
-			sf::IntRect rect(origin.x+frame_size.x*f, origin.y + frame_size.y*(dir), frame_size.x, frame_size.y);
+			sf::IntRect rect(origin.x+frame_size.x*f, origin.y + frame_size.y*(dir_row), frame_size.x, frame_size.y);
 			sprites.push_back(sf::Sprite(textures[texture_name], rect));
 			sprites.back().setOrigin(frame_offset.x, frame_offset.y);
 		}
 
-		anim_set.animations[state][dir+1] = Animation(sprites, frame_time, play);
+		anim_set.animations[state][dir] = Animation(sprites, frame_time, play);
+		dir_row++;
 	}
+	std::cout << "\n";
 }
 
 void Assets::flipRectX(sf::IntRect& rect) {

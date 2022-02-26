@@ -9,16 +9,16 @@
 
 struct EntityDataset {
 	size_t type;
-	std::string name;
-	int radius;
-	float velocity;
-	sf::Color fill;
-	sf::Color outline;
-	int out_thk;
-	size_t vertices;
-	int lifespan;
-	int experience;
-	int level;
+	std::string name = "";
+	int radius = 0;
+	float velocity = 0;
+	sf::Color fill = {255, 255, 255, 255};
+	sf::Color outline {0, 0, 0, 255};
+	int out_thk = 0;
+	size_t vertices = 0;
+	int lifespan = 0;
+	int experience = 0;
+	int level = 0;
 	int stats_base[CStats::COUNT];
 	int stats_per_level[CStats::COUNT];
 	AnimationSet animation_set;
