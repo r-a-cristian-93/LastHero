@@ -41,7 +41,7 @@ void Animation::update() {
 			active_frame++;
 			frames_changed = frames_alive;
 
-			if (active_frame >= frame_time.size()) active_frame = 0;
+			if (active_frame >= frame_time.size()) active_frame = frame_time.size()-1;
 			if (frames_alive > total_frames) has_ended = true;
 		}
 	}

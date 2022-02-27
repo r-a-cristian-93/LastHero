@@ -8,7 +8,7 @@ void SDraw::drawEntities(sf::RenderTarget* w, EntityVec& entities) {
 	for (const std::shared_ptr<Entity>& e:entities) {
 #ifdef DRAW_COLLISION_BOX
 		if (e->get<CShape>()) {
-			w->draw(e->get<CShape>()->shape);
+			//w->draw(e->get<CShape>()->shape);
 		}
 #endif
 
