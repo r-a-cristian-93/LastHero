@@ -68,8 +68,8 @@ void Game::run() {
 			screen_tex.clear();
 			window.clear();
 
-			current_scene->update();
 			sUserInput();
+			current_scene->update();
 
 			screen_tex.display();
 

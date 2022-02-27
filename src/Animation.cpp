@@ -16,7 +16,7 @@ Animation::Animation(std::vector<sf::Sprite> _sprites, std::vector<size_t> _fram
 	,frames_changed(0)
 	,active_frame(0)
 	,play(_play)
-	,has_ended(true)
+	,has_ended()
 	,sprites(_sprites)
 	,frame_time(_frame_time)
 {
@@ -37,7 +37,13 @@ void Animation::update() {
 		}
 	}
 	else if (play == PLAY_ONCE) {
+		if (frames_alive > frames_changed + frame_time[active_frame]) {
+			active_frame++;
+			frames_changed = frames_alive;
 
+			if (active_frame >= frame_time.size()) active_frame = 0;
+			if (frames_alive > total_frames) has_ended = true;
+		}
 	}
 }
 

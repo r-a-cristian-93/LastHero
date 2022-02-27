@@ -37,16 +37,29 @@ void EntityManager::update() {
 	//remove dead entities;
 	EntityVec entities_to_keep;
 	for (std::shared_ptr<Entity> e:entities) {
-		if (e->alive) {
+		bool anim_has_ended = true;
+
+		if (e->get<CAnimation>()) {
+			anim_has_ended = e->get<CAnimation>()->active_anim->hasEnded();
+		}
+
+		if (e->alive || !anim_has_ended) {
 			entities_to_keep.push_back(e);
 		}
+
 	}
 	entities = entities_to_keep;
 
 	EntityMap tagged_to_keep;
 	for (size_t tag=0; tag<entities_tagged.size(); tag++) {
 		for (std::shared_ptr<Entity> e:entities_tagged[tag]) {
-			if (e->alive) {
+			bool anim_has_ended = true;
+
+			if (e->get<CAnimation>()) {
+				anim_has_ended = e->get<CAnimation>()->active_anim->hasEnded();
+			}
+
+			if (e->alive || !anim_has_ended) {
 				tagged_to_keep[e->tag].push_back(e);
 			}
 		}

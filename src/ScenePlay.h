@@ -44,11 +44,13 @@ class ScenePlay: public Scene {
 	void spawnChilds(const std::shared_ptr<Entity>& parent);
 	void spawnMissle();
 	void spawnExplosion(sf::Vector2f& pos);
+	void killEntity(std::shared_ptr<Entity>& entity);
 
 	void sEnemySpawner();
 	void sCollisionCheck();
 	void sCollisionSolve();
 	void sCombat();
+	void sState();
 	void sLifespan();
 	void sSpin();
 	void sMissleGuidance();

@@ -18,7 +18,8 @@ public:
 	enum {
 		STATE_IDLE = 1,
 		STATE_RUN,
-		STATE_DIE
+		STATE_DIE,
+		STATE_SPAWN
 	};
 
 

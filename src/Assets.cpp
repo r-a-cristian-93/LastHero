@@ -300,6 +300,7 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 			if (word == "idle") state = Entity::STATE_IDLE;
 			else if (word == "run") state = Entity::STATE_RUN;
 			else if (word == "die") state = Entity::STATE_DIE;
+			else if (word == "spawn") state = Entity::STATE_SPAWN;
 		}
 		else if (word == "play") {
 			file_two >> word;

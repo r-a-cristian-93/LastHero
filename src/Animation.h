@@ -9,12 +9,12 @@ class Animation {
 public:
 	SpritesVec sprites;
 	std::vector<size_t> frame_time;
-	size_t total_frames, frames_alive, frames_changed, active_frame, previous_acrive_frame;
+	size_t total_frames, frames_alive, frames_changed, active_frame, previous_active_frame;
 	size_t play;
 	bool has_ended;
 
 	enum {
-		NONE,
+		NONE = 0,
 		PLAY_ONCE,
 		PLAY_LOOP,
 		PLAY_SWING,

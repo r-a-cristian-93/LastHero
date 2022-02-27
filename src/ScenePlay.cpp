@@ -198,6 +198,7 @@ void ScenePlay::update() {
 		SUpdate::updatePosition(ent_mgr.getEntities(), map_ground.getBounds());
 		sCollisionCheck();
 		sCollisionSolve();
+		sState();
 		sCombat();
 		sInterface();
 	}
@@ -313,9 +314,8 @@ bool ScenePlay::checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entit
 			return false;
 		}
 	}
-	else {
-		return false;
-	}
+
+	return false;
 }
 
 void ScenePlay::sCollisionCheck() {
@@ -342,14 +342,15 @@ void ScenePlay::sCollisionSolve() {
 	for (std::shared_ptr<Entity>& entity : ent_mgr.getEntities()) {
 
 		// if it's not a projectile and has CCollision
-		if (!entity->get<CLifespan>() && entity->get<CCollision>()) {
+		if (!entity->get<CLifespan>() && entity->get<CCollision>() && entity->alive) {
 			EntityVec& colliders = entity->get<CCollision>()->colliders;
 
 			// if collided with something
 			if (colliders.size() > 0) {
 				for (std::shared_ptr<Entity>& collider : colliders) {
-					// if it's a collider apply damage and kill collider
-					if (collider->get<CLifespan>()) {
+
+					// if it's a collider(projectile) apply damage and kill collider
+					if (collider->get<CLifespan>() && collider->alive) {
 						collider->alive = false;
 						spawnExplosion(collider->get<CTransform>()->pos);
 
@@ -379,13 +380,35 @@ void ScenePlay::sCollisionSolve() {
 						}
 					}
 
-					//else move to previous position
+					// else if it's not a collider(projectile) move to previous position
 					else {
 						entity->get<CTransform>()->pos = entity->get<CTransform>()->prev_pos;
 					}
 				}
 			}
 		}
+	}
+}
+
+void ScenePlay::sState() {
+	size_t state_new = Entity::STATE_IDLE;
+
+	for (std::shared_ptr<Entity>& entity : ent_mgr.getEntities()) {
+		if (entity->get<CTransform>()) {
+			if (entity->get<CTransform>()->vel.x || entity->get<CTransform>()->vel.y) {
+				state_new = Entity::STATE_RUN;
+			}
+			else if (entity->state != Entity::STATE_DIE) {
+				state_new = Entity::STATE_IDLE;
+			}
+		}
+
+
+		if (!entity->alive) {
+			state_new = Entity::STATE_DIE;
+		}
+
+		entity->state = state_new;
 	}
 }
 
@@ -469,26 +492,14 @@ void ScenePlay::checkLifespan(std::shared_ptr<Entity>& e) {
 
 		remaining--;
 
-		if (remaining * 3 < lifespan) {
-			if (e->get<CShape>()) {
-				sf::Color color = e->get<CShape>()->shape.getFillColor();
-				color.a = remaining * color.a / lifespan*3;
-
-				e->get<CShape>()->shape.setFillColor(color);
-			}
-
-			if (e->get<CAnimation>()) {
-				sf::Color color = e->get<CAnimation>()->anim_set.color_mod;
-				color.a = remaining * color.a / lifespan*3;
-
-				e->get<CAnimation>()->anim_set.setColorMod(color);
-			}
-		}
-
 		if (remaining <= 0) {
 			e->alive = false;
 		}
 	}
+}
+
+void ScenePlay::killEntity(std::shared_ptr<Entity>& entity) {
+
 }
 
 void ScenePlay::spawnBullet(std::string& recipe_name) {
@@ -683,33 +694,48 @@ void ScenePlay::sInterface() {
 void ScenePlay::sAnimation() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
 		if (e->get<CAnimation>() && e->facing != 0) {
-			e->get<CAnimation>()->active_anim->update();
-			if (e->get<CAnimation>()->active_anim->hasEnded()) {
-				if (e->get<CTransform>() && e->get<CTransform>()->max_velocity) {
-					sf::Vector2f e_pos(e->get<CTransform>()->pos);
-					sf::Vector2f e_dir(e_pos + e->get<CTransform>()->prev_dir);
-					size_t max_directions = e->get<CAnimation>()->anim_set.animations[e->state].size();
 
-					float c1, c2;
-					c1 = e_dir.y - e_pos.y;
-					c2 = e_dir.x - e_pos.x;
+			const size_t state = e->state;
+			AnimMapState& animations = e->get<CAnimation>()->anim_set.animations;
+			Animation*& active_anim = e->get<CAnimation>()->active_anim;
+			size_t has_state_animation = animations.count(state);
 
-					float deg = - ((atan2(-c1, -c2)/ PI * 180 ) - 180);
-					float facing = ceil( deg*max_directions/360.0f + 0.5f );	// float facing = ceil(  (deg + 180/max_directions) / (360/max_directions)  );
+			active_anim->update();
 
-					if (facing > max_directions) facing = e->get<CAnimation>()->anim_set.animations[e->state].begin()->first;
+			if (active_anim->hasEnded() || active_anim->play == Animation::PLAY_LOOP) {
+				if (e->get<CTransform>()) {
+					if (has_state_animation != 0) {
+						sf::Vector2f e_pos(e->get<CTransform>()->pos);
+						sf::Vector2f e_dir(e_pos + e->get<CTransform>()->prev_dir);
+						size_t max_directions = animations[state].size();
 
-					e->facing = facing;
+						float c1, c2;
+						c1 = e_dir.y - e_pos.y;
+						c2 = e_dir.x - e_pos.x;
 
-					if (e->get<CAnimation>()->active_anim != &e->get<CAnimation>()->anim_set.animations[e->state][facing]) {
-						e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[e->state][facing];
+						float deg = - ((atan2(-c1, -c2)/ PI * 180 ) - 180);
+						float facing = ceil( deg*max_directions/360.0f + 0.5f );	// float facing = ceil(  (deg + 180/max_directions) / (360/max_directions)  );
+
+						if (animations[state].count(facing) == 0) {
+							facing = animations[state].begin()->first;
+						}
+
+						if (facing > max_directions) {
+							facing = e->facing;
+						}
+
+						e->facing = facing;
+
+						if (active_anim != &animations[state][facing]) {
+							active_anim = &animations[state][facing];
+						}
 					}
 				}
 			}
 
 			// update animation sprite position
 			if (e->get<CTransform>()) {
-				e->get<CAnimation>()->active_anim->getSprite().setPosition(e->get<CTransform>()->pos);
+				active_anim->getSprite().setPosition(e->get<CTransform>()->pos);
 			}
 		}
 	}
