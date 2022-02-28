@@ -199,7 +199,7 @@ void ScenePlay::update() {
 		sCollisionCheck();
 		sCollisionSolve();
 		sState();
-		sCombat();
+		sFireWeapon();
 		sInterface();
 	}
 	sSpin();
@@ -458,15 +458,33 @@ void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
 	e->alive = true;
 }
 
-void ScenePlay::sCombat() {
-	if (player->get<CWeapon>()) {
-		if (player->get<CInput>()->fire_primary) {
-			spawnBullet(player->get<CWeapon>()->primary);
-			player->get<CInput>()->fire_primary = false;
-		}
-		else if (player->get<CInput>()->fire_secondary) {
-			spawnBullet(player->get<CWeapon>()->secondary);
-			player->get<CInput>()->fire_secondary = false;
+void ScenePlay::sFireWeapon() {
+	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
+		if (e->get<CWeapon>()) {
+			CWeapon& comp_w = *e->get<CWeapon>();
+
+			if (comp_w.p_cooldown_current > 0) {
+				comp_w.p_cooldown_current--;
+				e->get<CInput>()->fire_primary = false;
+			}
+
+			if (comp_w.s_cooldown_current > 0) {
+				comp_w.s_cooldown_current--;
+				e->get<CInput>()->fire_secondary = false;
+			}
+
+			if (e->get<CInput>()->fire_primary && comp_w.p_cooldown_current == 0) {
+				spawnBullet(comp_w.primary);
+				e->get<CInput>()->fire_primary = false;
+
+				comp_w.p_cooldown_current = comp_w.p_cooldown;
+			}
+			else if (e->get<CInput>()->fire_secondary && comp_w.s_cooldown_current == 0) {
+				spawnBullet(comp_w.secondary);
+				e->get<CInput>()->fire_secondary = false;
+
+				comp_w.s_cooldown_current = comp_w.s_cooldown;
+			}
 		}
 	}
 }

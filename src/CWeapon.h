@@ -13,6 +13,11 @@ public:
 	std::string primary;
 	std::string secondary;
 
+	size_t p_cooldown;
+	size_t s_cooldown;
+	size_t p_cooldown_current;
+	size_t s_cooldown_current;
+
 	CWeapon();
 	CWeapon(const CWeapon& c);
 	CWeapon(std::string& primary, std::string& secondary);

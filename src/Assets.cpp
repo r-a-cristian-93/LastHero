@@ -107,10 +107,10 @@ void Assets::loadEntity() {
 			data_ent.color_mod = sf::Color(r,g,b,a);
 		}
 		else if (word == "weapon_primary") {
-			file >> data_ent.weapon_primary;
+			file >> data_ent.weapon_primary >> data_ent.primary_cooldown;
 		}
 		else if (word == "weapon_secondary") {
-			file >> data_ent.weapon_secondary;
+			file >> data_ent.weapon_secondary >> data_ent.secondary_cooldown;
 		}
 		else if (word == "projectile_spawn") {
 			for (int i=1; i<=8; i++) {
@@ -154,6 +154,8 @@ void Assets::loadEntity() {
 
 			CWeapon weapon(data_ent.weapon_primary, data_ent.weapon_secondary);
 			weapon.projectile_spawn = data_ent.projectile_spawn;
+			weapon.p_cooldown = data_ent.primary_cooldown;
+			weapon.s_cooldown = data_ent.secondary_cooldown;
 
 			CCollision collision(data_ent.radius);
 			collision.offset = data_ent.collision_offset;

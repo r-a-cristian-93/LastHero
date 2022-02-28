@@ -25,6 +25,8 @@ struct EntityDataset {
 	sf::Color color_mod = {255, 255, 255, 255};
 	std::string weapon_primary;
 	std::string weapon_secondary;
+	size_t primary_cooldown;
+	size_t secondary_cooldown;
 	std::map<size_t, sf::Vector2f> projectile_spawn;
 	std::map<size_t, sf::Vector2f> collision_offset;
 	size_t prio = 0;
