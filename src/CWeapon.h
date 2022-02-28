@@ -13,6 +13,8 @@ public:
 	std::string primary;
 	std::string secondary;
 
+	size_t p_tag;
+	size_t s_tag;
 	size_t p_cooldown;
 	size_t s_cooldown;
 	size_t p_cooldown_current;

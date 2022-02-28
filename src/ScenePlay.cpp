@@ -194,6 +194,7 @@ void ScenePlay::update() {
 		//sEnemySpawner();
 		sLevelUp();
 		sLifespan();
+		sAI();
 		//sMissleGuidance();
 		SUpdate::updatePosition(ent_mgr.getEntities(), map_ground.getBounds());
 		sCollisionCheck();
@@ -264,8 +265,7 @@ void ScenePlay::spawnEnemy() {
 	e->get<CStats>()->level = rand() % 10;
 }
 
-void ScenePlay::spawnEnemy(size_t tag, std::string& recipe_name, sf::Vector2f& pos, size_t state, size_t facing) {
-	int player_radius = player->get<CCollision>()->radius;
+void ScenePlay::spawnEntity(size_t tag, std::string& recipe_name, sf::Vector2f& pos, size_t state, size_t facing) {
 	sf::Vector2f dir(0, 0);
 
 	switch (facing) {
@@ -279,15 +279,14 @@ void ScenePlay::spawnEnemy(size_t tag, std::string& recipe_name, sf::Vector2f& p
 		case Entity::FACING_SE: dir = {1, 1}; break;
 	}
 
-	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY, recipe_name);
+	std::shared_ptr<Entity> e = ent_mgr.add(tag, recipe_name);
 
-	e->get<CTransform>()->pos = pos;
-	e->get<CTransform>()->dir = dir;
 	e->state = state;
 	e->facing = facing;
+	e->get<CTransform>()->pos = pos;
+	e->get<CTransform>()->dir = dir;
 	e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
-
-	e->get<CShape>()->shape.setPosition(pos + e->get<CCollision>()->offset[e->facing]);
+	e->get<CShape>()->shape.setPosition(pos + e->get<CCollision>()->offset[facing]);
 }
 
 void ScenePlay::sEnemySpawner() {
@@ -458,10 +457,19 @@ void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
 	e->alive = true;
 }
 
+void ScenePlay::sAI() {
+	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_ENEMY)) {
+		if (e->get<CWeapon>() && e->get<CInput>()) {
+			e->get<CInput>()->fire_primary = true;
+		}
+	}
+}
+
 void ScenePlay::sFireWeapon() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
 		if (e->get<CWeapon>()) {
 			CWeapon& comp_w = *e->get<CWeapon>();
+			sf::Vector2f pos(e->get<CTransform>()->pos + e->get<CWeapon>()->projectile_spawn[e->facing]);
 
 			if (comp_w.p_cooldown_current > 0) {
 				comp_w.p_cooldown_current--;
@@ -474,15 +482,15 @@ void ScenePlay::sFireWeapon() {
 			}
 
 			if (e->get<CInput>()->fire_primary && comp_w.p_cooldown_current == 0) {
-				spawnBullet(comp_w.primary);
-				e->get<CInput>()->fire_primary = false;
+				spawnEntity(comp_w.p_tag, comp_w.primary, pos, Entity::STATE_RUN, e->facing);
 
+				e->get<CInput>()->fire_primary = false;
 				comp_w.p_cooldown_current = comp_w.p_cooldown;
 			}
 			else if (e->get<CInput>()->fire_secondary && comp_w.s_cooldown_current == 0) {
-				spawnBullet(comp_w.secondary);
-				e->get<CInput>()->fire_secondary = false;
+				spawnEntity(comp_w.s_tag, comp_w.secondary, pos, Entity::STATE_RUN, e->facing);
 
+				e->get<CInput>()->fire_secondary = false;
 				comp_w.s_cooldown_current = comp_w.s_cooldown;
 			}
 		}
@@ -518,18 +526,6 @@ void ScenePlay::checkLifespan(std::shared_ptr<Entity>& e) {
 
 void ScenePlay::killEntity(std::shared_ptr<Entity>& entity) {
 
-}
-
-void ScenePlay::spawnBullet(std::string& recipe_name) {
-	const sf::Vector2f pos(player->get<CTransform>()->pos);
-	const sf::Vector2f dir(player->get<CTransform>()->prev_dir);
-	const sf::Vector2f offset(player->get<CWeapon>()->projectile_spawn[player->facing]);
-
-	std::shared_ptr<Entity> bullet = ent_mgr.add(Entity::TAG_PROJECTILE, recipe_name);
-
-	bullet->get<CTransform>()->pos = pos + offset;
-	bullet->get<CTransform>()->dir = dir;
-	bullet->get<CShape>()->shape.setPosition(pos + offset);
 }
 
 void ScenePlay::sSpin() {
@@ -666,7 +662,7 @@ void ScenePlay::doAction(const Action* a) {
 				paused = !paused;
 			break;
 			case Action::SPAWN_ENEMY:
-				spawnEnemy(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
+				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
 			break;
 			default:
 			break;
