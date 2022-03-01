@@ -19,8 +19,8 @@ struct EntityDataset {
 	int lifespan = 0;
 	int experience = 0;
 	int level = 0;
-	int stats_base[CStats::COUNT];
-	int stats_per_level[CStats::COUNT];
+	int* stats_base = nullptr;
+	int* stats_per_level = nullptr;
 	AnimationSet animation_set;
 	sf::Color color_mod = {255, 255, 255, 255};
 	std::string weapon_primary;
@@ -32,6 +32,11 @@ struct EntityDataset {
 	std::map<size_t, sf::Vector2f> projectile_spawn;
 	std::map<size_t, sf::Vector2f> collision_offset;
 	size_t prio = 0;
+
+	~EntityDataset() {
+		delete[] stats_base;
+		delete[] stats_per_level;
+	}
 } ;
 
 class Assets {

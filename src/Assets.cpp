@@ -88,11 +88,13 @@ void Assets::loadEntity() {
 		else if (word == "experience") file >> data_ent.experience;
 		else if (word == "level") file >> data_ent.level;
 		else if (word == "stats_base") {
+			data_ent.stats_base = new int[CStats::COUNT];
 			for (int i=0; i<CStats::COUNT; i++) {
 				file >> data_ent.stats_base[i];
 			}
 		}
 		else if (word == "stats_per_level") {
+			data_ent.stats_per_level = new int[CStats::COUNT];
 			for (int i=0; i<CStats::COUNT; i++) {
 				file >> data_ent.stats_per_level[i];
 			}
@@ -194,22 +196,29 @@ void Assets::loadEntity() {
 			shape.setOrigin(data_ent.radius, data_ent.radius);
 			shape.setFillColor(data_ent.fill);
 
-			CStats stats;
-			stats.experience = data_ent.experience;
-			stats.level = data_ent.level;
+			// add CStats if exists
+			if (data_ent.stats_base != nullptr) {
+				if (data_ent.stats_per_level == nullptr) {
+					data_ent.stats_per_level = new int[CStats::COUNT];
+				}
 
-			for (int i=0; i<CStats::COUNT; i++) {
-				stats.base[i] = data_ent.stats_base[i];
-				stats.per_level[i] = data_ent.stats_per_level[i];
-				stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
-				stats.effective[i] = stats.initial[i];
+				CStats stats;
+				stats.experience = data_ent.experience;
+				stats.level = data_ent.level;
+
+				for (int i=0; i<CStats::COUNT; i++) {
+					stats.base[i] = data_ent.stats_base[i];
+					stats.per_level[i] = data_ent.stats_per_level[i];
+					stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
+					stats.effective[i] = stats.initial[i];
+				}
+				recipe[data_ent.type][data_ent.name].add<CStats>(new CStats(stats));
 			}
 
 			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
 			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
 			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(data_ent.radius));
 			recipe[data_ent.type][data_ent.name].add<CLifespan>(new CLifespan(data_ent.lifespan));
-			recipe[data_ent.type][data_ent.name].add<CStats>(new CStats(stats));
 
 
 			if (data_ent.animation_set.animations.size() > 0) {
@@ -242,15 +251,23 @@ void Assets::loadEntity() {
 			shape.setOutlineColor(data_ent.outline);
 			shape.setOutlineThickness(data_ent.out_thk);
 
-			CStats stats;
-			stats.experience = data_ent.experience;
-			stats.level = data_ent.level;
+			// add CStats if exists
+			if (data_ent.stats_base != nullptr) {
+				if (data_ent.stats_per_level == nullptr) {
+					data_ent.stats_per_level = new int[CStats::COUNT];
+				}
 
-			for (int i=0; i<CStats::COUNT; i++) {
-				stats.base[i] = data_ent.stats_base[i];
-				stats.per_level[i] = data_ent.stats_per_level[i];
-				stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
-				stats.effective[i] = stats.initial[i];
+				CStats stats;
+				stats.experience = data_ent.experience;
+				stats.level = data_ent.level;
+
+				for (int i=0; i<CStats::COUNT; i++) {
+					stats.base[i] = data_ent.stats_base[i];
+					stats.per_level[i] = data_ent.stats_per_level[i];
+					stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
+					stats.effective[i] = stats.initial[i];
+				}
+				recipe[data_ent.type][data_ent.name].add<CStats>(new CStats(stats));
 			}
 
 			CCollision collision(data_ent.radius);
@@ -260,7 +277,6 @@ void Assets::loadEntity() {
 			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
 			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(collision));
 			recipe[data_ent.type][data_ent.name].add<CScore>(new CScore(data_ent.vertices));
-			recipe[data_ent.type][data_ent.name].add<CStats>(new CStats(stats));
 			if (data_ent.animation_set.animations.size() > 0) {
 				recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
 				recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);

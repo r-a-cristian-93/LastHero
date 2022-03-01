@@ -285,6 +285,7 @@ void ScenePlay::spawnEntity(size_t tag, std::string& recipe_name, sf::Vector2f& 
 	e->facing = facing;
 	e->get<CTransform>()->pos = pos;
 	e->get<CTransform>()->dir = dir;
+	e->get<CTransform>()->prev_dir = dir;
 	e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
 	e->get<CShape>()->shape.setPosition(pos + e->get<CCollision>()->offset[facing]);
 }
@@ -353,28 +354,30 @@ void ScenePlay::sCollisionSolve() {
 						collider->alive = false;
 						spawnExplosion(collider->get<CTransform>()->pos);
 
-						int collider_atk = collider->get<CStats>()->effective[CStats::ATTACK];
-						int& entity_hp = entity->get<CStats>()->effective[CStats::HEALTH];
-						int& entity_def = entity->get<CStats>()->effective[CStats::DEFENCE];
+						if (entity->get<CStats>() && collider->get<CStats>()) {
 
-						if (entity_def > 0) {
-							entity_def -= collider_atk;
+							int collider_atk = collider->get<CStats>()->effective[CStats::ATTACK];
+							int& entity_hp = entity->get<CStats>()->effective[CStats::HEALTH];
+							int& entity_def = entity->get<CStats>()->effective[CStats::DEFENCE];
 
-							if (entity_def < 0) {
-								entity_hp -= -entity_def;
-								entity_def = 0;
+							if (entity_def > 0) {
+								entity_def -= collider_atk;
+
+								if (entity_def < 0) {
+									entity_hp -= -entity_def;
+									entity_def = 0;
+								}
 							}
-						}
-						else {
-							entity_hp -= collider_atk;
-						}
+							else {
+								entity_hp -= collider_atk;
+							}
 
-						if (entity_hp <= 0) {
-							entity->alive = false;
+							if (entity_hp <= 0) {
+								entity->alive = false;
 
-							if (entity->get<CScore>()) {
-								score += entity->get<CScore>()->score;
-
+								if (entity->get<CScore>()) {
+									score += entity->get<CScore>()->score;
+								}
 							}
 						}
 					}
@@ -719,23 +722,20 @@ void ScenePlay::sAnimation() {
 			if (active_anim->hasEnded() || active_anim->play == Animation::PLAY_LOOP) {
 				if (e->get<CTransform>()) {
 					if (has_state_animation != 0) {
-						sf::Vector2f e_pos(e->get<CTransform>()->pos);
-						sf::Vector2f e_dir(e_pos + e->get<CTransform>()->prev_dir);
-						size_t max_directions = animations[state].size();
+						sf::Vector2f e_dir(e->get<CTransform>()->prev_dir);
+						size_t facing(1);
 
-						float c1, c2;
-						c1 = e_dir.y - e_pos.y;
-						c2 = e_dir.x - e_pos.x;
-
-						float deg = - ((atan2(-c1, -c2)/ PI * 180 ) - 180);
-						float facing = ceil( deg*max_directions/360.0f + 0.5f );	// float facing = ceil(  (deg + 180/max_directions) / (360/max_directions)  );
+						if (e_dir.x == 1 && e_dir.y == 0) facing = Entity::FACING_E;
+						if (e_dir.x == 1 && e_dir.y == -1) facing = Entity::FACING_NE;
+						if (e_dir.x == 0 && e_dir.y == -1) facing = Entity::FACING_N;
+						if (e_dir.x == -1 && e_dir.y == -1) facing = Entity::FACING_NW;
+						if (e_dir.x == -1 && e_dir.y == 0) facing = Entity::FACING_W;
+						if (e_dir.x == -1 && e_dir.y == 1) facing = Entity::FACING_SW;
+						if (e_dir.x == 0 && e_dir.y == 1) facing = Entity::FACING_S;
+						if (e_dir.x == 1 && e_dir.y == 1) facing = Entity::FACING_SE;
 
 						if (animations[state].count(facing) == 0) {
 							facing = animations[state].begin()->first;
-						}
-
-						if (facing > max_directions) {
-							facing = e->facing;
 						}
 
 						e->facing = facing;
