@@ -6,15 +6,22 @@ void SDraw::drawEntities(sf::RenderTarget* w, EntityVec& entities) {
 	std::sort(entities.begin(), entities.end(), comparePosition);
 
 	for (const std::shared_ptr<Entity>& e:entities) {
-#ifdef DRAW_COLLISION_BOX
-		if (e->get<CShape>()) {
-			//w->draw(e->get<CShape>()->shape);
-		}
-#endif
-
 		if (e->get<CAnimation>()) {
 			w->draw(e->get<CAnimation>()->active_anim->getSprite());
 		}
+
+#ifdef DRAW_COLLISION_BOX
+		if (e->get<CShape>() && e->get<CCollision>()) {
+			sf::Vector2f& pos = e->get<CTransform>()->pos;
+
+			for (HitBox& hb : e->get<CCollision>()->hitbox) {
+				e->get<CShape>()->shape.setRadius(hb.radius);
+				e->get<CShape>()->shape.setOrigin(hb.radius, hb.radius);
+				e->get<CShape>()->shape.setPosition(pos + hb.offset[e->facing]);
+				w->draw(e->get<CShape>()->shape);
+			}
+		}
+#endif
 	}
 }
 

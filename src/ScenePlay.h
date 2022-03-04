@@ -40,7 +40,6 @@ class ScenePlay: public Scene {
 	void spawnPlayer();
 	void spawnEnemy();
 	void spawnEntity(size_t tag, std::string& recipe_name, sf::Vector2f& pos, size_t state, size_t facing);
-	void spawnChilds(const std::shared_ptr<Entity>& parent);
 	void spawnMissle();
 	void spawnExplosion(sf::Vector2f& pos);
 	void killEntity(std::shared_ptr<Entity>& entity);
@@ -52,7 +51,6 @@ class ScenePlay: public Scene {
 	void sFireWeapon();
 	void sState();
 	void sLifespan();
-	void sSpin();
 	void sMissleGuidance();
 	void sPlayback();
 	void sLevelUp();

@@ -10,7 +10,6 @@
 struct EntityDataset {
 	size_t type;
 	std::string name = "";
-	int radius = 0;
 	float velocity = 0;
 	sf::Color fill = {255, 255, 255, 255};
 	sf::Color outline {0, 0, 0, 255};
@@ -30,8 +29,8 @@ struct EntityDataset {
 	size_t primary_cooldown = 0;
 	size_t secondary_cooldown = 0;
 	std::map<size_t, sf::Vector2f> projectile_spawn;
-	std::map<size_t, sf::Vector2f> collision_offset;
 	size_t prio = 0;
+	std::vector<HitBox> hitbox;
 
 	~EntityDataset() {
 		delete[] stats_base;

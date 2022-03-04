@@ -203,7 +203,7 @@ void ScenePlay::update() {
 		sFireWeapon();
 		sInterface();
 	}
-	sSpin();
+
 	sAnimation();
 	sView();
 
@@ -227,12 +227,10 @@ void ScenePlay::update() {
 void ScenePlay::spawnPlayer() {
 	const sf::Vector2f pos(game->app_conf.window_w/2, game->app_conf.window_h/2);
 
-
 	std::string r_name = "cowboy";
 	player = ent_mgr.add(Entity::TAG_PLAYER);
 
 	player->get<CTransform>()->pos = pos;
-	player->get<CShape>()->shape.setPosition(pos + player->get<CCollision>()->offset[player->facing]);
 }
 
 void ScenePlay::spawnEnemy() {
@@ -242,10 +240,12 @@ void ScenePlay::spawnEnemy() {
 
 	bool position_is_valid = false;
 	sf::Vector2f pos;
-	int player_radius = player->get<CCollision>()->radius;
+	// deprecated
+	int player_radius = 50;
 
 	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY);
-	int radius = e->get<CCollision>()->radius;
+	// deprecated
+	int radius = 50;
 
 	while (!position_is_valid) {
 		pos.x = rand() % static_cast<int>(game->app_conf.window_w - radius*2) + radius;
@@ -261,7 +261,6 @@ void ScenePlay::spawnEnemy() {
 
 	e->get<CTransform>()->pos = pos;
 	e->get<CTransform>()->dir = dir;
-	e->get<CShape>()->shape.setPosition(pos + e->get<CCollision>()->offset[e->facing]);
 	e->get<CStats>()->level = rand() % 10;
 }
 
@@ -287,7 +286,6 @@ void ScenePlay::spawnEntity(size_t tag, std::string& recipe_name, sf::Vector2f& 
 	e->get<CTransform>()->dir = dir;
 	e->get<CTransform>()->prev_dir = dir;
 	e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
-	e->get<CShape>()->shape.setPosition(pos + e->get<CCollision>()->offset[facing]);
 }
 
 void ScenePlay::sEnemySpawner() {
@@ -297,7 +295,27 @@ void ScenePlay::sEnemySpawner() {
 }
 
 bool ScenePlay::checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entity>& b) {
+	bool collision = false;
+
 	if (a->get<CCollision>() && b->get<CCollision>()) {
+		if (!a->get<CCollision>()->hitbox.empty() && !b->get<CCollision>()->hitbox.empty()) {
+			for (HitBox hb_a : a->get<CCollision>()->hitbox) {
+				for (HitBox hb_b : b->get<CCollision>()->hitbox) {
+					sf::Vector2f pos_a = a->get<CTransform>()->pos + hb_a.offset[a->facing];
+					sf::Vector2f pos_b = b->get<CTransform>()->pos + hb_b.offset[b->facing];
+
+					float square_distance = squareDistance(pos_a, pos_b);
+					int square_radius = (hb_a.radius + hb_b.radius) * (hb_a.radius + hb_b.radius);
+
+					if (square_distance < square_radius) {
+						collision = true;
+					}
+				}
+			}
+		}
+	}
+/*
+
 		sf::Vector2f pos_a = a->get<CTransform>()->pos + a->get<CCollision>()->offset[a->facing];
 		sf::Vector2f pos_b = b->get<CTransform>()->pos + b->get<CCollision>()->offset[b->facing];
 
@@ -308,14 +326,11 @@ bool ScenePlay::checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entit
 			(a->get<CCollision>()->radius + b->get<CCollision>()->radius);
 
 		if (square_distance < square_radius) {
-			return true;
-		}
-		else {
-			return false;
+			collision = true;
 		}
 	}
-
-	return false;
+*/
+	return collision;
 }
 
 void ScenePlay::sCollisionCheck() {
@@ -414,42 +429,6 @@ void ScenePlay::sState() {
 	}
 }
 
-void ScenePlay::spawnChilds(const std::shared_ptr<Entity>& parent) {
-	const size_t vertices = parent->get<CShape>()->shape.getPointCount();
-	const float rotation = parent->get<CShape>()->shape.getRotation();
-	const float alpha = 360 / vertices;
-	const float radius = parent->get<CShape>()->shape.getRadius() / vertices;
-	const float vel = parent->get<CTransform>()->max_velocity / 2;
-	const int lifespan = static_cast<int>(radius) * 6;
-	const sf::Color fill_color = parent->get<CShape>()->shape.getFillColor();
-	sf::Vector2f dir;
-	sf::Vector2f pos;
-
-	for (size_t i=0; i<vertices; i++) {
-		dir.x = cos((alpha*i + rotation) * PI / 180);
-		dir.y = sin((alpha*i + rotation) * PI / 180);
-		pos = parent->get<CTransform>()->pos + dir*(radius*2);
-
-		CShape* c_shape = new CShape(sf::CircleShape(radius, vertices));
-		sf::CircleShape& shape = c_shape->shape;
-		shape.setOrigin(radius, radius);
-		shape.setFillColor(fill_color);
-		shape.setPosition(pos);
-
-		CStats* c_stats = new CStats();
-		c_stats->effective[CStats::ATTACK] = vertices;
-		std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_CHILD);
-
-		e->add<CTransform>(new CTransform(pos, dir, vel));
-		e->get<CTransform>()->d_angle = vel;
-		e->add<CShape>(c_shape);
-		e->add<CCollision>(new CCollision(radius));
-		e->add<CLifespan>(new CLifespan(lifespan));
-		e->add<CStats>(c_stats);
-		e->alive = true;
-	}
-}
-
 void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
 	std::string recipe = "glowing_bullet_explosion";
 	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_SFX, recipe);
@@ -529,16 +508,6 @@ void ScenePlay::checkLifespan(std::shared_ptr<Entity>& e) {
 
 void ScenePlay::killEntity(std::shared_ptr<Entity>& entity) {
 
-}
-
-void ScenePlay::sSpin() {
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
-		if (e->get<CTransform>() && e->get<CShape>()) {
-			if (e->get<CTransform>()->d_angle) {
-				e->get<CShape>()->shape.rotate(e->get<CTransform>()->d_angle);
-			}
-		}
-	}
 }
 
 void ScenePlay::spawnMissle() {

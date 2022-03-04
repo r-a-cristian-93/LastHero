@@ -32,7 +32,7 @@ void SUpdate::updatePosition(const EntityVec& entities, const sf::FloatRect& lim
 
 				//chech if it collides with boundaries
 				if (e->get<CCollision>()) {
-					const int r = e->get<CCollision>()->radius;
+					const int r = 100;//e->get<CCollision>()->radius;
 					sf::Vector2f pos_future = pos + vel;
 
 					sf::FloatRect bounds;
@@ -78,7 +78,7 @@ void SUpdate::updatePosition(const EntityVec& entities, const sf::FloatRect& lim
 				pos += vel;
 
 				if (e->get<CShape>()) {
-					e->get<CShape>()->shape.setPosition(pos + e->get<CCollision>()->offset[e->facing]);
+					//e->get<CShape>()->shape.setPosition(pos + e->get<CCollision>()->offset[e->facing]);
 				}
 
 				//updates only if there is a change in direction

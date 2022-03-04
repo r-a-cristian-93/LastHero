@@ -71,12 +71,11 @@ void Assets::loadEntity() {
 			else data_ent.type = Entity::NONE;
 		}
 		else if (word == "name") file >> data_ent.name;
-		else if (word == "radius") file >> data_ent.radius;
 		else if (word == "velocity") file >> data_ent.velocity;
 		else if (word == "fill") {
-			int r, g, b;
-			file >> r >> g >> b;
-			data_ent.fill = sf::Color(r,g,b);
+			int r, g, b, a;
+			file >> r >> g >> b >> a;
+			data_ent.fill = sf::Color(r,g,b, a);
 		}
 		else if (word == "outline") {
 			int r, g, b;
@@ -138,13 +137,17 @@ void Assets::loadEntity() {
 				data_ent.projectile_spawn[i].y = dy;
 			}
 		}
-		else if (word == "collision_offset") {
+		else if (word == "hitbox") {
+			HitBox hb;
+			file >> hb.radius;
+
 			for (int i=1; i<=8; i++) {
 				float dx, dy;
 				file >> dx >> dy;
-				data_ent.collision_offset[i].x = dx;
-				data_ent.collision_offset[i].y = dy;
+				hb.offset[i].x = dx;
+				hb.offset[i].y = dy;
 			}
+			data_ent.hitbox.push_back(hb);
 		}
 		else if (word == "prio") {
 			file >> data_ent.prio;
@@ -153,8 +156,7 @@ void Assets::loadEntity() {
 
 	switch (data_ent.type) {
 		case Entity::TAG_PLAYER: {
-			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
-			shape.setOrigin(data_ent.radius, data_ent.radius);
+			sf::CircleShape shape;
 			shape.setFillColor(data_ent.fill);
 			shape.setOutlineColor(data_ent.outline);
 			shape.setOutlineThickness(data_ent.out_thk);
@@ -177,8 +179,11 @@ void Assets::loadEntity() {
 			weapon.p_cooldown = data_ent.primary_cooldown;
 			weapon.s_cooldown = data_ent.secondary_cooldown;
 
-			CCollision collision(data_ent.radius);
-			collision.offset = data_ent.collision_offset;
+			CCollision collision;
+			if (!data_ent.hitbox.empty()) {
+				collision.hitbox = data_ent.hitbox;
+				std::cout << data_ent.name << " has hitbox\n";
+			}
 
 			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
 			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
@@ -192,8 +197,7 @@ void Assets::loadEntity() {
 		}
 		break;
 		case Entity::TAG_PROJECTILE: {
-			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
-			shape.setOrigin(data_ent.radius, data_ent.radius);
+			sf::CircleShape shape;
 			shape.setFillColor(data_ent.fill);
 
 			// add CStats if exists
@@ -217,7 +221,7 @@ void Assets::loadEntity() {
 
 			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
 			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
-			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(data_ent.radius));
+			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision());
 			recipe[data_ent.type][data_ent.name].add<CLifespan>(new CLifespan(data_ent.lifespan));
 
 
@@ -229,13 +233,12 @@ void Assets::loadEntity() {
 		}
 		break;
 		case Entity::TAG_MISSLE: {
-			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
-			shape.setOrigin(data_ent.radius, data_ent.radius);
+			sf::CircleShape shape;
 			shape.setFillColor(data_ent.fill);
 
 			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
 			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
-			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(data_ent.radius));
+			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision());
 			recipe[data_ent.type][data_ent.name].add<CTarget>(new CTarget());
 			if (data_ent.animation_set.animations.size() > 0) {
 				recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
@@ -245,8 +248,7 @@ void Assets::loadEntity() {
 		}
 		break;
 		case Entity::TAG_ENEMY: {
-			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
-			shape.setOrigin(data_ent.radius, data_ent.radius);
+			sf::CircleShape shape;
 			shape.setFillColor(data_ent.fill);
 			shape.setOutlineColor(data_ent.outline);
 			shape.setOutlineThickness(data_ent.out_thk);
@@ -270,8 +272,10 @@ void Assets::loadEntity() {
 				recipe[data_ent.type][data_ent.name].add<CStats>(new CStats(stats));
 			}
 
-			CCollision collision(data_ent.radius);
-			collision.offset = data_ent.collision_offset;
+			CCollision collision;
+			if (!data_ent.hitbox.empty()) {
+				collision.hitbox = data_ent.hitbox;
+			}
 
 			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
 			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
@@ -295,8 +299,7 @@ void Assets::loadEntity() {
 		}
 		break;
 		case Entity::TAG_SFX: {
-			sf::CircleShape shape(data_ent.radius, data_ent.vertices);
-			shape.setOrigin(data_ent.radius, data_ent.radius);
+			sf::CircleShape shape;
 			shape.setFillColor(data_ent.fill);
 			shape.setOutlineColor(data_ent.outline);
 			shape.setOutlineThickness(data_ent.out_thk);
