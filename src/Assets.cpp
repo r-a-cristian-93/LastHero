@@ -182,7 +182,6 @@ void Assets::loadEntity() {
 			CCollision collision;
 			if (!data_ent.hitbox.empty()) {
 				collision.hitbox = data_ent.hitbox;
-				std::cout << data_ent.name << " has hitbox\n";
 			}
 
 			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
@@ -219,10 +218,17 @@ void Assets::loadEntity() {
 				recipe[data_ent.type][data_ent.name].add<CStats>(new CStats(stats));
 			}
 
+
+			CCollision collision;
+			if (!data_ent.hitbox.empty()) {
+				collision.hitbox = data_ent.hitbox;
+			}
+
 			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
 			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
 			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision());
 			recipe[data_ent.type][data_ent.name].add<CLifespan>(new CLifespan(data_ent.lifespan));
+			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(collision));
 
 
 			if (data_ent.animation_set.animations.size() > 0) {

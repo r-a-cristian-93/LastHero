@@ -32,43 +32,48 @@ void SUpdate::updatePosition(const EntityVec& entities, const sf::FloatRect& lim
 
 				//chech if it collides with boundaries
 				if (e->get<CCollision>()) {
-					const int r = 100;//e->get<CCollision>()->radius;
-					sf::Vector2f pos_future = pos + vel;
+					if (!e->get<CCollision>()->hitbox.empty()) {
+						for (HitBox hb : e->get<CCollision>()->hitbox) {
 
-					sf::FloatRect bounds;
-					if (e->tag == Entity::TAG_MISSLE) {
-						bounds = {pos_future.x+r, pos_future.y+r, pos_future.x-r, pos_future.y-r};
-					}
-					else {
-						bounds = {pos_future.x-r, pos_future.y-r, pos_future.x+r, pos_future.y+r};
-					}
+							const int r = hb.radius;//e->get<CCollision>()->radius;
+							sf::Vector2f pos_future = pos + hb.offset[e->facing] + vel;
 
-					if (bounds.left <= limits.left || bounds.width >= limits.width) {
-						if (e->get<CInput>()) {
-							dir.x = 0;
-							vel.x = 0;
-						}
-						else {
-							dir.x *= -1.0f;
-							vel.x *= -1.0f;
-
+							sf::FloatRect bounds;
 							if (e->tag == Entity::TAG_MISSLE) {
-								e->alive = false;
+								bounds = {pos_future.x+r, pos_future.y+r, pos_future.x-r, pos_future.y-r};
 							}
-						}
-					}
+							else {
+								bounds = {pos_future.x-r, pos_future.y-r, pos_future.x+r, pos_future.y+r};
+							}
 
-					if (bounds.top <= limits.top || bounds.height >= limits.height) {
-						if (e->get<CInput>()) {
-							dir.y = 0;
-							vel.y = 0;
-						}
-						else {
-							dir.y *= -1.0f;
-							vel.y *= -1.0f;
+							if (bounds.left <= limits.left || bounds.width >= limits.width) {
+								if (e->get<CInput>()) {
+									dir.x = 0;
+									vel.x = 0;
+								}
+								else {
+									dir.x *= -1.0f;
+									vel.x *= -1.0f;
 
-							if (e->tag == Entity::TAG_MISSLE) {
-								e->alive = false;
+									if (e->tag == Entity::TAG_MISSLE) {
+										e->alive = false;
+									}
+								}
+							}
+
+							if (bounds.top <= limits.top || bounds.height >= limits.height) {
+								if (e->get<CInput>()) {
+									dir.y = 0;
+									vel.y = 0;
+								}
+								else {
+									dir.y *= -1.0f;
+									vel.y *= -1.0f;
+
+									if (e->tag == Entity::TAG_MISSLE) {
+										e->alive = false;
+									}
+								}
 							}
 						}
 					}
