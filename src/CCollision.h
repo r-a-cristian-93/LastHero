@@ -18,6 +18,8 @@ class CCollision {
 public:
 	std::vector<HitBox> hitbox;
 	std::vector<std::shared_ptr<Entity>> colliders;
+	std::vector<HitBox*> hitboxes_this;
+	std::vector<HitBox*> hitboxes_collider;
 
 	CCollision();
 	CCollision(const CCollision& c);

@@ -22,6 +22,7 @@ void SDraw::drawEntities(sf::RenderTarget* w, EntityVec& entities) {
 			}
 		}
 #endif
+
 	}
 }
 

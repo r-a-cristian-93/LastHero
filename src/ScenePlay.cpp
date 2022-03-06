@@ -299,8 +299,8 @@ bool ScenePlay::checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entit
 
 	if (a->get<CCollision>() && b->get<CCollision>()) {
 		if (!a->get<CCollision>()->hitbox.empty() && !b->get<CCollision>()->hitbox.empty()) {
-			for (HitBox hb_a : a->get<CCollision>()->hitbox) {
-				for (HitBox hb_b : b->get<CCollision>()->hitbox) {
+			for (HitBox& hb_a : a->get<CCollision>()->hitbox) {
+				for (HitBox& hb_b : b->get<CCollision>()->hitbox) {
 					sf::Vector2f pos_a = a->get<CTransform>()->pos + hb_a.offset[a->facing];
 					sf::Vector2f pos_b = b->get<CTransform>()->pos + hb_b.offset[b->facing];
 
@@ -309,27 +309,20 @@ bool ScenePlay::checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entit
 
 					if (square_distance < square_radius) {
 						collision = true;
+
+						a->get<CCollision>()->colliders.push_back(b);
+						a->get<CCollision>()->hitboxes_this.push_back(&hb_a);
+						a->get<CCollision>()->hitboxes_collider.push_back(&hb_b);
+
+						b->get<CCollision>()->colliders.push_back(a);
+						b->get<CCollision>()->hitboxes_this.push_back(&hb_b);
+						b->get<CCollision>()->hitboxes_collider.push_back(&hb_a);
 					}
 				}
 			}
 		}
 	}
-/*
 
-		sf::Vector2f pos_a = a->get<CTransform>()->pos + a->get<CCollision>()->offset[a->facing];
-		sf::Vector2f pos_b = b->get<CTransform>()->pos + b->get<CCollision>()->offset[b->facing];
-
-		float square_distance = squareDistance(pos_a, pos_b);
-
-		int square_radius =
-			(a->get<CCollision>()->radius + b->get<CCollision>()->radius) *
-			(a->get<CCollision>()->radius + b->get<CCollision>()->radius);
-
-		if (square_distance < square_radius) {
-			collision = true;
-		}
-	}
-*/
 	return collision;
 }
 
@@ -340,15 +333,14 @@ void ScenePlay::sCollisionCheck() {
 	for (size_t i=0; i<entities.size(); i++) {
 		if (entities[i]->get<CCollision>()) {
 			entities[i]->get<CCollision>()->colliders.clear();
+			entities[i]->get<CCollision>()->hitboxes_this.clear();
+			entities[i]->get<CCollision>()->hitboxes_collider.clear();
 		}
 	}
 
 	for (size_t i=0; i<entities.size(); i++) {
 		for (size_t j=i+1; j<entities.size(); j++) {
-			if (checkCollision(entities[i], entities[j])) {
-				entities[i]->get<CCollision>()->colliders.push_back(entities[j]);
-				entities[j]->get<CCollision>()->colliders.push_back(entities[i]);
-			}
+			checkCollision(entities[i], entities[j]);
 		}
 	}
 }
@@ -359,19 +351,21 @@ void ScenePlay::sCollisionSolve() {
 		// if it's not a projectile and has CCollision
 		if (!entity->get<CLifespan>() && entity->get<CCollision>() && entity->alive) {
 			EntityVec& colliders = entity->get<CCollision>()->colliders;
+			std::vector<HitBox*>& hitboxes_this = entity->get<CCollision>()->hitboxes_this;
+			std::vector<HitBox*>& hitboxes_collider = entity->get<CCollision>()->hitboxes_collider;
 
 			// if collided with something
 			if (colliders.size() > 0) {
-				for (std::shared_ptr<Entity>& collider : colliders) {
+				for (size_t i = 0; i < colliders.size(); i++) {
 
-					// if it's a collider(projectile) apply damage and kill collider
-					if (collider->get<CLifespan>() && collider->alive) {
-						collider->alive = false;
-						spawnExplosion(collider->get<CTransform>()->pos);
+					// if it's a colliders[i](projectile) apply damage and kill colliders[i]
+					if (colliders[i]->get<CLifespan>() && colliders[i]->alive) {
+						colliders[i]->alive = false;
+						spawnExplosion(colliders[i]->get<CTransform>()->pos);
 
-						if (entity->get<CStats>() && collider->get<CStats>()) {
+						if (entity->get<CStats>() && colliders[i]->get<CStats>()) {
 
-							int collider_atk = collider->get<CStats>()->effective[CStats::ATTACK];
+							const int& collider_atk = colliders[i]->get<CStats>()->effective[CStats::ATTACK];
 							int& entity_hp = entity->get<CStats>()->effective[CStats::HEALTH];
 							int& entity_def = entity->get<CStats>()->effective[CStats::DEFENCE];
 
@@ -399,7 +393,30 @@ void ScenePlay::sCollisionSolve() {
 
 					// else if it's not a collider(projectile) move to previous position
 					else {
-						entity->get<CTransform>()->pos = entity->get<CTransform>()->prev_pos;
+						// if the entity is able to move and the collider it's not a projectile;
+						if (entity->get<CTransform>()->max_velocity && !colliders[i]->get<CLifespan>()) {
+
+							const sf::Vector2f& e_pos = entity->get<CTransform>()->pos + hitboxes_this[i]->offset[entity->facing];
+							const sf::Vector2f& c_pos = colliders[i]->get<CTransform>()->pos + hitboxes_collider[i]->offset[colliders[i]->facing];
+							const sf::Vector2f delta = e_pos - c_pos;
+
+
+
+
+							if (delta.y > 0) {
+								entity->get<CTransform>()->pos.y += 5;
+							}
+							else if (delta.y < 0) {
+								entity->get<CTransform>()->pos.y -= 5;
+							}
+
+							if (delta.x > 0) {
+								entity->get<CTransform>()->pos.x += 5;
+							}
+							else if (delta.x < 0) {
+								entity->get<CTransform>()->pos.x -= 5;
+							}
+						}
 					}
 				}
 			}
