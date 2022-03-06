@@ -82,10 +82,6 @@ void SUpdate::updatePosition(const EntityVec& entities, const sf::FloatRect& lim
 				//update position
 				pos += vel;
 
-				if (e->get<CShape>()) {
-					//e->get<CShape>()->shape.setPosition(pos + e->get<CCollision>()->offset[e->facing]);
-				}
-
 				//updates only if there is a change in direction
 				prev_dir = dir;
 			}
