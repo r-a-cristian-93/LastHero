@@ -394,28 +394,61 @@ void ScenePlay::sCollisionSolve() {
 					// else if it's not a collider(projectile) move to previous position
 					else {
 						// if the entity is able to move and the collider it's not a projectile;
+						entity->get<CTransform>()->pos = entity->get<CTransform>()->prev_pos;
+
 						if (entity->get<CTransform>()->max_velocity && !colliders[i]->get<CLifespan>()) {
 
 							const sf::Vector2f& e_pos = entity->get<CTransform>()->pos + hitboxes_this[i]->offset[entity->facing];
 							const sf::Vector2f& c_pos = colliders[i]->get<CTransform>()->pos + hitboxes_collider[i]->offset[colliders[i]->facing];
 							const sf::Vector2f delta = e_pos - c_pos;
 
+							float dx = 0;
+							float dy = 0;
 
-
+							float velocity = entity->get<CTransform>()->max_velocity;
 
 							if (delta.y > 0) {
-								entity->get<CTransform>()->pos.y += 5;
+								dy += velocity;
 							}
 							else if (delta.y < 0) {
-								entity->get<CTransform>()->pos.y -= 5;
+								dy -= velocity;
 							}
 
 							if (delta.x > 0) {
-								entity->get<CTransform>()->pos.x += 5;
+								dx += velocity;
 							}
 							else if (delta.x < 0) {
-								entity->get<CTransform>()->pos.x -= 5;
+								dx -= velocity;
 							}
+
+
+							switch (entity->facing) {
+								case Entity::FACING_E:
+								case Entity::FACING_W:
+									dx = 0;
+								break;
+								case Entity::FACING_N:
+								case Entity::FACING_S:
+									dy = 0;
+								break;
+								case Entity::FACING_NE:
+								case Entity::FACING_NW:
+								case Entity::FACING_SE:
+								case Entity::FACING_SW:
+									if (abs(delta.x) > abs(delta.y)) {
+										//dx *= -1;
+										dy = 0;
+									}
+									else {
+										dx = 0;
+										//dy *= -1;
+									}
+								break;
+							}
+
+							 entity->get<CTransform>()->pos.x += dx;
+							 entity->get<CTransform>()->pos.y += dy;
+
 						}
 					}
 				}
