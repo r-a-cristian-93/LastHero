@@ -15,6 +15,8 @@ Game::Game(std::string file_name)
 }
 
 void Game::init(std::string file_name) {
+	PROFILE_FUNCTION();
+
 	std::ifstream file(file_name);
 	std::string word;
 
@@ -60,27 +62,37 @@ void Game::init(std::string file_name) {
 
 void Game::run() {
 	sf::Event event;
-
 	sf::FloatRect lim(0,0,app_conf.window_w,app_conf.window_h);
 
 	while(running) {
+		PROFILE_SCOPE("MAIN_GAME_LOOP");
+
 		if (window.isOpen()) {
 			screen_tex.clear();
 			window.clear();
 
 			sUserInput();
+
 			current_scene->update();
 
 			screen_tex.display();
 
 			//window.draw(screen_sprite, &assets->getShader("crt-geom"));
-			window.draw(screen_sprite);
-			window.display();
+			{
+				PROFILE_SCOPE("window.draw()");
+				window.draw(screen_sprite);
+			}
+			{
+				PROFILE_SCOPE("window.display()");
+				window.display();
+			}
 		}
 	}
 }
 
 void Game::sUserInput() {
+	PROFILE_FUNCTION();
+
 	sf::Event event;
 	Action* action = nullptr;
 	int action_code = Action::NONE;

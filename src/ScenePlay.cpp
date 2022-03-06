@@ -18,6 +18,8 @@ ScenePlay::ScenePlay(Game* g, std::string lp)
 ScenePlay::~ScenePlay() {}
 
 void ScenePlay::init() {
+	PROFILE_FUNCTION();
+
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
@@ -92,6 +94,8 @@ void ScenePlay::init() {
 }
 
 void ScenePlay::load_level(std::string path) {
+	PROFILE_FUNCTION();
+
 	std::ifstream file(path);
 	std::string word;
 
@@ -189,27 +193,40 @@ void ScenePlay::load_level(std::string path) {
 }
 
 void ScenePlay::update() {
-	if (!paused) {
-		ent_mgr.update();
-		//sEnemySpawner();
-		sLevelUp();
-		sLifespan();
-		sAI();
-		//sMissleGuidance();
-		SUpdate::updatePosition(ent_mgr.getEntities(), map_ground.getBounds());
-		sCollisionCheck();
-		sCollisionSolve();
-		sState();
-		sFireWeapon();
-		sInterface();
+	{
+		PROFILE_SCOPE("SCENE_LOGIC");
+
+		if (!paused) {
+			ent_mgr.update();
+
+			//sEnemySpawner();
+			sLevelUp();
+			sLifespan();
+			sAI();
+			//sMissleGuidance();
+
+			SUpdate::updatePosition(ent_mgr.getEntities(), map_ground.getBounds());
+
+			sCollisionCheck();
+			sCollisionSolve();
+			sState();
+			sFireWeapon();
+			sInterface();
+		}
+
+		sAnimation();
+		sView();
 	}
 
-	sAnimation();
-	sView();
+	{
+		PROFILE_SCOPE("sDrawBg");
+		game->screen_tex.draw(map_ground);
+	}
 
-	game->screen_tex.draw(map_ground);
-
-	SDraw::drawEntities(&game->screen_tex, ent_mgr.getEntities());
+	{
+		PROFILE_SCOPE("sDrawEntities");
+		SDraw::drawEntities(&game->screen_tex, ent_mgr.getEntities());
+	}
 
 	if (glitter.m_lifetime >=0) {
 		glitter.update();
@@ -217,12 +234,16 @@ void ScenePlay::update() {
 	}
 
 	//change view in order to keep the interface relative to window
-	game->screen_tex.setView(gui_view);
-	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
-	game->screen_tex.setView(game->view);
+	{
+		PROFILE_SCOPE("sDrawInterface");
+		game->screen_tex.setView(gui_view);
+		SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
+		game->screen_tex.setView(game->view);
+	}
 
 	frame_current++;
 }
+
 
 void ScenePlay::spawnPlayer() {
 	const sf::Vector2f pos(game->app_conf.window_w/2, game->app_conf.window_h/2);
@@ -327,6 +348,8 @@ bool ScenePlay::checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entit
 }
 
 void ScenePlay::sCollisionCheck() {
+	PROFILE_FUNCTION();
+
 	EntityVec& entities = ent_mgr.getEntities();
 
 	// clear colliders
@@ -346,6 +369,8 @@ void ScenePlay::sCollisionCheck() {
 }
 
 void ScenePlay::sCollisionSolve() {
+	PROFILE_FUNCTION();
+
 	for (std::shared_ptr<Entity>& entity : ent_mgr.getEntities()) {
 
 		// if it's not a projectile and has CCollision

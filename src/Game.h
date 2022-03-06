@@ -1,6 +1,8 @@
 #ifndef GAME
 #define GAME
 
+#define DEBUG_PROFILING
+
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <deque>
@@ -12,6 +14,8 @@
 #include "Common.h"
 #include "Assets.h"
 #include "Scene.h"
+
+#include "Profiler.h"
 
 class Scene;
 
