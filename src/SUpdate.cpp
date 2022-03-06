@@ -35,11 +35,11 @@ void SUpdate::updatePosition(const EntityVec& entities, const sf::FloatRect& lim
 					if (!e->get<CCollision>()->hitbox.empty()) {
 						for (HitBox hb : e->get<CCollision>()->hitbox) {
 
-							const int r = hb.radius;//e->get<CCollision>()->radius;
+							const int r = hb.radius;
 							sf::Vector2f pos_future = pos + hb.offset[e->facing] + vel;
 
 							sf::FloatRect bounds;
-							if (e->tag == Entity::TAG_MISSLE) {
+							if (e->tag == Entity::TAG_PROJECTILE) {
 								bounds = {pos_future.x+r, pos_future.y+r, pos_future.x-r, pos_future.y-r};
 							}
 							else {
@@ -55,7 +55,7 @@ void SUpdate::updatePosition(const EntityVec& entities, const sf::FloatRect& lim
 									dir.x *= -1.0f;
 									vel.x *= -1.0f;
 
-									if (e->tag == Entity::TAG_MISSLE) {
+									if (e->tag == Entity::TAG_PROJECTILE) {
 										e->alive = false;
 									}
 								}

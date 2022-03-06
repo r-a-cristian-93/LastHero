@@ -407,20 +407,11 @@ void ScenePlay::sCollisionSolve() {
 
 							float velocity = entity->get<CTransform>()->max_velocity;
 
-							if (delta.y > 0) {
-								dy += velocity;
-							}
-							else if (delta.y < 0) {
-								dy -= velocity;
-							}
+							if (delta.y > 0) dy += velocity;
+							else if (delta.y < 0) dy -= velocity;
 
-							if (delta.x > 0) {
-								dx += velocity;
-							}
-							else if (delta.x < 0) {
-								dx -= velocity;
-							}
-
+							if (delta.x > 0) dx += velocity;
+							else if (delta.x < 0) dx -= velocity;
 
 							switch (entity->facing) {
 								case Entity::FACING_E:
@@ -435,14 +426,10 @@ void ScenePlay::sCollisionSolve() {
 								case Entity::FACING_NW:
 								case Entity::FACING_SE:
 								case Entity::FACING_SW:
-									if (abs(delta.x) > abs(delta.y)) {
-										//dx *= -1;
+									if (abs(delta.x) > abs(delta.y))
 										dy = 0;
-									}
-									else {
+									else
 										dx = 0;
-										//dy *= -1;
-									}
 								break;
 							}
 
