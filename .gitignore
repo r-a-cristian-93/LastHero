@@ -5,3 +5,4 @@ Spinners
 cmake_install.cmake
 replay.txt
 art_src/
+results.json
