@@ -356,6 +356,7 @@ void Assets::loadAnimation(AnimationSet& anim_set) {
 			else if (word == "run") state = Entity::STATE_RUN;
 			else if (word == "die") state = Entity::STATE_DIE;
 			else if (word == "spawn") state = Entity::STATE_SPAWN;
+			else if (word == "hit") state = Entity::STATE_HIT;
 			else if (word == "fire_primary") state = Entity::STATE_FIRE_PRIMARY;
 			else if (word == "fire_secondary") state = Entity::STATE_FIRE_SECONDARY;
 		}

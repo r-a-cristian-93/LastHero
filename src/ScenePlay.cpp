@@ -388,6 +388,10 @@ void ScenePlay::sCollisionSolve() {
 						colliders[i]->alive = false;
 						spawnExplosion(colliders[i]->get<CTransform>()->pos);
 
+						// hit flag is set only for one frame
+						// it will be unset by sStareFacing
+						entity->hit = true;
+
 						if (entity->get<CStats>() && colliders[i]->get<CStats>()) {
 
 							const int& collider_atk = colliders[i]->get<CStats>()->effective[CStats::ATTACK];
@@ -485,7 +489,6 @@ void ScenePlay::sStateFacing() {
 			if (dir.x == 1 && dir.y == 1) e->facing = Entity::FACING_SE;
 		}
 
-
 		//change state;
 		if (!e->blocked) {
 			if (e->get<CTransform>()) {
@@ -497,27 +500,42 @@ void ScenePlay::sStateFacing() {
 				}
 			}
 
+			if (e->hit && e->get<CAnimation>()->anim_set.animations[Entity::STATE_HIT].count(e->facing) != 0) {
+				e->state = Entity::STATE_HIT;
+				e->blocked = true;
+				e->hit = false;
+			}
+
+			// block when firing only if it has firing animation
 			if (e->get<CInput>() && e->get<CWeapon>()) {
 				CWeapon& comp_w = *e->get<CWeapon>();
 
 				if (e->get<CInput>()->fire_primary && comp_w.p_cooldown_current == 0) {
-					e->state = Entity::STATE_FIRE_PRIMARY;
-					e->blocked = true;
+					if (e->get<CAnimation>()->anim_set.animations[Entity::STATE_FIRE_PRIMARY].count(e->facing) != 0) {
+						e->state = Entity::STATE_FIRE_PRIMARY;
+						e->blocked = true;
+					}
 				}
 				else if (e->get<CInput>()->fire_secondary && comp_w.s_cooldown_current == 0) {
-					e->state = Entity::STATE_FIRE_SECONDARY;
-					e->blocked = true;
+					if (e->get<CAnimation>()->anim_set.animations[Entity::STATE_FIRE_SECONDARY].count(e->facing) != 0) {
+						e->state = Entity::STATE_FIRE_SECONDARY;
+						e->blocked = true;
+					}
 				}
-			}
-
-			if (!e->alive) {
-				e->state = Entity::STATE_DIE;
 			}
 		}
 		//if blocking animation has ended
 		else if (e->get<CAnimation>()->active_anim->hasEnded()) {
 			e->blocked = false;
 			e->state = Entity::STATE_IDLE;
+		}
+
+		if (!e->alive) {
+			if (e->blocked && e->state == Entity::STATE_HIT) {
+				e->get<CAnimation>()->active_anim->has_ended = true;
+			}
+
+			e->state = Entity::STATE_DIE;
 		}
 	}
 }

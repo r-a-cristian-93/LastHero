@@ -20,6 +20,7 @@ public:
 		STATE_RUN,
 		STATE_DIE,
 		STATE_SPAWN,
+		STATE_HIT,
 		STATE_FIRE_PRIMARY,
 		STATE_FIRE_SECONDARY
 	};
@@ -42,6 +43,7 @@ public:
 	size_t facing;
 	size_t state;
 	bool blocked;
+	bool hit;
 
 	Components components;
 
