@@ -19,7 +19,9 @@ public:
 		STATE_IDLE = 1,
 		STATE_RUN,
 		STATE_DIE,
-		STATE_SPAWN
+		STATE_SPAWN,
+		STATE_FIRE_PRIMARY,
+		STATE_FIRE_SECONDARY
 	};
 
 
@@ -39,6 +41,7 @@ public:
 	bool alive;
 	size_t facing;
 	size_t state;
+	bool blocked;
 
 	Components components;
 

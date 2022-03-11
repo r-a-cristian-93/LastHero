@@ -4,7 +4,7 @@
 
 void SUpdate::updatePosition(const EntityVec& entities, const sf::FloatRect& limits) {
 	for(const std::shared_ptr<Entity>& e:entities) {
-		if (e->get<CTransform>() && e->alive) {
+		if (e->get<CTransform>() && e->alive && !e->blocked) {
 			sf::Vector2f& prev_dir = e->get<CTransform>()->prev_dir;
 			sf::Vector2f& prev_pos = e->get<CTransform>()->prev_pos;
 			sf::Vector2f& dir = e->get<CTransform>()->dir;

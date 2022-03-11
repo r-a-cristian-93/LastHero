@@ -209,7 +209,7 @@ void ScenePlay::update() {
 
 			sCollisionCheck();
 			sCollisionSolve();
-			sState();
+			sStateFacing();
 			sFireWeapon();
 			sInterface();
 		}
@@ -469,25 +469,56 @@ void ScenePlay::sCollisionSolve() {
 	}
 }
 
-void ScenePlay::sState() {
-	size_t state_new = Entity::STATE_IDLE;
+void ScenePlay::sStateFacing() {
+	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
 
-	for (std::shared_ptr<Entity>& entity : ent_mgr.getEntities()) {
-		if (entity->get<CTransform>()) {
-			if (entity->get<CTransform>()->vel.x || entity->get<CTransform>()->vel.y) {
-				state_new = Entity::STATE_RUN;
-			}
-			else if (entity->state != Entity::STATE_DIE) {
-				state_new = Entity::STATE_IDLE;
-			}
+		// update facing direction;
+		if (!e->blocked) {
+			sf::Vector2f dir(e->get<CTransform>()->prev_dir);
+			if (dir.x == 1 && dir.y == 0) e->facing = Entity::FACING_E;
+			if (dir.x == 1 && dir.y == -1) e->facing = Entity::FACING_NE;
+			if (dir.x == 0 && dir.y == -1) e->facing = Entity::FACING_N;
+			if (dir.x == -1 && dir.y == -1) e->facing = Entity::FACING_NW;
+			if (dir.x == -1 && dir.y == 0) e->facing = Entity::FACING_W;
+			if (dir.x == -1 && dir.y == 1) e->facing = Entity::FACING_SW;
+			if (dir.x == 0 && dir.y == 1) e->facing = Entity::FACING_S;
+			if (dir.x == 1 && dir.y == 1) e->facing = Entity::FACING_SE;
 		}
 
 
-		if (!entity->alive) {
-			state_new = Entity::STATE_DIE;
-		}
+		//change state;
+		if (!e->blocked) {
+			if (e->get<CTransform>()) {
+				if (e->get<CTransform>()->vel.x || e->get<CTransform>()->vel.y) {
+					e->state = Entity::STATE_RUN;
+				}
+				else {
+					e->state = Entity::STATE_IDLE;
+				}
+			}
 
-		entity->state = state_new;
+			if (e->get<CInput>() && e->get<CWeapon>()) {
+				CWeapon& comp_w = *e->get<CWeapon>();
+
+				if (e->get<CInput>()->fire_primary && comp_w.p_cooldown_current == 0) {
+					e->state = Entity::STATE_FIRE_PRIMARY;
+					e->blocked = true;
+				}
+				else if (e->get<CInput>()->fire_secondary && comp_w.s_cooldown_current == 0) {
+					e->state = Entity::STATE_FIRE_SECONDARY;
+					e->blocked = true;
+				}
+			}
+
+			if (!e->alive) {
+				e->state = Entity::STATE_DIE;
+			}
+		}
+		//if blocking animation has ended
+		else if (e->get<CAnimation>()->active_anim->hasEnded()) {
+			e->blocked = false;
+			e->state = Entity::STATE_IDLE;
+		}
 	}
 }
 
@@ -744,35 +775,29 @@ void ScenePlay::sAnimation() {
 		if (e->get<CAnimation>() && e->facing != 0) {
 
 			const size_t state = e->state;
+			size_t& facing = e->facing;
 			AnimMapState& animations = e->get<CAnimation>()->anim_set.animations;
 			Animation*& active_anim = e->get<CAnimation>()->active_anim;
 			size_t has_state_animation = animations.count(state);
 
 			active_anim->update();
 
-			if (active_anim->hasEnded() || active_anim->play == Animation::PLAY_LOOP) {
+			if ((active_anim->hasEnded() || active_anim->play == Animation::PLAY_LOOP)) {
+				active_anim->has_ended = true;
 				if (e->get<CTransform>()) {
 					if (has_state_animation != 0) {
-						sf::Vector2f e_dir(e->get<CTransform>()->prev_dir);
-						size_t facing(1);
-
-						if (e_dir.x == 1 && e_dir.y == 0) facing = Entity::FACING_E;
-						if (e_dir.x == 1 && e_dir.y == -1) facing = Entity::FACING_NE;
-						if (e_dir.x == 0 && e_dir.y == -1) facing = Entity::FACING_N;
-						if (e_dir.x == -1 && e_dir.y == -1) facing = Entity::FACING_NW;
-						if (e_dir.x == -1 && e_dir.y == 0) facing = Entity::FACING_W;
-						if (e_dir.x == -1 && e_dir.y == 1) facing = Entity::FACING_SW;
-						if (e_dir.x == 0 && e_dir.y == 1) facing = Entity::FACING_S;
-						if (e_dir.x == 1 && e_dir.y == 1) facing = Entity::FACING_SE;
-
 						if (animations[state].count(facing) == 0) {
 							facing = animations[state].begin()->first;
 						}
 
-						e->facing = facing;
-
 						if (active_anim != &animations[state][facing]) {
+							// set new animation
 							active_anim = &animations[state][facing];
+
+							// reset PLAY_ONCE animation
+							if (active_anim->play == Animation::PLAY_ONCE) {
+								active_anim->has_ended = false;
+							}
 						}
 					}
 				}

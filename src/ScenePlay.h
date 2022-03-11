@@ -49,7 +49,7 @@ class ScenePlay: public Scene {
 	void sCollisionSolve();
 	void sAI();
 	void sFireWeapon();
-	void sState();
+	void sStateFacing();
 	void sLifespan();
 	void sMissleGuidance();
 	void sPlayback();
