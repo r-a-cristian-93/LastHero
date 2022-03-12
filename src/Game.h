@@ -1,7 +1,8 @@
 #ifndef GAME
 #define GAME
 
-#define DEBUG_PROFILING
+//#define DEBUG_PROFILING
+//#define DRAW_COLLISION_BOX
 
 #include <SFML/Graphics.hpp>
 #include <string>

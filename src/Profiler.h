@@ -16,6 +16,7 @@
 		PROFILE_SCOPE(__FUNCTION__)
 #else
 	#define PROFILE_SCOPE(name)
+	#define PROFILE_FUNCTION()
 #endif
 
 struct ProfileResult {

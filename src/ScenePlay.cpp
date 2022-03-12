@@ -758,11 +758,7 @@ void ScenePlay::sAnimation() {
 					if (active_anim != &animations[state][facing]) {
 						// set new animation
 						active_anim = &animations[state][facing];
-
-						// reset PLAY_ONCE animation
-						if (active_anim->play == Animation::PLAY_ONCE) {
-							active_anim->has_ended = false;
-						}
+						active_anim->reset();
 					}
 				}
 			}

@@ -23,6 +23,7 @@ public:
 	Animation();
 	Animation(std::vector<sf::Sprite> sprites, std::vector<size_t> frame_time, size_t play);
 
+	void reset();
 	void update();
 	bool hasEnded();
 	sf::Sprite& getSprite();

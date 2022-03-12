@@ -44,9 +44,6 @@ void Animation::update() {
 			if (active_frame >= frame_time.size()) active_frame = frame_time.size()-1;
 			if (frames_alive > total_frames) {
 				has_ended = true;
-				//active_frame = 0;
-				frames_alive = 0;
-				frames_changed = 0;
 			}
 		}
 	}
@@ -58,4 +55,11 @@ sf::Sprite& Animation::getSprite() {
 
 bool Animation::hasEnded() {
 	return has_ended;
+}
+
+void Animation::reset() {
+	has_ended = false;
+	active_frame = 0;
+	frames_alive = 0;
+	frames_changed = 0;
 }
