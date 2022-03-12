@@ -3,6 +3,8 @@
 
 WidgetText::WidgetText()
 	:text(nullptr)
+	,link_text(LINK_NONE)
+	,link_int(nullptr)
 	{}
 
 void WidgetText::setPosAbs(sf::Vector2i p) {
@@ -13,17 +15,23 @@ void WidgetText::setPosAbs(sf::Vector2i p) {
 
 void WidgetText::setText(std::string t, sf::Font& font, unsigned int size) {
 	if (!text) {
-		str = t;
-		text = new sf::Text(str, font, size);
+		text = new sf::Text(t, font, size);
 		drawables.push_back(text);
 	}
 }
 
 void WidgetText::setText(std::string t) {
 	if (text) {
-		str = t;
-		text->setString(str);
+		text->setString(t);
 	}
+}
+
+void WidgetText::linkToInt(int& value) {
+	link_int = & value;
+}
+
+void WidgetText::updateText() {
+	if (link_int) setText(std::to_string(*link_int));
 }
 
 WidgetText::~WidgetText() {

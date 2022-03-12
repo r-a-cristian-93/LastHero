@@ -6,14 +6,24 @@
 #include "Border.h"
 
 class WidgetText: public Widget {
-	std::string str;
+	size_t link_text;
+	int* link_int;
 	sf::Text* text;
 
 public:
+	enum {
+		LINK_NONE,
+		LINK_PLAYER_HP,
+		LINK_BASE_HP,
+		LINK_TOTAL_KILLS,
+	};
+
 	void setPosAbs(sf::Vector2i p) override;
 
 	void setText(std::string t, sf::Font& font, unsigned int size);
 	void setText(std::string t);
+	void linkToInt(int& value);
+	void updateText();
 
 	WidgetText();
 	~WidgetText();

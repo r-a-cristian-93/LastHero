@@ -6,6 +6,7 @@
 ScenePlay::ScenePlay(Game* g, std::string lp)
 	:Scene(g)
 	,level_path(lp)
+	,total_kills(0)
 {
 	init();
 }
@@ -26,9 +27,14 @@ void ScenePlay::init() {
 
 	load_level("res/level_001.cfg");
 	spawnPlayer();
+	spawnBase();
+
+	static_cast<WidgetText*>(game->assets->getWidget("player_health_text"))->linkToInt(player->get<CStats>()->effective[CStats::HEALTH]);
+	static_cast<WidgetText*>(game->assets->getWidget("base_health_text"))->linkToInt(base->get<CStats>()->effective[CStats::HEALTH]);
+	static_cast<WidgetText*>(game->assets->getWidget("total_kills_text"))->linkToInt(total_kills);
 
 	interface.add(game->assets->getWidget("player_health"));
-	interface.add(game->assets->getWidget("base_defence"));
+	interface.add(game->assets->getWidget("base_health"));
 	interface.add(game->assets->getWidget("total_kills"));
 
 	gui_view.reset(sf::FloatRect(0 ,0, game->app_conf.game_w, game->app_conf.game_h));
@@ -188,10 +194,16 @@ void ScenePlay::update() {
 void ScenePlay::spawnPlayer() {
 	const sf::Vector2f pos(game->app_conf.window_w/2, game->app_conf.window_h/2);
 
-	std::string r_name = "cowboy";
 	player = ent_mgr.add(Entity::TAG_PLAYER);
-
 	player->get<CTransform>()->pos = pos;
+}
+
+void ScenePlay::spawnBase() {
+	const sf::Vector2f pos(game->app_conf.window_w/2 + 100, game->app_conf.window_h/2);
+
+	base = ent_mgr.add(Entity::TAG_ENEMY);
+	base->get<CTransform>()->pos = pos;
+	base->get<CTransform>()->max_velocity = 0;
 }
 
 void ScenePlay::spawnEnemy() {
@@ -353,9 +365,7 @@ void ScenePlay::sCollisionSolve() {
 							if (entity_hp <= 0) {
 								entity->alive = false;
 
-								if (entity->get<CScore>()) {
-									//score += entity->get<CScore>()->score;
-								}
+								total_kills++;
 							}
 						}
 					}
@@ -716,7 +726,9 @@ void ScenePlay::sLevelUp() {
 }
 
 void ScenePlay::sInterface() {
-
+	static_cast<WidgetText*>(game->assets->getWidget("player_health_text"))->updateText();
+	static_cast<WidgetText*>(game->assets->getWidget("base_health_text"))->updateText();
+	static_cast<WidgetText*>(game->assets->getWidget("total_kills_text"))->updateText();
 }
 
 void ScenePlay::sAnimation() {

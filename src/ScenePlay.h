@@ -18,15 +18,20 @@ class ScenePlay: public Scene {
 
 	Camera cam;
 	Interface interface;
+	int total_kills;
+	std::string total_kills_str;
 
 	sf::View gui_view;
 
 	std::shared_ptr<Entity> player;
+	std::shared_ptr<Entity> base;
+
 
 	void init();
 	void load_level(std::string path);
 
 	void spawnPlayer();
+	void spawnBase();
 	void spawnEnemy();
 	void spawnEntity(size_t tag, std::string& recipe_name, sf::Vector2f& pos, size_t state, size_t facing);
 	void spawnMissle();
