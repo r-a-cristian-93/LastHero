@@ -6,6 +6,7 @@
 #include <fstream>
 #include "Entity.h"
 #include "Border.h"
+#include "Interface.h"
 
 struct EntityDataset {
 	size_t type;
@@ -51,16 +52,19 @@ private:
 	std::map<std::string, sf::Sprite> sprites;
 	std::map<std::string, Border> borders;
 	std::map<std::string, sf::Shader> shaders;
+	std::map<std::string, Widget*> widgets;
 
 	void loadEntities();
 	void loadFonts();
 	void loadGUI();
+	void loadWidgets();
 	void loadShaders();
 
 	void loadEntity();
 	void loadTexture();
 	void loadSprite();
 	void loadBorders();
+	void loadWidget();
 	void loadBorderRepeatable(std::string border_name, size_t sprite_name, std::string texture_name);
 	void loadAnimationSet(std::string path, AnimationSet& animation_set);
 	void loadAnimation(AnimationSet& anim_set);
@@ -90,6 +94,7 @@ public:
 	sf::Texture& getTexture(std::string name);
 	sf::Sprite& getSprite(std::string name);
 	sf::Shader& getShader(std::string name);
+	Widget*& getWidget(std::string name);
 
 };
 

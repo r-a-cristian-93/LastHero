@@ -6,12 +6,6 @@
 ScenePlay::ScenePlay(Game* g, std::string lp)
 	:Scene(g)
 	,level_path(lp)
-	,status_widget(nullptr)
-	,score_widget(nullptr)
-	,wave_widget(nullptr)
-	,score(0)
-	,wave_current(0)
-	,wave_total(0)
 {
 	init();
 }
@@ -27,68 +21,15 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Space, Action::FIRE_PRIMARY);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::FIRE_PRIMARY);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::FIRE_SECONDARY);
-	game->act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Left, Action::FIRE_PRIMARY);
-	game->act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Right, Action::FIRE_SECONDARY);
-
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
 
-	spawnPlayer();
+
 	load_level("res/level_001.cfg");
+	spawnPlayer();
 
-	// health widget
-	WidgetBox* w_health_ico = new WidgetBox();
-	w_health_ico->setSize(sf::Vector2i(40,40));
-	w_health_ico->setPosRel(sf::Vector2i(-10,-8));
-	w_health_ico->setBackground(game->assets->getSprite("icon_hart"), sf::Vector2i(0,0));
-
-	w_health_text = new WidgetText();
-	w_health_text->setPosRel(sf::Vector2i(40, -2));
-	int health = player->get<CStats>()->effective[CStats::HEALTH];
-	w_health_text->setText(std::to_string(health), game->assets->getFont(Assets::FONT_COURIER), 20);
-
-	WidgetBox* w_health = new WidgetBox();
-	w_health->setSize(sf::Vector2i(100,25));
-	w_health->setPosAbs(sf::Vector2i(20,10));
-	w_health->setBackground(game->assets->getTexture("dark_green"), 10);
-	w_health->setBorder(game->assets->getBorder("slick"));
-	w_health->addChild(w_health_ico);
-	w_health->addChild(w_health_text);
-
-	// defence widget
-	WidgetBox* w_defence_ico = new WidgetBox();
-	w_defence_ico->setSize(sf::Vector2i(40,40));
-	w_defence_ico->setPosRel(sf::Vector2i(-10,-8));
-	w_defence_ico->setBackground(game->assets->getSprite("icon_helmet"), sf::Vector2i(0,0));
-
-	w_defence_text = new WidgetText();
-	w_defence_text->setPosRel(sf::Vector2i(40, -2));
-	int defence = player->get<CStats>()->effective[CStats::DEFENCE];
-	w_defence_text->setText(std::to_string(defence), game->assets->getFont(Assets::FONT_COURIER), 20);
-
-	WidgetBox* w_defence = new WidgetBox();
-	w_defence->setSize(sf::Vector2i(100,25));
-	w_defence->setPosAbs(sf::Vector2i(150,10));
-	w_defence->setBackground(game->assets->getTexture("dark_green"), 10);
-	w_defence->setBorder(game->assets->getBorder("slick"));
-	w_defence->addChild(w_defence_ico);
-	w_defence->addChild(w_defence_text);
-
-	// waves widget
-	WidgetBox* w_waves_ico = new WidgetBox();
-	w_waves_ico->setSize(sf::Vector2i(40,40));
-	w_waves_ico->setPosRel(sf::Vector2i(-10,-8));
-	w_waves_ico->setBackground(game->assets->getSprite("icon_skull"), sf::Vector2i(0,0));
-
-	WidgetBox* w_waves = new WidgetBox();
-	w_waves->setSize(sf::Vector2i(100,25));
-	w_waves->setPosAbs(sf::Vector2i(280,10));
-	w_waves->setBackground(game->assets->getTexture("dark_green"), 10);
-	w_waves->setBorder(game->assets->getBorder("slick"));
-	w_waves->addChild(w_waves_ico);
-
-	interface.add(w_health);
-	interface.add(w_defence);
-	interface.add(w_waves);
+	interface.add(game->assets->getWidget("player_health"));
+	interface.add(game->assets->getWidget("base_defence"));
+	interface.add(game->assets->getWidget("total_kills"));
 
 	gui_view.reset(sf::FloatRect(0 ,0, game->app_conf.game_w, game->app_conf.game_h));
 }
@@ -212,9 +153,8 @@ void ScenePlay::update() {
 			sStateFacing();
 			sFireWeapon();
 			sInterface();
+			sAnimation();
 		}
-
-		sAnimation();
 		sView();
 	}
 
@@ -414,7 +354,7 @@ void ScenePlay::sCollisionSolve() {
 								entity->alive = false;
 
 								if (entity->get<CScore>()) {
-									score += entity->get<CScore>()->score;
+									//score += entity->get<CScore>()->score;
 								}
 							}
 						}
@@ -776,16 +716,7 @@ void ScenePlay::sLevelUp() {
 }
 
 void ScenePlay::sInterface() {
-	if (player) {
-		if (w_health_text) {
-			int health = player->get<CStats>()->effective[CStats::HEALTH];
-			w_health_text->setText(std::to_string(health));
-		}
-		if (w_defence_text) {
-			int defence = player->get<CStats>()->effective[CStats::DEFENCE];
-			w_defence_text->setText(std::to_string(defence));
-		}
-	}
+
 }
 
 void ScenePlay::sAnimation() {

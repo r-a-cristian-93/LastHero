@@ -7,6 +7,7 @@
 
 class WidgetBox: public Widget {
 	sf::Sprite* background;
+	sf::Vector2i bg_offset;
 	Border* border;
 
 public:

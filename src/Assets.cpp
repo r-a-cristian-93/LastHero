@@ -6,6 +6,7 @@
 
 Assets::Assets() {
 	loadGUI();
+	loadWidgets();
 	loadEntities();
 	loadFonts();
 	loadShaders();
@@ -42,6 +43,10 @@ sf::Texture& Assets::getTexture(std::string name) {
 
 sf::Sprite& Assets::getSprite(std::string name) {
 	return sprites[name];
+}
+
+Widget*& Assets::getWidget(std::string name) {
+	return widgets.at(name);
 }
 
 void Assets::loadEntities() {
@@ -292,7 +297,7 @@ void Assets::loadEntity() {
 				recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
 				recipe[data_ent.type][data_ent.name].get<CAnimation>()->prio = data_ent.prio;
 			}
-			if (!data_ent.weapon_primary.empty() && !data_ent.weapon_secondary.empty()) {
+			if (!data_ent.weapon_primary.empty() || !data_ent.weapon_secondary.empty()) {
 				CWeapon weapon(data_ent.weapon_primary, data_ent.weapon_secondary);
 				weapon.p_tag = data_ent.p_tag;
 				weapon.s_tag = data_ent.s_tag;
@@ -502,6 +507,108 @@ void Assets::loadBorders() {
 		else {
 			std::cout << "In file: " << file_path << " unknown key: " << word << std::endl;
 		}
+	}
+}
+
+void Assets::loadWidgets() {
+	file_path = "res/interface/widgets.cfg";
+	file.open(file_path);
+
+	while (file >> word) {
+		if (word == "_END") break;
+		else if (word == "_WIDGET") {
+			loadWidget();
+		}
+	}
+
+	file.close();
+}
+
+void Assets::loadWidget() {
+	std::string name(""), type(""), bg_sprite(""), bg_tex(""), border("");
+	sf::Vector2i size, pos_rel, pos_abs;
+	sf::Vector2i spr_offset;
+	int tex_offset(0), w(0), h(0), font_size(0);
+	size_t font_id(NONE);
+	std::vector<std::string> childs;
+
+	while (file >> word) {
+		if (word == "_END") break;
+		else if (word == "name") file >> name;
+		else if (word == "type") file >> type;
+		else if (word == "size") {
+			file >> size.x >> size.y;
+		}
+		else if (word == "pos_rel") {
+			file >> pos_rel.x >> pos_rel.y;
+		}
+		else if (word == "pos_abs") {
+			file >> pos_abs.x >> pos_abs.y;
+		}
+		else if (word == "bg_sprite") {
+			file >> bg_sprite >> spr_offset.x >> spr_offset.y;
+		}
+		else if (word == "bg_tex") {
+			file >> bg_tex >> tex_offset;
+		}
+		else if (word == "border") {
+			file >> border;
+		}
+		else if (word == "font") {
+			file >> word >> font_size;
+			if (word == "courier") font_id = FONT_COURIER;
+			else if (word == "military") font_id = FONT_MILITARY;
+			else {
+				std::cout << "Invalid font specified \"" << word << "\".\n";
+				exit(0);
+			}
+		}
+		else if (word == "child") {
+			file >> word;
+			childs.push_back(word);
+		}
+	}
+
+	if (!name.empty() && !type.empty()) {
+		Widget* widget;
+
+		if (type == "box") {
+			WidgetBox* wb = new WidgetBox();
+
+			wb->setSize(size);
+			if (!bg_sprite.empty()) wb->setBackground(sprites[bg_sprite], spr_offset);
+			if (!bg_tex.empty()) wb->setBackground(textures[bg_tex], tex_offset);
+			if (!border.empty()) wb->setBorder(borders[border]);
+
+			widget = wb;
+		}
+		else if (type == "text") {
+			WidgetText* wt = new WidgetText();
+
+			wt->setSize(size);
+			wt->setText("TEXT", fonts[font_id], font_size);
+
+			widget = wt;
+		}
+		else {
+			std::cout << "Invalid widget type \"" << type << "\".\n";
+			exit(0);
+		}
+
+		widget->setPosRel(pos_rel);
+		widget->setPosAbs(pos_abs);
+
+		for (size_t i=0; i<childs.size(); i++) {
+			if (widgets.find(childs[i]) != widgets.end()) {
+				widget->addChild(widgets[childs[i]]);
+			}
+			else {
+				std::cout << "Widget \"" << childs[i] << "\" does not exist.\n";
+				exit(0);
+			}
+		}
+
+		widgets[name] = widget;
 	}
 }
 

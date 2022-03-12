@@ -18,19 +18,8 @@ class ScenePlay: public Scene {
 
 	Camera cam;
 	Interface interface;
-	Widget* status_widget;
+
 	sf::View gui_view;
-
-	WidgetText* w_health_text;
-	WidgetText* w_defence_text;
-
-	Widget* score_widget;
-	std::string score_text;
-	int score;
-
-	Widget* wave_widget;
-	std::string wave_text;
-	int wave_current, wave_total;
 
 	std::shared_ptr<Entity> player;
 
