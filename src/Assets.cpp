@@ -725,3 +725,12 @@ void Assets::loadShaders() {
 sf::Shader& Assets::getShader(std::string name) {
 	return 	shaders[name];
 }
+
+Assets::~Assets() {
+	std::map<std::string, Widget*>::iterator it;
+
+	for (it = widgets.begin(); it!=widgets.end(); it++) {
+		delete it->second;
+	}
+}
+

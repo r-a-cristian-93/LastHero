@@ -81,6 +81,7 @@ public:
 	};
 
 	Assets();
+	~Assets();
 
 	template<class T>
 	const T* get(Components& c) {
