@@ -177,13 +177,6 @@ void Assets::loadEntity() {
 				stats.effective[i] = stats.initial[i];
 			}
 
-			CWeapon weapon(data_ent.weapon_primary, data_ent.weapon_secondary);
-			weapon.p_tag = data_ent.p_tag;
-			weapon.s_tag = data_ent.s_tag;
-			weapon.projectile_spawn = data_ent.projectile_spawn;
-			weapon.p_cooldown = data_ent.primary_cooldown;
-			weapon.s_cooldown = data_ent.secondary_cooldown;
-
 			CCollision collision;
 			if (!data_ent.hitbox.empty()) {
 				collision.hitbox = data_ent.hitbox;
@@ -197,7 +190,16 @@ void Assets::loadEntity() {
 			recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
 			recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
 			recipe[data_ent.type][data_ent.name].get<CAnimation>()->prio = data_ent.prio;
-			recipe[data_ent.type][data_ent.name].add<CWeapon>(new CWeapon(weapon));
+
+			if (!data_ent.weapon_primary.empty() || !data_ent.weapon_secondary.empty()) {
+				CWeapon weapon(data_ent.weapon_primary, data_ent.weapon_secondary);
+				weapon.p_tag = data_ent.p_tag;
+				weapon.s_tag = data_ent.s_tag;
+				weapon.projectile_spawn = data_ent.projectile_spawn;
+				weapon.p_cooldown = data_ent.primary_cooldown;
+				weapon.s_cooldown = data_ent.secondary_cooldown;
+				recipe[data_ent.type][data_ent.name].add<CWeapon>(new CWeapon(weapon));
+			}
 		}
 		break;
 		case Entity::TAG_PROJECTILE: {

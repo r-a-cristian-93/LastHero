@@ -199,11 +199,17 @@ void ScenePlay::spawnPlayer() {
 }
 
 void ScenePlay::spawnBase() {
-	const sf::Vector2f pos(game->app_conf.window_w/2 + 100, game->app_conf.window_h/2);
+	const sf::Vector2f pos(game->app_conf.window_w/2 + 200, game->app_conf.window_h/2);
 
-	base = ent_mgr.add(Entity::TAG_ENEMY);
+
+	std::string recipe("cow");
+	base = ent_mgr.add(Entity::TAG_ENEMY, recipe);
 	base->get<CTransform>()->pos = pos;
-	base->get<CTransform>()->max_velocity = 0;
+	base->get<CTransform>()->dir = {-1, 1};
+	base->state = Entity::STATE_IDLE;
+	base->facing = Entity::FACING_SW;
+	base->get<CTransform>()->prev_dir = {-1, 1};
+	base->get<CAnimation>()->active_anim = &base->get<CAnimation>()->anim_set.animations[base->state][base->facing];
 }
 
 void ScenePlay::spawnEnemy() {
@@ -481,7 +487,7 @@ void ScenePlay::sStateFacing() {
 		}
 
 		if (!e->alive) {
-			if (e->blocked && e->state == Entity::STATE_HIT) {
+			if (e->blocked && e->state != Entity::STATE_DIE) {
 				e->get<CAnimation>()->active_anim->has_ended = true;
 			}
 
@@ -744,21 +750,18 @@ void ScenePlay::sAnimation() {
 			active_anim->update();
 
 			if ((active_anim->hasEnded() || active_anim->play == Animation::PLAY_LOOP)) {
-				active_anim->has_ended = true;
-				if (e->get<CTransform>()) {
-					if (has_state_animation != 0) {
-						if (animations[state].count(facing) == 0) {
-							facing = animations[state].begin()->first;
-						}
+				if (has_state_animation != 0) {
+					if (animations[state].count(facing) == 0) {
+						facing = animations[state].begin()->first;
+					}
 
-						if (active_anim != &animations[state][facing]) {
-							// set new animation
-							active_anim = &animations[state][facing];
+					if (active_anim != &animations[state][facing]) {
+						// set new animation
+						active_anim = &animations[state][facing];
 
-							// reset PLAY_ONCE animation
-							if (active_anim->play == Animation::PLAY_ONCE) {
-								active_anim->has_ended = false;
-							}
+						// reset PLAY_ONCE animation
+						if (active_anim->play == Animation::PLAY_ONCE) {
+							active_anim->has_ended = false;
 						}
 					}
 				}
