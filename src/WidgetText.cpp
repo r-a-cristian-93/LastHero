@@ -17,12 +17,14 @@ void WidgetText::setText(std::string t, sf::Font& font, unsigned int size) {
 	if (!text) {
 		text = new sf::Text(t, font, size);
 		drawables.push_back(text);
+		updateOrigin();
 	}
 }
 
 void WidgetText::setText(std::string t) {
 	if (text) {
 		text->setString(t);
+		updateOrigin();
 	}
 }
 
@@ -31,8 +33,17 @@ void WidgetText::linkToInt(int& value) {
 }
 
 void WidgetText::updateText() {
-	if (link_int) setText(std::to_string(*link_int));
+	if (link_int)  {
+		setText(std::to_string(*link_int));
+		updateOrigin();
+	}
 }
+
+void WidgetText::updateOrigin() {
+	sf::FloatRect b = text->getLocalBounds();
+	text->setOrigin(b.left + b.width/2, b.top + b.height/2);
+}
+
 
 WidgetText::~WidgetText() {
 	if (text) delete text;

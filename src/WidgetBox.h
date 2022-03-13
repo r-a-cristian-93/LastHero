@@ -6,6 +6,7 @@
 #include "Border.h"
 
 class WidgetBox: public Widget {
+protected:
 	sf::Sprite* background;
 	sf::Vector2i bg_offset;
 	Border* border;

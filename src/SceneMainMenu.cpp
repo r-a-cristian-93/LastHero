@@ -14,9 +14,10 @@ void SceneMainMenu::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
 
-	interface.add(game->assets->getWidget("player_health"));
-	interface.add(game->assets->getWidget("base_health"));
-	interface.add(game->assets->getWidget("total_kills"));
+	static_cast<WidgetText*>(game->assets->getWidget("button_play_text"))->setText("PLAY");
+	static_cast<WidgetText*>(game->assets->getWidget("button_quit_text"))->setText("QUIT");
+
+	interface.add(game->assets->getWidget("main_menu"));
 
 	gui_view.reset(sf::FloatRect(0 ,0, game->app_conf.game_w, game->app_conf.game_h));
 	game->screen_tex.setView(gui_view);
@@ -30,9 +31,6 @@ void SceneMainMenu::update() {
 
 
 void SceneMainMenu::sInterface() {
-	static_cast<WidgetText*>(game->assets->getWidget("player_health_text"))->updateText();
-	static_cast<WidgetText*>(game->assets->getWidget("base_health_text"))->updateText();
-	static_cast<WidgetText*>(game->assets->getWidget("total_kills_text"))->updateText();
 }
 
 

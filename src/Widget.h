@@ -20,7 +20,7 @@ public:
 	void setSize(sf::Vector2i s);
 
 	void addChild(Widget* child);
-	std::vector<sf::Drawable*>& getDrawables();
+	virtual std::vector<sf::Drawable*>& getDrawables();
 	std::vector<Widget*>& getChilds();
 
 	Widget();

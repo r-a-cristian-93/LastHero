@@ -527,7 +527,7 @@ void Assets::loadWidgets() {
 }
 
 void Assets::loadWidget() {
-	std::string name(""), type(""), bg_sprite(""), bg_tex(""), border("");
+	std::string name(""), type(""), bg_sprite(""), bg_tex(""), bg_tex_hover(""), border(""), border_hover("");
 	sf::Vector2i size, pos_rel, pos_abs;
 	sf::Vector2i spr_offset;
 	int tex_offset(0), w(0), h(0), font_size(0);
@@ -538,24 +538,14 @@ void Assets::loadWidget() {
 		if (word == "_END") break;
 		else if (word == "name") file >> name;
 		else if (word == "type") file >> type;
-		else if (word == "size") {
-			file >> size.x >> size.y;
-		}
-		else if (word == "pos_rel") {
-			file >> pos_rel.x >> pos_rel.y;
-		}
-		else if (word == "pos_abs") {
-			file >> pos_abs.x >> pos_abs.y;
-		}
-		else if (word == "bg_sprite") {
-			file >> bg_sprite >> spr_offset.x >> spr_offset.y;
-		}
-		else if (word == "bg_tex") {
-			file >> bg_tex >> tex_offset;
-		}
-		else if (word == "border") {
-			file >> border;
-		}
+		else if (word == "size") file >> size.x >> size.y;
+		else if (word == "pos_rel") file >> pos_rel.x >> pos_rel.y;
+		else if (word == "pos_abs") file >> pos_abs.x >> pos_abs.y;
+		else if (word == "bg_sprite") file >> bg_sprite >> spr_offset.x >> spr_offset.y;
+		else if (word == "bg_tex") file >> bg_tex >> tex_offset;
+		else if (word == "bg_tex_hover") file >> bg_tex_hover >> tex_offset;
+		else if (word == "border") file >> border;
+		else if (word == "border_hover") file >> border_hover;
 		else if (word == "font") {
 			file >> word >> font_size;
 			if (word == "courier") font_id = FONT_COURIER;
@@ -591,6 +581,18 @@ void Assets::loadWidget() {
 			wt->setText("TEXT", fonts[font_id], font_size);
 
 			widget = wt;
+		}
+		else if (type == "button") {
+			WidgetButton* wb = new WidgetButton();
+
+			wb->setSize(size);
+			if (!bg_sprite.empty()) wb->setBackground(sprites[bg_sprite], spr_offset);
+			if (!bg_tex.empty()) wb->setBackground(textures[bg_tex], tex_offset);
+			if (!border.empty()) wb->setBorder(borders[border]);
+			if (!bg_tex_hover.empty()) wb->setBackgroundHover(textures[bg_tex_hover], tex_offset);
+			if (!border_hover.empty()) wb->setBorderHover(borders[border_hover]);
+
+			widget = wb;
 		}
 		else {
 			std::cout << "Invalid widget type \"" << type << "\".\n";

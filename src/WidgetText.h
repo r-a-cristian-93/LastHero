@@ -24,6 +24,7 @@ public:
 	void setText(std::string t);
 	void linkToInt(int& value);
 	void updateText();
+	void updateOrigin();
 
 	WidgetText();
 	~WidgetText();
