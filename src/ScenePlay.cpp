@@ -530,17 +530,21 @@ void ScenePlay::sFireWeapon() {
 				e->get<CInput>()->fire_secondary = false;
 			}
 
-			if (e->get<CInput>()->fire_primary && comp_w.p_cooldown_current == 0) {
-				spawnEntity(comp_w.p_tag, comp_w.primary, pos, Entity::STATE_RUN, e->facing);
+			// use only one weapon at a time
+			// the weapon cooldown time should be slightly higher that the firing animation
+			if (comp_w.p_cooldown_current == 0 && comp_w.s_cooldown_current == 0) {
+				if (e->get<CInput>()->fire_primary) {
+					spawnEntity(comp_w.p_tag, comp_w.primary, pos, Entity::STATE_RUN, e->facing);
 
-				e->get<CInput>()->fire_primary = false;
-				comp_w.p_cooldown_current = comp_w.p_cooldown;
-			}
-			else if (e->get<CInput>()->fire_secondary && comp_w.s_cooldown_current == 0) {
-				spawnEntity(comp_w.s_tag, comp_w.secondary, pos, Entity::STATE_RUN, e->facing);
+					e->get<CInput>()->fire_primary = false;
+					comp_w.p_cooldown_current = comp_w.p_cooldown;
+				}
+				else if (e->get<CInput>()->fire_secondary) {
+					spawnEntity(comp_w.s_tag, comp_w.secondary, pos, Entity::STATE_RUN, e->facing);
 
-				e->get<CInput>()->fire_secondary = false;
-				comp_w.s_cooldown_current = comp_w.s_cooldown;
+					e->get<CInput>()->fire_secondary = false;
+					comp_w.s_cooldown_current = comp_w.s_cooldown;
+				}
 			}
 		}
 	}
