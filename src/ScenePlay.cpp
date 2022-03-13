@@ -38,8 +38,6 @@ void ScenePlay::init() {
 	interface.add(game->assets->getWidget("player_health"));
 	interface.add(game->assets->getWidget("base_health"));
 	interface.add(game->assets->getWidget("total_kills"));
-
-	gui_view.reset(sf::FloatRect(0 ,0, game->app_conf.game_w, game->app_conf.game_h));
 }
 
 void ScenePlay::load_level(std::string path) {

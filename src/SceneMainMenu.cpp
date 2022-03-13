@@ -28,7 +28,6 @@ void SceneMainMenu::init() {
 	game->assets->getWidget("button_play")->setColor(mod_highlight);
 	game->assets->getWidget("button_exit")->setColor(mod_dark);
 
-	gui_view.reset(sf::FloatRect(0 ,0, game->app_conf.game_w, game->app_conf.game_h));
 	game->screen_tex.setView(gui_view);
 }
 

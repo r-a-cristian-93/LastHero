@@ -12,6 +12,7 @@ class Scene {
 protected:
 	Game* game;
 	EntityManager ent_mgr;
+	sf::View gui_view;
 
 	int frame_current;
 	bool paused, has_ended;

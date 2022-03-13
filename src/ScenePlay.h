@@ -21,8 +21,6 @@ class ScenePlay: public Scene {
 	int total_kills;
 	std::string total_kills_str;
 
-	sf::View gui_view;
-
 	std::shared_ptr<Entity> player;
 	std::shared_ptr<Entity> base;
 

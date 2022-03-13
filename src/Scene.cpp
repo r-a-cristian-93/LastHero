@@ -14,4 +14,6 @@ Scene::Scene(Game* g)
 
 void Scene::init() {
 	ent_mgr = EntityManager(game->assets);
+
+	gui_view.reset(sf::FloatRect(0 ,0, game->app_conf.game_w, game->app_conf.game_h));
 }
