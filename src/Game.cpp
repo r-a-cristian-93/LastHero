@@ -7,6 +7,7 @@
 #include "SUpdate.h"
 #include "Assets.h"
 #include "ScenePlay.h"
+#include "SceneMainMenu.h"
 
 Game::Game(std::string file_name)
 	:running(false)
@@ -53,9 +54,10 @@ void Game::init(std::string file_name) {
 	window.setKeyRepeatEnabled(false);
 
 	act_mgr = ActionManager();
+	scenes[1] = new SceneMainMenu(this);
 	scenes[2] = new ScenePlay(this, "res/level_001.cfg");
 
-	setScene(2);
+	setScene(1);
 
 	running = true;
 }

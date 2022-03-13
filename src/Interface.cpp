@@ -12,12 +12,4 @@ WidgetVec& Interface::getWidgets() {
 	return widgets;
 }
 
-Interface::~Interface() {
-	for (Widget*& widget:widgets) {
-		if (widget) {
-			delete widget;
-		}
-	}
-
-	widgets.clear();
-}
+Interface::~Interface() {}

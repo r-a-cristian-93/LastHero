@@ -34,6 +34,7 @@ set(SOURCE_FILES
 	src/AnimationSet.cpp
 	src/Scene.cpp
 	src/ScenePlay.cpp
+	src/SceneMainMenu.cpp
 	src/Interface.cpp
 	src/Widget.cpp
 	src/WidgetBox.cpp
