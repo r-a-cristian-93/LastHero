@@ -17,6 +17,7 @@ public:
 	void setBackground(sf::Texture& tex, int offset);
 	void setBackground(sf::Sprite& sprite, sf::Vector2i offset);
 	void setBorder(Border& b);
+	void setColor(sf::Color color);
 
 	WidgetBox();
 	~WidgetBox();

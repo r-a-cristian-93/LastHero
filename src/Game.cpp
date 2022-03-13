@@ -54,10 +54,8 @@ void Game::init(std::string file_name) {
 	window.setKeyRepeatEnabled(false);
 
 	act_mgr = ActionManager();
-	scenes[1] = new SceneMainMenu(this);
-	scenes[2] = new ScenePlay(this, "res/level_001.cfg");
 
-	setScene(2);
+	setScene(GAME_SCENE_MENU);
 
 	running = true;
 }
@@ -132,7 +130,18 @@ void Game::sUserInput() {
 }
 
 void Game::setScene(size_t id) {
-	current_scene = scenes[id];
+	act_mgr = ActionManager();
+
+	switch (id) {
+		case GAME_SCENE_MENU:
+			current_scene = new SceneMainMenu(this);
+		break;
+		case GAME_SCENE_PLAY:
+			current_scene = new ScenePlay(this, "res/level_001.cfg");
+		break;
+	}
+
+	//current_scene = scenes[id];
 }
 
 Game::~Game() {

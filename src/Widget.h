@@ -18,6 +18,7 @@ public:
 	void setPosRel(sf::Vector2i pos);
 	virtual void setPosAbs(sf::Vector2i pos) = 0;
 	void setSize(sf::Vector2i s);
+	virtual void setColor(sf::Color color) {};
 
 	void addChild(Widget* child);
 	virtual std::vector<sf::Drawable*>& getDrawables();

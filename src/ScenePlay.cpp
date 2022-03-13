@@ -19,10 +19,12 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::D, Action::MOVE_RIGHT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Space, Action::FIRE_PRIMARY);
+
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::FIRE_PRIMARY);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::FIRE_SECONDARY);
+
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
 
 
 	load_level("res/level_001.cfg");
@@ -703,6 +705,9 @@ void ScenePlay::doAction(const Action* a) {
 			break;
 			case Action::GAME_PAUSE:
 				paused = !paused;
+			break;
+			case Action::CHANGE_SCENE_MENU:
+				game->setScene(Game::GAME_SCENE_MENU);
 			break;
 			case Action::SPAWN_ENEMY:
 				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);

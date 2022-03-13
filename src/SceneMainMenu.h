@@ -5,8 +5,19 @@
 #include "Interface.h"
 
 class SceneMainMenu: public Scene {
+	sf::Sprite* background;
 	Interface interface;
 	sf::View gui_view;
+
+	sf::Color mod_highlight = {255, 255, 255};
+	sf::Color mod_dark = {100, 100, 100};
+
+	enum {
+		SELECT_PLAY,
+		SELECT_EXIT,
+	};
+
+	size_t selection = SELECT_PLAY;
 
 	void init();
 

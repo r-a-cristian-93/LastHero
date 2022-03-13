@@ -22,7 +22,6 @@ class Scene;
 
 class Game {
 private:
-	bool running;
 	Scene* current_scene;
 	std::map<size_t, Scene*> scenes;
 
@@ -33,10 +32,11 @@ private:
 public:
 	enum {
 		NONE,
-		SCENE_MENU,
-		SCENE_PLAY
+		GAME_SCENE_MENU,
+		GAME_SCENE_PLAY,
 	};
 
+	bool running;
 	sf::RenderWindow window;
 	sf::RenderTexture screen_tex;
 	sf::Sprite screen_sprite;

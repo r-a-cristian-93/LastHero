@@ -45,6 +45,10 @@ void WidgetBox::setBorder(Border& b) {
 	}
 }
 
+void WidgetBox::setColor(sf::Color color) {
+	if (background) background->setColor(color);
+}
+
 WidgetBox::~WidgetBox() {
 	if (border) delete border;
 	if (background) delete background;
