@@ -555,10 +555,6 @@ void ScenePlay::sLifespan() {
 		checkLifespan(e);
 	}
 
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_CHILD)) {
-		checkLifespan(e);
-	}
-
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_SFX)) {
 		checkLifespan(e);
 	}

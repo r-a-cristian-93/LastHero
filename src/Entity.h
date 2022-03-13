@@ -11,7 +11,6 @@ public:
 		TAG_ENEMY,
 		TAG_PROJECTILE,
 		TAG_MISSLE,
-		TAG_CHILD,
 		TAG_SFX,
 	};
 
@@ -39,6 +38,7 @@ public:
 
 	const size_t id;
 	const size_t tag;
+	std::string* name;
 	bool alive;
 	size_t facing;
 	size_t state;
@@ -49,6 +49,7 @@ public:
 
 	Entity(size_t _tag, size_t _id);
 	Entity(size_t _tag, size_t _id, Components& _components);
+	Entity(size_t _tag, size_t _id, std::string& name, Components& _components);
 
 	template<class T>
 	void add(T* t) {

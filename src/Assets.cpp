@@ -12,21 +12,14 @@ Assets::Assets() {
 	loadShaders();
 }
 
-Components& Assets::getRecipe(size_t tag, std::string& recipe_name) {
+Components& Assets::getRecipe(size_t tag, const std::string& recipe_name) {
 	return recipe[tag][recipe_name];
 }
 
-Components& Assets::getRecipeRand(size_t tag) {
-	std::map<std::string, Components>::iterator it;
-	int k = recipe[tag].size() - rand() % recipe[tag].size();
-
-	for (it = recipe[tag].begin(); it != recipe[tag].end(); it++) {
-		k--;
-		if (k <= 0) {
-			return it->second;
-		}
-	}
-	return recipe[tag][""];
+const std::string& Assets::getRecipeName(size_t tag) {
+	std::map<std::string, Components>::iterator it = recipe[tag].begin();
+	std::advance(it, rand() % recipe[tag].size());
+	return (it->first);
 }
 
 sf::Font& Assets::getFont(size_t name) {

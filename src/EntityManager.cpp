@@ -12,13 +12,8 @@ EntityManager::EntityManager(Assets* _assets)
 
 std::shared_ptr<Entity> EntityManager::add(size_t tag) {
 	std::shared_ptr<Entity> e = nullptr;
-
-	if (tag == Entity::TAG_CHILD) {
-		e = std::make_shared<Entity>(tag, entities_counter++);
-	}
-	else {
-		e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipeRand(tag));
-	}
+	const std::string& recipe_name = assets->getRecipeName(tag);
+	e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipe(tag, recipe_name));
 
 	entities_to_add.push_back(e);
 	return e;
@@ -26,7 +21,7 @@ std::shared_ptr<Entity> EntityManager::add(size_t tag) {
 
 std::shared_ptr<Entity> EntityManager::add(size_t tag, std::string& recipe_name) {
 	std::shared_ptr<Entity> e = nullptr;
-	e = std::make_shared<Entity>(tag, entities_counter++, assets->getRecipe(tag, recipe_name));
+	e = std::make_shared<Entity>(tag, entities_counter++, recipe_name, assets->getRecipe(tag, recipe_name));
 
 	entities_to_add.push_back(e);
 	return e;

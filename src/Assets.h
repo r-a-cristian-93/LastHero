@@ -88,8 +88,8 @@ public:
 		return std::get<T*>(c);
 	}
 
-	Components& getRecipe(size_t tag, std::string& recipe_name);
-	Components& getRecipeRand(size_t tag);
+	Components& getRecipe(size_t tag, const std::string& recipe_name);
+	const std::string& getRecipeName(size_t tag);
 	sf::Font& getFont(size_t name);
 	Border& getBorder(std::string name);
 	sf::Texture& getTexture(std::string name);
