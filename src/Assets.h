@@ -46,6 +46,7 @@ private:
 	std::string word;
 
 	std::map<size_t, std::map<std::string, Components>> recipe;
+	std::map<std::string, size_t> recipe_name_id;
 
 	std::map<size_t, sf::Font> fonts;
 	std::map<std::string, sf::Texture> textures;

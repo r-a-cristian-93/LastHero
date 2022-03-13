@@ -152,6 +152,12 @@ void Assets::loadEntity() {
 		}
 	}
 
+	// register recipe id
+	if (!recipe_name_id.count(data_ent.name)) {
+		size_t new_id = recipe_name_id.size();
+		recipe_name_id[data_ent.name] = new_id;
+	}
+
 	switch (data_ent.type) {
 		case Entity::TAG_PLAYER: {
 			sf::CircleShape shape;
@@ -319,6 +325,10 @@ void Assets::loadEntity() {
 				recipe[data_ent.type][data_ent.name].get<CAnimation>()->prio = data_ent.prio;
 			}
 		}
+		break;
+		default:
+			std::cout << "Invalid entity tag \"" << data_ent.type << "\".\n";
+			exit(0);
 		break;
 	}
 }
