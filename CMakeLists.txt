@@ -39,7 +39,6 @@ set(SOURCE_FILES
 	src/Widget.cpp
 	src/WidgetBox.cpp
 	src/WidgetText.cpp
-	src/WidgetButton.cpp
 	src/Border.cpp
 	src/Tilemap.cpp
 )

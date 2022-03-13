@@ -22,6 +22,7 @@ public:
 
 	void setText(std::string t, sf::Font& font, unsigned int size);
 	void setText(std::string t);
+	void setColor(sf::Color color);
 	void linkToInt(int& value);
 	void updateText();
 	void updateOrigin();

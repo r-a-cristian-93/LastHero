@@ -533,6 +533,7 @@ void Assets::loadWidget() {
 	int tex_offset(0), w(0), h(0), font_size(0);
 	size_t font_id(NONE);
 	std::vector<std::string> childs;
+	sf::Color text_color(255, 255, 255);
 
 	while (file >> word) {
 		if (word == "_END") break;
@@ -554,6 +555,11 @@ void Assets::loadWidget() {
 				std::cout << "Invalid font specified \"" << word << "\".\n";
 				exit(0);
 			}
+		}
+		else if (word == "text_color") {
+			int r, g, b;
+			file >> r, g, b;
+			text_color = sf::Color(r, g, b);
 		}
 		else if (word == "child") {
 			file >> word;
@@ -579,20 +585,9 @@ void Assets::loadWidget() {
 
 			wt->setSize(size);
 			wt->setText("TEXT", fonts[font_id], font_size);
+			wt->setColor(text_color);
 
 			widget = wt;
-		}
-		else if (type == "button") {
-			WidgetButton* wb = new WidgetButton();
-
-			wb->setSize(size);
-			if (!bg_sprite.empty()) wb->setBackground(sprites[bg_sprite], spr_offset);
-			if (!bg_tex.empty()) wb->setBackground(textures[bg_tex], tex_offset);
-			if (!border.empty()) wb->setBorder(borders[border]);
-			if (!bg_tex_hover.empty()) wb->setBackgroundHover(textures[bg_tex_hover], tex_offset);
-			if (!border_hover.empty()) wb->setBorderHover(borders[border_hover]);
-
-			widget = wb;
 		}
 		else {
 			std::cout << "Invalid widget type \"" << type << "\".\n";

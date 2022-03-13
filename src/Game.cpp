@@ -57,7 +57,7 @@ void Game::init(std::string file_name) {
 	scenes[1] = new SceneMainMenu(this);
 	scenes[2] = new ScenePlay(this, "res/level_001.cfg");
 
-	setScene(1);
+	setScene(2);
 
 	running = true;
 }

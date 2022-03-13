@@ -28,6 +28,12 @@ void WidgetText::setText(std::string t) {
 	}
 }
 
+void WidgetText::setColor(sf::Color color) {
+	if (text) {
+		text->setFillColor(color);
+	}
+}
+
 void WidgetText::linkToInt(int& value) {
 	link_int = & value;
 }

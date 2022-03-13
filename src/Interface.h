@@ -4,7 +4,6 @@
 #include "Widget.h"
 #include "WidgetBox.h"
 #include "WidgetText.h"
-#include "WidgetButton.h"
 
 typedef std::vector<Widget*> WidgetVec;
 
