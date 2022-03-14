@@ -12,14 +12,23 @@ Assets::Assets() {
 	loadShaders();
 }
 
-Components& Assets::getRecipe(size_t tag, const std::string& recipe_name) {
-	return recipe[tag][recipe_name];
+Components& Assets::getRecipe(size_t tag, size_t name_id) {
+	return recipe[tag][name_id];
 }
 
-const std::string& Assets::getRecipeName(size_t tag) {
-	std::map<std::string, Components>::iterator it = recipe[tag].begin();
+size_t Assets::getRecipeName(size_t tag) {
+	std::map<size_t, Components>::iterator it = recipe[tag].begin();
 	std::advance(it, rand() % recipe[tag].size());
 	return (it->first);
+}
+
+size_t Assets::getRecipeNameID(std::string entity_name) {
+	if (recipe_name_id.count(entity_name)) {
+		return recipe_name_id[entity_name];
+	}
+
+	std::cout << "recipe_name_id \"" << entity_name << "\" not found.\n";
+	exit(0);
 }
 
 sf::Font& Assets::getFont(size_t name) {
@@ -52,6 +61,14 @@ void Assets::loadEntities() {
 	}
 
 	file.close();
+
+#ifdef DEBUG_RECIPE_NAME_ID
+	std::map<std::string, size_t>::iterator it;
+	for (it = recipe_name_id.begin(); it != recipe_name_id.end(); it++) {
+		std::cout << it->first << " " << it->second << std::endl;
+	}
+#endif
+
 }
 
 void Assets::loadEntity() {
@@ -68,7 +85,17 @@ void Assets::loadEntity() {
 			else if (word == "sfx") data_ent.type = Entity::TAG_SFX;
 			else data_ent.type = Entity::NONE;
 		}
-		else if (word == "name") file >> data_ent.name;
+		else if (word == "name") {
+			file >> word;
+
+			// register recipe id
+			if (!recipe_name_id.count(word)) {
+				size_t new_id = recipe_name_id.size();
+				recipe_name_id[word] = new_id;
+			}
+
+			data_ent.name_id = getRecipeNameID(word);
+		}
 		else if (word == "velocity") file >> data_ent.velocity;
 		else if (word == "fill") {
 			int r, g, b, a;
@@ -114,7 +141,9 @@ void Assets::loadEntity() {
 			else if (word == "enemy") data_ent.p_tag = Entity::TAG_ENEMY;
 			else if (word == "sfx") data_ent.p_tag = Entity::TAG_SFX;
 
-			file >> data_ent.weapon_primary >> data_ent.primary_cooldown;
+			file >> word;
+			data_ent.weapon_primary = getRecipeNameID(word);
+			file >> data_ent.primary_cooldown;
 		}
 		else if (word == "weapon_secondary") {
 			file >> word;
@@ -125,7 +154,9 @@ void Assets::loadEntity() {
 			else if (word == "enemy") data_ent.s_tag = Entity::TAG_ENEMY;
 			else if (word == "sfx") data_ent.s_tag = Entity::TAG_SFX;
 
-			file >> data_ent.weapon_secondary >> data_ent.secondary_cooldown;
+			file >> word;
+			data_ent.weapon_secondary = getRecipeNameID(word);
+			file >> data_ent.secondary_cooldown;
 		}
 		else if (word == "projectile_spawn") {
 			for (int i=1; i<=8; i++) {
@@ -152,12 +183,6 @@ void Assets::loadEntity() {
 		}
 	}
 
-	// register recipe id
-	if (!recipe_name_id.count(data_ent.name)) {
-		size_t new_id = recipe_name_id.size();
-		recipe_name_id[data_ent.name] = new_id;
-	}
-
 	switch (data_ent.type) {
 		case Entity::TAG_PLAYER: {
 			sf::CircleShape shape;
@@ -181,23 +206,23 @@ void Assets::loadEntity() {
 				collision.hitbox = data_ent.hitbox;
 			}
 
-			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
-			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
-			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(collision));
-			recipe[data_ent.type][data_ent.name].add<CInput>(new CInput());
-			recipe[data_ent.type][data_ent.name].add<CStats>(new CStats(stats));
-			recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
-			recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
-			recipe[data_ent.type][data_ent.name].get<CAnimation>()->prio = data_ent.prio;
+			recipe[data_ent.type][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
+			recipe[data_ent.type][data_ent.name_id].add<CShape>(new CShape(shape));
+			recipe[data_ent.type][data_ent.name_id].add<CCollision>(new CCollision(collision));
+			recipe[data_ent.type][data_ent.name_id].add<CInput>(new CInput());
+			recipe[data_ent.type][data_ent.name_id].add<CStats>(new CStats(stats));
+			recipe[data_ent.type][data_ent.name_id].add<CAnimation>(new CAnimation(data_ent.animation_set));
+			recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
+			recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
 
-			if (!data_ent.weapon_primary.empty() || !data_ent.weapon_secondary.empty()) {
+			if (data_ent.weapon_primary!=NONE || data_ent.weapon_secondary!=NONE) {
 				CWeapon weapon(data_ent.weapon_primary, data_ent.weapon_secondary);
 				weapon.p_tag = data_ent.p_tag;
 				weapon.s_tag = data_ent.s_tag;
 				weapon.projectile_spawn = data_ent.projectile_spawn;
 				weapon.p_cooldown = data_ent.primary_cooldown;
 				weapon.s_cooldown = data_ent.secondary_cooldown;
-				recipe[data_ent.type][data_ent.name].add<CWeapon>(new CWeapon(weapon));
+				recipe[data_ent.type][data_ent.name_id].add<CWeapon>(new CWeapon(weapon));
 			}
 		}
 		break;
@@ -221,7 +246,7 @@ void Assets::loadEntity() {
 					stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
 					stats.effective[i] = stats.initial[i];
 				}
-				recipe[data_ent.type][data_ent.name].add<CStats>(new CStats(stats));
+				recipe[data_ent.type][data_ent.name_id].add<CStats>(new CStats(stats));
 			}
 
 
@@ -230,17 +255,17 @@ void Assets::loadEntity() {
 				collision.hitbox = data_ent.hitbox;
 			}
 
-			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
-			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
-			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision());
-			recipe[data_ent.type][data_ent.name].add<CLifespan>(new CLifespan(data_ent.lifespan));
-			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(collision));
+			recipe[data_ent.type][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
+			recipe[data_ent.type][data_ent.name_id].add<CShape>(new CShape(shape));
+			recipe[data_ent.type][data_ent.name_id].add<CCollision>(new CCollision());
+			recipe[data_ent.type][data_ent.name_id].add<CLifespan>(new CLifespan(data_ent.lifespan));
+			recipe[data_ent.type][data_ent.name_id].add<CCollision>(new CCollision(collision));
 
 
 			if (data_ent.animation_set.animations.size() > 0) {
-				recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
-				recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
-				recipe[data_ent.type][data_ent.name].get<CAnimation>()->prio = data_ent.prio;
+				recipe[data_ent.type][data_ent.name_id].add<CAnimation>(new CAnimation(data_ent.animation_set));
+				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
+				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
 			}
 		}
 		break;
@@ -248,14 +273,14 @@ void Assets::loadEntity() {
 			sf::CircleShape shape;
 			shape.setFillColor(data_ent.fill);
 
-			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
-			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
-			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision());
-			recipe[data_ent.type][data_ent.name].add<CTarget>(new CTarget());
+			recipe[data_ent.type][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
+			recipe[data_ent.type][data_ent.name_id].add<CShape>(new CShape(shape));
+			recipe[data_ent.type][data_ent.name_id].add<CCollision>(new CCollision());
+			recipe[data_ent.type][data_ent.name_id].add<CTarget>(new CTarget());
 			if (data_ent.animation_set.animations.size() > 0) {
-				recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
-				recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
-				recipe[data_ent.type][data_ent.name].get<CAnimation>()->prio = data_ent.prio;
+				recipe[data_ent.type][data_ent.name_id].add<CAnimation>(new CAnimation(data_ent.animation_set));
+				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
+				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
 			}
 		}
 		break;
@@ -281,7 +306,7 @@ void Assets::loadEntity() {
 					stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
 					stats.effective[i] = stats.initial[i];
 				}
-				recipe[data_ent.type][data_ent.name].add<CStats>(new CStats(stats));
+				recipe[data_ent.type][data_ent.name_id].add<CStats>(new CStats(stats));
 			}
 
 			CCollision collision;
@@ -289,24 +314,24 @@ void Assets::loadEntity() {
 				collision.hitbox = data_ent.hitbox;
 			}
 
-			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
-			recipe[data_ent.type][data_ent.name].add<CShape>(new CShape(shape));
-			recipe[data_ent.type][data_ent.name].add<CCollision>(new CCollision(collision));
-			recipe[data_ent.type][data_ent.name].add<CScore>(new CScore(data_ent.vertices));
+			recipe[data_ent.type][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
+			recipe[data_ent.type][data_ent.name_id].add<CShape>(new CShape(shape));
+			recipe[data_ent.type][data_ent.name_id].add<CCollision>(new CCollision(collision));
+			recipe[data_ent.type][data_ent.name_id].add<CScore>(new CScore(data_ent.vertices));
 			if (data_ent.animation_set.animations.size() > 0) {
-				recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
-				recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
-				recipe[data_ent.type][data_ent.name].get<CAnimation>()->prio = data_ent.prio;
+				recipe[data_ent.type][data_ent.name_id].add<CAnimation>(new CAnimation(data_ent.animation_set));
+				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
+				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
 			}
-			if (!data_ent.weapon_primary.empty() || !data_ent.weapon_secondary.empty()) {
+			if (data_ent.weapon_primary!=NONE || data_ent.weapon_secondary!=NONE) {
 				CWeapon weapon(data_ent.weapon_primary, data_ent.weapon_secondary);
 				weapon.p_tag = data_ent.p_tag;
 				weapon.s_tag = data_ent.s_tag;
 				weapon.projectile_spawn = data_ent.projectile_spawn;
 				weapon.p_cooldown = data_ent.primary_cooldown;
 				weapon.s_cooldown = data_ent.secondary_cooldown;
-				recipe[data_ent.type][data_ent.name].add<CWeapon>(new CWeapon(weapon));
-				recipe[data_ent.type][data_ent.name].add<CInput>(new CInput());
+				recipe[data_ent.type][data_ent.name_id].add<CWeapon>(new CWeapon(weapon));
+				recipe[data_ent.type][data_ent.name_id].add<CInput>(new CInput());
 			}
 		}
 		break;
@@ -316,13 +341,13 @@ void Assets::loadEntity() {
 			shape.setOutlineColor(data_ent.outline);
 			shape.setOutlineThickness(data_ent.out_thk);
 
-			recipe[data_ent.type][data_ent.name].add<CTransform>(new CTransform(data_ent.velocity));
-			recipe[data_ent.type][data_ent.name].add<CLifespan>(new CLifespan(data_ent.lifespan));
+			recipe[data_ent.type][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
+			recipe[data_ent.type][data_ent.name_id].add<CLifespan>(new CLifespan(data_ent.lifespan));
 
 			if (data_ent.animation_set.animations.size() > 0) {
-				recipe[data_ent.type][data_ent.name].add<CAnimation>(new CAnimation(data_ent.animation_set));
-				recipe[data_ent.type][data_ent.name].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
-				recipe[data_ent.type][data_ent.name].get<CAnimation>()->prio = data_ent.prio;
+				recipe[data_ent.type][data_ent.name_id].add<CAnimation>(new CAnimation(data_ent.animation_set));
+				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
+				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
 			}
 		}
 		break;

@@ -10,8 +10,8 @@ public:
 	// dir, dx, dy - offset for projectile spawning dependent on direction and relative to entity's position
 	std::map<size_t, sf::Vector2f> projectile_spawn;
 
-	std::string primary;
-	std::string secondary;
+	size_t primary;
+	size_t secondary;
 
 	size_t p_tag;
 	size_t s_tag;
@@ -22,7 +22,7 @@ public:
 
 	CWeapon();
 	CWeapon(const CWeapon& c);
-	CWeapon(std::string& primary, std::string& secondary);
+	CWeapon(size_t primary, size_t secondary);
 };
 
 #endif

@@ -6,7 +6,7 @@
 class Entity {
 public:
 	enum {
-		NONE,
+		NONE = 0,
 		TAG_PLAYER,
 		TAG_ENEMY,
 		TAG_PROJECTILE,
@@ -38,7 +38,7 @@ public:
 
 	const size_t id;
 	const size_t tag;
-	std::string* name;
+	const size_t name;
 	bool alive;
 	size_t facing;
 	size_t state;
@@ -49,7 +49,7 @@ public:
 
 	Entity(size_t _tag, size_t _id);
 	Entity(size_t _tag, size_t _id, Components& _components);
-	Entity(size_t _tag, size_t _id, std::string& name, Components& _components);
+	Entity(size_t _tag, size_t _id, size_t _name, Components& _components);
 
 	template<class T>
 	void add(T* t) {

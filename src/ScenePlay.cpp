@@ -51,7 +51,7 @@ void ScenePlay::load_level(std::string path) {
 	int* level_layer;
 
 	int frame, pos_x, pos_y, dir_x, dir_y;
-	std::string enemy_name;
+	size_t enemy_name;
 	size_t tag, code, type, state, facing;
 
 	ActionStream action_stream;
@@ -93,8 +93,10 @@ void ScenePlay::load_level(std::string path) {
 				else if (word == "entity") {
 					file >> word;
 					if (word == "enemy") {
+						file >> word;
+
 						tag = Entity::TAG_ENEMY;
-						file >> enemy_name;
+						enemy_name = game->assets->getRecipeNameID(word);
 					}
 				}
 				else if (word == "pos") file >> pos_x >> pos_y;
@@ -119,7 +121,7 @@ void ScenePlay::load_level(std::string path) {
 
 			Action* action = new Action(code, type);
 			action->ent_tag = new size_t(tag);
-			action->ent_name = new std::string(enemy_name);
+			action->ent_name = new size_t(enemy_name);
 			action->pos = new sf::Vector2f(pos_x, pos_y);
 			action->state = new size_t(state);
 			action->facing = new size_t(facing);
@@ -202,7 +204,7 @@ void ScenePlay::spawnBase() {
 	const sf::Vector2f pos(game->app_conf.window_w/2 + 200, game->app_conf.window_h/2);
 
 
-	std::string recipe("cow");
+	size_t recipe = game->assets->getRecipeNameID("cow");
 	base = ent_mgr.add(Entity::TAG_ENEMY, recipe);
 	base->get<CTransform>()->pos = pos;
 	base->get<CTransform>()->dir = {-1, 1};
@@ -243,7 +245,7 @@ void ScenePlay::spawnEnemy() {
 	e->get<CStats>()->level = rand() % 10;
 }
 
-void ScenePlay::spawnEntity(size_t tag, std::string& recipe_name, sf::Vector2f& pos, size_t state, size_t facing) {
+void ScenePlay::spawnEntity(size_t tag, size_t recipe_name, sf::Vector2f& pos, size_t state, size_t facing) {
 	sf::Vector2f dir(0, 0);
 
 	switch (facing) {
@@ -259,12 +261,14 @@ void ScenePlay::spawnEntity(size_t tag, std::string& recipe_name, sf::Vector2f& 
 
 	std::shared_ptr<Entity> e = ent_mgr.add(tag, recipe_name);
 
-	e->state = state;
-	e->facing = facing;
-	e->get<CTransform>()->pos = pos;
-	e->get<CTransform>()->dir = dir;
-	e->get<CTransform>()->prev_dir = dir;
-	e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
+	if (e) {
+		e->state = state;
+		e->facing = facing;
+		e->get<CTransform>()->pos = pos;
+		e->get<CTransform>()->dir = dir;
+		e->get<CTransform>()->prev_dir = dir;
+		e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
+	}
 }
 
 void ScenePlay::sEnemySpawner() {
@@ -497,7 +501,7 @@ void ScenePlay::sStateFacing() {
 }
 
 void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
-	std::string recipe = "glowing_bullet_explosion";
+	size_t recipe = game->assets->getRecipeNameID("glowing_bullet_explosion");
 	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_SFX, recipe);
 
 	e->add<CTransform>(new CTransform(pos, 0));
@@ -531,7 +535,7 @@ void ScenePlay::sFireWeapon() {
 			}
 
 			// use only one weapon at a time
-			// the weapon cooldown time should be slightly higher that the firing animation
+			// the weapon cooldown time should be slightly higher than the firing animation
 			if (comp_w.p_cooldown_current == 0 && comp_w.s_cooldown_current == 0) {
 				if (e->get<CInput>()->fire_primary) {
 					spawnEntity(comp_w.p_tag, comp_w.primary, pos, Entity::STATE_RUN, e->facing);

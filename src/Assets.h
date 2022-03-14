@@ -10,7 +10,7 @@
 
 struct EntityDataset {
 	size_t type;
-	std::string name = "";
+	size_t name_id = 0;
 	float velocity = 0;
 	sf::Color fill = {255, 255, 255, 111};
 	sf::Color outline {0, 0, 0, 255};
@@ -23,8 +23,8 @@ struct EntityDataset {
 	int* stats_per_level = nullptr;
 	AnimationSet animation_set;
 	sf::Color color_mod = {255, 255, 255, 255};
-	std::string weapon_primary;
-	std::string weapon_secondary;
+	size_t weapon_primary = 0;
+	size_t weapon_secondary = 0;
 	size_t p_tag = 0;
 	size_t s_tag = 0;
 	size_t primary_cooldown = 0;
@@ -45,8 +45,8 @@ private:
 	std::ifstream file, file_two;
 	std::string word;
 
-	std::map<size_t, std::map<std::string, Components>> recipe;
-	std::map<std::string, size_t> recipe_name_id;
+	std::map<size_t, std::map<size_t, Components>> recipe;
+	std::map<std::string, size_t> recipe_name_id = {{"", NONE}};
 
 	std::map<size_t, sf::Font> fonts;
 	std::map<std::string, sf::Texture> textures;
@@ -76,7 +76,7 @@ private:
 
 public:
 	enum {
-		NONE,
+		NONE = 0,
 		FONT_COURIER,
 		FONT_MILITARY
 	};
@@ -89,8 +89,9 @@ public:
 		return std::get<T*>(c);
 	}
 
-	Components& getRecipe(size_t tag, const std::string& recipe_name);
-	const std::string& getRecipeName(size_t tag);
+	Components& getRecipe(size_t tag, size_t recipe_name);
+	size_t getRecipeName(size_t tag);
+	size_t getRecipeNameID(std::string entity_name);
 	sf::Font& getFont(size_t name);
 	Border& getBorder(std::string name);
 	sf::Texture& getTexture(std::string name);

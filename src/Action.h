@@ -39,7 +39,7 @@ public:
 	size_t* ent_tag;
 	size_t* state;
 	size_t* facing;
-	std::string* ent_name;
+	size_t* ent_name;
 	sf::Vector2f* pos;
 	sf::Vector2f* dir;
 

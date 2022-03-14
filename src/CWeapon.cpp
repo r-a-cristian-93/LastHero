@@ -1,8 +1,8 @@
 #include "CWeapon.h"
 
 CWeapon::CWeapon()
-	:primary("")
-	,secondary("")
+	:primary(0)
+	,secondary(0)
 	,p_tag(0)
 	,s_tag(0)
 	,p_cooldown(0)
@@ -24,7 +24,7 @@ CWeapon::CWeapon(const CWeapon& c)
 	,projectile_spawn(c.projectile_spawn)
 	{}
 
-CWeapon::CWeapon(std::string& _primary, std::string& _secondary)
+CWeapon::CWeapon(size_t _primary, size_t _secondary)
 	:primary(_primary)
 	,secondary(_secondary)
 	,p_tag(0)
