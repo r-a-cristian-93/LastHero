@@ -63,6 +63,7 @@ void Assets::loadEntities() {
 	file.close();
 
 #ifdef DEBUG_RECIPE_NAME_ID
+	std::cout << "DEBUG_RECIPE_NAME_ID";
 	std::map<std::string, size_t>::iterator it;
 	for (it = recipe_name_id.begin(); it != recipe_name_id.end(); it++) {
 		std::cout << it->first << " " << it->second << std::endl;
@@ -79,11 +80,15 @@ void Assets::loadEntity() {
 		else if (word == "type") {
 			file >> word;
 			if (word == "player") data_ent.type = Entity::TAG_PLAYER;
+			else if (word == "base") data_ent.type = Entity::TAG_BASE;
 			else if (word == "projectile") data_ent.type = Entity::TAG_PROJECTILE;
 			else if (word == "missle") data_ent.type = Entity::TAG_MISSLE;
 			else if (word == "enemy") data_ent.type = Entity::TAG_ENEMY;
 			else if (word == "sfx") data_ent.type = Entity::TAG_SFX;
-			else data_ent.type = Entity::NONE;
+			else {
+				std::cout << "Invalid entity tag \"" << data_ent.s_tag << "\".\n";
+				exit(0);
+			}
 		}
 		else if (word == "name") {
 			file >> word;
@@ -284,6 +289,7 @@ void Assets::loadEntity() {
 			}
 		}
 		break;
+		case Entity::TAG_BASE:
 		case Entity::TAG_ENEMY: {
 			sf::CircleShape shape;
 			shape.setFillColor(data_ent.fill);
@@ -352,8 +358,6 @@ void Assets::loadEntity() {
 		}
 		break;
 		default:
-			std::cout << "Invalid entity tag \"" << data_ent.type << "\".\n";
-			exit(0);
 		break;
 	}
 }

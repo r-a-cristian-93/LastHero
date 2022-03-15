@@ -7,6 +7,7 @@ ScenePlay::ScenePlay(Game* g, std::string lp)
 	:Scene(g)
 	,level_path(lp)
 	,total_kills(0)
+	,game_state(GAME_PLAY)
 {
 	init();
 }
@@ -28,8 +29,8 @@ void ScenePlay::init() {
 
 
 	load_level("res/level_001.cfg");
-	spawnPlayer();
-	spawnBase();
+	//spawnPlayer();
+	//spawnBase();
 
 	static_cast<WidgetText*>(game->assets->getWidget("player_health_text"))->linkToInt(player->get<CStats>()->effective[CStats::HEALTH]);
 	static_cast<WidgetText*>(game->assets->getWidget("base_health_text"))->linkToInt(base->get<CStats>()->effective[CStats::HEALTH]);
@@ -38,6 +39,18 @@ void ScenePlay::init() {
 	interface.add(game->assets->getWidget("player_health"));
 	interface.add(game->assets->getWidget("base_health"));
 	interface.add(game->assets->getWidget("total_kills"));
+
+	// run this block to display level;
+	{
+		ent_mgr.update();
+		SUpdate::updatePosition(ent_mgr.getEntities(), map_ground.getBounds());
+		sCollisionCheck();
+		sCollisionSolve();
+		sStateFacing();
+		sFireWeapon();
+		sInterface();
+		sAnimation();
+	}
 }
 
 void ScenePlay::load_level(std::string path) {
@@ -82,7 +95,9 @@ void ScenePlay::load_level(std::string path) {
 				if (word == "_END") break;
 				else if (word == "code") {
 					file >> word;
-					if (word == "spawn") code = Action::SPAWN_ENEMY;
+					if (word == "spawn") code = Action::SPAWN_ENTITY;
+					else if (word  == "spawn_player") code = Action::SPAWN_PLAYER;
+					else if (word  == "spawn_base") code = Action::SPAWN_BASE;
 				}
 				else if (word == "type") {
 					file >> word;
@@ -92,12 +107,16 @@ void ScenePlay::load_level(std::string path) {
 				else if (word == "frame") file >> frame;
 				else if (word == "entity") {
 					file >> word;
-					if (word == "enemy") {
-						file >> word;
-
-						tag = Entity::TAG_ENEMY;
-						enemy_name = game->assets->getRecipeNameID(word);
+					if (word == "enemy") tag = Entity::TAG_ENEMY;
+					else if (word == "player") tag = Entity::TAG_PLAYER;
+					else if (word == "base") tag = Entity::TAG_BASE;
+					else {
+						std::cout << "LOAD LEVEL: Tag \"" << "\" is not supported\n";
+						exit(0);
 					}
+
+					file >> word;
+					enemy_name = game->assets->getRecipeNameID(word);
 				}
 				else if (word == "pos") file >> pos_x >> pos_y;
 				else if (word == "state") {
@@ -145,7 +164,7 @@ void ScenePlay::update() {
 	{
 		PROFILE_SCOPE("SCENE_LOGIC");
 
-		if (!paused) {
+		if (!paused && game_state == GAME_PLAY) {
 			ent_mgr.update();
 
 			//sEnemySpawner();
@@ -246,6 +265,15 @@ void ScenePlay::spawnEnemy() {
 }
 
 void ScenePlay::spawnEntity(size_t tag, size_t recipe_name, sf::Vector2f& pos, size_t state, size_t facing) {
+	spawnEntity(tag, recipe_name, nullptr, pos, state, facing);
+}
+
+void ScenePlay::spawnEntity(size_t tag, size_t recipe_name, std::shared_ptr<Entity> owner, sf::Vector2f& pos, size_t state, size_t facing) {
+
+#ifdef DEBUG_SPAWN_ENTITY
+	std::cout << "spawnEntity()  tag: " << tag << " name_id: " << recipe_name << " state: " << state << " facing: " << facing << std::endl;
+#endif
+
 	sf::Vector2f dir(0, 0);
 
 	switch (facing) {
@@ -262,12 +290,16 @@ void ScenePlay::spawnEntity(size_t tag, size_t recipe_name, sf::Vector2f& pos, s
 	std::shared_ptr<Entity> e = ent_mgr.add(tag, recipe_name);
 
 	if (e) {
+		e->owner = owner;
 		e->state = state;
 		e->facing = facing;
-		e->get<CTransform>()->pos = pos;
-		e->get<CTransform>()->dir = dir;
-		e->get<CTransform>()->prev_dir = dir;
-		e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
+
+			e->get<CTransform>()->pos = pos;
+			e->get<CTransform>()->dir = dir;
+			e->get<CTransform>()->prev_dir = dir;
+
+			e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
+
 	}
 }
 
@@ -351,7 +383,7 @@ void ScenePlay::sCollisionSolve() {
 						spawnExplosion(colliders[i]->get<CTransform>()->pos);
 
 						// hit flag is set only for one frame
-						// it will be unset by sStareFacing
+						// it will be unset by sStateFacing
 						entity->hit = true;
 
 						if (entity->get<CStats>() && colliders[i]->get<CStats>()) {
@@ -376,6 +408,12 @@ void ScenePlay::sCollisionSolve() {
 								entity->alive = false;
 
 								total_kills++;
+
+								if (colliders[i]->owner) {
+									if (colliders[i]->owner == player) {
+										kills_per_enemy[entity->name]++;
+									}
+								}
 							}
 						}
 					}
@@ -538,13 +576,13 @@ void ScenePlay::sFireWeapon() {
 			// the weapon cooldown time should be slightly higher than the firing animation
 			if (comp_w.p_cooldown_current == 0 && comp_w.s_cooldown_current == 0) {
 				if (e->get<CInput>()->fire_primary) {
-					spawnEntity(comp_w.p_tag, comp_w.primary, pos, Entity::STATE_RUN, e->facing);
+					spawnEntity(comp_w.p_tag, comp_w.primary, e, pos, Entity::STATE_RUN, e->facing);
 
 					e->get<CInput>()->fire_primary = false;
 					comp_w.p_cooldown_current = comp_w.p_cooldown;
 				}
 				else if (e->get<CInput>()->fire_secondary) {
-					spawnEntity(comp_w.s_tag, comp_w.secondary, pos, Entity::STATE_RUN, e->facing);
+					spawnEntity(comp_w.s_tag, comp_w.secondary, e, pos, Entity::STATE_RUN, e->facing);
 
 					e->get<CInput>()->fire_secondary = false;
 					comp_w.s_cooldown_current = comp_w.s_cooldown;
@@ -707,9 +745,18 @@ void ScenePlay::doAction(const Action* a) {
 			case Action::CHANGE_SCENE_MENU:
 				game->setScene(Game::GAME_SCENE_MENU);
 			break;
-			case Action::SPAWN_ENEMY:
+			case Action::SPAWN_ENTITY:
 				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
 			break;
+			case Action::SPAWN_PLAYER:
+				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
+				ent_mgr.update();
+				player = ent_mgr.getEntities(Entity::TAG_PLAYER)[0];
+			break;
+			case Action::SPAWN_BASE:
+				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
+				ent_mgr.update();
+				base = ent_mgr.getEntities(Entity::TAG_BASE)[0];
 			default:
 			break;
 		}
@@ -783,7 +830,10 @@ void ScenePlay::sView() {
 	cam.target = player->get<CTransform>()->pos;
 	float square_delta = squareDistance(cam.pos, cam.target);
 
-	if (square_delta > game->app_conf.cam_treshold) {
+	if (game_state == GAME_INTRO) {
+		cam.pos = cam.target;
+	}
+	else if (square_delta > game->app_conf.cam_treshold) {
 		cam.pos += ((cam.target - cam.pos) / game->app_conf.cam_speed);
 	}
 
@@ -803,6 +853,9 @@ void ScenePlay::sView() {
 	if (rect.top + rect.height > world.height) rect.top = world.height - h;
 
 	game->view.reset(rect);
+}
+
+void ScenePlay::sGameState() {
 }
 
 float ScenePlay::squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {

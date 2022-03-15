@@ -10,7 +10,15 @@ struct Camera {
 	sf::Vector2f pos, target;
 };
 
+typedef size_t GameState;
+
 class ScenePlay: public Scene {
+	enum {
+		GAME_INTRO,
+		GAME_PLAY,
+		GAME_OVER
+	};
+
 	ParticlesEmitter glitter;
 
 	std::string level_path;
@@ -19,11 +27,11 @@ class ScenePlay: public Scene {
 	Camera cam;
 	Interface interface;
 	int total_kills;
-	std::string total_kills_str;
+	std::map<size_t, size_t> kills_per_enemy;
+	GameState game_state;
 
 	std::shared_ptr<Entity> player;
 	std::shared_ptr<Entity> base;
-
 
 	void init();
 	void load_level(std::string path);
@@ -32,6 +40,7 @@ class ScenePlay: public Scene {
 	void spawnBase();
 	void spawnEnemy();
 	void spawnEntity(size_t tag, size_t recipe_name, sf::Vector2f& pos, size_t state, size_t facing);
+	void spawnEntity(size_t tag, size_t recipe_name, std::shared_ptr<Entity> owner, sf::Vector2f& pos, size_t state, size_t facing);
 	void spawnMissle();
 	void spawnExplosion(sf::Vector2f& pos);
 	void killEntity(std::shared_ptr<Entity>& entity);
@@ -49,6 +58,7 @@ class ScenePlay: public Scene {
 	void sInterface();
 	void sAnimation();
 	void sView();
+	void sGameState();
 
 	void checkLifespan(std::shared_ptr<Entity>& e);
 	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);

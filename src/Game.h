@@ -1,10 +1,6 @@
 #ifndef GAME
 #define GAME
 
-//#define DEBUG_PROFILING
-//#define DRAW_COLLISION_BOX
-//#define DEBUG_RECIPE_NAME_ID
-
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <deque>

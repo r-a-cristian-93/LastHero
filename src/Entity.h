@@ -8,6 +8,7 @@ public:
 	enum {
 		NONE = 0,
 		TAG_PLAYER,
+		TAG_BASE,
 		TAG_ENEMY,
 		TAG_PROJECTILE,
 		TAG_MISSLE,
@@ -39,6 +40,7 @@ public:
 	const size_t id;
 	const size_t tag;
 	const size_t name;
+	std::shared_ptr<Entity> owner;
 	bool alive;
 	size_t facing;
 	size_t state;

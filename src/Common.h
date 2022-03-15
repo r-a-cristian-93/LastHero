@@ -1,6 +1,11 @@
 #ifndef COMMON
 #define COMMON
 
+//#define DEBUG_PROFILING
+//#define DRAW_COLLISION_BOX
+#define DEBUG_RECIPE_NAME_ID
+#define DEBUG_SPAWN_ENTITY
+
 #include <string>
 #include <SFML/Graphics.hpp>
 
