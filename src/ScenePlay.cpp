@@ -16,6 +16,10 @@ ScenePlay::~ScenePlay() {}
 void ScenePlay::init() {
 	PROFILE_FUNCTION();
 
+	fade_in = true;
+	next_scene = Game::GAME_SCENE_MENU;
+	game->screen_sprite.setColor({0, 0, 0});
+
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
@@ -27,10 +31,7 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
 
-
 	load_level("res/level_001.cfg");
-	//spawnPlayer();
-	//spawnBase();
 
 	static_cast<WidgetText*>(game->assets->getWidget("player_health_text"))->linkToInt(player->get<CStats>()->effective[CStats::HEALTH]);
 	static_cast<WidgetText*>(game->assets->getWidget("base_health_text"))->linkToInt(base->get<CStats>()->effective[CStats::HEALTH]);
@@ -164,7 +165,7 @@ void ScenePlay::update() {
 	{
 		PROFILE_SCOPE("SCENE_LOGIC");
 
-		if (!paused && game_state == GAME_PLAY) {
+		if (!paused && game_state == GAME_PLAY && !fade_in && !fade_out) {
 			ent_mgr.update();
 
 			//sEnemySpawner();
@@ -208,6 +209,7 @@ void ScenePlay::update() {
 		game->screen_tex.setView(game->view);
 	}
 
+	sFade();
 	frame_current++;
 }
 
@@ -743,7 +745,7 @@ void ScenePlay::doAction(const Action* a) {
 				paused = !paused;
 			break;
 			case Action::CHANGE_SCENE_MENU:
-				game->setScene(Game::GAME_SCENE_MENU);
+				fade_out = true;
 			break;
 			case Action::SPAWN_ENTITY:
 				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);

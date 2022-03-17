@@ -23,8 +23,7 @@ class SceneMainMenu: public Scene {
 public:
 	void update() override;
 	void doAction(const Action* a) override;
-
-	void sInterface();
+	void sFade() override;
 
 	SceneMainMenu();
 	SceneMainMenu(Game* g);
