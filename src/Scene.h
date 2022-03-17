@@ -8,6 +8,8 @@
 
 class Game;
 
+typedef size_t FadeType;
+
 class Scene {
 protected:
 	Game* game;
@@ -17,20 +19,28 @@ protected:
 	int frame_current;
 	bool paused, has_ended;
 
-	bool fade_in = false;
-	bool fade_out = false;
-	const size_t fade_in_frames = 60;
-	const size_t fade_out_frames = 60;
-	size_t current_fade_in = 0;
-	size_t current_fade_out = fade_out_frames;
-	size_t next_scene = 0;
+	enum {
+		FADE_NONE = 0,
+		FADE_IN,
+		FADE_OUT,
+		FADE_COUNT
+	};
 
 	void init();
+
+private:
+	FadeType fade = FADE_NONE;
+	const size_t fade_frames[FADE_COUNT] = {0, 60, 60};
+	size_t current_fade_frames[FADE_COUNT] = {0, 0, 60};
+	size_t next_scene = 0;
 
 public:
 	virtual void update() = 0;
 	virtual void doAction(const Action* a) = 0;
-	virtual void sFade();
+	void sFade();
+	void setFade(FadeType fade);
+	void setNextScene(size_t scene);
+	bool isFading();
 
 	Scene();
 	Scene(Game* g);

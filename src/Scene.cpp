@@ -19,25 +19,46 @@ void Scene::init() {
 }
 
 void Scene::sFade() {
-	if (fade_in) {
-		current_fade_in++;
-		unsigned char c = static_cast<size_t>(current_fade_in * (255/fade_in_frames));
-		game->screen_sprite.setColor({c, c, c});
+	switch (fade) {
+		case FADE_IN: {
+			current_fade_frames[fade]++;
+			unsigned char c = static_cast<size_t>(current_fade_frames[fade] * (255/fade_frames[fade]));
+			game->screen_sprite.setColor({c, c, c});
 
-		if (current_fade_in >= fade_in_frames) {
-			game->screen_sprite.setColor({255, 255, 255});
-			fade_in = false;
+			if (current_fade_frames[fade] >= fade_frames[fade]) {
+				game->screen_sprite.setColor({255, 255, 255});
+				fade = FADE_NONE;
+			}
 		}
-	}
+		break;
+		case FADE_OUT: {
+			current_fade_frames[fade]--;
+			unsigned char c = static_cast<size_t>(current_fade_frames[fade] * (255/fade_frames[fade]));
+			game->screen_sprite.setColor({c, c, c});
 
-	if (fade_out) {
-		current_fade_out--;
-		unsigned char c = static_cast<size_t>(current_fade_out * (255/fade_out_frames));
-		game->screen_sprite.setColor({c, c, c});
-
-		if (current_fade_out == 0) {
-			game->setScene(next_scene);
-			game->screen_sprite.setColor({0, 0, 0});
+			if (current_fade_frames[fade] == 0) {
+				game->screen_sprite.setColor({0, 0, 0});
+				game->setScene(next_scene);
+				fade = FADE_NONE;
+			}
 		}
+		break;
 	}
 }
+
+void Scene::setFade(FadeType _fade) {
+	fade = _fade;
+}
+
+void Scene::setNextScene(size_t scene) {
+	next_scene = scene;
+}
+
+bool Scene::isFading() {
+	if (fade) return true;
+
+	return false;
+}
+
+
+

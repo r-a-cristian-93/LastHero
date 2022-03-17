@@ -16,8 +16,8 @@ ScenePlay::~ScenePlay() {}
 void ScenePlay::init() {
 	PROFILE_FUNCTION();
 
-	fade_in = true;
-	next_scene = Game::GAME_SCENE_MENU;
+	setFade(FADE_IN);
+	setNextScene(Game::GAME_SCENE_MENU);
 	game->screen_sprite.setColor({0, 0, 0});
 
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
@@ -165,7 +165,7 @@ void ScenePlay::update() {
 	{
 		PROFILE_SCOPE("SCENE_LOGIC");
 
-		if (!paused && game_state == GAME_PLAY && !fade_in && !fade_out) {
+		if (!paused && game_state == GAME_PLAY && !isFading()) {
 			ent_mgr.update();
 
 			//sEnemySpawner();
@@ -745,7 +745,7 @@ void ScenePlay::doAction(const Action* a) {
 				paused = !paused;
 			break;
 			case Action::CHANGE_SCENE_MENU:
-				fade_out = true;
+				setFade(FADE_OUT);
 			break;
 			case Action::SPAWN_ENTITY:
 				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
