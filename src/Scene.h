@@ -30,7 +30,7 @@ protected:
 
 private:
 	FadeType fade = FADE_NONE;
-	const size_t fade_frames[FADE_COUNT] = {0, 60, 60};
+	size_t fade_frames[FADE_COUNT] = {0, 60, 60};
 	size_t current_fade_frames[FADE_COUNT] = {0, 0, 60};
 	size_t next_scene = 0;
 
@@ -38,7 +38,8 @@ public:
 	virtual void update() = 0;
 	virtual void doAction(const Action* a) = 0;
 	void sFade();
-	void setFade(FadeType fade);
+	void setFade(FadeType fade, size_t frames);
+	void setFade(FadeType fade, size_t frames, size_t scene);
 	void setNextScene(size_t scene);
 	bool isFading();
 

@@ -46,12 +46,19 @@ void Scene::sFade() {
 	}
 }
 
-void Scene::setFade(FadeType _fade) {
-	fade = _fade;
-}
-
 void Scene::setNextScene(size_t scene) {
 	next_scene = scene;
+}
+
+void Scene::setFade(FadeType _fade, size_t frames) {
+	fade = _fade;
+	fade_frames[fade] = frames;
+}
+
+void Scene::setFade(FadeType _fade, size_t frames, size_t scene) {
+	next_scene = scene;
+	fade = _fade;
+	fade_frames[fade] = frames;
 }
 
 bool Scene::isFading() {

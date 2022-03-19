@@ -8,6 +8,7 @@
 #include "Assets.h"
 #include "ScenePlay.h"
 #include "SceneMainMenu.h"
+#include "SceneGameOver.h"
 
 Game::Game(std::string file_name)
 	:running(false)
@@ -138,6 +139,9 @@ void Game::setScene(size_t id) {
 		break;
 		case GAME_SCENE_PLAY:
 			current_scene = new ScenePlay(this, "res/level_001.cfg");
+		break;
+		case GAME_SCENE_OVER:
+			current_scene = new SceneGameOver(this);
 		break;
 	}
 

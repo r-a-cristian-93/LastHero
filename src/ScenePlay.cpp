@@ -17,9 +17,7 @@ ScenePlay::~ScenePlay() {}
 void ScenePlay::init() {
 	PROFILE_FUNCTION();
 
-	setFade(FADE_IN);
-	setNextScene(Game::GAME_SCENE_MENU);
-	game->screen_sprite.setColor({0, 0, 0});
+	setFade(FADE_IN, 60);
 
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
@@ -185,6 +183,7 @@ void ScenePlay::update() {
 			sFireWeapon();
 			sInterface();
 			sAnimation();
+			sGameState();
 		}
 		sView();
 	}
@@ -748,7 +747,7 @@ void ScenePlay::doAction(const Action* a) {
 				paused = !paused;
 			break;
 			case Action::CHANGE_SCENE_MENU:
-				setFade(FADE_OUT);
+				setFade(FADE_OUT, 60, Game::GAME_SCENE_MENU);
 			break;
 			case Action::SPAWN_ENTITY:
 				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
@@ -858,6 +857,14 @@ void ScenePlay::sView() {
 }
 
 void ScenePlay::sGameState() {
+	if (!player->alive && player->get<CAnimation>()->active_anim->hasEnded()) {
+		game_state = GAME_OVER;
+		setFade(FADE_OUT, 60, Game::GAME_SCENE_OVER);
+	}
+	if (!base->alive && base->get<CAnimation>()->active_anim->hasEnded()) {
+		game_state = GAME_OVER;
+		setFade(FADE_OUT, 60, Game::GAME_SCENE_OVER);
+	}
 }
 
 float ScenePlay::squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {

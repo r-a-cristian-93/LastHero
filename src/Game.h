@@ -31,6 +31,7 @@ public:
 		NONE,
 		GAME_SCENE_MENU,
 		GAME_SCENE_PLAY,
+		GAME_SCENE_OVER,
 	};
 
 	bool running;

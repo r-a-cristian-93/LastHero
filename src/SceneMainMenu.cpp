@@ -12,15 +12,14 @@ SceneMainMenu::SceneMainMenu(Game* g)
 SceneMainMenu::~SceneMainMenu() {}
 
 void SceneMainMenu::init() {
-	setFade(FADE_IN);
-	setNextScene(Game::GAME_SCENE_PLAY);
-	game->screen_sprite.setColor({0, 0, 0});
+	setFade(FADE_IN, 60);
 
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::MENU_SELECT);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::MENU_SELECT);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Enter, Action::MENU_SELECT);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::GAME_EXIT);
 
 	background = &game->assets->getSprite("main_bg");
 	sf::FloatRect b = background->getLocalBounds();
@@ -51,7 +50,7 @@ void SceneMainMenu::doAction(const Action* a) {
 					game->running = false;
 				}
 				else if (selection == SELECT_PLAY) {
-					setFade(FADE_OUT);
+					setFade(FADE_OUT, 60, Game::GAME_SCENE_PLAY);
 				}
 			break;
 			case Action::MOVE_UP:
@@ -68,6 +67,8 @@ void SceneMainMenu::doAction(const Action* a) {
 					selection = SELECT_EXIT;
 				}
 			break;
+			case Action::GAME_EXIT:
+				game->running = false;
 			default:
 			break;
 		}
