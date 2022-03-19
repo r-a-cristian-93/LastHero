@@ -4,7 +4,7 @@
 class CScore {
 public:
 	int score;
-	
+
 	CScore();
 	CScore(const CScore& c);
 	CScore(int s);

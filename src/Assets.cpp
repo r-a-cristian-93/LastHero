@@ -16,6 +16,16 @@ Components& Assets::getRecipe(size_t tag, size_t name_id) {
 	return recipe[tag][name_id];
 }
 
+size_t Assets::getScorePoints(size_t name_id) {
+	if (all_recipes.count(name_id)){
+		if (all_recipes[name_id]->get<CScore>()) {
+			return all_recipes[name_id]->get<CScore>()->score;
+		}
+	}
+
+	return 0;
+}
+
 size_t Assets::getRecipeName(size_t tag) {
 	std::map<size_t, Components>::iterator it = recipe[tag].begin();
 	std::advance(it, rand() % recipe[tag].size());
@@ -112,7 +122,7 @@ void Assets::loadEntity() {
 			file >> r >> g >> b >> data_ent.out_thk;
 			data_ent.outline = sf::Color(r,g,b);
 		}
-		else if (word == "vertices") file >> data_ent.vertices;
+		else if (word == "score_points") file >> data_ent.score_points;
 		else if (word == "lifespan") file >> data_ent.lifespan;
 		else if (word == "experience") file >> data_ent.experience;
 		else if (word == "level") file >> data_ent.level;
@@ -229,6 +239,7 @@ void Assets::loadEntity() {
 				weapon.s_cooldown = data_ent.secondary_cooldown;
 				recipe[data_ent.type][data_ent.name_id].add<CWeapon>(new CWeapon(weapon));
 			}
+			all_recipes[data_ent.name_id] = &recipe[data_ent.type][data_ent.name_id];
 		}
 		break;
 		case Entity::TAG_PROJECTILE: {
@@ -272,6 +283,7 @@ void Assets::loadEntity() {
 				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
 				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
 			}
+			all_recipes[data_ent.name_id] = &recipe[data_ent.type][data_ent.name_id];
 		}
 		break;
 		case Entity::TAG_MISSLE: {
@@ -287,6 +299,7 @@ void Assets::loadEntity() {
 				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
 				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
 			}
+			all_recipes[data_ent.name_id] = &recipe[data_ent.type][data_ent.name_id];
 		}
 		break;
 		case Entity::TAG_BASE:
@@ -323,7 +336,7 @@ void Assets::loadEntity() {
 			recipe[data_ent.type][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
 			recipe[data_ent.type][data_ent.name_id].add<CShape>(new CShape(shape));
 			recipe[data_ent.type][data_ent.name_id].add<CCollision>(new CCollision(collision));
-			recipe[data_ent.type][data_ent.name_id].add<CScore>(new CScore(data_ent.vertices));
+			recipe[data_ent.type][data_ent.name_id].add<CScore>(new CScore(data_ent.score_points));
 			if (data_ent.animation_set.animations.size() > 0) {
 				recipe[data_ent.type][data_ent.name_id].add<CAnimation>(new CAnimation(data_ent.animation_set));
 				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
@@ -339,6 +352,7 @@ void Assets::loadEntity() {
 				recipe[data_ent.type][data_ent.name_id].add<CWeapon>(new CWeapon(weapon));
 				recipe[data_ent.type][data_ent.name_id].add<CInput>(new CInput());
 			}
+			all_recipes[data_ent.name_id] = &recipe[data_ent.type][data_ent.name_id];
 		}
 		break;
 		case Entity::TAG_SFX: {
@@ -355,6 +369,7 @@ void Assets::loadEntity() {
 				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
 				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
 			}
+			all_recipes[data_ent.name_id] = &recipe[data_ent.type][data_ent.name_id];
 		}
 		break;
 		default:

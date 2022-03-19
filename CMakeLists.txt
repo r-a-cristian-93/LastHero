@@ -38,6 +38,7 @@ set(SOURCE_FILES
 	src/ScenePlay.cpp
 	src/SceneMainMenu.cpp
 	src/SceneGameOver.cpp
+	src/SceneScore.cpp
 	src/Interface.cpp
 	src/Widget.cpp
 	src/WidgetBox.cpp

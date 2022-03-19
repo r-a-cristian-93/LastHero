@@ -5,7 +5,6 @@
 #include "Interface.h"
 
 class SceneGameOver: public Scene {
-	sf::Sprite* background;
 	Interface interface;
 
 	enum {

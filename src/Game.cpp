@@ -9,6 +9,7 @@
 #include "ScenePlay.h"
 #include "SceneMainMenu.h"
 #include "SceneGameOver.h"
+#include "SceneScore.h"
 
 Game::Game(std::string file_name)
 	:running(false)
@@ -56,7 +57,7 @@ void Game::init(std::string file_name) {
 
 	act_mgr = ActionManager();
 
-	setScene(GAME_SCENE_MENU);
+	setScene(GAME_SCENE_SCORE);
 
 	running = true;
 }
@@ -143,9 +144,19 @@ void Game::setScene(size_t id) {
 		case GAME_SCENE_OVER:
 			current_scene = new SceneGameOver(this);
 		break;
+		case GAME_SCENE_SCORE:
+			current_scene = new SceneScore(this);
+		break;
 	}
+}
 
-	//current_scene = scenes[id];
+void Game::addKills(std::map<size_t, size_t> kills) {
+	new_kills_per_enemy = kills;
+
+	KillsMap::const_iterator it;
+	for (it = kills.cbegin(); it!=kills.cend(); it++) {
+		kills_per_enemy[it->first] += it->second;
+	}
 }
 
 Game::~Game() {

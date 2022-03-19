@@ -27,7 +27,7 @@ class ScenePlay: public Scene {
 	Camera cam;
 	Interface interface;
 	int total_kills;
-	std::map<size_t, size_t> kills_per_enemy;
+	KillsMap kills_per_enemy;
 	GameState game_state;
 
 	std::shared_ptr<Entity> player;

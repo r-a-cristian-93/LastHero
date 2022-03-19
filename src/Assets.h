@@ -15,7 +15,7 @@ struct EntityDataset {
 	sf::Color fill = {255, 255, 255, 111};
 	sf::Color outline {0, 0, 0, 255};
 	int out_thk = 0;
-	size_t vertices = 0;
+	int score_points = 0;
 	int lifespan = 0;
 	int experience = 0;
 	int level = 0;
@@ -46,6 +46,7 @@ private:
 	std::string word;
 
 	std::map<size_t, std::map<size_t, Components>> recipe;
+	std::map<size_t, Components*> all_recipes;
 	std::map<std::string, size_t> recipe_name_id = {{"", NONE}};
 
 	std::map<size_t, sf::Font> fonts;
@@ -92,6 +93,7 @@ public:
 	Components& getRecipe(size_t tag, size_t recipe_name);
 	size_t getRecipeName(size_t tag);
 	size_t getRecipeNameID(std::string entity_name);
+	size_t getScorePoints(size_t name_id);
 	sf::Font& getFont(size_t name);
 	Border& getBorder(std::string name);
 	sf::Texture& getTexture(std::string name);

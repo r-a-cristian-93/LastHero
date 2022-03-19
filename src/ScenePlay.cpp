@@ -414,7 +414,7 @@ void ScenePlay::sCollisionSolve() {
 								total_kills++;
 
 								if (colliders[i]->owner) {
-									if (colliders[i]->owner == player) {
+									if (colliders[i]->owner == player && entity->tag == Entity::TAG_ENEMY) {
 										kills_per_enemy[entity->name]++;
 									}
 								}
@@ -857,12 +857,11 @@ void ScenePlay::sView() {
 }
 
 void ScenePlay::sGameState() {
-	if (!player->alive && player->get<CAnimation>()->active_anim->hasEnded()) {
+	if (!player->alive && player->get<CAnimation>()->active_anim->hasEnded() ||
+		!base->alive && base->get<CAnimation>()->active_anim->hasEnded())
+	{
 		game_state = GAME_OVER;
-		setFade(FADE_OUT, 60, Game::GAME_SCENE_OVER);
-	}
-	if (!base->alive && base->get<CAnimation>()->active_anim->hasEnded()) {
-		game_state = GAME_OVER;
+		game->addKills(kills_per_enemy);
 		setFade(FADE_OUT, 60, Game::GAME_SCENE_OVER);
 	}
 }

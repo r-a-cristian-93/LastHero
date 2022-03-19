@@ -17,6 +17,8 @@
 
 class Scene;
 
+typedef std::map<size_t, size_t> KillsMap;
+
 class Game {
 private:
 	Scene* current_scene;
@@ -27,11 +29,15 @@ private:
 	void sUserInput();
 
 public:
+	KillsMap kills_per_enemy = {{8,3}, {9,4}, {10,6}, {12,2}};
+	KillsMap new_kills_per_enemy = {{12,2}};
+
 	enum {
 		NONE,
 		GAME_SCENE_MENU,
 		GAME_SCENE_PLAY,
 		GAME_SCENE_OVER,
+		GAME_SCENE_SCORE,
 	};
 
 	bool running;
@@ -44,6 +50,7 @@ public:
 	Assets* assets;
 
 	void setScene(size_t id);
+	void addKills(std::map<size_t, size_t> kills_per_enemy);
 	void run();
 
 	Game(std::string file_name);

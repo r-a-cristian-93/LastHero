@@ -5,7 +5,6 @@
 
 SceneGameOver::SceneGameOver(Game* g)
 	:Scene(g)
-	,background(nullptr)
 {
 	init();
 }
@@ -21,7 +20,7 @@ void SceneGameOver::update() {
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 
 	if (frame_current == 120) {
-		setFade(FADE_OUT, 60, Game::GAME_SCENE_MENU);
+		setFade(FADE_OUT, 60, Game::GAME_SCENE_SCORE);
 	}
 
 	sFade();
