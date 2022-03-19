@@ -11,6 +11,7 @@ ScenePlay::ScenePlay(Game* g, std::string lp)
 {
 	init();
 }
+
 ScenePlay::~ScenePlay() {}
 
 void ScenePlay::init() {
@@ -51,6 +52,8 @@ void ScenePlay::init() {
 		sFireWeapon();
 		sInterface();
 		sAnimation();
+		// focus camera on player
+		cam.pos = player->get<CTransform>()->pos;
 	}
 }
 
@@ -832,10 +835,7 @@ void ScenePlay::sView() {
 	cam.target = player->get<CTransform>()->pos;
 	float square_delta = squareDistance(cam.pos, cam.target);
 
-	if (game_state == GAME_INTRO) {
-		cam.pos = cam.target;
-	}
-	else if (square_delta > game->app_conf.cam_treshold) {
+	if (square_delta > game->app_conf.cam_treshold) {
 		cam.pos += ((cam.target - cam.pos) / game->app_conf.cam_speed);
 	}
 
