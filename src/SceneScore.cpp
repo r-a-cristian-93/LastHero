@@ -13,7 +13,10 @@ SceneScore::~SceneScore() {}
 void SceneScore::init() {
 	setFade(FADE_IN, 60);
 
-	interface.add(game->assets->getWidget("score_menu"));
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::MENU_SELECT);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::MENU_SELECT);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Enter, Action::MENU_SELECT);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SELECT);
 
 	const KillsMap& kills = game->kills_per_enemy;
 	const KillsMap& n_kills = game->new_kills_per_enemy;
@@ -40,7 +43,7 @@ void SceneScore::init() {
 
 	{
 		WidgetText* title = new WidgetText();
-		std::string string = "STAGE 1";
+		std::string string = "YOUR SCORE";
 		sf::Font& font = game->assets->getFont(Assets::FONT_COURIER);
 		unsigned int size = static_cast<unsigned int>(game->app_conf.window_h * title_h);
 		sf::Vector2i pos;
@@ -71,8 +74,8 @@ void SceneScore::init() {
 			}
 
 			// line
-			else if (r == rows-2) {
-				//string = "___";
+			else if (r == rows-2 && c > 1) {
+				string = "____";
 			}
 
 			// total score
@@ -97,18 +100,18 @@ void SceneScore::init() {
 				}
 			}
 
-			if (!string.empty()) {
-				WidgetText* cell = new WidgetText();
-				unsigned int size = static_cast<unsigned int>(game->app_conf.window_h*row_h * 0.8);
-				sf::Vector2i pos;
-				pos.x = static_cast<int>(game->app_conf.window_w * (c*col_w + indent_left + col_w/2));
-				pos.y = static_cast<int>(game->app_conf.window_h * (r*row_h + header_h + title_h + spacer_h + row_h/2));
 
-				cell->setText(string, font, size);
-				cell->setColor(color);
-				cell->setPosAbs(pos);
-				interface.add(cell);
-			}
+			WidgetText* cell = new WidgetText();
+			unsigned int size = static_cast<unsigned int>(game->app_conf.window_h*row_h * 0.8);
+			sf::Vector2i pos;
+			pos.x = static_cast<int>(game->app_conf.window_w * (c*col_w + indent_left + col_w/2));
+			pos.y = static_cast<int>(game->app_conf.window_h * (r*row_h + header_h + title_h + spacer_h + row_h/2));
+
+			cell->setText(string, font, size);
+			cell->setColor(color);
+			cell->setPosAbs(pos);
+			all_table_widgets.push_back(cell);
+
 		}
 		if (r > 0) {
 			it_k++;
@@ -119,19 +122,40 @@ void SceneScore::init() {
 }
 
 void SceneScore::update() {
-	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
+	if (frame_current == FRAME_COL_0) copyCells(all_table_widgets, table_widgets, {0,0,0,rows-3});
+	if (frame_current == FRAME_COL_1) copyCells(all_table_widgets, table_widgets, {1,0,1,rows-3});
+	if (frame_current == FRAME_COL_2) copyCells(all_table_widgets, table_widgets, {2,0,2,rows-3});
+	if (frame_current == FRAME_COL_3) copyCells(all_table_widgets, table_widgets, {3,0,3,rows-3});
+	if (frame_current == FRAME_ROW_LINE) copyCells(all_table_widgets, table_widgets, {2,rows-2,3,rows-2});
+	if (frame_current == FRAME_ROW_TOTAL) copyCells(all_table_widgets, table_widgets, {1,rows-1,3,rows-1});
 
-	if (frame_current == 360) {
-		setFade(FADE_OUT, 60, Game::GAME_SCENE_PLAY);
-	}
+	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
+	SDraw::drawInterface(&game->screen_tex, table_widgets);
 
 	sFade();
 	frame_current++;
 }
 
+void SceneScore::copyCells(WidgetVec& src, WidgetVec& dst, sf::IntRect rect) {
+	int k = 0;
+	for (int r=0; r<rows; r++) {
+		for (int c=0; c<cols; c++) {
+			if (r >= rect.top && r <= rect.height && c >= rect.left && c <= rect.width) {
+				dst.push_back(src[k]);
+			}
+			k++;
+		}
+	}
+}
+
 void SceneScore::doAction(const Action* a) {
 	if (*a->type == Action::TYPE_START) {
 		switch (*a->code) {
+			case Action::MENU_SELECT:
+				if (frame_current > FRAME_CONTINUE) {
+					setFade(FADE_OUT, 60, Game::GAME_SCENE_MENU);
+				}
+			break;
 			default:
 			break;
 		}

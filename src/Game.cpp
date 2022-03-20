@@ -57,7 +57,7 @@ void Game::init(std::string file_name) {
 
 	act_mgr = ActionManager();
 
-	setScene(GAME_SCENE_SCORE);
+	setScene(GAME_SCENE_MENU);
 
 	running = true;
 }

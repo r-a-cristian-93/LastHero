@@ -29,8 +29,8 @@ private:
 	void sUserInput();
 
 public:
-	KillsMap kills_per_enemy = {{8,3}, {9,4}, {10,6}, {12,2}};
-	KillsMap new_kills_per_enemy = {{12,2}};
+	KillsMap kills_per_enemy;
+	KillsMap new_kills_per_enemy;
 
 	enum {
 		NONE,

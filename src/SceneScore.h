@@ -24,7 +24,19 @@ typedef std::vector<ScoreRow> ScoreTable;
  */
 
 class SceneScore: public Scene {
+	enum {
+		FRAME_COL_0 = 60,
+		FRAME_COL_1 = 90,
+		FRAME_COL_2 = 120,
+		FRAME_COL_3 = 150,
+		FRAME_ROW_LINE = 180,
+		FRAME_ROW_TOTAL = 240,
+		FRAME_CONTINUE = 280
+	};
+
 	Interface interface;
+	WidgetVec all_table_widgets;
+	WidgetVec table_widgets;
 
 	ScoreTable table;
 	sf::RectangleShape line;
@@ -52,6 +64,7 @@ class SceneScore: public Scene {
 	size_t selection = SELECT_PLAY;
 
 	void init();
+	void copyCells(WidgetVec& src, WidgetVec& dst, sf::IntRect rec);
 
 public:
 	void update() override;
