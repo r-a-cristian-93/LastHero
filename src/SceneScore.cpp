@@ -8,7 +8,6 @@ SceneScore::SceneScore(Game* g)
 {
 	init();
 }
-SceneScore::~SceneScore() {}
 
 void SceneScore::init() {
 	setFade(FADE_IN, 60);
@@ -19,7 +18,7 @@ void SceneScore::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SELECT);
 
 	{
-		WidgetText* title = new WidgetText();
+		title = new WidgetText();
 		std::string string = "YOUR SCORE";
 		sf::Font& font = game->assets->getFont(Assets::FONT_COURIER);
 		unsigned int size = static_cast<unsigned int>(game->app_conf.window_h * title_h);
@@ -166,4 +165,12 @@ void SceneScore::doAction(const Action* a) {
 			break;
 		}
 	}
+}
+
+SceneScore::~SceneScore() {
+	for (Widget* w : all_table_widgets) {
+		delete w;
+	}
+
+	delete title;
 }

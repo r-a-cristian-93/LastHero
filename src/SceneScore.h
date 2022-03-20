@@ -4,9 +4,6 @@
 #include "Scene.h"
 #include "Interface.h"
 
-typedef std::vector<Widget*> ScoreRow;
-typedef std::vector<ScoreRow> ScoreTable;
-
 /*
  * The scoreboard is spaced vertically as follows
  *
@@ -37,10 +34,8 @@ class SceneScore: public Scene {
 	Interface interface;
 	WidgetVec all_table_widgets;
 	WidgetVec table_widgets;
+	WidgetText* title = nullptr;
 
-	ScoreTable table;
-	sf::RectangleShape line;
-	ScoreRow total_row;
 	unsigned int total_kills = 0;
 	unsigned int total_score = 0;
 
