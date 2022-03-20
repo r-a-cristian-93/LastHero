@@ -512,13 +512,13 @@ void ScenePlay::sStateFacing() {
 			if (e->get<CInput>() && e->get<CWeapon>()) {
 				CWeapon& comp_w = *e->get<CWeapon>();
 
-				if (e->get<CInput>()->fire_primary && comp_w.p_cooldown_current == 0) {
+				if (e->get<CInput>()->fire_primary && comp_w.p_cooldown_current == 0 && comp_w.p_rounds) {
 					if (e->get<CAnimation>()->anim_set.animations[Entity::STATE_FIRE_PRIMARY].count(e->facing) != 0) {
 						e->state = Entity::STATE_FIRE_PRIMARY;
 						e->blocked = true;
 					}
 				}
-				else if (e->get<CInput>()->fire_secondary && comp_w.s_cooldown_current == 0) {
+				else if (e->get<CInput>()->fire_secondary && comp_w.s_cooldown_current == 0 && comp_w.s_rounds) {
 					if (e->get<CAnimation>()->anim_set.animations[Entity::STATE_FIRE_SECONDARY].count(e->facing) != 0) {
 						e->state = Entity::STATE_FIRE_SECONDARY;
 						e->blocked = true;
@@ -562,7 +562,7 @@ void ScenePlay::sAI() {
 
 void ScenePlay::sFireWeapon() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
-		if (e->get<CWeapon>()) {
+		if (e->get<CWeapon>() && e->alive) {
 			CWeapon& comp_w = *e->get<CWeapon>();
 			sf::Vector2f pos(e->get<CTransform>()->pos + e->get<CWeapon>()->projectile_spawn[e->facing]);
 
@@ -579,16 +579,18 @@ void ScenePlay::sFireWeapon() {
 			// use only one weapon at a time
 			// the weapon cooldown time should be slightly higher than the firing animation
 			if (comp_w.p_cooldown_current == 0 && comp_w.s_cooldown_current == 0) {
-				if (e->get<CInput>()->fire_primary) {
+				if (e->get<CInput>()->fire_primary && comp_w.p_rounds) {
 					spawnEntity(comp_w.p_tag, comp_w.primary, e, pos, Entity::STATE_RUN, e->facing);
 
 					e->get<CInput>()->fire_primary = false;
+					comp_w.p_rounds--;
 					comp_w.p_cooldown_current = comp_w.p_cooldown;
 				}
-				else if (e->get<CInput>()->fire_secondary) {
+				else if (e->get<CInput>()->fire_secondary && comp_w.s_rounds) {
 					spawnEntity(comp_w.s_tag, comp_w.secondary, e, pos, Entity::STATE_RUN, e->facing);
 
 					e->get<CInput>()->fire_secondary = false;
+					comp_w.s_rounds--;
 					comp_w.s_cooldown_current = comp_w.s_cooldown;
 				}
 			}

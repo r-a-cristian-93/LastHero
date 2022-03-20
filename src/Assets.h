@@ -29,6 +29,8 @@ struct EntityDataset {
 	size_t s_tag = 0;
 	size_t primary_cooldown = 0;
 	size_t secondary_cooldown = 0;
+	size_t p_rounds = 0;
+	size_t s_rounds = 0;
 	std::map<size_t, sf::Vector2f> projectile_spawn;
 	size_t prio = 0;
 	std::vector<HitBox> hitbox;

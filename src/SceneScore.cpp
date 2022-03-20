@@ -18,6 +18,20 @@ void SceneScore::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Enter, Action::MENU_SELECT);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SELECT);
 
+	{
+		WidgetText* title = new WidgetText();
+		std::string string = "YOUR SCORE";
+		sf::Font& font = game->assets->getFont(Assets::FONT_COURIER);
+		unsigned int size = static_cast<unsigned int>(game->app_conf.window_h * title_h);
+		sf::Vector2i pos;
+		pos.x = static_cast<int>(game->app_conf.window_w*0.5);
+		pos.y = static_cast<int>(game->app_conf.window_h*(header_h+title_h/2));
+
+		title->setText(string, font, size);
+		title->setPosAbs(pos);
+		interface.add(title);
+	}
+
 	const KillsMap& kills = game->kills_per_enemy;
 	const KillsMap& n_kills = game->new_kills_per_enemy;
 	KillsMap::const_iterator it_k;
@@ -40,20 +54,6 @@ void SceneScore::init() {
 
 	//calculate col_w
 	col_w = (1 - indent_left - indent_right) / cols;
-
-	{
-		WidgetText* title = new WidgetText();
-		std::string string = "YOUR SCORE";
-		sf::Font& font = game->assets->getFont(Assets::FONT_COURIER);
-		unsigned int size = static_cast<unsigned int>(game->app_conf.window_h * title_h);
-		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.window_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.window_h*(header_h+title_h/2));
-
-		title->setText(string, font, size);
-		title->setPosAbs(pos);
-		interface.add(title);
-	}
 
 	std::string string = "";
 	sf::Font& font = game->assets->getFont(Assets::FONT_COURIER);
@@ -86,7 +86,7 @@ void SceneScore::init() {
 			}
 
 			// normal rows
-			else {
+			else if (!kills.empty()) {
 				if (c == 0)
 					string = "ICO " + std::to_string(it_k->first); // ENTITY ICON;
 				if (c == 1)
@@ -114,7 +114,7 @@ void SceneScore::init() {
 
 		}
 		if (r > 0) {
-			it_k++;
+			if (!kills.empty()) it_k++;
 		}
 	}
 

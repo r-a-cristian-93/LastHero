@@ -9,6 +9,8 @@ CWeapon::CWeapon()
 	,s_cooldown(0)
 	,p_cooldown_current(0)
 	,s_cooldown_current(0)
+	,p_rounds(0)
+	,s_rounds(0)
 	,projectile_spawn()
 	{}
 
@@ -21,6 +23,8 @@ CWeapon::CWeapon(const CWeapon& c)
 	,s_cooldown(c.s_cooldown)
 	,p_cooldown_current(c.p_cooldown_current)
 	,s_cooldown_current(c.s_cooldown_current)
+	,p_rounds(c.p_rounds)
+	,s_rounds(c.s_rounds)
 	,projectile_spawn(c.projectile_spawn)
 	{}
 
@@ -33,6 +37,7 @@ CWeapon::CWeapon(size_t _primary, size_t _secondary)
 	,s_cooldown(0)
 	,p_cooldown_current(0)
 	,s_cooldown_current(0)
-
+	,p_rounds(0)
+	,s_rounds(0)
 	,projectile_spawn()
 	{}

@@ -19,6 +19,8 @@ public:
 	size_t s_cooldown;
 	size_t p_cooldown_current;
 	size_t s_cooldown_current;
+	size_t p_rounds;
+	size_t s_rounds;
 
 	CWeapon();
 	CWeapon(const CWeapon& c);
