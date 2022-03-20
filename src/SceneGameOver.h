@@ -5,7 +5,7 @@
 #include "Interface.h"
 
 class SceneGameOver: public Scene {
-	Interface interface;
+	WidgetVec interface;
 
 	enum {
 		SELECT_PLAY,

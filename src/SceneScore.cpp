@@ -24,7 +24,7 @@ void SceneScore::init() {
 			string = "ALL STAGES COMPLETE!";
 		}
 		else {
-			string = "STAGE " + std::to_string(game->stagePrev() + 1) + " COMPLETE";
+			string = "STAGE " + std::to_string(game->stagePrev() + 1);
 		}
 
 		sf::Font& font = game->assets->getFont(Assets::FONT_COURIER);

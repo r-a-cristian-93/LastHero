@@ -8,16 +8,45 @@ SceneGameOver::SceneGameOver(Game* g)
 {
 	init();
 }
-SceneGameOver::~SceneGameOver() {}
+SceneGameOver::~SceneGameOver() {
+	for (Widget* w : interface) {
+		delete w;
+	}
+}
 
 void SceneGameOver::init() {
 	setFade(FADE_IN, 60);
-	interface.add(game->assets->getWidget("game_over"));
+
+	{
+		WidgetText* msg = new WidgetText();
+		std::string string = "";
+		sf::Color color;
+
+		if (game->stagePrev() + 1 == game->stagesCount()) {
+			string = "YOU WIN";
+			color = {135, 155, 70};
+		}
+		else {
+			string = "YOU LOSE";
+			color = {255, 50, 50};
+		}
+
+		sf::Font& font = game->assets->getFont(Assets::FONT_COURIER);
+		sf::Vector2i pos;
+		pos.x = static_cast<int>(game->app_conf.window_w*0.5);
+		pos.y = static_cast<int>(game->app_conf.window_h*0.5);
+
+		msg->setText(string, font, 150);
+		msg->setColor(color);
+		msg->setPosAbs(pos);
+		interface.push_back(msg);
+	}
+
 	game->screen_tex.setView(gui_view);
 }
 
 void SceneGameOver::update() {
-	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
+	SDraw::drawInterface(&game->screen_tex, interface);
 
 	if (frame_current == 120) {
 		setFade(FADE_OUT, 60, Game::GAME_SCENE_SCORE);
