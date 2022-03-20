@@ -5,6 +5,7 @@
 //#define DRAW_COLLISION_BOX
 #define DEBUG_RECIPE_NAME_ID
 #define DEBUG_SPAWN_ENTITY
+//#define DEBUG_ENEMIES_LEFT
 
 #include <string>
 #include <SFML/Graphics.hpp>

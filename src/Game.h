@@ -22,7 +22,9 @@ typedef std::map<size_t, size_t> KillsMap;
 class Game {
 private:
 	Scene* current_scene;
-	std::map<size_t, Scene*> scenes;
+	std::vector<std::string> stages;
+	size_t next_stage;
+	size_t prev_stage;
 
 	void init(std::string file_name);
 
@@ -51,6 +53,11 @@ public:
 
 	void setScene(size_t id);
 	void addKills(std::map<size_t, size_t> kills_per_enemy);
+	bool stageNext();
+	void stageReset();
+	size_t stageCurrent();
+	size_t stagePrev();
+	size_t stagesCount();
 	void run();
 
 	Game(std::string file_name);

@@ -19,7 +19,14 @@ void SceneScore::init() {
 
 	{
 		title = new WidgetText();
-		std::string string = "YOUR SCORE";
+		std::string string = "";
+		if (game->stagePrev() + 1 == game->stagesCount()) {
+			string = "ALL STAGES COMPLETE!";
+		}
+		else {
+			string = "STAGE " + std::to_string(game->stagePrev() + 1) + " COMPLETE";
+		}
+
 		sf::Font& font = game->assets->getFont(Assets::FONT_COURIER);
 		unsigned int size = static_cast<unsigned int>(game->app_conf.window_h * title_h);
 		sf::Vector2i pos;
@@ -152,7 +159,12 @@ void SceneScore::doAction(const Action* a) {
 		switch (*a->code) {
 			case Action::MENU_SELECT:
 				if (frame_current > FRAME_CONTINUE) {
-					setFade(FADE_OUT, 60, Game::GAME_SCENE_MENU);
+					if (game->stageCurrent()) {
+						setFade(FADE_OUT, 60, Game::GAME_SCENE_PLAY);
+					}
+					else {
+						setFade(FADE_OUT, 60, Game::GAME_SCENE_MENU);
+					}
 				}
 			break;
 			default:

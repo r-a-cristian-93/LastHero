@@ -865,14 +865,26 @@ void ScenePlay::sGameState() {
 	{
 		game_state = GAME_OVER;
 		game->addKills(kills_per_enemy);
+		game->stageReset();
 		setFade(FADE_OUT, 60, Game::GAME_SCENE_OVER);
 	}
 
 	if (ent_mgr.getEntities(Entity::TAG_ENEMY).empty()) {
 		game_state = GAME_OVER;
 		game->addKills(kills_per_enemy);
-		setFade(FADE_OUT, 60, Game::GAME_SCENE_SCORE);
+		if (game->stageNext()) {
+			setFade(FADE_OUT, 60, Game::GAME_SCENE_SCORE);
+		}
+		else {
+			game->stageReset();
+			setFade(FADE_OUT, 60, Game::GAME_SCENE_OVER);
+		}
 	}
+#ifdef DEBUG_ENEMIES_LEFT
+	else {
+		std::cout << "enemies left: " << ent_mgr.getEntities(Entity::TAG_ENEMY).size() << std::endl;
+	}
+#endif
 }
 
 float ScenePlay::squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {

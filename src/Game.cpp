@@ -13,6 +13,9 @@
 
 Game::Game(std::string file_name)
 	:running(false)
+	,current_scene(nullptr)
+	,next_stage(0)
+	,prev_stage(0)
 {
 	init(file_name);
 }
@@ -39,6 +42,10 @@ void Game::init(std::string file_name) {
 		}
 		if (word == "Camera") {
 			file >> app_conf.cam_speed >> app_conf.cam_treshold;
+		}
+		if (word == "stage") {
+			file >> word;
+			stages.push_back(word);
 		}
 	}
 
@@ -134,12 +141,14 @@ void Game::sUserInput() {
 void Game::setScene(size_t id) {
 	act_mgr = ActionManager();
 
+	Scene* old = current_scene;
+
 	switch (id) {
 		case GAME_SCENE_MENU:
 			current_scene = new SceneMainMenu(this);
 		break;
 		case GAME_SCENE_PLAY:
-			current_scene = new ScenePlay(this, "res/level_000.cfg");
+			current_scene = new ScenePlay(this, stages[next_stage]);
 		break;
 		case GAME_SCENE_OVER:
 			current_scene = new SceneGameOver(this);
@@ -148,6 +157,8 @@ void Game::setScene(size_t id) {
 			current_scene = new SceneScore(this);
 		break;
 	}
+
+	if (old) delete old;
 }
 
 void Game::addKills(std::map<size_t, size_t> kills) {
@@ -159,12 +170,32 @@ void Game::addKills(std::map<size_t, size_t> kills) {
 	}
 }
 
-Game::~Game() {
-	for (size_t i=0; i<scenes.size(); i++) {
-		if (scenes[i]) {
-			delete scenes[i];
-		}
-	}
+bool Game::stageNext() {
+	prev_stage = next_stage;
+	if (next_stage < stages.size()-1) {
+		next_stage++;
 
-	scenes.clear();
+		return true;
+	}
+	return false;
+}
+
+void Game::stageReset() {
+	next_stage = 0;
+}
+
+size_t Game::stageCurrent() {
+	return next_stage;
+}
+
+size_t Game::stagePrev() {
+	return prev_stage;
+}
+
+size_t Game::stagesCount() {
+	return stages.size();
+}
+
+Game::~Game() {
+
 }
