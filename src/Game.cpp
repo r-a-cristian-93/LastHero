@@ -139,7 +139,7 @@ void Game::setScene(size_t id) {
 			current_scene = new SceneMainMenu(this);
 		break;
 		case GAME_SCENE_PLAY:
-			current_scene = new ScenePlay(this, "res/level_001.cfg");
+			current_scene = new ScenePlay(this, "res/level_000.cfg");
 		break;
 		case GAME_SCENE_OVER:
 			current_scene = new SceneGameOver(this);

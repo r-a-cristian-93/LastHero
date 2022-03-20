@@ -91,6 +91,7 @@ void Assets::loadEntity() {
 			file >> word;
 			if (word == "player") data_ent.type = Entity::TAG_PLAYER;
 			else if (word == "base") data_ent.type = Entity::TAG_BASE;
+			else if (word == "environment") data_ent.type = Entity::TAG_ENVIRONMENT;
 			else if (word == "projectile") data_ent.type = Entity::TAG_PROJECTILE;
 			else if (word == "missle") data_ent.type = Entity::TAG_MISSLE;
 			else if (word == "enemy") data_ent.type = Entity::TAG_ENEMY;
@@ -306,6 +307,7 @@ void Assets::loadEntity() {
 			all_recipes[data_ent.name_id] = &recipe[data_ent.type][data_ent.name_id];
 		}
 		break;
+		case Entity::TAG_ENVIRONMENT:
 		case Entity::TAG_BASE:
 		case Entity::TAG_ENEMY: {
 			sf::CircleShape shape;

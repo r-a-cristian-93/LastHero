@@ -30,7 +30,7 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
 
-	load_level("res/level_001.cfg");
+	load_level(level_path);
 
 	static_cast<WidgetText*>(game->assets->getWidget("player_health_text"))->linkToInt(player->get<CStats>()->effective[CStats::HEALTH]);
 	static_cast<WidgetText*>(game->assets->getWidget("base_health_text"))->linkToInt(base->get<CStats>()->effective[CStats::HEALTH]);
@@ -112,6 +112,7 @@ void ScenePlay::load_level(std::string path) {
 					if (word == "enemy") tag = Entity::TAG_ENEMY;
 					else if (word == "player") tag = Entity::TAG_PLAYER;
 					else if (word == "base") tag = Entity::TAG_BASE;
+					else if (word == "environment") tag = Entity::TAG_ENVIRONMENT;
 					else {
 						std::cout << "LOAD LEVEL: Tag \"" << "\" is not supported\n";
 						exit(0);
@@ -865,6 +866,12 @@ void ScenePlay::sGameState() {
 		game_state = GAME_OVER;
 		game->addKills(kills_per_enemy);
 		setFade(FADE_OUT, 60, Game::GAME_SCENE_OVER);
+	}
+
+	if (ent_mgr.getEntities(Entity::TAG_ENEMY).empty()) {
+		game_state = GAME_OVER;
+		game->addKills(kills_per_enemy);
+		setFade(FADE_OUT, 60, Game::GAME_SCENE_SCORE);
 	}
 }
 
