@@ -34,6 +34,7 @@ struct EntityDataset {
 	std::map<size_t, sf::Vector2f> projectile_spawn;
 	size_t prio = 0;
 	std::vector<HitBox> hitbox;
+	std::string icon = "";
 
 	~EntityDataset() {
 		delete[] stats_base;
@@ -50,6 +51,7 @@ private:
 	std::map<size_t, std::map<size_t, Components>> recipe;
 	std::map<size_t, Components*> all_recipes;
 	std::map<std::string, size_t> recipe_name_id = {{"", NONE}};
+	std::map<size_t, sf::Sprite*> icon_small;
 
 	std::map<size_t, sf::Font> fonts;
 	std::map<std::string, sf::Texture> textures;
@@ -100,8 +102,11 @@ public:
 	Border& getBorder(std::string name);
 	sf::Texture& getTexture(std::string name);
 	sf::Sprite& getSprite(std::string name);
+	sf::Sprite& getIconSmall(size_t name_id);
 	sf::Shader& getShader(std::string name);
 	Widget*& getWidget(std::string name);
+
+
 
 };
 

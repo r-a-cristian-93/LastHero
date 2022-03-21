@@ -57,6 +57,15 @@ sf::Sprite& Assets::getSprite(std::string name) {
 	return sprites[name];
 }
 
+sf::Sprite& Assets::getIconSmall(size_t name_id) {
+	if (icon_small.count(name_id)) {
+		return *icon_small[name_id];
+	}
+
+	std::cout << "Entity with name_id \"" << name_id << "\" might not have a small icon.\n";
+	exit(0);
+}
+
 Widget*& Assets::getWidget(std::string name) {
 	return widgets.at(name);
 }
@@ -198,6 +207,9 @@ void Assets::loadEntity() {
 		}
 		else if (word == "prio") {
 			file >> data_ent.prio;
+		}
+		else if (word == "icon") {
+			file >> data_ent.icon;
 		}
 	}
 
@@ -361,6 +373,10 @@ void Assets::loadEntity() {
 				recipe[data_ent.type][data_ent.name_id].add<CInput>(new CInput());
 			}
 			all_recipes[data_ent.name_id] = &recipe[data_ent.type][data_ent.name_id];
+
+			if (!data_ent.icon.empty()) {
+				icon_small[data_ent.name_id] = &getSprite(data_ent.icon);
+			}
 		}
 		break;
 		case Entity::TAG_SFX: {

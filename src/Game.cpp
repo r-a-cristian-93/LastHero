@@ -149,6 +149,10 @@ void Game::setScene(size_t id) {
 		break;
 		case GAME_SCENE_PLAY:
 			current_scene = new ScenePlay(this, stages[next_stage]);
+			if (next_stage == 0) {
+				kills_per_enemy.clear();
+				new_kills_per_enemy.clear();
+			}
 		break;
 		case GAME_SCENE_OVER:
 			current_scene = new SceneGameOver(this);

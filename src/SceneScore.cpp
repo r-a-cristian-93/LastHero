@@ -70,6 +70,10 @@ void SceneScore::init() {
 		for (int c=0; c<cols; c++) {
 			string = "";
 			color = {255, 255, 255};
+			unsigned int size = static_cast<unsigned int>(game->app_conf.window_h*row_h * 0.8);
+			sf::Vector2i pos;
+			pos.x = static_cast<int>(game->app_conf.window_w * (c*col_w + indent_left + col_w/2));
+			pos.y = static_cast<int>(game->app_conf.window_h * (r*row_h + header_h + title_h + spacer_h + row_h/2));
 
 			// table header
 			if (r == 0) {
@@ -93,8 +97,6 @@ void SceneScore::init() {
 
 			// normal rows
 			else if (!kills.empty()) {
-				if (c == 0)
-					string = "ICO " + std::to_string(it_k->first); // ENTITY ICON;
 				if (c == 1)
 					if (n_kills.count(it_k->first))
 						string = "+" + std::to_string(n_kills.at(it_k->first));
@@ -106,20 +108,24 @@ void SceneScore::init() {
 				}
 			}
 
-
-			WidgetText* cell = new WidgetText();
-			unsigned int size = static_cast<unsigned int>(game->app_conf.window_h*row_h * 0.8);
-			sf::Vector2i pos;
-			pos.x = static_cast<int>(game->app_conf.window_w * (c*col_w + indent_left + col_w/2));
-			pos.y = static_cast<int>(game->app_conf.window_h * (r*row_h + header_h + title_h + spacer_h + row_h/2));
-
-			cell->setText(string, font, size);
-			cell->setColor(color);
-			cell->setPosAbs(pos);
-			all_table_widgets.push_back(cell);
-
+			if (c==0 && r > 0 && r < rows-2) {
+				WidgetBox* box = new WidgetBox();
+				sf::Sprite& icon = game->assets->getIconSmall(it_k->first);
+				sf::FloatRect rect = icon.getLocalBounds();
+				sf::Vector2i offset = {static_cast<int>(-rect.width/2), static_cast<int>(-rect.height/2)};
+				box->setBackground(game->assets->getIconSmall(it_k->first), offset);
+				box->setPosAbs(pos);
+				all_table_widgets.push_back(box);
+			}
+			else {
+				WidgetText* cell = new WidgetText();
+				cell->setText(string, font, size);
+				cell->setColor(color);
+				cell->setPosAbs(pos);
+				all_table_widgets.push_back(cell);
+			}
 		}
-		if (r > 0) {
+		if (r > 0 && r < rows-3) {
 			if (!kills.empty()) it_k++;
 		}
 	}
