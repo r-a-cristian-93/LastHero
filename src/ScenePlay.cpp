@@ -127,6 +127,7 @@ void ScenePlay::load_level(std::string path) {
 					if (word == "idle") state = Entity::STATE_IDLE;
 					else if (word == "run") state = Entity::STATE_RUN;
 					else if (word == "die") state = Entity::STATE_DIE;
+					else if (word == "spawn") state = Entity::STATE_SPAWN;
 				}
 				else if (word == "facing") {
 					file >> word;
@@ -295,16 +296,15 @@ void ScenePlay::spawnEntity(size_t tag, size_t recipe_name, std::shared_ptr<Enti
 	std::shared_ptr<Entity> e = ent_mgr.add(tag, recipe_name);
 
 	if (e) {
+		if (state == Entity::STATE_SPAWN) e->blocked = true;
 		e->owner = owner;
 		e->state = state;
 		e->facing = facing;
 
-			e->get<CTransform>()->pos = pos;
-			e->get<CTransform>()->dir = dir;
-			e->get<CTransform>()->prev_dir = dir;
-
-			e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
-
+		e->get<CTransform>()->pos = pos;
+		e->get<CTransform>()->dir = dir;
+		e->get<CTransform>()->prev_dir = dir;
+		e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
 	}
 }
 
