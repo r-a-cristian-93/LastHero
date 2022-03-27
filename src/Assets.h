@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include "Common.h"
 #include "Entity.h"
 #include "Border.h"
 #include "Interface.h"
