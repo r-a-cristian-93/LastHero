@@ -211,6 +211,28 @@ void Assets::loadEntity() {
 		else if (word == "icon") {
 			file >> data_ent.icon;
 		}
+		else if (word == "behaviour") {
+			file >> word;
+			if (word == "fire") {
+				file >> word;
+				if (word == "tr_cont") data_ent.cb_fire_p = CBFire::TR_CONTINUOUS;
+				else if (word == "tr_rand") data_ent.cb_fire_p = CBFire::TR_RANDOM;
+				else if (word == "tr_player_low_hp") data_ent.cb_fire_p = CBFire::TR_PLAYER_LOW_HP;
+				else if (word == "tr_player_nearby") data_ent.cb_fire_p = CBFire::TR_PLAYER_NEARBY;
+
+				file >> word;
+				if (word == "tr_cont") data_ent.cb_fire_s = CBFire::TR_CONTINUOUS;
+				else if (word == "tr_rand") data_ent.cb_fire_s = CBFire::TR_RANDOM;
+				else if (word == "tr_player_low_hp") data_ent.cb_fire_s = CBFire::TR_PLAYER_LOW_HP;
+				else if (word == "tr_player_nearby") data_ent.cb_fire_s = CBFire::TR_PLAYER_NEARBY;
+
+				file >> data_ent.cb_fire_data_p >> data_ent.cb_fire_data_s;
+			}
+			else {
+				std::cout << "Behaviour " << word << " is not supported.\n";
+				exit(0);
+			}
+		}
 	}
 
 	switch (data_ent.type) {
@@ -376,6 +398,10 @@ void Assets::loadEntity() {
 
 			if (!data_ent.icon.empty()) {
 				icon_small[data_ent.name_id] = &getSprite(data_ent.icon);
+			}
+
+			if (data_ent.cb_fire_p || data_ent.cb_fire_s) {
+				recipe[data_ent.type][data_ent.name_id].add<CBFire>(new CBFire(data_ent.cb_fire_p, data_ent.cb_fire_s, data_ent.cb_fire_data_p, data_ent.cb_fire_data_s));
 			}
 		}
 		break;

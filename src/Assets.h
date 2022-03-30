@@ -36,6 +36,10 @@ struct EntityDataset {
 	size_t prio = 0;
 	std::vector<HitBox> hitbox;
 	std::string icon = "";
+	size_t cb_fire_p = 0;
+	size_t cb_fire_s = 0;
+	size_t cb_fire_data_p = 0;
+	size_t cb_fire_data_s = 0;
 
 	~EntityDataset() {
 		delete[] stats_base;

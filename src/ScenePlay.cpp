@@ -560,8 +560,21 @@ void ScenePlay::sAI() {
 		}
 	}
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_ENVIRONMENT)) {
-		if (e->get<CWeapon>() && e->get<CInput>()) {
-			e->get<CInput>()->fire_primary = true;
+		if (e->get<CBFire>() && e->get<CWeapon>() && e->get<CInput>()) {
+			switch (e->get<CBFire>()->tr_fire_pri) {
+				case CBFire::TR_CONTINUOUS:
+					e->get<CInput>()->fire_primary = true;
+				break;
+				case CBFire::TR_RANDOM:
+					if (rand() % 2) e->get<CInput>()->fire_primary = true;
+					else e->get<CInput>()->fire_primary = false;
+				break;
+				case CBFire::TR_PLAYER_NEARBY:
+					if (squareDistance(e->get<CTransform>()->pos, player->get<CTransform>()->pos) < e->get<CBFire>()->data_fire_pri) {
+						e->get<CInput>()->fire_primary = true;
+					}
+				break;
+			}
 		}
 	}
 }
