@@ -559,6 +559,11 @@ void ScenePlay::sAI() {
 			e->get<CInput>()->fire_primary = true;
 		}
 	}
+	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_ENVIRONMENT)) {
+		if (e->get<CWeapon>() && e->get<CInput>()) {
+			e->get<CInput>()->fire_primary = true;
+		}
+	}
 }
 
 void ScenePlay::sFireWeapon() {
