@@ -219,12 +219,14 @@ void Assets::loadEntity() {
 				else if (word == "tr_rand") data_ent.cb_fire_p = CBFire::TR_RANDOM;
 				else if (word == "tr_player_low_hp") data_ent.cb_fire_p = CBFire::TR_PLAYER_LOW_HP;
 				else if (word == "tr_player_nearby") data_ent.cb_fire_p = CBFire::TR_PLAYER_NEARBY;
+				else if (word == "tr_base_not_protected") data_ent.cb_fire_p = CBFire::TR_BASE_NOT_PROTECTED;
 
 				file >> word;
 				if (word == "tr_cont") data_ent.cb_fire_s = CBFire::TR_CONTINUOUS;
 				else if (word == "tr_rand") data_ent.cb_fire_s = CBFire::TR_RANDOM;
 				else if (word == "tr_player_low_hp") data_ent.cb_fire_s = CBFire::TR_PLAYER_LOW_HP;
 				else if (word == "tr_player_nearby") data_ent.cb_fire_s = CBFire::TR_PLAYER_NEARBY;
+				else if (word == "tr_base_not_protected") data_ent.cb_fire_s = CBFire::TR_BASE_NOT_PROTECTED;
 
 				file >> data_ent.cb_fire_data_p >> data_ent.cb_fire_data_s;
 			}

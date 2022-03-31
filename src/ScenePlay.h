@@ -64,6 +64,8 @@ class ScenePlay: public Scene {
 	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);
 
 	float angle(const sf::Vector2f a, const sf::Vector2f b);
+	float angle(sf::Vector2f v);
+	size_t facingOf(sf::Vector2f v);
 	float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b);
 	bool checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entity>& b);
 

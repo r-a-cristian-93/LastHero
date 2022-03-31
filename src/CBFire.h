@@ -1,7 +1,9 @@
 #ifndef C_B_FIRE
 #define C_B_FIRE
 
-#include <string>
+#include <memory>
+
+class Entity;
 
 class CBFire {
 public:
@@ -20,6 +22,8 @@ public:
 	size_t tr_fire_sec;
 	size_t data_fire_pri;	//can be distance or HP;
 	size_t data_fire_sec;
+
+	std::shared_ptr<Entity> target;
 
 	CBFire();
 	CBFire(const CBFire& c);

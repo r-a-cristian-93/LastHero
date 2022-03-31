@@ -571,7 +571,20 @@ void ScenePlay::sAI() {
 				break;
 				case CBFire::TR_PLAYER_NEARBY:
 					if (squareDistance(e->get<CTransform>()->pos, player->get<CTransform>()->pos) < e->get<CBFire>()->data_fire_pri) {
+						e->get<CBFire>()->target = player;
 						e->get<CInput>()->fire_primary = true;
+					}
+					else {
+						e->get<CBFire>()->target = nullptr;
+					}
+				break;
+				case CBFire::TR_BASE_NOT_PROTECTED:
+					if (squareDistance(player->get<CTransform>()->pos, base->get<CTransform>()->pos) > e->get<CBFire>()->data_fire_pri) {
+						e->get<CBFire>()->target = base;
+						e->get<CInput>()->fire_primary = true;
+					}
+					else {
+						e->get<CBFire>()->target = nullptr;
 					}
 				break;
 			}
@@ -583,7 +596,15 @@ void ScenePlay::sFireWeapon() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
 		if (e->get<CWeapon>() && e->alive) {
 			CWeapon& comp_w = *e->get<CWeapon>();
-			sf::Vector2f pos(e->get<CTransform>()->pos + e->get<CWeapon>()->projectile_spawn[e->facing]);
+			size_t facing(e->facing);
+
+			if (e->get<CBFire>()) {
+				if (e->get<CBFire>()->target) {
+					facing = facingOf(e->get<CBFire>()->target->get<CTransform>()->pos - e->get<CTransform>()->pos);
+				}
+			}
+
+			sf::Vector2f pos(e->get<CTransform>()->pos + e->get<CWeapon>()->projectile_spawn[facing]);
 
 			if (comp_w.p_cooldown_current > 0) {
 				comp_w.p_cooldown_current--;
@@ -599,14 +620,14 @@ void ScenePlay::sFireWeapon() {
 			// the weapon cooldown time should be slightly higher than the firing animation
 			if (comp_w.p_cooldown_current == 0 && comp_w.s_cooldown_current == 0) {
 				if (e->get<CInput>()->fire_primary && comp_w.p_rounds) {
-					spawnEntity(comp_w.p_tag, comp_w.primary, e, pos, Entity::STATE_RUN, e->facing);
+					spawnEntity(comp_w.p_tag, comp_w.primary, e, pos, Entity::STATE_RUN, facing);
 
 					e->get<CInput>()->fire_primary = false;
 					comp_w.p_rounds--;
 					comp_w.p_cooldown_current = comp_w.p_cooldown;
 				}
 				else if (e->get<CInput>()->fire_secondary && comp_w.s_rounds) {
-					spawnEntity(comp_w.s_tag, comp_w.secondary, e, pos, Entity::STATE_RUN, e->facing);
+					spawnEntity(comp_w.s_tag, comp_w.secondary, e, pos, Entity::STATE_RUN, facing);
 
 					e->get<CInput>()->fire_secondary = false;
 					comp_w.s_rounds--;
@@ -741,6 +762,32 @@ float ScenePlay::angle(const sf::Vector2f a, const sf::Vector2f b) {
 	float mod_a_b = sqrt((a.x*a.x + a.y*a.y) * (b.x*b.x + b.y*b.y));
 
 	return acos(dot_a_b / mod_a_b) / PI * 180;
+
+}
+
+float ScenePlay::angle(sf::Vector2f v) {
+	v.y*=-1;
+	float ang = atan(v.y/v.x);
+
+	if (v.x < 0 && v.y > 0) ang += PI;
+	else if (v.x < 0 && v.y < 0) ang += PI;
+	else if (v.x > 0 && v.y < 0) ang += 2*PI;
+
+	return ang / PI * 180;
+}
+
+size_t ScenePlay::facingOf(sf::Vector2f v) {
+	float ang = angle(v);
+
+	if (ang >= 0 && ang < 22.5) return Entity::FACING_E;
+	else if (ang >= 337.5 && ang < 360) return Entity::FACING_E;
+	else if (ang >= 22.5 && ang < 67.5) return Entity::FACING_NE;
+	else if (ang >= 67.5 && ang < 112.5) return Entity::FACING_N;
+	else if (ang >= 112.5 && ang < 157.5) return Entity::FACING_NW;
+	else if (ang >= 112.5 && ang < 202.5) return Entity::FACING_W;
+	else if (ang >= 202.5 && ang < 247.5) return Entity::FACING_SW;
+	else if (ang >= 247.5 && ang < 292.5) return Entity::FACING_S;
+	else if (ang >= 292.5 && ang < 337.5) return Entity::FACING_SE;
 }
 
 void ScenePlay::doAction(const Action* a) {
