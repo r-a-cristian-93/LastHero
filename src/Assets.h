@@ -84,6 +84,7 @@ private:
 	void flipRectX(sf::IntRect& rect);
 	void flipRectY(sf::IntRect& rect);
 
+	size_t parseTag(const std::string& word);
 	size_t parseTrigger(const std::string& word);
 
 public:

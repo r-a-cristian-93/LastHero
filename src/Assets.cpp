@@ -98,17 +98,7 @@ void Assets::loadEntity() {
 		if (word == "_END") break;
 		else if (word == "type") {
 			file >> word;
-			if (word == "player") data_ent.tag = Entity::TAG_PLAYER;
-			else if (word == "base") data_ent.tag = Entity::TAG_BASE;
-			else if (word == "environment") data_ent.tag = Entity::TAG_ENVIRONMENT;
-			else if (word == "projectile") data_ent.tag = Entity::TAG_PROJECTILE;
-			else if (word == "missle") data_ent.tag = Entity::TAG_MISSLE;
-			else if (word == "enemy") data_ent.tag = Entity::TAG_ENEMY;
-			else if (word == "sfx") data_ent.tag = Entity::TAG_SFX;
-			else {
-				std::cout << "Invalid entity tag \"" << data_ent.s_tag << "\".\n";
-				exit(0);
-			}
+			data_ent.tag = parseTag(word);
 		}
 		else if (word == "name") {
 			file >> word;
@@ -159,12 +149,7 @@ void Assets::loadEntity() {
 		}
 		else if (word == "weapon_primary") {
 			file >> word;
-
-			if (word == "player") data_ent.p_tag = Entity::TAG_PLAYER;
-			else if (word == "projectile") data_ent.p_tag = Entity::TAG_PROJECTILE;
-			else if (word == "missle") data_ent.p_tag = Entity::TAG_MISSLE;
-			else if (word == "enemy") data_ent.p_tag = Entity::TAG_ENEMY;
-			else if (word == "sfx") data_ent.p_tag = Entity::TAG_SFX;
+			data_ent.p_tag = parseTag(word);
 
 			file >> word;
 			data_ent.weapon_primary = getRecipeNameID(word);
@@ -173,12 +158,7 @@ void Assets::loadEntity() {
 		}
 		else if (word == "weapon_secondary") {
 			file >> word;
-
-			if (word == "player") data_ent.s_tag = Entity::TAG_PLAYER;
-			else if (word == "projectile") data_ent.s_tag = Entity::TAG_PROJECTILE;
-			else if (word == "missle") data_ent.s_tag = Entity::TAG_MISSLE;
-			else if (word == "enemy") data_ent.s_tag = Entity::TAG_ENEMY;
-			else if (word == "sfx") data_ent.s_tag = Entity::TAG_SFX;
+			data_ent.s_tag = parseTag(word);
 
 			file >> word;
 			data_ent.weapon_secondary = getRecipeNameID(word);
@@ -323,6 +303,21 @@ void Assets::loadEntity() {
 	}
 }
 
+
+size_t Assets::parseTag(const std::string& word) {
+	if (word == "player") return Entity::TAG_PLAYER;
+	else if (word == "base") return Entity::TAG_BASE;
+	else if (word == "environment") return Entity::TAG_ENVIRONMENT;
+	else if (word == "projectile") return Entity::TAG_PROJECTILE;
+	else if (word == "missle") return Entity::TAG_MISSLE;
+	else if (word == "enemy") return Entity::TAG_ENEMY;
+	else if (word == "sfx") return Entity::TAG_SFX;
+	else {
+		std::cout << "Invalid entity tag \"" << word << "\".\n";
+		exit(0);
+	}
+}
+
 size_t Assets::parseTrigger(const std::string& word) {
 	if (word == "tr_cont") return CBFire::TR_CONTINUOUS;
 	else if (word == "tr_rand") return CBFire::TR_RANDOM;
@@ -332,8 +327,10 @@ size_t Assets::parseTrigger(const std::string& word) {
 	else if (word == "tr_base_low_hp") return CBFire::TR_BASE_LOW_HP;
 	else if (word == "tr_base_nearby") return CBFire::TR_BASE_NEARBY;
 	else if (word == "tr_base_not_protected") return CBFire::TR_BASE_NOT_PROTECTED;
-
-	return 0;
+	else {
+		std::cout << "Invalid trigger \"" << word << "\".\n";
+		exit(0);
+	}
 }
 
 void Assets::loadAnimationSet(std::string path, AnimationSet& anim_set) {
