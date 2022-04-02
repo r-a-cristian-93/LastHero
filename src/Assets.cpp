@@ -98,13 +98,13 @@ void Assets::loadEntity() {
 		if (word == "_END") break;
 		else if (word == "type") {
 			file >> word;
-			if (word == "player") data_ent.type = Entity::TAG_PLAYER;
-			else if (word == "base") data_ent.type = Entity::TAG_BASE;
-			else if (word == "environment") data_ent.type = Entity::TAG_ENVIRONMENT;
-			else if (word == "projectile") data_ent.type = Entity::TAG_PROJECTILE;
-			else if (word == "missle") data_ent.type = Entity::TAG_MISSLE;
-			else if (word == "enemy") data_ent.type = Entity::TAG_ENEMY;
-			else if (word == "sfx") data_ent.type = Entity::TAG_SFX;
+			if (word == "player") data_ent.tag = Entity::TAG_PLAYER;
+			else if (word == "base") data_ent.tag = Entity::TAG_BASE;
+			else if (word == "environment") data_ent.tag = Entity::TAG_ENVIRONMENT;
+			else if (word == "projectile") data_ent.tag = Entity::TAG_PROJECTILE;
+			else if (word == "missle") data_ent.tag = Entity::TAG_MISSLE;
+			else if (word == "enemy") data_ent.tag = Entity::TAG_ENEMY;
+			else if (word == "sfx") data_ent.tag = Entity::TAG_SFX;
 			else {
 				std::cout << "Invalid entity tag \"" << data_ent.s_tag << "\".\n";
 				exit(0);
@@ -215,18 +215,10 @@ void Assets::loadEntity() {
 			file >> word;
 			if (word == "fire") {
 				file >> word;
-				if (word == "tr_cont") data_ent.cb_fire_p = CBFire::TR_CONTINUOUS;
-				else if (word == "tr_rand") data_ent.cb_fire_p = CBFire::TR_RANDOM;
-				else if (word == "tr_player_low_hp") data_ent.cb_fire_p = CBFire::TR_PLAYER_LOW_HP;
-				else if (word == "tr_player_nearby") data_ent.cb_fire_p = CBFire::TR_PLAYER_NEARBY;
-				else if (word == "tr_base_not_protected") data_ent.cb_fire_p = CBFire::TR_BASE_NOT_PROTECTED;
+				data_ent.cb_fire_p = parseTrigger(word);
 
 				file >> word;
-				if (word == "tr_cont") data_ent.cb_fire_s = CBFire::TR_CONTINUOUS;
-				else if (word == "tr_rand") data_ent.cb_fire_s = CBFire::TR_RANDOM;
-				else if (word == "tr_player_low_hp") data_ent.cb_fire_s = CBFire::TR_PLAYER_LOW_HP;
-				else if (word == "tr_player_nearby") data_ent.cb_fire_s = CBFire::TR_PLAYER_NEARBY;
-				else if (word == "tr_base_not_protected") data_ent.cb_fire_s = CBFire::TR_BASE_NOT_PROTECTED;
+				data_ent.cb_fire_s = parseTrigger(word);
 
 				file >> data_ent.cb_fire_data_p >> data_ent.cb_fire_data_s;
 			}
@@ -237,121 +229,27 @@ void Assets::loadEntity() {
 		}
 	}
 
-	switch (data_ent.type) {
-		case Entity::TAG_PLAYER: {
-			sf::CircleShape shape;
-			shape.setFillColor(data_ent.fill);
-			shape.setOutlineColor(data_ent.outline);
-			shape.setOutlineThickness(data_ent.out_thk);
-
-			CStats stats;
-			stats.experience = data_ent.experience;
-			stats.level = data_ent.level;
-
-			for (int i=0; i<CStats::COUNT; i++) {
-				stats.base[i] = data_ent.stats_base[i];
-				stats.per_level[i] = data_ent.stats_per_level[i];
-				stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
-				stats.effective[i] = stats.initial[i];
-			}
-
-			CCollision collision;
-			if (!data_ent.hitbox.empty()) {
-				collision.hitbox = data_ent.hitbox;
-			}
-
-			recipe[data_ent.type][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
-			recipe[data_ent.type][data_ent.name_id].add<CShape>(new CShape(shape));
-			recipe[data_ent.type][data_ent.name_id].add<CCollision>(new CCollision(collision));
-			recipe[data_ent.type][data_ent.name_id].add<CInput>(new CInput());
-			recipe[data_ent.type][data_ent.name_id].add<CStats>(new CStats(stats));
-			recipe[data_ent.type][data_ent.name_id].add<CAnimation>(new CAnimation(data_ent.animation_set));
-			recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
-			recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
-
-			if (data_ent.weapon_primary!=NONE || data_ent.weapon_secondary!=NONE) {
-				CWeapon weapon(data_ent.weapon_primary, data_ent.weapon_secondary);
-				weapon.p_tag = data_ent.p_tag;
-				weapon.s_tag = data_ent.s_tag;
-				weapon.projectile_spawn = data_ent.projectile_spawn;
-				weapon.p_cooldown = data_ent.primary_cooldown;
-				weapon.s_cooldown = data_ent.secondary_cooldown;
-				weapon.p_rounds = data_ent.p_rounds;
-				weapon.s_rounds = data_ent.s_rounds;
-				recipe[data_ent.type][data_ent.name_id].add<CWeapon>(new CWeapon(weapon));
-			}
-			all_recipes[data_ent.name_id] = &recipe[data_ent.type][data_ent.name_id];
-		}
-		break;
-		case Entity::TAG_PROJECTILE: {
-			sf::CircleShape shape;
-			shape.setFillColor(data_ent.fill);
-
-			// add CStats if exists
-			if (data_ent.stats_base != nullptr) {
-				if (data_ent.stats_per_level == nullptr) {
-					data_ent.stats_per_level = new int[CStats::COUNT];
-				}
-
-				CStats stats;
-				stats.experience = data_ent.experience;
-				stats.level = data_ent.level;
-
-				for (int i=0; i<CStats::COUNT; i++) {
-					stats.base[i] = data_ent.stats_base[i];
-					stats.per_level[i] = data_ent.stats_per_level[i];
-					stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
-					stats.effective[i] = stats.initial[i];
-				}
-				recipe[data_ent.type][data_ent.name_id].add<CStats>(new CStats(stats));
-			}
-
-
-			CCollision collision;
-			if (!data_ent.hitbox.empty()) {
-				collision.hitbox = data_ent.hitbox;
-			}
-
-			recipe[data_ent.type][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
-			recipe[data_ent.type][data_ent.name_id].add<CShape>(new CShape(shape));
-			recipe[data_ent.type][data_ent.name_id].add<CCollision>(new CCollision());
-			recipe[data_ent.type][data_ent.name_id].add<CLifespan>(new CLifespan(data_ent.lifespan));
-			recipe[data_ent.type][data_ent.name_id].add<CCollision>(new CCollision(collision));
-
-
-			if (data_ent.animation_set.animations.size() > 0) {
-				recipe[data_ent.type][data_ent.name_id].add<CAnimation>(new CAnimation(data_ent.animation_set));
-				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
-				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
-			}
-			all_recipes[data_ent.name_id] = &recipe[data_ent.type][data_ent.name_id];
-		}
-		break;
-		case Entity::TAG_MISSLE: {
-			sf::CircleShape shape;
-			shape.setFillColor(data_ent.fill);
-
-			recipe[data_ent.type][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
-			recipe[data_ent.type][data_ent.name_id].add<CShape>(new CShape(shape));
-			recipe[data_ent.type][data_ent.name_id].add<CCollision>(new CCollision());
-			recipe[data_ent.type][data_ent.name_id].add<CTarget>(new CTarget());
-			if (data_ent.animation_set.animations.size() > 0) {
-				recipe[data_ent.type][data_ent.name_id].add<CAnimation>(new CAnimation(data_ent.animation_set));
-				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
-				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
-			}
-			all_recipes[data_ent.name_id] = &recipe[data_ent.type][data_ent.name_id];
-		}
-		break;
-		case Entity::TAG_ENVIRONMENT:
+	switch (data_ent.tag) {
+		case Entity::TAG_PLAYER:
 		case Entity::TAG_BASE:
-		case Entity::TAG_ENEMY: {
+		case Entity::TAG_ENEMY:
+		case Entity::TAG_ENVIRONMENT:
+		case Entity::TAG_PROJECTILE:
+		case Entity::TAG_MISSLE:
+		case Entity::TAG_SFX:
+		{
+			//add Transform
+			recipe[data_ent.tag][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
+
+			//add CShape
 			sf::CircleShape shape;
 			shape.setFillColor(data_ent.fill);
-			shape.setOutlineColor(data_ent.outline);
-			shape.setOutlineThickness(data_ent.out_thk);
+			recipe[data_ent.tag][data_ent.name_id].add<CShape>(new CShape(shape));
 
-			// add CStats if exists
+			//add CScore		{
+			recipe[data_ent.tag][data_ent.name_id].add<CScore>(new CScore(data_ent.score_points));
+
+			// add CStats
 			if (data_ent.stats_base != nullptr) {
 				if (data_ent.stats_per_level == nullptr) {
 					data_ent.stats_per_level = new int[CStats::COUNT];
@@ -367,23 +265,29 @@ void Assets::loadEntity() {
 					stats.initial[i] = stats.base[i] + stats.per_level[i] * stats.level;
 					stats.effective[i] = stats.initial[i];
 				}
-				recipe[data_ent.type][data_ent.name_id].add<CStats>(new CStats(stats));
+				recipe[data_ent.tag][data_ent.name_id].add<CStats>(new CStats(stats));
 			}
 
-			CCollision collision;
+			// add CLifespan
+			if (data_ent.lifespan) {
+				recipe[data_ent.tag][data_ent.name_id].add<CLifespan>(new CLifespan(data_ent.lifespan));
+			}
+
+			//add CCollsion
 			if (!data_ent.hitbox.empty()) {
+				CCollision collision;
 				collision.hitbox = data_ent.hitbox;
+				recipe[data_ent.tag][data_ent.name_id].add<CCollision>(new CCollision(collision));
 			}
 
-			recipe[data_ent.type][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
-			recipe[data_ent.type][data_ent.name_id].add<CShape>(new CShape(shape));
-			recipe[data_ent.type][data_ent.name_id].add<CCollision>(new CCollision(collision));
-			recipe[data_ent.type][data_ent.name_id].add<CScore>(new CScore(data_ent.score_points));
+			//add CAnimation
 			if (data_ent.animation_set.animations.size() > 0) {
-				recipe[data_ent.type][data_ent.name_id].add<CAnimation>(new CAnimation(data_ent.animation_set));
-				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
-				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
+				recipe[data_ent.tag][data_ent.name_id].add<CAnimation>(new CAnimation(data_ent.animation_set));
+				recipe[data_ent.tag][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
+				recipe[data_ent.tag][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
 			}
+
+			//add CWeapon
 			if (data_ent.weapon_primary!=NONE || data_ent.weapon_secondary!=NONE) {
 				CWeapon weapon(data_ent.weapon_primary, data_ent.weapon_secondary);
 				weapon.p_tag = data_ent.p_tag;
@@ -393,40 +297,43 @@ void Assets::loadEntity() {
 				weapon.s_cooldown = data_ent.secondary_cooldown;
 				weapon.p_rounds = data_ent.p_rounds;
 				weapon.s_rounds = data_ent.s_rounds;
-				recipe[data_ent.type][data_ent.name_id].add<CWeapon>(new CWeapon(weapon));
-				recipe[data_ent.type][data_ent.name_id].add<CInput>(new CInput());
+				recipe[data_ent.tag][data_ent.name_id].add<CWeapon>(new CWeapon(weapon));
+				//add CInput
+			recipe[data_ent.tag][data_ent.name_id].add<CInput>(new CInput());
 			}
-			all_recipes[data_ent.name_id] = &recipe[data_ent.type][data_ent.name_id];
 
+			//add CBFire
+			if (data_ent.cb_fire_p || data_ent.cb_fire_s) {
+				recipe[data_ent.tag][data_ent.name_id].add<CBFire>(new CBFire(data_ent.cb_fire_p, data_ent.cb_fire_s, data_ent.cb_fire_data_p, data_ent.cb_fire_data_s));
+			}
+
+			//add icon
 			if (!data_ent.icon.empty()) {
 				icon_small[data_ent.name_id] = &getSprite(data_ent.icon);
 			}
 
-			if (data_ent.cb_fire_p || data_ent.cb_fire_s) {
-				recipe[data_ent.type][data_ent.name_id].add<CBFire>(new CBFire(data_ent.cb_fire_p, data_ent.cb_fire_s, data_ent.cb_fire_data_p, data_ent.cb_fire_data_s));
-			}
-		}
-		break;
-		case Entity::TAG_SFX: {
-			sf::CircleShape shape;
-			shape.setFillColor(data_ent.fill);
-			shape.setOutlineColor(data_ent.outline);
-			shape.setOutlineThickness(data_ent.out_thk);
-
-			recipe[data_ent.type][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
-			recipe[data_ent.type][data_ent.name_id].add<CLifespan>(new CLifespan(data_ent.lifespan));
-
-			if (data_ent.animation_set.animations.size() > 0) {
-				recipe[data_ent.type][data_ent.name_id].add<CAnimation>(new CAnimation(data_ent.animation_set));
-				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
-				recipe[data_ent.type][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
-			}
-			all_recipes[data_ent.name_id] = &recipe[data_ent.type][data_ent.name_id];
+			//add a reference of the recipe for ease of access;
+			all_recipes[data_ent.name_id] = &recipe[data_ent.tag][data_ent.name_id];
 		}
 		break;
 		default:
+			std::cout << "Invalid entity tag " << data_ent.tag << std::endl;
+			exit(0);
 		break;
 	}
+}
+
+size_t Assets::parseTrigger(const std::string& word) {
+	if (word == "tr_cont") return CBFire::TR_CONTINUOUS;
+	else if (word == "tr_rand") return CBFire::TR_RANDOM;
+	else if (word == "tr_cont") return CBFire::TR_CONTINUOUS;
+	else if (word == "tr_player_low_hp") return CBFire::TR_PLAYER_LOW_HP;
+	else if (word == "tr_player_nearby") return CBFire::TR_PLAYER_NEARBY;
+	else if (word == "tr_base_low_hp") return CBFire::TR_BASE_LOW_HP;
+	else if (word == "tr_base_nearby") return CBFire::TR_BASE_NEARBY;
+	else if (word == "tr_base_not_protected") return CBFire::TR_BASE_NOT_PROTECTED;
+
+	return 0;
 }
 
 void Assets::loadAnimationSet(std::string path, AnimationSet& anim_set) {

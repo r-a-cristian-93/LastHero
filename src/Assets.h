@@ -10,7 +10,7 @@
 #include "Interface.h"
 
 struct EntityDataset {
-	size_t type;
+	size_t tag;
 	size_t name_id = 0;
 	float velocity = 0;
 	sf::Color fill = {255, 255, 255, 111};
@@ -83,6 +83,8 @@ private:
 	sf::Texture makeRepeatable(const sf::Texture& original, sf::IntRect& rect);
 	void flipRectX(sf::IntRect& rect);
 	void flipRectY(sf::IntRect& rect);
+
+	size_t parseTrigger(const std::string& word);
 
 public:
 	enum {
