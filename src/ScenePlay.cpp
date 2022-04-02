@@ -280,18 +280,7 @@ void ScenePlay::spawnEntity(size_t tag, size_t recipe_name, std::shared_ptr<Enti
 	std::cout << "spawnEntity()  tag: " << tag << " name_id: " << recipe_name << " state: " << state << " facing: " << facing << std::endl;
 #endif
 
-	sf::Vector2f dir(0, 0);
-
-	switch (facing) {
-		case Entity::FACING_E: dir = {1, 0}; break;
-		case Entity::FACING_NE: dir = {1, -1}; break;
-		case Entity::FACING_N: dir = {0, -1}; break;
-		case Entity::FACING_NW: dir = {-1, -1}; break;
-		case Entity::FACING_W: dir = {-1, 0}; break;
-		case Entity::FACING_SW: dir = {-1, 1}; break;
-		case Entity::FACING_S: dir = {0, 1}; break;
-		case Entity::FACING_SE: dir = {1, 1}; break;
-	}
+	sf::Vector2f dir = dirOf(facing);
 
 	std::shared_ptr<Entity> e = ent_mgr.add(tag, recipe_name);
 
@@ -553,12 +542,7 @@ void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
 }
 
 void ScenePlay::sAI() {
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_ENEMY)) {
-		if (e->get<CWeapon>() && e->get<CInput>()) {
-			e->get<CInput>()->fire_primary = true;
-		}
-	}
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_ENVIRONMENT)) {
+	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
 		if (e->get<CBFire>() && e->get<CWeapon>() && e->get<CInput>()) {
 			if (e->get<CWeapon>()->primary) {
 				handle(e, e->get<CBFire>()->pri, e->get<CInput>()->fire_primary);
@@ -606,6 +590,12 @@ void ScenePlay::handle(std::shared_ptr<Entity>& e, const BFire& b_fire, bool& fi
 				e->get<CBFire>()->target = nullptr;
 			}
 		break;
+	}
+
+	// face target
+	if (e->get<CBFire>()->target && e->tag != Entity::TAG_ENVIRONMENT) {
+		e->facing = facingOf(e->get<CBFire>()->target->get<CTransform>()->pos - e->get<CTransform>()->pos);
+		e->get<CTransform>()->prev_dir = dirOf(e->facing);
 	}
 }
 
@@ -805,6 +795,19 @@ size_t ScenePlay::facingOf(sf::Vector2f v) {
 	else if (ang >= 202.5 && ang < 247.5) return Entity::FACING_SW;
 	else if (ang >= 247.5 && ang < 292.5) return Entity::FACING_S;
 	else if (ang >= 292.5 && ang < 337.5) return Entity::FACING_SE;
+}
+
+sf::Vector2f ScenePlay::dirOf(size_t facing) {
+	switch (facing) {
+		case Entity::FACING_E: return {1, 0}; break;
+		case Entity::FACING_NE: return {1, -1}; break;
+		case Entity::FACING_N: return {0, -1}; break;
+		case Entity::FACING_NW: return {-1, -1}; break;
+		case Entity::FACING_W: return {-1, 0}; break;
+		case Entity::FACING_SW: return {-1, 1}; break;
+		case Entity::FACING_S: return {0, 1}; break;
+		case Entity::FACING_SE: return {1, 1}; break;
+	}
 }
 
 void ScenePlay::doAction(const Action* a) {
