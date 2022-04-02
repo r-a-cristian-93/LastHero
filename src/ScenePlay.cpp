@@ -547,6 +547,8 @@ void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
 
 void ScenePlay::sAI() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
+		bool has_target = false;
+
 		if (e->get<CBFire>() && e->get<CWeapon>() && e->get<CInput>()) {
 			if (e->get<CWeapon>()->primary) {
 				handle(e, e->get<CBFire>()->pri, e->get<CInput>()->fire_primary);
@@ -554,9 +556,28 @@ void ScenePlay::sAI() {
 			if (e->get<CWeapon>()->secondary) {
 				handle(e, e->get<CBFire>()->sec, e->get<CInput>()->fire_secondary);
 			}
+
+			if (e->get<CBFire>()->target && e->tag != Entity::TAG_ENVIRONMENT) {
+				has_target = true;
+
+				// face target
+				size_t facing = facingOf(e->get<CBFire>()->target->get<CTransform>()->pos - e->get<CTransform>()->pos);
+				sf::Vector2f dir = dirOf(facing);
+
+				// reset all directions
+				e->get<CInput>()->right = false;
+				e->get<CInput>()->left = false;
+				e->get<CInput>()->up = false;
+				e->get<CInput>()->down = false;
+
+				if (dir.x > 0) e->get<CInput>()->right = true;
+				else if (dir.x < 0) e->get<CInput>()->left = true;
+				if (dir.y > 0) e->get<CInput>()->down = true;
+				else if (dir.y < 0) e->get<CInput>()->up = true;
+			}
 		}
 
-		if (e->get<CBPatrol>() && e->get<CInput>()) {
+		if (e->get<CBPatrol>() && e->get<CInput>() && !has_target) {
 			switch (e->get<CBPatrol>()->patrol) {
 				case CBPatrol::PATROL_HORIZONTAL:
 					if (e->get<CTransform>()->pos.x - e->get<CBPatrol>()->base_pos.x <= 0) {
@@ -622,21 +643,22 @@ void ScenePlay::handle(std::shared_ptr<Entity>& e, const BFire& b_fire, bool& fi
 			else fire_weapon = false;
 		break;
 		case CBFire::TR_PLAYER_NEARBY:
-			if (squareDistance(e->get<CTransform>()->pos, player->get<CTransform>()->pos) < b_fire.data *  b_fire.data) {
+		{
+			float sq_dist = squareDistance(e->get<CTransform>()->pos, player->get<CTransform>()->pos);
+			if (sq_dist < b_fire.data *  b_fire.data) {
 				e->get<CBFire>()->target = player;
 				fire_weapon = true;
 			}
-			else {
+			// lose agro if target got too far
+			else if (sq_dist > b_fire.data * b_fire.data * 4) {
 				e->get<CBFire>()->target = nullptr;
 			}
+		}
 		break;
 		case CBFire::TR_BASE_NEARBY:
 			if (squareDistance(e->get<CTransform>()->pos, base->get<CTransform>()->pos) < b_fire.data *  b_fire.data) {
 				e->get<CBFire>()->target = base;
 				fire_weapon = true;
-			}
-			else {
-				e->get<CBFire>()->target = nullptr;
 			}
 		break;
 		case CBFire::TR_BASE_NOT_PROTECTED:
@@ -644,16 +666,7 @@ void ScenePlay::handle(std::shared_ptr<Entity>& e, const BFire& b_fire, bool& fi
 				e->get<CBFire>()->target = base;
 				fire_weapon = true;
 			}
-			else {
-				e->get<CBFire>()->target = nullptr;
-			}
 		break;
-	}
-
-	// face target
-	if (e->get<CBFire>()->target && e->tag != Entity::TAG_ENVIRONMENT) {
-		e->facing = facingOf(e->get<CBFire>()->target->get<CTransform>()->pos - e->get<CTransform>()->pos);
-		e->get<CTransform>()->prev_dir = dirOf(e->facing);
 	}
 }
 
