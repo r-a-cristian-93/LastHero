@@ -561,34 +561,52 @@ void ScenePlay::sAI() {
 	}
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_ENVIRONMENT)) {
 		if (e->get<CBFire>() && e->get<CWeapon>() && e->get<CInput>()) {
-			switch (e->get<CBFire>()->tr_fire_pri) {
-				case CBFire::TR_CONTINUOUS:
-					e->get<CInput>()->fire_primary = true;
-				break;
-				case CBFire::TR_RANDOM:
-					if (rand() % 2) e->get<CInput>()->fire_primary = true;
-					else e->get<CInput>()->fire_primary = false;
-				break;
-				case CBFire::TR_PLAYER_NEARBY:
-					if (squareDistance(e->get<CTransform>()->pos, player->get<CTransform>()->pos) < e->get<CBFire>()->data_fire_pri *  e->get<CBFire>()->data_fire_pri) {
-						e->get<CBFire>()->target = player;
-						e->get<CInput>()->fire_primary = true;
-					}
-					else {
-						e->get<CBFire>()->target = nullptr;
-					}
-				break;
-				case CBFire::TR_BASE_NOT_PROTECTED:
-					if (squareDistance(player->get<CTransform>()->pos, base->get<CTransform>()->pos) > e->get<CBFire>()->data_fire_pri *  e->get<CBFire>()->data_fire_pri) {
-						e->get<CBFire>()->target = base;
-						e->get<CInput>()->fire_primary = true;
-					}
-					else {
-						e->get<CBFire>()->target = nullptr;
-					}
-				break;
+			if (e->get<CWeapon>()->primary) {
+				handle(e, e->get<CBFire>()->pri, e->get<CInput>()->fire_primary);
+			}
+			if (e->get<CWeapon>()->secondary) {
+				handle(e, e->get<CBFire>()->sec, e->get<CInput>()->fire_secondary);
 			}
 		}
+	}
+}
+
+void ScenePlay::handle(std::shared_ptr<Entity>& e, const BFire& b_fire, bool& fire_weapon) {
+	switch (b_fire.trigger) {
+		case CBFire::TR_CONTINUOUS:
+			fire_weapon = true;
+		break;
+		case CBFire::TR_RANDOM:
+			if (rand() % 2) fire_weapon = true;
+			else fire_weapon = false;
+		break;
+		case CBFire::TR_PLAYER_NEARBY:
+			if (squareDistance(e->get<CTransform>()->pos, player->get<CTransform>()->pos) < b_fire.data *  b_fire.data) {
+				e->get<CBFire>()->target = player;
+				fire_weapon = true;
+			}
+			else {
+				e->get<CBFire>()->target = nullptr;
+			}
+		break;
+		case CBFire::TR_BASE_NEARBY:
+			if (squareDistance(e->get<CTransform>()->pos, base->get<CTransform>()->pos) < b_fire.data *  b_fire.data) {
+				e->get<CBFire>()->target = base;
+				fire_weapon = true;
+			}
+			else {
+				e->get<CBFire>()->target = nullptr;
+			}
+		break;
+		case CBFire::TR_BASE_NOT_PROTECTED:
+			if (squareDistance(player->get<CTransform>()->pos, base->get<CTransform>()->pos) > b_fire.data *  b_fire.data) {
+				e->get<CBFire>()->target = base;
+				fire_weapon = true;
+			}
+			else {
+				e->get<CBFire>()->target = nullptr;
+			}
+		break;
 	}
 }
 

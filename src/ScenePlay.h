@@ -69,6 +69,8 @@ class ScenePlay: public Scene {
 	float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b);
 	bool checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entity>& b);
 
+	void handle(std::shared_ptr<Entity>& e, const BFire& b_fire, bool& fire_weapon);
+
 public:
 	void update() override;
 	void doAction(const Action* a) override;
