@@ -294,6 +294,10 @@ void ScenePlay::spawnEntity(size_t tag, size_t recipe_name, std::shared_ptr<Enti
 		e->get<CTransform>()->dir = dir;
 		e->get<CTransform>()->prev_dir = dir;
 		e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
+
+		if (e->get<CBPatrol>()) {
+			e->get<CBPatrol>()->base_pos = pos;
+		}
 	}
 }
 
@@ -549,6 +553,60 @@ void ScenePlay::sAI() {
 			}
 			if (e->get<CWeapon>()->secondary) {
 				handle(e, e->get<CBFire>()->sec, e->get<CInput>()->fire_secondary);
+			}
+		}
+
+		if (e->get<CBPatrol>() && e->get<CInput>()) {
+			switch (e->get<CBPatrol>()->patrol) {
+				case CBPatrol::PATROL_HORIZONTAL:
+					if (e->get<CTransform>()->pos.x - e->get<CBPatrol>()->base_pos.x <= 0) {
+						e->get<CInput>()->right = true;
+						e->get<CInput>()->left = false;
+					}
+					else if (e->get<CTransform>()->pos.x - e->get<CBPatrol>()->base_pos.x >= e->get<CBPatrol>()->dist) {
+						e->get<CInput>()->right = false;
+						e->get<CInput>()->left = true;
+					}
+
+					// if it has lost y position
+					if (e->get<CTransform>()->pos.y - e->get<CBPatrol>()->base_pos.y >= 30) {
+						e->get<CInput>()->up = true;
+						e->get<CInput>()->down = false;
+					}
+					else if (e->get<CTransform>()->pos.y - e->get<CBPatrol>()->base_pos.y <= -30) {
+						e->get<CInput>()->up = false;
+						e->get<CInput>()->down = true;
+					}
+					else {
+						e->get<CInput>()->up = false;
+						e->get<CInput>()->down = false;
+					}
+				break;
+
+				case CBPatrol::PATROL_VERTICAL:
+					if (e->get<CTransform>()->pos.y - e->get<CBPatrol>()->base_pos.y <= 0) {
+						e->get<CInput>()->up = false;
+						e->get<CInput>()->down = true;
+					}
+					else if (e->get<CTransform>()->pos.y - e->get<CBPatrol>()->base_pos.y >= e->get<CBPatrol>()->dist) {
+						e->get<CInput>()->up = true;
+						e->get<CInput>()->down = false;
+					}
+
+					// if it has lost x position
+					if (e->get<CTransform>()->pos.x - e->get<CBPatrol>()->base_pos.x >= 30) {
+						e->get<CInput>()->left = true;
+						e->get<CInput>()->right = false;
+					}
+					else if (e->get<CTransform>()->pos.x - e->get<CBPatrol>()->base_pos.x <= -30) {
+						e->get<CInput>()->left = false;
+						e->get<CInput>()->right = true;
+					}
+					else {
+						e->get<CInput>()->left = false;
+						e->get<CInput>()->right = false;
+					}
+				break;
 			}
 		}
 	}

@@ -12,6 +12,7 @@
 #include "CAnimation.h"
 #include "CWeapon.h"
 #include "CBFire.h"
+#include "CBPatrol.h"
 
 class Components {
 	std::tuple<
@@ -25,7 +26,8 @@ class Components {
 		CStats*,
 		CAnimation*,
 		CWeapon*,
-		CBFire*> components;
+		CBFire*,
+		CBPatrol*> components;
 
 public:
 	Components() {
@@ -40,6 +42,7 @@ public:
 		add<CAnimation>(nullptr);
 		add<CWeapon>(nullptr);
 		add<CBFire>(nullptr);
+		add<CBPatrol>(nullptr);
 	}
 
 	Components(
@@ -53,7 +56,8 @@ public:
 		CStats* c_h,
 		CWeapon* c_w,
 		CAnimation* c_a,
-		CBFire* cb_f)
+		CBFire* cb_f,
+		CBPatrol* cb_p)
 	{
 		add<CTransform>(c_tr);
 		add<CShape>(c_sh);
@@ -66,6 +70,7 @@ public:
 		add<CWeapon>(c_w);
 		add<CAnimation>(c_a);
 		add<CBFire>(cb_f);
+		add<CBPatrol>(cb_p);
 	}
 
 	Components(const Components& c) {
@@ -91,6 +96,8 @@ public:
 			add<CWeapon>(new CWeapon(*c.get<CWeapon>()));
 		if (c.get<CBFire>())
 			add<CBFire>(new CBFire(*c.get<CBFire>()));
+		if (c.get<CBPatrol>())
+			add<CBPatrol>(new CBPatrol(*c.get<CBPatrol>()));
 	}
 
 	~Components() {
@@ -105,6 +112,7 @@ public:
 		if (get<CAnimation>()) delete get<CAnimation>();
 		if (get<CWeapon>()) delete get<CWeapon>();
 		if (get<CBFire>()) delete get<CBFire>();
+		if (get<CBPatrol>()) delete get<CBPatrol>();
 	}
 
 	template<class T>

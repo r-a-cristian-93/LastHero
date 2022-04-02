@@ -40,6 +40,8 @@ struct EntityDataset {
 	size_t cb_fire_s = 0;
 	size_t cb_fire_data_p = 0;
 	size_t cb_fire_data_s = 0;
+	size_t cb_patrol = 0;
+	size_t cb_patrol_dist = 0;
 
 	~EntityDataset() {
 		delete[] stats_base;

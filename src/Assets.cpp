@@ -202,6 +202,19 @@ void Assets::loadEntity() {
 
 				file >> data_ent.cb_fire_data_p >> data_ent.cb_fire_data_s;
 			}
+			else if (word == "patrol") {
+				file >> word;
+
+				if (word == "horizontal") data_ent.cb_patrol = CBPatrol::PATROL_HORIZONTAL;
+				else if (word == "vertical") data_ent.cb_patrol = CBPatrol::PATROL_VERTICAL;
+				else if (word == "square") data_ent.cb_patrol = CBPatrol::PATROL_SQUARE;
+				else {
+					std::cout << "Patrol type " << word << " is not supported.\n";
+					exit(0);
+				}
+
+				file >> data_ent.cb_patrol_dist;
+			}
 			else {
 				std::cout << "Behaviour " << word << " is not supported.\n";
 				exit(0);
@@ -218,15 +231,15 @@ void Assets::loadEntity() {
 		case Entity::TAG_MISSLE:
 		case Entity::TAG_SFX:
 		{
-			//add Transform
+			// add Transform
 			recipe[data_ent.tag][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
 
-			//add CShape
+			// add CShape
 			sf::CircleShape shape;
 			shape.setFillColor(data_ent.fill);
 			recipe[data_ent.tag][data_ent.name_id].add<CShape>(new CShape(shape));
 
-			//add CScore		{
+			// add CScore		{
 			recipe[data_ent.tag][data_ent.name_id].add<CScore>(new CScore(data_ent.score_points));
 
 			// add CStats
@@ -253,21 +266,21 @@ void Assets::loadEntity() {
 				recipe[data_ent.tag][data_ent.name_id].add<CLifespan>(new CLifespan(data_ent.lifespan));
 			}
 
-			//add CCollsion
+			// add CCollsion
 			if (!data_ent.hitbox.empty()) {
 				CCollision collision;
 				collision.hitbox = data_ent.hitbox;
 				recipe[data_ent.tag][data_ent.name_id].add<CCollision>(new CCollision(collision));
 			}
 
-			//add CAnimation
+			// add CAnimation
 			if (data_ent.animation_set.animations.size() > 0) {
 				recipe[data_ent.tag][data_ent.name_id].add<CAnimation>(new CAnimation(data_ent.animation_set));
 				recipe[data_ent.tag][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
 				recipe[data_ent.tag][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
 			}
 
-			//add CWeapon
+			// add CWeapon
 			if (data_ent.weapon_primary!=NONE || data_ent.weapon_secondary!=NONE) {
 				CWeapon weapon(data_ent.weapon_primary, data_ent.weapon_secondary);
 				weapon.p_tag = data_ent.p_tag;
@@ -282,17 +295,22 @@ void Assets::loadEntity() {
 			recipe[data_ent.tag][data_ent.name_id].add<CInput>(new CInput());
 			}
 
-			//add CBFire
+			// add CBFire
 			if (data_ent.cb_fire_p || data_ent.cb_fire_s) {
 				recipe[data_ent.tag][data_ent.name_id].add<CBFire>(new CBFire(data_ent.cb_fire_p, data_ent.cb_fire_s, data_ent.cb_fire_data_p, data_ent.cb_fire_data_s));
 			}
 
-			//add icon
+			// add CBPatrol
+			if (data_ent.cb_patrol) {
+				recipe[data_ent.tag][data_ent.name_id].add<CBPatrol>(new CBPatrol(data_ent.cb_patrol, data_ent.cb_patrol_dist, {0,0}));
+			}
+
+			// add icon
 			if (!data_ent.icon.empty()) {
 				icon_small[data_ent.name_id] = &getSprite(data_ent.icon);
 			}
 
-			//add a reference of the recipe for ease of access;
+			// add a reference of the recipe for ease of access;
 			all_recipes[data_ent.name_id] = &recipe[data_ent.tag][data_ent.name_id];
 		}
 		break;

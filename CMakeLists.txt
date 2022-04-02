@@ -23,6 +23,7 @@ set(SOURCE_FILES
 	src/CAnimation.cpp
 	src/CWeapon.cpp
 	src/CBFire.cpp
+	src/CBPatrol.cpp
 	src/Entity.cpp
 	src/SUpdate.cpp
 	src/SDraw.cpp
