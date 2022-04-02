@@ -570,7 +570,7 @@ void ScenePlay::sAI() {
 					else e->get<CInput>()->fire_primary = false;
 				break;
 				case CBFire::TR_PLAYER_NEARBY:
-					if (squareDistance(e->get<CTransform>()->pos, player->get<CTransform>()->pos) < e->get<CBFire>()->data_fire_pri) {
+					if (squareDistance(e->get<CTransform>()->pos, player->get<CTransform>()->pos) < e->get<CBFire>()->data_fire_pri *  e->get<CBFire>()->data_fire_pri) {
 						e->get<CBFire>()->target = player;
 						e->get<CInput>()->fire_primary = true;
 					}
@@ -579,7 +579,7 @@ void ScenePlay::sAI() {
 					}
 				break;
 				case CBFire::TR_BASE_NOT_PROTECTED:
-					if (squareDistance(player->get<CTransform>()->pos, base->get<CTransform>()->pos) > e->get<CBFire>()->data_fire_pri) {
+					if (squareDistance(player->get<CTransform>()->pos, base->get<CTransform>()->pos) > e->get<CBFire>()->data_fire_pri *  e->get<CBFire>()->data_fire_pri) {
 						e->get<CBFire>()->target = base;
 						e->get<CInput>()->fire_primary = true;
 					}
