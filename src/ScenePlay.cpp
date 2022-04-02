@@ -412,11 +412,10 @@ void ScenePlay::sCollisionSolve() {
 							if (entity_hp <= 0) {
 								entity->alive = false;
 
-								total_kills++;
-
 								if (colliders[i]->owner) {
 									if (colliders[i]->owner == player && entity->tag == Entity::TAG_ENEMY) {
 										kills_per_enemy[entity->name]++;
+										total_kills++;
 									}
 								}
 							}
