@@ -67,6 +67,7 @@ class ScenePlay: public Scene {
 	float angle(sf::Vector2f v);
 	size_t facingOf(sf::Vector2f v);
 	sf::Vector2f dirOf(size_t facing);
+	void lookAt(CInput& c_input, const sf::Vector2f& a, const sf::Vector2f& b);
 	float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b);
 	bool checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entity>& b);
 

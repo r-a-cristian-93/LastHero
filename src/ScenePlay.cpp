@@ -559,27 +559,13 @@ void ScenePlay::sAI() {
 		if (e->get<CBChase>()) {
 			for (BCondition& bc:e->get<CBChase>()->cond) {
 				handleChase(e, bc);
-				if (e->get<CBChase>()->target) break;
 			}
 
 			if (e->get<CBChase>()->target && e->tag != Entity::TAG_ENVIRONMENT) {
 				has_target = true;
 
 				// face target
-				size_t facing = facingOf(e->get<CBChase>()->target->get<CTransform>()->pos - e->get<CTransform>()->pos);
-				sf::Vector2f dir = dirOf(facing);
-
-				// reset direction
-				e->get<CInput>()->right = false;
-				e->get<CInput>()->left = false;
-				e->get<CInput>()->up = false;
-				e->get<CInput>()->down = false;
-
-				// set new direction
-				if (dir.x > 0) e->get<CInput>()->right = true;
-				else if (dir.x < 0) e->get<CInput>()->left = true;
-				if (dir.y > 0) e->get<CInput>()->down = true;
-				else if (dir.y < 0) e->get<CInput>()->up = true;
+				lookAt(*e->get<CInput>(), e->get<CBChase>()->target->get<CTransform>()->pos, e->get<CTransform>()->pos);
 			}
 		}
 
@@ -653,7 +639,7 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 		case TR_PLAYER_NEARBY:
 		{
 			float sq_dist = squareDistance(e->get<CTransform>()->pos, player->get<CTransform>()->pos);
-			if (sq_dist < bc.data_start *  bc.data_start) {
+			if (sq_dist < bc.data_start * bc.data_start) {
 				e->get<CBChase>()->target = player;
 			}
 			// lose agro if target got too far
@@ -669,6 +655,11 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 		break;
 		case TR_BASE_NOT_PROTECTED:
 			if (squareDistance(player->get<CTransform>()->pos, base->get<CTransform>()->pos) > bc.data_start *  bc.data_start) {
+				e->get<CBChase>()->target = base;
+			}
+		break;
+		case TR_BASE_LOW_HP:
+			if (base->get<CStats>()->effective[CStats::HEALTH] < base->get<CStats>()->initial[CStats::HEALTH] * bc.data_start / 100) {
 				e->get<CBChase>()->target = base;
 			}
 		break;
@@ -690,28 +681,26 @@ void ScenePlay::handleFire(std::shared_ptr<Entity>& e, const BFire& b_fire, bool
 		{
 			float sq_dist = squareDistance(e->get<CTransform>()->pos, player->get<CTransform>()->pos);
 			if (sq_dist < b_fire.data *  b_fire.data) {
-				//e->get<CBFire>()->target = player;
 				fire_weapon = true;
+				e->get<CBFire>()->target = player;
 			}
-			// lose agro if target got too far
 			else if (sq_dist > b_fire.data * b_fire.data * 4) {
-				//e->get<CBFire>()->target = nullptr;
+				e->get<CBFire>()->target = nullptr;
 			}
 		}
 		break;
 		case TR_BASE_NEARBY:
 			if (squareDistance(e->get<CTransform>()->pos, base->get<CTransform>()->pos) < b_fire.data *  b_fire.data) {
-				//e->get<CBFire>()->target = base;
 				fire_weapon = true;
-			}
-		break;
-		case TR_BASE_NOT_PROTECTED:
-			if (squareDistance(player->get<CTransform>()->pos, base->get<CTransform>()->pos) > b_fire.data *  b_fire.data) {
-				//e->get<CBFire>()->target = base;
-				fire_weapon = true;
+				e->get<CBFire>()->target = base;
 			}
 		break;
 	}
+
+	if (e->get<CBChase>()) {
+		e->get<CBFire>()->target = e->get<CBChase>()->target;
+	}
+
 }
 
 void ScenePlay::sFireWeapon() {
@@ -923,6 +912,24 @@ sf::Vector2f ScenePlay::dirOf(size_t facing) {
 		case Entity::FACING_S: return {0, 1}; break;
 		case Entity::FACING_SE: return {1, 1}; break;
 	}
+}
+
+
+void ScenePlay::lookAt(CInput& c_input, const sf::Vector2f& a, const sf::Vector2f& b) {
+	size_t facing = facingOf(a-b);
+	sf::Vector2f dir = dirOf(facing);
+
+	// reset direction
+	c_input.right = false;
+	c_input.left = false;
+	c_input.up = false;
+	c_input.down = false;
+
+	// set new direction
+	if (dir.x > 0) c_input.right = true;
+	else if (dir.x < 0) c_input.left = true;
+	if (dir.y > 0) c_input.down = true;
+	else if (dir.y < 0) c_input.up = true;
 }
 
 void ScenePlay::doAction(const Action* a) {

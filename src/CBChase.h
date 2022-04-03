@@ -9,7 +9,7 @@ class Entity;
 
 class CBChase {
 public:
-	// order of conditions determines the priority. First element has the highest priority.
+	// order of conditions determines the priority. Last element has the highest priority.
 	std::vector<BCondition> cond;
 	std::shared_ptr<Entity> target;
 
