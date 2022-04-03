@@ -42,6 +42,7 @@ struct EntityDataset {
 	size_t cb_fire_data_s = 0;
 	size_t cb_patrol = 0;
 	size_t cb_patrol_dist = 0;
+	std::vector<BCondition> cb_chase;
 
 	~EntityDataset() {
 		delete[] stats_base;

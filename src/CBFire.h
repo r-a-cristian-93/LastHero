@@ -2,6 +2,7 @@
 #define C_B_FIRE
 
 #include <memory>
+#include "CommonBehaviour.h"
 
 class Entity;
 
@@ -18,17 +19,6 @@ struct BFire {
 
 class CBFire {
 public:
-	enum {
-		NONE = 0,
-		TR_PLAYER_LOW_HP,			// % of HP
-		TR_PLAYER_NEARBY,			// distance in pixels
-		TR_BASE_LOW_HP,				// % of HP
-		TR_BASE_NEARBY,				// distance in pixels
-		TR_BASE_NOT_PROTECTED,		// distance in pixels
-		TR_CONTINUOUS,
-		TR_RANDOM,
-	};
-
 	BFire pri;
 	BFire sec;
 

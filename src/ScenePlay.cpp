@@ -556,31 +556,39 @@ void ScenePlay::sAI() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
 		bool has_target = false;
 
-		if (e->get<CBFire>() && e->get<CWeapon>() && e->get<CInput>()) {
-			if (e->get<CWeapon>()->primary) {
-				handle(e, e->get<CBFire>()->pri, e->get<CInput>()->fire_primary);
-			}
-			if (e->get<CWeapon>()->secondary) {
-				handle(e, e->get<CBFire>()->sec, e->get<CInput>()->fire_secondary);
+		if (e->get<CBChase>()) {
+			for (BCondition& bc:e->get<CBChase>()->cond) {
+				handleChase(e, bc);
+				if (e->get<CBChase>()->target) break;
 			}
 
-			if (e->get<CBFire>()->target && e->tag != Entity::TAG_ENVIRONMENT) {
+			if (e->get<CBChase>()->target && e->tag != Entity::TAG_ENVIRONMENT) {
 				has_target = true;
 
 				// face target
-				size_t facing = facingOf(e->get<CBFire>()->target->get<CTransform>()->pos - e->get<CTransform>()->pos);
+				size_t facing = facingOf(e->get<CBChase>()->target->get<CTransform>()->pos - e->get<CTransform>()->pos);
 				sf::Vector2f dir = dirOf(facing);
 
-				// reset all directions
+				// reset direction
 				e->get<CInput>()->right = false;
 				e->get<CInput>()->left = false;
 				e->get<CInput>()->up = false;
 				e->get<CInput>()->down = false;
 
+				// set new direction
 				if (dir.x > 0) e->get<CInput>()->right = true;
 				else if (dir.x < 0) e->get<CInput>()->left = true;
 				if (dir.y > 0) e->get<CInput>()->down = true;
 				else if (dir.y < 0) e->get<CInput>()->up = true;
+			}
+		}
+
+		if (e->get<CBFire>() && e->get<CWeapon>() && e->get<CInput>()) {
+			if (e->get<CWeapon>()->primary) {
+				handleFire(e, e->get<CBFire>()->pri, e->get<CInput>()->fire_primary);
+			}
+			if (e->get<CWeapon>()->secondary) {
+				handleFire(e, e->get<CBFire>()->sec, e->get<CInput>()->fire_secondary);
 			}
 		}
 
@@ -640,37 +648,66 @@ void ScenePlay::sAI() {
 	}
 }
 
-void ScenePlay::handle(std::shared_ptr<Entity>& e, const BFire& b_fire, bool& fire_weapon) {
+void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
+	switch (bc.trigger) {
+		case TR_PLAYER_NEARBY:
+		{
+			float sq_dist = squareDistance(e->get<CTransform>()->pos, player->get<CTransform>()->pos);
+			if (sq_dist < bc.data_start *  bc.data_start) {
+				e->get<CBChase>()->target = player;
+			}
+			// lose agro if target got too far
+			else if (sq_dist > bc.data_stop * bc.data_stop) {
+				e->get<CBChase>()->target = nullptr;
+			}
+		}
+		break;
+		case TR_BASE_NEARBY:
+			if (squareDistance(e->get<CTransform>()->pos, base->get<CTransform>()->pos) < bc.data_start *  bc.data_start) {
+				e->get<CBChase>()->target = base;
+			}
+		break;
+		case TR_BASE_NOT_PROTECTED:
+			if (squareDistance(player->get<CTransform>()->pos, base->get<CTransform>()->pos) > bc.data_start *  bc.data_start) {
+				e->get<CBChase>()->target = base;
+			}
+		break;
+	}
+}
+
+void ScenePlay::handleFire(std::shared_ptr<Entity>& e, const BFire& b_fire, bool& fire_weapon) {
+	// SHOULD CHECK FOR COLLIDERS INSTREAD OF TARGET POSITION
+
 	switch (b_fire.trigger) {
-		case CBFire::TR_CONTINUOUS:
+		case TR_CONTINUOUS:
 			fire_weapon = true;
 		break;
-		case CBFire::TR_RANDOM:
+		case TR_RANDOM:
 			if (rand() % 2) fire_weapon = true;
 			else fire_weapon = false;
 		break;
-		case CBFire::TR_PLAYER_NEARBY:
+		case TR_PLAYER_NEARBY:
 		{
 			float sq_dist = squareDistance(e->get<CTransform>()->pos, player->get<CTransform>()->pos);
 			if (sq_dist < b_fire.data *  b_fire.data) {
-				e->get<CBFire>()->target = player;
+				//e->get<CBFire>()->target = player;
 				fire_weapon = true;
 			}
 			// lose agro if target got too far
 			else if (sq_dist > b_fire.data * b_fire.data * 4) {
-				e->get<CBFire>()->target = nullptr;
+				//e->get<CBFire>()->target = nullptr;
 			}
 		}
 		break;
-		case CBFire::TR_BASE_NEARBY:
+		case TR_BASE_NEARBY:
 			if (squareDistance(e->get<CTransform>()->pos, base->get<CTransform>()->pos) < b_fire.data *  b_fire.data) {
-				e->get<CBFire>()->target = base;
+				//e->get<CBFire>()->target = base;
 				fire_weapon = true;
 			}
 		break;
-		case CBFire::TR_BASE_NOT_PROTECTED:
+		case TR_BASE_NOT_PROTECTED:
 			if (squareDistance(player->get<CTransform>()->pos, base->get<CTransform>()->pos) > b_fire.data *  b_fire.data) {
-				e->get<CBFire>()->target = base;
+				//e->get<CBFire>()->target = base;
 				fire_weapon = true;
 			}
 		break;

@@ -215,6 +215,20 @@ void Assets::loadEntity() {
 
 				file >> data_ent.cb_patrol_dist;
 			}
+			else if (word == "chase") {
+				BCondition bc;
+				file >> word;
+				bc.trigger = parseTrigger(word);
+				file >> bc.data_start >> bc.data_stop;
+
+				if (bc.trigger && bc.data_start && bc.data_stop) {
+					data_ent.cb_chase.push_back(bc);
+				}
+				else {
+					std::cout << "Behaviour chase can not contain 0 values\n";
+					exit(0);
+				}
+			}
 			else {
 				std::cout << "Behaviour " << word << " is not supported.\n";
 				exit(0);
@@ -305,6 +319,11 @@ void Assets::loadEntity() {
 				recipe[data_ent.tag][data_ent.name_id].add<CBPatrol>(new CBPatrol(data_ent.cb_patrol, data_ent.cb_patrol_dist, {0,0}));
 			}
 
+			//add CBChase
+			if (!data_ent.cb_chase.empty()) {
+				recipe[data_ent.tag][data_ent.name_id].add<CBChase>(new CBChase(data_ent.cb_chase));
+			}
+
 			// add icon
 			if (!data_ent.icon.empty()) {
 				icon_small[data_ent.name_id] = &getSprite(data_ent.icon);
@@ -337,14 +356,14 @@ size_t Assets::parseTag(const std::string& word) {
 }
 
 size_t Assets::parseTrigger(const std::string& word) {
-	if (word == "tr_cont") return CBFire::TR_CONTINUOUS;
-	else if (word == "tr_rand") return CBFire::TR_RANDOM;
-	else if (word == "tr_cont") return CBFire::TR_CONTINUOUS;
-	else if (word == "tr_player_low_hp") return CBFire::TR_PLAYER_LOW_HP;
-	else if (word == "tr_player_nearby") return CBFire::TR_PLAYER_NEARBY;
-	else if (word == "tr_base_low_hp") return CBFire::TR_BASE_LOW_HP;
-	else if (word == "tr_base_nearby") return CBFire::TR_BASE_NEARBY;
-	else if (word == "tr_base_not_protected") return CBFire::TR_BASE_NOT_PROTECTED;
+	if (word == "tr_cont") return TR_CONTINUOUS;
+	else if (word == "tr_rand") return TR_RANDOM;
+	else if (word == "tr_cont") return TR_CONTINUOUS;
+	else if (word == "tr_player_low_hp") return TR_PLAYER_LOW_HP;
+	else if (word == "tr_player_nearby") return TR_PLAYER_NEARBY;
+	else if (word == "tr_base_low_hp") return TR_BASE_LOW_HP;
+	else if (word == "tr_base_nearby") return TR_BASE_NEARBY;
+	else if (word == "tr_base_not_protected") return TR_BASE_NOT_PROTECTED;
 	else {
 		std::cout << "Invalid trigger \"" << word << "\".\n";
 		exit(0);
