@@ -375,6 +375,13 @@ void ScenePlay::sCollisionSolve() {
 			if (colliders.size() > 0) {
 				for (size_t i = 0; i < colliders.size(); i++) {
 
+					// skip if owner spawned the projectile
+					if (colliders[i]->owner) {
+						if (colliders[i]->owner == entity) {
+							continue;
+						}
+					}
+
 					// if it's a colliders[i](projectile) apply damage and kill colliders[i]
 					if (colliders[i]->get<CLifespan>() && colliders[i]->alive) {
 						colliders[i]->alive = false;
