@@ -1,9 +1,7 @@
 #include "CBFire.h"
 
 CBFire::CBFire()
-	:pri(0, 0)
-	,sec(0, 0)
-	,target(nullptr)
+	:target(nullptr)
 	{}
 
 CBFire::CBFire(const CBFire& c)
@@ -12,8 +10,8 @@ CBFire::CBFire(const CBFire& c)
 	,target(c.target)
 	{}
 
-CBFire::CBFire(size_t tfp, size_t tfs, size_t dfp, size_t dfs)
-	:pri(tfp, dfp)
-	,sec(tfs, dfs)
+CBFire::CBFire(std::vector<BCondition> _pri, std::vector<BCondition> _sec)
+	:pri(_pri)
+	,sec(_sec)
 	,target(nullptr)
 	{}

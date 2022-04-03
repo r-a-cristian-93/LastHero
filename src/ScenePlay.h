@@ -70,8 +70,9 @@ class ScenePlay: public Scene {
 	void lookAt(CInput& c_input, const sf::Vector2f& a, const sf::Vector2f& b);
 	float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b);
 	bool checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entity>& b);
+	bool checkCollision(const std::shared_ptr<Entity>& a, const std::shared_ptr<Entity>& b, const size_t threshold);
 
-	void handleFire(std::shared_ptr<Entity>& e, const BFire& b_fire, bool& fire_weapon);
+	void handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, bool& fire_weapon);
 	void handleChase(std::shared_ptr<Entity>& e, const BCondition& bc);
 
 public:

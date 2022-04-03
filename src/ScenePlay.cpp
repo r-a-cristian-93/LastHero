@@ -339,6 +339,30 @@ bool ScenePlay::checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entit
 	return collision;
 }
 
+bool ScenePlay::checkCollision(const std::shared_ptr<Entity>& a, const std::shared_ptr<Entity>& b, const size_t threshold) {
+	bool collision = false;
+
+	if (a->get<CCollision>() && b->get<CCollision>()) {
+		if (!a->get<CCollision>()->hitbox.empty() && !b->get<CCollision>()->hitbox.empty()) {
+			for (HitBox& hb_a : a->get<CCollision>()->hitbox) {
+				for (HitBox& hb_b : b->get<CCollision>()->hitbox) {
+					sf::Vector2f pos_a = a->get<CTransform>()->pos + hb_a.offset[a->facing];
+					sf::Vector2f pos_b = b->get<CTransform>()->pos + hb_b.offset[b->facing];
+
+					float square_distance = squareDistance(pos_a, pos_b);
+					int square_radius = (hb_a.radius + hb_b.radius + threshold) * (hb_a.radius + hb_b.radius + threshold);
+
+					if (square_distance < square_radius) {
+						collision = true;
+					}
+				}
+			}
+		}
+	}
+
+	return collision;
+}
+
 void ScenePlay::sCollisionCheck() {
 	PROFILE_FUNCTION();
 
@@ -564,17 +588,29 @@ void ScenePlay::sAI() {
 			if (e->get<CBChase>()->target && e->tag != Entity::TAG_ENVIRONMENT) {
 				has_target = true;
 
-				// face target
-				lookAt(*e->get<CInput>(), e->get<CBChase>()->target->get<CTransform>()->pos, e->get<CTransform>()->pos);
+				// move twards target if it's not too close;
+				if (!checkCollision(e, e->get<CBChase>()->target, 2)) {
+					lookAt(*e->get<CInput>(), e->get<CBChase>()->target->get<CTransform>()->pos, e->get<CTransform>()->pos);
+				}
+				else {
+					e->get<CInput>()->right = false;
+					e->get<CInput>()->left = false;
+					e->get<CInput>()->up = false;
+					e->get<CInput>()->down = false;
+				}
 			}
 		}
 
 		if (e->get<CBFire>() && e->get<CWeapon>() && e->get<CInput>()) {
 			if (e->get<CWeapon>()->primary) {
-				handleFire(e, e->get<CBFire>()->pri, e->get<CInput>()->fire_primary);
+				for (BCondition& bc: e->get<CBFire>()->pri) {
+					handleFire(e, bc, e->get<CInput>()->fire_primary);
+				}
 			}
 			if (e->get<CWeapon>()->secondary) {
-				handleFire(e, e->get<CBFire>()->sec, e->get<CInput>()->fire_secondary);
+				for (BCondition& bc: e->get<CBFire>()->sec) {
+					handleFire(e, bc, e->get<CInput>()->fire_secondary);
+				}
 			}
 		}
 
@@ -638,23 +674,22 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 	switch (bc.trigger) {
 		case TR_PLAYER_NEARBY:
 		{
-			float sq_dist = squareDistance(e->get<CTransform>()->pos, player->get<CTransform>()->pos);
-			if (sq_dist < bc.data_start * bc.data_start) {
+			if (checkCollision(e, player, bc.data_start)) {
 				e->get<CBChase>()->target = player;
 			}
 			// lose agro if target got too far
-			else if (sq_dist > bc.data_stop * bc.data_stop) {
+			else if (!checkCollision(e, player, bc.data_stop)) {
 				e->get<CBChase>()->target = nullptr;
 			}
 		}
 		break;
 		case TR_BASE_NEARBY:
-			if (squareDistance(e->get<CTransform>()->pos, base->get<CTransform>()->pos) < bc.data_start *  bc.data_start) {
+			if (checkCollision(e, base, bc.data_start)) {
 				e->get<CBChase>()->target = base;
 			}
 		break;
 		case TR_BASE_NOT_PROTECTED:
-			if (squareDistance(player->get<CTransform>()->pos, base->get<CTransform>()->pos) > bc.data_start *  bc.data_start) {
+			if (checkCollision(player, base, bc.data_start)) {
 				e->get<CBChase>()->target = base;
 			}
 		break;
@@ -666,10 +701,11 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 	}
 }
 
-void ScenePlay::handleFire(std::shared_ptr<Entity>& e, const BFire& b_fire, bool& fire_weapon) {
-	// SHOULD CHECK FOR COLLIDERS INSTREAD OF TARGET POSITION
+void ScenePlay::handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, bool& fire_weapon) {
+	// MUST CHECK COLLISION BETWEEN PROJECTILE SPAWN POSTION AND TARGET
+	// ADD NEW checkCollision() FUNCTION
 
-	switch (b_fire.trigger) {
+	switch (bc.trigger) {
 		case TR_CONTINUOUS:
 			fire_weapon = true;
 		break;
@@ -678,29 +714,22 @@ void ScenePlay::handleFire(std::shared_ptr<Entity>& e, const BFire& b_fire, bool
 			else fire_weapon = false;
 		break;
 		case TR_PLAYER_NEARBY:
-		{
-			float sq_dist = squareDistance(e->get<CTransform>()->pos, player->get<CTransform>()->pos);
-			if (sq_dist < b_fire.data *  b_fire.data) {
+			if (checkCollision(e, player, bc.data_start)) {
 				fire_weapon = true;
-				e->get<CBFire>()->target = player;
 			}
-			else if (sq_dist > b_fire.data * b_fire.data * 4) {
-				e->get<CBFire>()->target = nullptr;
-			}
-		}
 		break;
 		case TR_BASE_NEARBY:
-			if (squareDistance(e->get<CTransform>()->pos, base->get<CTransform>()->pos) < b_fire.data *  b_fire.data) {
+			if (checkCollision(e, base, bc.data_start)) {
 				fire_weapon = true;
-				e->get<CBFire>()->target = base;
 			}
 		break;
 	}
 
 	if (e->get<CBChase>()) {
-		e->get<CBFire>()->target = e->get<CBChase>()->target;
+		if (e->get<CBChase>()->target) {
+			e->get<CBFire>()->target = e->get<CBChase>()->target;
+		}
 	}
-
 }
 
 void ScenePlay::sFireWeapon() {

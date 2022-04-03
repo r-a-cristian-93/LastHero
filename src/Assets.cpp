@@ -193,14 +193,19 @@ void Assets::loadEntity() {
 		}
 		else if (word == "behaviour") {
 			file >> word;
-			if (word == "fire") {
+			if (word == "fire_primary") {
+				BCondition bc;
 				file >> word;
-				data_ent.cb_fire_p = parseTrigger(word);
-
+				bc.trigger = parseTrigger(word);
+				file >> bc.data_start;
+				data_ent.cb_fire_primary.push_back(bc);
+			}
+			else if (word == "fire_secondary") {
+				BCondition bc;
 				file >> word;
-				data_ent.cb_fire_s = parseTrigger(word);
-
-				file >> data_ent.cb_fire_data_p >> data_ent.cb_fire_data_s;
+				bc.trigger = parseTrigger(word);
+				file >> bc.data_start;
+				data_ent.cb_fire_secondary.push_back(bc);
 			}
 			else if (word == "patrol") {
 				file >> word;
@@ -310,8 +315,8 @@ void Assets::loadEntity() {
 			}
 
 			// add CBFire
-			if (data_ent.cb_fire_p || data_ent.cb_fire_s) {
-				recipe[data_ent.tag][data_ent.name_id].add<CBFire>(new CBFire(data_ent.cb_fire_p, data_ent.cb_fire_s, data_ent.cb_fire_data_p, data_ent.cb_fire_data_s));
+			if (!data_ent.cb_fire_primary.empty() || !data_ent.cb_fire_secondary.empty()) {
+				recipe[data_ent.tag][data_ent.name_id].add<CBFire>(new CBFire(data_ent.cb_fire_primary, data_ent.cb_fire_secondary));
 			}
 
 			// add CBPatrol
