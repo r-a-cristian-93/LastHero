@@ -505,11 +505,11 @@ void ScenePlay::sPlayFx() {
 		 if (e->get<CAnimation>() && e->get<CFx>()) {
 			 for (Fx fx : e->get<CFx>()->fx) {
 				 switch (fx.trigger) {
-					 case TR::DIE:
-					 if (!e->alive && e->get<CAnimation>()->active_anim->hasEnded()) {
+					case TR::DIE:
+						if (!e->alive && e->get<CAnimation>()->active_anim->hasEnded()) {
 							spawnEntity(fx.tag, fx.id, e->get<CTransform>()->pos, Entity::STATE_DIE, Entity::FACING_E);
 						}
-					 break;
+					break;
 				 }
 			 }
 		}
