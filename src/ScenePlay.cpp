@@ -109,10 +109,10 @@ void ScenePlay::load_level(std::string path) {
 				else if (word == "frame") file >> frame;
 				else if (word == "entity") {
 					file >> word;
-					if (word == "enemy") tag = Entity::TAG_ENEMY;
-					else if (word == "player") tag = Entity::TAG_PLAYER;
-					else if (word == "base") tag = Entity::TAG_BASE;
-					else if (word == "environment") tag = Entity::TAG_ENVIRONMENT;
+					if (word == "enemy") tag = TAG::ENEMY;
+					else if (word == "player") tag = TAG::PLAYER;
+					else if (word == "base") tag = TAG::BASE;
+					else if (word == "environment") tag = TAG::ENVIRONMENT;
 					else {
 						std::cout << "LOAD LEVEL: Tag \"" << "\" is not supported\n";
 						exit(0);
@@ -221,7 +221,7 @@ void ScenePlay::update() {
 void ScenePlay::spawnPlayer() {
 	const sf::Vector2f pos(game->app_conf.window_w/2, game->app_conf.window_h/2);
 
-	player = ent_mgr.add(Entity::TAG_PLAYER);
+	player = ent_mgr.add(TAG::PLAYER);
 	player->get<CTransform>()->pos = pos;
 }
 
@@ -230,7 +230,7 @@ void ScenePlay::spawnBase() {
 
 
 	size_t recipe = game->assets->getRecipeNameID("cow");
-	base = ent_mgr.add(Entity::TAG_ENEMY, recipe);
+	base = ent_mgr.add(TAG::ENEMY, recipe);
 	base->get<CTransform>()->pos = pos;
 	base->get<CTransform>()->dir = {-1, 1};
 	base->state = Entity::STATE_IDLE;
@@ -249,7 +249,7 @@ void ScenePlay::spawnEnemy() {
 	// deprecated
 	int player_radius = 50;
 
-	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_ENEMY);
+	std::shared_ptr<Entity> e = ent_mgr.add(TAG::ENEMY);
 	// deprecated
 	int radius = 50;
 
@@ -437,7 +437,7 @@ void ScenePlay::sCollisionSolve() {
 								entity->alive = false;
 
 								if (colliders[i]->owner) {
-									if (colliders[i]->owner == player && entity->tag == Entity::TAG_ENEMY) {
+									if (colliders[i]->owner == player && entity->tag == TAG::ENEMY) {
 										kills_per_enemy[entity->name]++;
 										total_kills++;
 									}
@@ -568,7 +568,7 @@ void ScenePlay::sStateFacing() {
 
 void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
 	size_t recipe = game->assets->getRecipeNameID("glowing_bullet_explosion");
-	std::shared_ptr<Entity> e = ent_mgr.add(Entity::TAG_SFX, recipe);
+	std::shared_ptr<Entity> e = ent_mgr.add(TAG::FX, recipe);
 
 	e->add<CTransform>(new CTransform(pos, 0));
 
@@ -585,7 +585,7 @@ void ScenePlay::sAI() {
 				handleChase(e, bc);
 			}
 
-			if (e->get<CBChase>()->target && e->tag != Entity::TAG_ENVIRONMENT) {
+			if (e->get<CBChase>()->target && e->tag != TAG::ENVIRONMENT) {
 				has_target = true;
 
 				// move twards target if it's not too close;
@@ -672,7 +672,7 @@ void ScenePlay::sAI() {
 
 void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 	switch (bc.trigger) {
-		case TR_PLAYER_NEARBY:
+		case TR::PLAYER_NEARBY:
 		{
 			if (checkCollision(e, player, bc.data_start)) {
 				e->get<CBChase>()->target = player;
@@ -683,17 +683,17 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 			}
 		}
 		break;
-		case TR_BASE_NEARBY:
+		case TR::BASE_NEARBY:
 			if (checkCollision(e, base, bc.data_start)) {
 				e->get<CBChase>()->target = base;
 			}
 		break;
-		case TR_BASE_NOT_PROTECTED:
+		case TR::BASE_NOT_PROTECTED:
 			if (checkCollision(player, base, bc.data_start)) {
 				e->get<CBChase>()->target = base;
 			}
 		break;
-		case TR_BASE_LOW_HP:
+		case TR::BASE_LOW_HP:
 			if (base->get<CStats>()->effective[CStats::HEALTH] < base->get<CStats>()->initial[CStats::HEALTH] * bc.data_start / 100) {
 				e->get<CBChase>()->target = base;
 			}
@@ -706,20 +706,20 @@ void ScenePlay::handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, boo
 	// ADD NEW checkCollision() FUNCTION
 
 	switch (bc.trigger) {
-		case TR_CONTINUOUS:
+		case TR::CONTINUOUS:
 			fire_weapon = true;
 		break;
-		case TR_RANDOM:
+		case TR::RANDOM:
 			if (rand() % 2) fire_weapon = true;
 			else fire_weapon = false;
 		break;
-		case TR_PLAYER_NEARBY:
+		case TR::PLAYER_NEARBY:
 			if (checkCollision(e, player, bc.data_start)) {
 				fire_weapon = true;
 				e->get<CBFire>()->target = player;
 			}
 		break;
-		case TR_BASE_NEARBY:
+		case TR::BASE_NEARBY:
 			if (checkCollision(e, base, bc.data_start)) {
 				fire_weapon = true;
 				e->get<CBFire>()->target = base;
@@ -781,11 +781,11 @@ void ScenePlay::sFireWeapon() {
 }
 
 void ScenePlay::sLifespan() {
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_PROJECTILE)) {
+	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(TAG::PROJECTILE)) {
 		checkLifespan(e);
 	}
 
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(Entity::TAG_SFX)) {
+	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(TAG::FX)) {
 		checkLifespan(e);
 	}
 }
@@ -813,7 +813,7 @@ void ScenePlay::spawnMissle() {
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir = mouse_pos - pos;
 
-	std::shared_ptr<Entity> missle = ent_mgr.add(Entity::TAG_MISSLE);
+	std::shared_ptr<Entity> missle = ent_mgr.add(TAG::MISSLE);
 
 	missle->get<CTransform>()->pos = pos;
 	missle->get<CTransform>()->dir = dir;
@@ -825,7 +825,7 @@ std::shared_ptr<Entity> ScenePlay::findTarget(const std::shared_ptr<Entity>& mis
 	sf::Vector2f dir_missle(missle->get<CTransform>()->dir);
 	sf::Vector2f dir_enemy;
 
-	for (std::shared_ptr<Entity>& enemy : ent_mgr.getEntities(Entity::TAG_ENEMY)) {
+	for (std::shared_ptr<Entity>& enemy : ent_mgr.getEntities(TAG::ENEMY)) {
 		dir_enemy = enemy->get<CTransform>()->pos - missle->get<CTransform>()->pos;
 
 		if (angle(dir_missle, dir_enemy) < 30) {
@@ -854,7 +854,7 @@ std::shared_ptr<Entity> ScenePlay::findTarget(const std::shared_ptr<Entity>& mis
 }
 
 void ScenePlay::sMissleGuidance() {
-	for (std::shared_ptr<Entity>& missle : ent_mgr.getEntities(Entity::TAG_MISSLE)) {
+	for (std::shared_ptr<Entity>& missle : ent_mgr.getEntities(TAG::MISSLE)) {
 
 		std::shared_ptr<Entity> new_target = findTarget(missle);
 		std::shared_ptr<Entity> prev_target = nullptr;
@@ -996,12 +996,12 @@ void ScenePlay::doAction(const Action* a) {
 			case Action::SPAWN_PLAYER:
 				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
 				ent_mgr.update();
-				player = ent_mgr.getEntities(Entity::TAG_PLAYER)[0];
+				player = ent_mgr.getEntities(TAG::PLAYER)[0];
 			break;
 			case Action::SPAWN_BASE:
 				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
 				ent_mgr.update();
-				base = ent_mgr.getEntities(Entity::TAG_BASE)[0];
+				base = ent_mgr.getEntities(TAG::BASE)[0];
 			default:
 			break;
 		}
@@ -1107,7 +1107,7 @@ void ScenePlay::sGameState() {
 		setFade(FADE_OUT, 60, Game::GAME_SCENE_OVER);
 	}
 
-	if (ent_mgr.getEntities(Entity::TAG_ENEMY).empty()) {
+	if (ent_mgr.getEntities(TAG::ENEMY).empty()) {
 		game_state = GAME_OVER;
 		game->addKills(kills_per_enemy);
 		if (game->stageNext()) {
@@ -1120,7 +1120,7 @@ void ScenePlay::sGameState() {
 	}
 #ifdef DEBUG_ENEMIES_LEFT
 	else {
-		std::cout << "enemies left: " << ent_mgr.getEntities(Entity::TAG_ENEMY).size() << std::endl;
+		std::cout << "enemies left: " << ent_mgr.getEntities(TAG::ENEMY).size() << std::endl;
 	}
 #endif
 }

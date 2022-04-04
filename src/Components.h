@@ -11,6 +11,7 @@
 #include "CStats.h"
 #include "CAnimation.h"
 #include "CWeapon.h"
+#include "CFx.h"
 #include "CBFire.h"
 #include "CBPatrol.h"
 #include "CBChase.h"
@@ -27,6 +28,7 @@ class Components {
 		CStats*,
 		CAnimation*,
 		CWeapon*,
+		CFx*,
 		CBFire*,
 		CBPatrol*,
 		CBChase*> components;
@@ -43,6 +45,7 @@ public:
 		add<CStats>(nullptr);
 		add<CAnimation>(nullptr);
 		add<CWeapon>(nullptr);
+		add<CFx>(nullptr);
 		add<CBFire>(nullptr);
 		add<CBPatrol>(nullptr);
 		add<CBChase>(nullptr);
@@ -58,6 +61,7 @@ public:
 		CTarget* c_tg,
 		CStats* c_h,
 		CWeapon* c_w,
+		CFx* c_fx,
 		CAnimation* c_a,
 		CBFire* cb_f,
 		CBPatrol* cb_p,
@@ -72,6 +76,7 @@ public:
 		add<CTarget>(c_tg);
 		add<CStats>(c_h);
 		add<CWeapon>(c_w);
+		add<CFx>(c_fx);
 		add<CAnimation>(c_a);
 		add<CBFire>(cb_f);
 		add<CBPatrol>(cb_p);
@@ -99,6 +104,8 @@ public:
 			add<CAnimation>(new CAnimation(*c.get<CAnimation>()));
 		if (c.get<CWeapon>())
 			add<CWeapon>(new CWeapon(*c.get<CWeapon>()));
+		if (c.get<CFx>())
+			add<CFx>(new CFx(*c.get<CFx>()));
 		if (c.get<CBFire>())
 			add<CBFire>(new CBFire(*c.get<CBFire>()));
 		if (c.get<CBPatrol>())
@@ -118,6 +125,7 @@ public:
 		if (get<CStats>()) delete get<CStats>();
 		if (get<CAnimation>()) delete get<CAnimation>();
 		if (get<CWeapon>()) delete get<CWeapon>();
+		if (get<CFx>()) delete get<CFx>();
 		if (get<CBFire>()) delete get<CBFire>();
 		if (get<CBPatrol>()) delete get<CBPatrol>();
 		if (get<CBChase>()) delete get<CBChase>();

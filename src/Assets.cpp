@@ -173,6 +173,22 @@ void Assets::loadEntity() {
 				data_ent.projectile_spawn[i].y = dy;
 			}
 		}
+		else if (word == "fx") {
+			Fx fx;
+
+			file >> word;
+			if (word == "tr_die") fx.trigger = TR::DIE;
+			else if (word == "tr_spawn") fx.trigger = TR::SPAWN;
+			else {
+				std::cout << "CFx trigger " << word << " is not supported.\n";
+				exit(0);
+			}
+
+			file >> word;
+			fx.id = getRecipeNameID(word);
+
+			if (fx.id) 	data_ent.c_fx.push_back(fx);
+		}
 		else if (word == "hitbox") {
 			HitBox hb;
 			file >> hb.radius;
@@ -242,13 +258,13 @@ void Assets::loadEntity() {
 	}
 
 	switch (data_ent.tag) {
-		case Entity::TAG_PLAYER:
-		case Entity::TAG_BASE:
-		case Entity::TAG_ENEMY:
-		case Entity::TAG_ENVIRONMENT:
-		case Entity::TAG_PROJECTILE:
-		case Entity::TAG_MISSLE:
-		case Entity::TAG_SFX:
+		case TAG::PLAYER:
+		case TAG::BASE:
+		case TAG::ENEMY:
+		case TAG::ENVIRONMENT:
+		case TAG::PROJECTILE:
+		case TAG::MISSLE:
+		case TAG::FX:
 		{
 			// add Transform
 			recipe[data_ent.tag][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
@@ -347,13 +363,13 @@ void Assets::loadEntity() {
 
 
 size_t Assets::parseTag(const std::string& word) {
-	if (word == "player") return Entity::TAG_PLAYER;
-	else if (word == "base") return Entity::TAG_BASE;
-	else if (word == "environment") return Entity::TAG_ENVIRONMENT;
-	else if (word == "projectile") return Entity::TAG_PROJECTILE;
-	else if (word == "missle") return Entity::TAG_MISSLE;
-	else if (word == "enemy") return Entity::TAG_ENEMY;
-	else if (word == "sfx") return Entity::TAG_SFX;
+	if (word == "player") return TAG::PLAYER;
+	else if (word == "base") return TAG::BASE;
+	else if (word == "environment") return TAG::ENVIRONMENT;
+	else if (word == "projectile") return TAG::PROJECTILE;
+	else if (word == "missle") return TAG::MISSLE;
+	else if (word == "enemy") return TAG::ENEMY;
+	else if (word == "fx") return TAG::FX;
 	else {
 		std::cout << "Invalid entity tag \"" << word << "\".\n";
 		exit(0);
@@ -361,14 +377,14 @@ size_t Assets::parseTag(const std::string& word) {
 }
 
 size_t Assets::parseTrigger(const std::string& word) {
-	if (word == "tr_cont") return TR_CONTINUOUS;
-	else if (word == "tr_rand") return TR_RANDOM;
-	else if (word == "tr_cont") return TR_CONTINUOUS;
-	else if (word == "tr_player_low_hp") return TR_PLAYER_LOW_HP;
-	else if (word == "tr_player_nearby") return TR_PLAYER_NEARBY;
-	else if (word == "tr_base_low_hp") return TR_BASE_LOW_HP;
-	else if (word == "tr_base_nearby") return TR_BASE_NEARBY;
-	else if (word == "tr_base_not_protected") return TR_BASE_NOT_PROTECTED;
+	if (word == "tr_cont") return TR::CONTINUOUS;
+	else if (word == "tr_rand") return TR::RANDOM;
+	else if (word == "tr_cont") return TR::CONTINUOUS;
+	else if (word == "tr_player_low_hp") return TR::PLAYER_LOW_HP;
+	else if (word == "tr_player_nearby") return TR::PLAYER_NEARBY;
+	else if (word == "tr_base_low_hp") return TR::BASE_LOW_HP;
+	else if (word == "tr_base_nearby") return TR::BASE_NEARBY;
+	else if (word == "tr_base_not_protected") return TR::BASE_NOT_PROTECTED;
 	else {
 		std::cout << "Invalid trigger \"" << word << "\".\n";
 		exit(0);

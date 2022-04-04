@@ -6,17 +6,6 @@
 class Entity {
 public:
 	enum {
-		NONE = 0,
-		TAG_PLAYER,
-		TAG_BASE,
-		TAG_ENEMY,
-		TAG_ENVIRONMENT,
-		TAG_PROJECTILE,
-		TAG_MISSLE,
-		TAG_SFX,
-	};
-
-	enum {
 		STATE_IDLE = 1,
 		STATE_RUN,
 		STATE_DIE,

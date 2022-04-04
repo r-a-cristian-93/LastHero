@@ -22,6 +22,7 @@ set(SOURCE_FILES
 	src/CClickLocation.cpp
 	src/CAnimation.cpp
 	src/CWeapon.cpp
+	src/CFx.cpp
 	src/CBChase.cpp
 	src/CBFire.cpp
 	src/CBPatrol.cpp

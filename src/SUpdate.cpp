@@ -39,7 +39,7 @@ void SUpdate::updatePosition(const EntityVec& entities, const sf::FloatRect& lim
 							sf::Vector2f pos_future = pos + hb.offset[e->facing] + vel;
 
 							sf::FloatRect bounds;
-							if (e->tag == Entity::TAG_PROJECTILE) {
+							if (e->tag == TAG::PROJECTILE) {
 								bounds = {pos_future.x+r, pos_future.y+r, pos_future.x-r, pos_future.y-r};
 							}
 							else {
@@ -55,7 +55,7 @@ void SUpdate::updatePosition(const EntityVec& entities, const sf::FloatRect& lim
 									dir.x *= -1.0f;
 									vel.x *= -1.0f;
 
-									if (e->tag == Entity::TAG_PROJECTILE) {
+									if (e->tag == TAG::PROJECTILE) {
 										e->alive = false;
 									}
 								}
@@ -70,7 +70,7 @@ void SUpdate::updatePosition(const EntityVec& entities, const sf::FloatRect& lim
 									dir.y *= -1.0f;
 									vel.y *= -1.0f;
 
-									if (e->tag == Entity::TAG_MISSLE) {
+									if (e->tag == TAG::MISSLE) {
 										e->alive = false;
 									}
 								}

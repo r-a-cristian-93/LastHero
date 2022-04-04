@@ -5,6 +5,7 @@
 #include "Interface.h"
 #include "ParticlesEmitter.h"
 #include "Tilemap.h"
+#include "Enums.h"
 
 struct Camera {
 	sf::Vector2f pos, target;

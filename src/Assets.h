@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include "Common.h"
+#include "Enums.h"
 #include "Entity.h"
 #include "Border.h"
 #include "Interface.h"
@@ -41,6 +42,7 @@ struct EntityDataset {
 	size_t cb_patrol = 0;
 	size_t cb_patrol_dist = 0;
 	std::vector<BCondition> cb_chase;
+	std::vector<Fx> c_fx;
 
 	~EntityDataset() {
 		delete[] stats_base;
