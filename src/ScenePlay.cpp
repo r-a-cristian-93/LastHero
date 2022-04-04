@@ -716,11 +716,13 @@ void ScenePlay::handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, boo
 		case TR_PLAYER_NEARBY:
 			if (checkCollision(e, player, bc.data_start)) {
 				fire_weapon = true;
+				e->get<CBFire>()->target = player;
 			}
 		break;
 		case TR_BASE_NEARBY:
 			if (checkCollision(e, base, bc.data_start)) {
 				fire_weapon = true;
+				e->get<CBFire>()->target = base;
 			}
 		break;
 	}
