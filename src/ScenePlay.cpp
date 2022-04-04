@@ -185,6 +185,7 @@ void ScenePlay::update() {
 			sFireWeapon();
 			sInterface();
 			sAnimation();
+			sPlayFx();
 			sGameState();
 		}
 		sView();
@@ -409,7 +410,7 @@ void ScenePlay::sCollisionSolve() {
 					// if it's a colliders[i](projectile) apply damage and kill colliders[i]
 					if (colliders[i]->get<CLifespan>() && colliders[i]->alive) {
 						colliders[i]->alive = false;
-						spawnExplosion(colliders[i]->get<CTransform>()->pos);
+						//spawnExplosion(colliders[i]->get<CTransform>()->pos);
 
 						// hit flag is set only for one frame
 						// it will be unset by sStateFacing
@@ -495,6 +496,22 @@ void ScenePlay::sCollisionSolve() {
 					}
 				}
 			}
+		}
+	}
+}
+
+void ScenePlay::sPlayFx() {
+	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(TAG::PROJECTILE)) {
+		 if (e->get<CAnimation>() && e->get<CFx>()) {
+			 for (Fx fx : e->get<CFx>()->fx) {
+				 switch (fx.trigger) {
+					 case TR::DIE:
+					 if (!e->alive && e->get<CAnimation>()->active_anim->hasEnded()) {
+							spawnEntity(fx.tag, fx.id, e->get<CTransform>()->pos, Entity::STATE_DIE, Entity::FACING_E);
+						}
+					 break;
+				 }
+			 }
 		}
 	}
 }
@@ -942,6 +959,7 @@ sf::Vector2f ScenePlay::dirOf(size_t facing) {
 		case Entity::FACING_SW: return {-1, 1}; break;
 		case Entity::FACING_S: return {0, 1}; break;
 		case Entity::FACING_SE: return {1, 1}; break;
+		default: return {0,0};
 	}
 }
 

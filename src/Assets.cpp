@@ -330,6 +330,11 @@ void Assets::loadEntity() {
 			recipe[data_ent.tag][data_ent.name_id].add<CInput>(new CInput());
 			}
 
+			// add CFx
+			if (!data_ent.c_fx.empty()) {
+				recipe[data_ent.tag][data_ent.name_id].add<CFx>(new CFx(data_ent.c_fx));
+			}
+
 			// add CBFire
 			if (!data_ent.cb_fire_primary.empty() || !data_ent.cb_fire_secondary.empty()) {
 				recipe[data_ent.tag][data_ent.name_id].add<CBFire>(new CBFire(data_ent.cb_fire_primary, data_ent.cb_fire_secondary));

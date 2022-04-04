@@ -60,6 +60,7 @@ class ScenePlay: public Scene {
 	void sAnimation();
 	void sView();
 	void sGameState();
+	void sPlayFx();
 
 	void checkLifespan(std::shared_ptr<Entity>& e);
 	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);
