@@ -155,12 +155,13 @@ void ScenePlay::load_level(std::string path) {
 
 	map_ground.setTexture(game->assets.getTexture(texture_name));
 	map_ground.loadLevel(tile_size, level_layer, map_size);
-	delete level_layer;
+	delete[] level_layer;
 
 	while (!action_stream.empty()) {
 		Action* action;
 		action_stream >> action;
 		doAction(action);
+		delete action;
 	}
 }
 
