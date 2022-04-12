@@ -109,7 +109,6 @@ void Game::sUserInput() {
 	while (window.pollEvent(event)) {
 		if (event.type == sf::Event::Closed) {
 			running = false;
-			window.close();
 		}
 		else if (event.type == sf::Event::KeyPressed) {
 			action_code = act_mgr.getCode(ActionManager::DEV_KEYBOARD, event.key.code);

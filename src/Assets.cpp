@@ -742,6 +742,7 @@ void Assets::loadTexture() {
 		if (!textures[name].loadFromFile(*path)) {
 			std::cout << "Can't load texture " << path << std::endl;
 		}
+		delete path;
 	}
 }
 
