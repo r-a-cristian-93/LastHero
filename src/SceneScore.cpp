@@ -18,7 +18,7 @@ void SceneScore::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SELECT);
 
 	{
-		title = new WidgetText();
+		title = new Widget();
 		std::string string = "";
 		if (game->stagePrev() + 1 == game->stagesCount()) {
 			string = "ALL STAGES COMPLETE!";
@@ -109,7 +109,7 @@ void SceneScore::init() {
 			}
 
 			if (c==0 && r > 0 && r < rows-2) {
-				WidgetBox* box = new WidgetBox();
+				Widget* box = new Widget();
 				sf::Sprite& icon = game->assets.getIconSmall(it_k->first);
 				sf::FloatRect rect = icon.getLocalBounds();
 				sf::Vector2i offset = {static_cast<int>(-rect.width/2), static_cast<int>(-rect.height/2)};
@@ -118,7 +118,7 @@ void SceneScore::init() {
 				all_table_widgets.push_back(box);
 			}
 			else {
-				WidgetText* cell = new WidgetText();
+				Widget* cell = new Widget();
 				cell->setText(string, font, size);
 				cell->setColor(color);
 				cell->setPosAbs(pos);
@@ -187,6 +187,7 @@ void SceneScore::doAction(const Action* a) {
 
 SceneScore::~SceneScore() {
 	for (Widget* w : all_table_widgets) {
+		w->clearData();
 		delete w;
 	}
 

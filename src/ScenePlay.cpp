@@ -32,13 +32,13 @@ void ScenePlay::init() {
 
 	load_level(level_path);
 
-	static_cast<WidgetText*>(game->assets.getWidget("player_health_text"))->linkToInt(player->get<CStats>()->effective[CStats::HEALTH]);
-	static_cast<WidgetText*>(game->assets.getWidget("base_health_text"))->linkToInt(base->get<CStats>()->effective[CStats::HEALTH]);
-	static_cast<WidgetText*>(game->assets.getWidget("total_kills_text"))->linkToInt(total_kills);
+	game->assets.getWidget("player_health_text").linkToInt(player->get<CStats>()->effective[CStats::HEALTH]);
+	game->assets.getWidget("base_health_text").linkToInt(base->get<CStats>()->effective[CStats::HEALTH]);
+	game->assets.getWidget("total_kills_text").linkToInt(total_kills);
 
-	interface.add(game->assets.getWidget("player_health"));
-	interface.add(game->assets.getWidget("base_health"));
-	interface.add(game->assets.getWidget("total_kills"));
+	interface.add(&game->assets.getWidget("player_health"));
+	interface.add(&game->assets.getWidget("base_health"));
+	interface.add(&game->assets.getWidget("total_kills"));
 
 	// run this block to display level;
 	{
@@ -1052,9 +1052,7 @@ void ScenePlay::sLevelUp() {
 }
 
 void ScenePlay::sInterface() {
-	static_cast<WidgetText*>(game->assets.getWidget("player_health_text"))->updateText();
-	static_cast<WidgetText*>(game->assets.getWidget("base_health_text"))->updateText();
-	static_cast<WidgetText*>(game->assets.getWidget("total_kills_text"))->updateText();
+	interface.update();
 }
 
 void ScenePlay::sAnimation() {

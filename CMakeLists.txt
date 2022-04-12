@@ -45,8 +45,6 @@ set(SOURCE_FILES
 	src/SceneScore.cpp
 	src/Interface.cpp
 	src/Widget.cpp
-	src/WidgetBox.cpp
-	src/WidgetText.cpp
 	src/Border.cpp
 	src/Tilemap.cpp
 )

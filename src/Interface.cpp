@@ -12,4 +12,10 @@ WidgetVec& Interface::getWidgets() {
 	return widgets;
 }
 
+void Interface::update() {
+	for (Widget* w : widgets) {
+		w->update();
+	}
+}
+
 Interface::~Interface() {}

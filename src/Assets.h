@@ -66,7 +66,7 @@ private:
 	std::map<std::string, sf::Sprite> sprites;
 	std::map<std::string, Border> borders;
 	std::map<std::string, sf::Shader> shaders;
-	std::map<std::string, Widget*> widgets;
+	std::map<std::string, Widget> widgets;
 
 	void loadEntities();
 	void loadFonts();
@@ -110,7 +110,7 @@ public:
 	sf::Sprite& getSprite(std::string name);
 	sf::Sprite& getIconSmall(size_t name_id);
 	sf::Shader& getShader(std::string name);
-	Widget*& getWidget(std::string name);
+	Widget& getWidget(std::string name);
 };
 
 #endif

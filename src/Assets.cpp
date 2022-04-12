@@ -66,8 +66,11 @@ sf::Sprite& Assets::getIconSmall(size_t name_id) {
 	exit(0);
 }
 
-Widget*& Assets::getWidget(std::string name) {
-	return widgets.at(name);
+Widget& Assets::getWidget(std::string name) {
+	if (widgets.count(name)) return widgets.at(name);
+
+	std::cout << "Widget " << name << " could not be found.\n";
+	exit(0);
 }
 
 void Assets::loadEntities() {
@@ -634,46 +637,36 @@ void Assets::loadWidget() {
 	}
 
 	if (!name.empty() && !type.empty()) {
-		Widget* widget;
+		Widget& widget = widgets[name];
 
 		if (type == "box") {
-			WidgetBox* wb = new WidgetBox();
-
-			wb->setSize(size);
-			if (!bg_sprite.empty()) wb->setBackground(sprites[bg_sprite], spr_offset);
-			if (!bg_tex.empty()) wb->setBackground(textures[bg_tex], tex_offset);
-			if (!border.empty()) wb->setBorder(borders[border]);
-
-			widget = wb;
+			widget.setSize(size);
+			if (!bg_sprite.empty()) widget.setBackground(sprites[bg_sprite], spr_offset);
+			if (!bg_tex.empty()) widget.setBackground(textures[bg_tex], tex_offset);
+			if (!border.empty()) widget.setBorder(borders[border]);
 		}
 		else if (type == "text") {
-			WidgetText* wt = new WidgetText();
-
-			wt->setSize(size);
-			wt->setText("TEXT", fonts[font_id], font_size);
-			wt->setColor(text_color);
-
-			widget = wt;
+			widget.setSize(size);
+			widget.setText("TEXT", fonts[font_id], font_size);
+			widget.setTextColor(text_color);
 		}
 		else {
 			std::cout << "Invalid widget type \"" << type << "\".\n";
 			exit(0);
 		}
 
-		widget->setPosRel(pos_rel);
-		widget->setPosAbs(pos_abs);
+		widget.setPosRel(pos_rel);
+		widget.setPosAbs(pos_abs);
 
 		for (size_t i=0; i<childs.size(); i++) {
 			if (widgets.find(childs[i]) != widgets.end()) {
-				widget->addChild(widgets[childs[i]]);
+				widget.addChild(&widgets[childs[i]]);
 			}
 			else {
 				std::cout << "Widget \"" << childs[i] << "\" does not exist.\n";
 				exit(0);
 			}
 		}
-
-		widgets[name] = widget;
 	}
 }
 
@@ -791,10 +784,5 @@ sf::Shader& Assets::getShader(std::string name) {
 }
 
 Assets::~Assets() {
-	std::map<std::string, Widget*>::iterator it;
-
-	for (it = widgets.begin(); it!=widgets.end(); it++) {
-		delete it->second;
-	}
 }
 

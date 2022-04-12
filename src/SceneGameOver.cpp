@@ -10,6 +10,7 @@ SceneGameOver::SceneGameOver(Game* g)
 }
 SceneGameOver::~SceneGameOver() {
 	for (Widget* w : interface) {
+		w->clearData();
 		delete w;
 	}
 }
@@ -18,7 +19,7 @@ void SceneGameOver::init() {
 	setFade(FADE_IN, 60);
 
 	{
-		WidgetText* msg = new WidgetText();
+		Widget* msg = new Widget();
 		std::string string = "";
 		sf::Color color;
 

@@ -2,8 +2,6 @@
 #define INTERFACE
 
 #include "Widget.h"
-#include "WidgetBox.h"
-#include "WidgetText.h"
 
 typedef std::vector<Widget*> WidgetVec;
 
@@ -15,6 +13,7 @@ public:
 	~Interface();
 
 	void add(Widget* widget);
+	void update();
 	WidgetVec& getWidgets();
 };
 
