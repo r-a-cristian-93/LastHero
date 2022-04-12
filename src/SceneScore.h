@@ -39,14 +39,14 @@ class SceneScore: public Scene {
 	unsigned int total_kills = 0;
 	unsigned int total_score = 0;
 
-	size_t rows = 3; // table header + line + total row;
+	int rows = 3; // table header + line + total row;
 	float title_h = 0.10; // 10% of screen height
 	float header_h = 0.05;
 	float footer_h = 0.05;
 	float spacer_h = 0.05;
 	float row_h = 0;
 
-	size_t cols = 4;
+	int cols = 4;
 	float indent_left = 0.1;
 	float indent_right = 0.1;
 	float col_w = 0;
