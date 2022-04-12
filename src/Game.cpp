@@ -52,7 +52,7 @@ void Game::init(std::string file_name) {
 	file.close();
 
 	//load texture after creating the window causes sementation fault;
-	assets = new Assets();
+	//assets = Assets();
 
 	screen_tex.create(app_conf.window_w, app_conf.window_h);
 	screen_tex.setView(view);

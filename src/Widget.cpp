@@ -50,8 +50,4 @@ std::vector<Widget*>& Widget::getChilds() {
 }
 
 Widget::~Widget() {
-	while (!childs.empty()) {
-		delete childs.back();
-		childs.pop_back();
-	}
 }

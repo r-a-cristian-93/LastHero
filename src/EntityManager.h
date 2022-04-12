@@ -22,7 +22,7 @@ private:
 
 public:
 	EntityManager();
-	EntityManager(Assets* _assets);
+	EntityManager(Assets& _assets);
 	void update();
 	std::shared_ptr<Entity> add(size_t tag);
 	std::shared_ptr<Entity> add(size_t tag, size_t recipe_name);

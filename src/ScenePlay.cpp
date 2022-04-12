@@ -32,13 +32,13 @@ void ScenePlay::init() {
 
 	load_level(level_path);
 
-	static_cast<WidgetText*>(game->assets->getWidget("player_health_text"))->linkToInt(player->get<CStats>()->effective[CStats::HEALTH]);
-	static_cast<WidgetText*>(game->assets->getWidget("base_health_text"))->linkToInt(base->get<CStats>()->effective[CStats::HEALTH]);
-	static_cast<WidgetText*>(game->assets->getWidget("total_kills_text"))->linkToInt(total_kills);
+	static_cast<WidgetText*>(game->assets.getWidget("player_health_text"))->linkToInt(player->get<CStats>()->effective[CStats::HEALTH]);
+	static_cast<WidgetText*>(game->assets.getWidget("base_health_text"))->linkToInt(base->get<CStats>()->effective[CStats::HEALTH]);
+	static_cast<WidgetText*>(game->assets.getWidget("total_kills_text"))->linkToInt(total_kills);
 
-	interface.add(game->assets->getWidget("player_health"));
-	interface.add(game->assets->getWidget("base_health"));
-	interface.add(game->assets->getWidget("total_kills"));
+	interface.add(game->assets.getWidget("player_health"));
+	interface.add(game->assets.getWidget("base_health"));
+	interface.add(game->assets.getWidget("total_kills"));
 
 	// run this block to display level;
 	{
@@ -119,7 +119,7 @@ void ScenePlay::load_level(std::string path) {
 					}
 
 					file >> word;
-					enemy_name = game->assets->getRecipeNameID(word);
+					enemy_name = game->assets.getRecipeNameID(word);
 				}
 				else if (word == "pos") file >> pos_x >> pos_y;
 				else if (word == "state") {
@@ -153,7 +153,7 @@ void ScenePlay::load_level(std::string path) {
 		}
 	}
 
-	map_ground.setTexture(game->assets->getTexture(texture_name));
+	map_ground.setTexture(game->assets.getTexture(texture_name));
 	map_ground.loadLevel(tile_size, level_layer, map_size);
 	delete level_layer;
 
@@ -230,7 +230,7 @@ void ScenePlay::spawnBase() {
 	const sf::Vector2f pos(game->app_conf.window_w/2 + 200, game->app_conf.window_h/2);
 
 
-	size_t recipe = game->assets->getRecipeNameID("cow");
+	size_t recipe = game->assets.getRecipeNameID("cow");
 	base = ent_mgr.add(TAG::ENEMY, recipe);
 	base->get<CTransform>()->pos = pos;
 	base->get<CTransform>()->dir = {-1, 1};
@@ -584,7 +584,7 @@ void ScenePlay::sStateFacing() {
 }
 
 void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
-	size_t recipe = game->assets->getRecipeNameID("glowing_bullet_explosion");
+	size_t recipe = game->assets.getRecipeNameID("glowing_bullet_explosion");
 	std::shared_ptr<Entity> e = ent_mgr.add(TAG::FX, recipe);
 
 	e->add<CTransform>(new CTransform(pos, 0));
@@ -947,6 +947,8 @@ size_t ScenePlay::facingOf(sf::Vector2f v) {
 	else if (ang >= 202.5 && ang < 247.5) return Entity::FACING_SW;
 	else if (ang >= 247.5 && ang < 292.5) return Entity::FACING_S;
 	else if (ang >= 292.5 && ang < 337.5) return Entity::FACING_SE;
+
+	return 0;
 }
 
 sf::Vector2f ScenePlay::dirOf(size_t facing) {
@@ -1049,9 +1051,9 @@ void ScenePlay::sLevelUp() {
 }
 
 void ScenePlay::sInterface() {
-	static_cast<WidgetText*>(game->assets->getWidget("player_health_text"))->updateText();
-	static_cast<WidgetText*>(game->assets->getWidget("base_health_text"))->updateText();
-	static_cast<WidgetText*>(game->assets->getWidget("total_kills_text"))->updateText();
+	static_cast<WidgetText*>(game->assets.getWidget("player_health_text"))->updateText();
+	static_cast<WidgetText*>(game->assets.getWidget("base_health_text"))->updateText();
+	static_cast<WidgetText*>(game->assets.getWidget("total_kills_text"))->updateText();
 }
 
 void ScenePlay::sAnimation() {

@@ -100,11 +100,6 @@ public:
 	Assets();
 	~Assets();
 
-	template<class T>
-	const T* get(Components& c) {
-		return std::get<T*>(c);
-	}
-
 	Components& getRecipe(size_t tag, size_t recipe_name);
 	size_t getRecipeName(size_t tag);
 	size_t getRecipeNameID(std::string entity_name);
@@ -116,9 +111,6 @@ public:
 	sf::Sprite& getIconSmall(size_t name_id);
 	sf::Shader& getShader(std::string name);
 	Widget*& getWidget(std::string name);
-
-
-
 };
 
 #endif

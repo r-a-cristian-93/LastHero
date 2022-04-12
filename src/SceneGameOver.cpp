@@ -31,7 +31,7 @@ void SceneGameOver::init() {
 			color = {255, 50, 50};
 		}
 
-		sf::Font& font = game->assets->getFont(Assets::FONT_COURIER);
+		sf::Font& font = game->assets.getFont(Assets::FONT_COURIER);
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(game->app_conf.window_w*0.5);
 		pos.y = static_cast<int>(game->app_conf.window_h*0.5);

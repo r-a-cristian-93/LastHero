@@ -21,15 +21,15 @@ void SceneMainMenu::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Enter, Action::MENU_SELECT);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::GAME_EXIT);
 
-	background = &game->assets->getSprite("main_bg");
+	background = &game->assets.getSprite("main_bg");
 	sf::FloatRect b = background->getLocalBounds();
 	float scale_x = game->app_conf.game_w / b.width;
 	float scale_y = game->app_conf.game_h / b.height;
 	background->setScale(scale_x, scale_y);
 
-	interface.add(game->assets->getWidget("main_menu"));
-	game->assets->getWidget("button_play")->setColor(mod_highlight);
-	game->assets->getWidget("button_exit")->setColor(mod_dark);
+	interface.add(game->assets.getWidget("main_menu"));
+	game->assets.getWidget("button_play")->setColor(mod_highlight);
+	game->assets.getWidget("button_exit")->setColor(mod_dark);
 
 	game->screen_tex.setView(gui_view);
 }
@@ -55,15 +55,15 @@ void SceneMainMenu::doAction(const Action* a) {
 			break;
 			case Action::MOVE_UP:
 				if (!isFading()) {
-					game->assets->getWidget("button_play")->setColor(mod_highlight);
-					game->assets->getWidget("button_exit")->setColor(mod_dark);
+					game->assets.getWidget("button_play")->setColor(mod_highlight);
+					game->assets.getWidget("button_exit")->setColor(mod_dark);
 					selection = SELECT_PLAY;
 				}
 			break;
 			case Action::MOVE_DOWN:
 				if (!isFading()) {
-					game->assets->getWidget("button_play")->setColor(mod_dark);
-					game->assets->getWidget("button_exit")->setColor(mod_highlight);
+					game->assets.getWidget("button_play")->setColor(mod_dark);
+					game->assets.getWidget("button_exit")->setColor(mod_highlight);
 					selection = SELECT_EXIT;
 				}
 			break;

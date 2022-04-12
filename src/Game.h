@@ -49,7 +49,7 @@ public:
 	sf::View view;
 	AppConfig app_conf;
 	ActionManager act_mgr;
-	Assets* assets;
+	Assets assets;
 
 	void setScene(size_t id);
 	void addKills(std::map<size_t, size_t> kills_per_enemy);

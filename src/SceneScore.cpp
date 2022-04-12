@@ -27,7 +27,7 @@ void SceneScore::init() {
 			string = "STAGE " + std::to_string(game->stagePrev() + 1);
 		}
 
-		sf::Font& font = game->assets->getFont(Assets::FONT_COURIER);
+		sf::Font& font = game->assets.getFont(Assets::FONT_COURIER);
 		unsigned int size = static_cast<unsigned int>(game->app_conf.window_h * title_h);
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(game->app_conf.window_w*0.5);
@@ -47,7 +47,7 @@ void SceneScore::init() {
 		total_kills += it_k->second;
 
 		// calculate total_score
-		size_t points = it_k->second * game->assets->getScorePoints(it_k->first);
+		size_t points = it_k->second * game->assets.getScorePoints(it_k->first);
 		total_score += points;
 
 		// count rows
@@ -62,7 +62,7 @@ void SceneScore::init() {
 	col_w = (1 - indent_left - indent_right) / cols;
 
 	std::string string = "";
-	sf::Font& font = game->assets->getFont(Assets::FONT_COURIER);
+	sf::Font& font = game->assets.getFont(Assets::FONT_COURIER);
 	sf::Color color({255,255,255});
 
 	it_k = kills.cbegin();
@@ -103,17 +103,17 @@ void SceneScore::init() {
 				if (c == 2)
 					string = std::to_string(it_k->second);
 				if (c == 3) {
-					size_t points = it_k->second * game->assets->getScorePoints(it_k->first);
+					size_t points = it_k->second * game->assets.getScorePoints(it_k->first);
 					string = std::to_string(points);
 				}
 			}
 
 			if (c==0 && r > 0 && r < rows-2) {
 				WidgetBox* box = new WidgetBox();
-				sf::Sprite& icon = game->assets->getIconSmall(it_k->first);
+				sf::Sprite& icon = game->assets.getIconSmall(it_k->first);
 				sf::FloatRect rect = icon.getLocalBounds();
 				sf::Vector2i offset = {static_cast<int>(-rect.width/2), static_cast<int>(-rect.height/2)};
-				box->setBackground(game->assets->getIconSmall(it_k->first), offset);
+				box->setBackground(game->assets.getIconSmall(it_k->first), offset);
 				box->setPosAbs(pos);
 				all_table_widgets.push_back(box);
 			}

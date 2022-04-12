@@ -5,10 +5,11 @@ EntityManager::EntityManager()
 	:entities_counter(0)
 	{}
 
-EntityManager::EntityManager(Assets* _assets)
+EntityManager::EntityManager(Assets& _assets)
 	:entities_counter(0)
-	,assets(_assets)
-	{}
+{
+	assets = &_assets;
+}
 
 std::shared_ptr<Entity> EntityManager::add(size_t tag) {
 	std::shared_ptr<Entity> e = nullptr;
