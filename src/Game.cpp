@@ -82,7 +82,7 @@ void Game::run() {
 
 			sUserInput();
 
-			current_scene->update();
+			if (current_scene) current_scene->update();
 
 			screen_tex.display();
 
@@ -140,7 +140,7 @@ void Game::sUserInput() {
 void Game::setScene(size_t id) {
 	act_mgr = ActionManager();
 
-	Scene* old = current_scene;
+	delete current_scene;
 
 	switch (id) {
 		case GAME_SCENE_MENU:
@@ -160,8 +160,6 @@ void Game::setScene(size_t id) {
 			current_scene = new SceneScore(this);
 		break;
 	}
-
-	if (old) delete old;
 }
 
 void Game::addKills(std::map<size_t, size_t> kills) {
@@ -200,5 +198,5 @@ size_t Game::stagesCount() {
 }
 
 Game::~Game() {
-
+	delete current_scene;
 }

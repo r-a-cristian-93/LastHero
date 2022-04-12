@@ -37,9 +37,9 @@ void Scene::sFade() {
 			game->screen_sprite.setColor({c, c, c});
 
 			if (current_fade_frames[fade] == 0) {
+				fade = FADE_NONE;
 				game->screen_sprite.setColor({0, 0, 0});
 				game->setScene(next_scene);
-				fade = FADE_NONE;
 			}
 		}
 		break;
