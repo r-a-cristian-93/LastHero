@@ -18,7 +18,7 @@ void SceneScore::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SELECT);
 
 	{
-		title = new Widget();
+		Widget title;
 		std::string string = "";
 		if (game->stagePrev() + 1 == game->stagesCount()) {
 			string = "ALL STAGES COMPLETE!";
@@ -33,8 +33,8 @@ void SceneScore::init() {
 		pos.x = static_cast<int>(game->app_conf.window_w*0.5);
 		pos.y = static_cast<int>(game->app_conf.window_h*(header_h+title_h/2));
 
-		title->setText(string, font, size);
-		title->setPosAbs(pos);
+		title.setText(string, font, size);
+		title.setPosAbs(pos);
 		interface.add(title);
 	}
 
@@ -109,19 +109,19 @@ void SceneScore::init() {
 			}
 
 			if (c==0 && r > 0 && r < rows-2) {
-				Widget* box = new Widget();
+				Widget box;
 				sf::Sprite& icon = game->assets.getIconSmall(it_k->first);
 				sf::FloatRect rect = icon.getLocalBounds();
 				sf::Vector2i offset = {static_cast<int>(-rect.width/2), static_cast<int>(-rect.height/2)};
-				box->setBackground(game->assets.getIconSmall(it_k->first), offset);
-				box->setPosAbs(pos);
+				box.setBackground(game->assets.getIconSmall(it_k->first), offset);
+				box.setPosAbs(pos);
 				all_table_widgets.push_back(box);
 			}
 			else {
-				Widget* cell = new Widget();
-				cell->setText(string, font, size);
-				cell->setColor(color);
-				cell->setPosAbs(pos);
+				Widget cell;
+				cell.setText(string, font, size);
+				cell.setColor(color);
+				cell.setPosAbs(pos);
 				all_table_widgets.push_back(cell);
 			}
 		}
@@ -134,15 +134,14 @@ void SceneScore::init() {
 }
 
 void SceneScore::update() {
-	if (frame_current == FRAME_COL_0) copyCells(all_table_widgets, table_widgets, {0,0,0,rows-3});
-	if (frame_current == FRAME_COL_1) copyCells(all_table_widgets, table_widgets, {1,0,1,rows-3});
-	if (frame_current == FRAME_COL_2) copyCells(all_table_widgets, table_widgets, {2,0,2,rows-3});
-	if (frame_current == FRAME_COL_3) copyCells(all_table_widgets, table_widgets, {3,0,3,rows-3});
-	if (frame_current == FRAME_ROW_LINE) copyCells(all_table_widgets, table_widgets, {2,rows-2,3,rows-2});
-	if (frame_current == FRAME_ROW_TOTAL) copyCells(all_table_widgets, table_widgets, {1,rows-1,3,rows-1});
+	if (frame_current == FRAME_COL_0) copyCells(all_table_widgets, interface.getWidgets(), {0,0,0,rows-3});
+	if (frame_current == FRAME_COL_1) copyCells(all_table_widgets, interface.getWidgets(), {1,0,1,rows-3});
+	if (frame_current == FRAME_COL_2) copyCells(all_table_widgets, interface.getWidgets(), {2,0,2,rows-3});
+	if (frame_current == FRAME_COL_3) copyCells(all_table_widgets, interface.getWidgets(), {3,0,3,rows-3});
+	if (frame_current == FRAME_ROW_LINE) copyCells(all_table_widgets, interface.getWidgets(), {2,rows-2,3,rows-2});
+	if (frame_current == FRAME_ROW_TOTAL) copyCells(all_table_widgets, interface.getWidgets(), {1,rows-1,3,rows-1});
 
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
-	SDraw::drawInterface(&game->screen_tex, table_widgets);
 
 	sFade();
 	frame_current++;
@@ -185,11 +184,4 @@ void SceneScore::doAction(const Action* a) {
 	}
 }
 
-SceneScore::~SceneScore() {
-	for (Widget* w : all_table_widgets) {
-		w->clearData();
-		delete w;
-	}
-
-	delete title;
-}
+SceneScore::~SceneScore() {}

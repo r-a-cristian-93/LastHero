@@ -3,7 +3,7 @@
 
 #include "Widget.h"
 
-typedef std::vector<Widget*> WidgetVec;
+typedef std::vector<Widget> WidgetVec;
 
 class Interface {
 	WidgetVec widgets;
@@ -12,7 +12,7 @@ public:
 	Interface();
 	~Interface();
 
-	void add(Widget* widget);
+	void add(Widget& widget);
 	void update();
 	WidgetVec& getWidgets();
 };

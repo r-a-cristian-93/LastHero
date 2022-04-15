@@ -4,7 +4,7 @@
 Interface::Interface() {
 }
 
-void Interface::add(Widget* widget) {
+void Interface::add(Widget& widget) {
 	widgets.push_back(widget);
 }
 
@@ -13,8 +13,8 @@ WidgetVec& Interface::getWidgets() {
 }
 
 void Interface::update() {
-	for (Widget* w : widgets) {
-		w->update();
+	for (Widget& w : widgets) {
+		w.update();
 	}
 }
 

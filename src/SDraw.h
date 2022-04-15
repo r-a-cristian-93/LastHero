@@ -10,7 +10,7 @@
 
 namespace SDraw {
 	void drawEntities(sf::RenderTarget* w, EntityVec& entities);
-	void drawInterface(sf::RenderTarget* w, const WidgetVec& widget);
+	void drawInterface(sf::RenderTarget* w, WidgetVec& widget);
 	void drawWidget(sf::RenderTarget* w, Widget& widget);
 
 	bool comparePosition(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b);

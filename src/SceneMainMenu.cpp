@@ -27,9 +27,9 @@ void SceneMainMenu::init() {
 	float scale_y = game->app_conf.game_h / b.height;
 	background->setScale(scale_x, scale_y);
 
-	interface.add(&game->assets.getWidget("main_menu"));
 	game->assets.getWidget("button_play").setColor(mod_highlight);
 	game->assets.getWidget("button_exit").setColor(mod_dark);
+	interface.add(game->assets.getWidget("main_menu"));
 
 	game->screen_tex.setView(gui_view);
 }

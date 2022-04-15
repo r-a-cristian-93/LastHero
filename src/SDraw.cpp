@@ -26,9 +26,9 @@ void SDraw::drawEntities(sf::RenderTarget* w, EntityVec& entities) {
 	}
 }
 
-void SDraw::drawInterface(sf::RenderTarget* w, const WidgetVec& widgets) {
-	for (Widget* widget:widgets) {
-		drawWidget(w, *widget);
+void SDraw::drawInterface(sf::RenderTarget* w, WidgetVec& widgets) {
+	for (Widget& widget:widgets) {
+		drawWidget(w, widget);
 	}
 }
 
@@ -38,8 +38,8 @@ void SDraw::drawWidget(sf::RenderTarget* w, Widget& widget) {
 	}
 
 	if (!widget.getChilds().empty()) {
-		for (Widget* child:widget.getChilds()) {
-			drawWidget(w, *(child));
+		for (Widget& child:widget.getChilds()) {
+			drawWidget(w, child);
 		}
 	}
 }

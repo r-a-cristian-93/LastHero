@@ -34,7 +34,6 @@ class SceneScore: public Scene {
 	Interface interface;
 	WidgetVec all_table_widgets;
 	WidgetVec table_widgets;
-	Widget* title = nullptr;
 
 	unsigned int total_kills = 0;
 	unsigned int total_score = 0;

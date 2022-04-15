@@ -6,16 +6,32 @@ Widget::Widget()
 	,pos_abs(0, 0)
 	,size(0, 0)
 	,background(nullptr)
+	,bg_offset(0,0)
 	,border(nullptr)
 	,text(nullptr)
 	,link_int(nullptr)
 	{}
 
-void Widget::clearData() {
+Widget::Widget(const Widget& w)
+	:pos_rel(w.pos_rel)
+	,pos_abs(w.pos_abs)
+	,size(w.size)
+	,background(nullptr)
+	,border(nullptr)
+	,text(nullptr)
+	,link_int(w.link_int)
+	,childs(w.childs)
+{
+	if (w.background) setBackground(*w.background, w.bg_offset);
+	if (w.border) setBorder(*w.border);
+	if (w.text) setText(*w.text);
+}
+
+
+Widget::~Widget() {
 	delete background;
 	delete border;
 	delete text;
-	delete link_int;
 }
 
 void Widget::setPosRel(sf::Vector2i p) {
@@ -23,7 +39,7 @@ void Widget::setPosRel(sf::Vector2i p) {
 
 	if (!childs.empty()) {
 		for (int i=0; i<childs.size(); i++) {
-			updateChildPos(*childs[i]);
+			updateChildPos(childs[i]);
 		}
 	}
 }
@@ -33,7 +49,7 @@ void Widget::setPosAbs(sf::Vector2i p) {
 
 	if (!childs.empty()) {
 		for (int i=0; i<childs.size(); i++) {
-			updateChildPos(*childs[i]);
+			updateChildPos(childs[i]);
 		}
 	}
 
@@ -46,9 +62,9 @@ void Widget::setSize(sf::Vector2i s) {
 	size = s;
 }
 
-void Widget::addChild(Widget* child) {
+void Widget::addChild(Widget& child) {
+	updateChildPos(child);
 	childs.push_back(child);
-	updateChildPos(*childs.back());
 }
 
 void Widget::updateChildPos(Widget& child) {
@@ -59,14 +75,8 @@ std::vector<sf::Drawable*>& Widget::getDrawables() {
 	return drawables;
 }
 
-std::vector<Widget*>& Widget::getChilds() {
+std::vector<Widget>& Widget::getChilds() {
 	return childs;
-}
-
-Widget::~Widget() {
-	delete border;
-	delete background;
-	delete text;
 }
 
 // BOX
@@ -126,6 +136,14 @@ void Widget::setText(std::string t) {
 	}
 }
 
+void Widget::setText(sf::Text& t) {
+	if (text) {
+		text = new sf::Text(t);
+		drawables.push_back(text);
+		updateOrigin();
+	}
+}
+
 void Widget::linkToInt(int& value) {
 	link_int = & value;
 }
@@ -160,7 +178,7 @@ void Widget::update() {
 
 	if (!childs.empty()) {
 		for (int i=0; i<childs.size(); i++) {
-			childs[i]->update();
+			childs[i].update();
 		}
 	}
 }

@@ -8,18 +8,13 @@ SceneGameOver::SceneGameOver(Game* g)
 {
 	init();
 }
-SceneGameOver::~SceneGameOver() {
-	for (Widget* w : interface) {
-		w->clearData();
-		delete w;
-	}
-}
+SceneGameOver::~SceneGameOver() {}
 
 void SceneGameOver::init() {
 	setFade(FADE_IN, 60);
 
 	{
-		Widget* msg = new Widget();
+		Widget msg = Widget();
 		std::string string = "";
 		sf::Color color;
 
@@ -37,17 +32,17 @@ void SceneGameOver::init() {
 		pos.x = static_cast<int>(game->app_conf.window_w*0.5);
 		pos.y = static_cast<int>(game->app_conf.window_h*0.5);
 
-		msg->setText(string, font, 150);
-		msg->setColor(color);
-		msg->setPosAbs(pos);
-		interface.push_back(msg);
+		msg.setText(string, font, 150);
+		msg.setColor(color);
+		msg.setPosAbs(pos);
+		interface.add(msg);
 	}
 
 	game->screen_tex.setView(gui_view);
 }
 
 void SceneGameOver::update() {
-	SDraw::drawInterface(&game->screen_tex, interface);
+	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 
 	if (frame_current == 120) {
 		setFade(FADE_OUT, 60, Game::GAME_SCENE_SCORE);

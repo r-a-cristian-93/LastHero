@@ -658,13 +658,15 @@ void Assets::loadWidget() {
 		widget.setPosRel(pos_rel);
 		widget.setPosAbs(pos_abs);
 
-		for (size_t i=0; i<childs.size(); i++) {
-			if (widgets.find(childs[i]) != widgets.end()) {
-				widget.addChild(&widgets[childs[i]]);
-			}
-			else {
-				std::cout << "Widget \"" << childs[i] << "\" does not exist.\n";
-				exit(0);
+		if (childs.size() > 0) {
+			for (size_t i=0; i<childs.size(); i++) {
+				if (widgets.find(childs[i]) != widgets.end()) {
+					widget.addChild(widgets[childs[i]]);
+				}
+				else {
+					std::cout << "Widget \"" << childs[i] << "\" does not exist.\n";
+					exit(0);
+				}
 			}
 		}
 	}
@@ -783,6 +785,5 @@ sf::Shader& Assets::getShader(std::string name) {
 	return 	shaders[name];
 }
 
-Assets::~Assets() {
-}
+Assets::~Assets() {}
 

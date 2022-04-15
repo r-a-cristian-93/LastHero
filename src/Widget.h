@@ -6,7 +6,7 @@
 
 class Widget {
 protected:
-	std::vector<Widget*> childs;
+	std::vector<Widget> childs;
 
 	sf::Vector2i pos_rel;
 	sf::Vector2i pos_abs;
@@ -15,8 +15,6 @@ protected:
 
 	void updateChildPos(Widget& child);
 
-
-
 //box
 	sf::Sprite* background;
 	sf::Vector2i bg_offset;
@@ -24,7 +22,6 @@ protected:
 //box
 
 //text
-	size_t link_text;
 	int* link_int;
 	sf::Text* text;
 //text
@@ -35,12 +32,11 @@ public:
 	void setSize(sf::Vector2i s);
 	void setColor(sf::Color color);
 
-	void addChild(Widget* child);
+	void addChild(Widget& child);
 	std::vector<sf::Drawable*>& getDrawables();
-	std::vector<Widget*>& getChilds();
+	std::vector<Widget>& getChilds();
 
 	void update();
-
 
 // box
 	void setBackground(sf::Texture& tex, int offset);
@@ -59,6 +55,7 @@ public:
 
 	void setText(std::string t, sf::Font& font, unsigned int size);
 	void setText(std::string t);
+	void setText(sf::Text& t);
 	void setTextColor(sf::Color color);
 	void linkToInt(int& value);
 	void updateText();
@@ -66,10 +63,8 @@ public:
 //text
 
 	Widget();
+	Widget(const Widget& w);
 	~Widget();
-
-	// be careful with this one! Do not use it to delete widgets from Assets"
-	void clearData();
 };
 
 #endif

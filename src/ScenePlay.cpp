@@ -36,9 +36,9 @@ void ScenePlay::init() {
 	game->assets.getWidget("base_health_text").linkToInt(base->get<CStats>()->effective[CStats::HEALTH]);
 	game->assets.getWidget("total_kills_text").linkToInt(total_kills);
 
-	interface.add(&game->assets.getWidget("player_health"));
-	interface.add(&game->assets.getWidget("base_health"));
-	interface.add(&game->assets.getWidget("total_kills"));
+	interface.add(game->assets.getWidget("player_health"));
+	interface.add(game->assets.getWidget("base_health"));
+	interface.add(game->assets.getWidget("total_kills"));
 
 	// run this block to display level;
 	{
