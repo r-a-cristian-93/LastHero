@@ -7,6 +7,7 @@
 class SceneMainMenu: public Scene {
 	sf::Sprite* background;
 	Interface interface;
+	std::vector<Widget*> buttons;
 
 	sf::Color mod_highlight = {255, 255, 255};
 	sf::Color mod_dark = {100, 100, 100};
@@ -19,6 +20,7 @@ class SceneMainMenu: public Scene {
 	size_t selection = SELECT_PLAY;
 
 	void init();
+	void setHighlight();
 
 public:
 	void update() override;
