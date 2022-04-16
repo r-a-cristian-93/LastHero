@@ -4,10 +4,10 @@
 CStats::CStats()
 	:experience(0)
 	,level(0)
-	,base{}
-	,per_level{}
-	,initial{}
-	,effective{}
+	,base{0}
+	,per_level{0}
+	,initial{0}
+	,effective{0}
 	{}
 
 CStats::CStats(const CStats& c)
