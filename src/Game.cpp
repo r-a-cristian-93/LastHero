@@ -116,6 +116,7 @@ void Game::sUserInput() {
 			if (action_code) {
 				action = new Action(action_code, Action::TYPE_START);
 				current_scene->doAction(action);
+				delete action;
 			}
 		}
 		else if (event.type == sf::Event::KeyReleased) {
@@ -124,6 +125,7 @@ void Game::sUserInput() {
 			if (action_code) {
 				action = new Action(action_code, Action::TYPE_END);
 				current_scene->doAction(action);
+				delete action;
 			}
 		}
 		else if (event.type == sf::Event::MouseButtonPressed){
@@ -132,6 +134,7 @@ void Game::sUserInput() {
 			if (action_code != 0) {
 				action = new Action(action_code, Action::TYPE_START, sf::Mouse::getPosition());
 				current_scene->doAction(action);
+				delete action;
 			}
 		}
 	}
