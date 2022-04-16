@@ -46,8 +46,9 @@ void SceneMainMenu::update() {
 	game->screen_tex.draw(*background);
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 
-	sFade();
+
 	frame_current++;
+	sFade();
 }
 
 void SceneMainMenu::doAction(const Action* a) {

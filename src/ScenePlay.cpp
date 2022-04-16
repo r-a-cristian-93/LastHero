@@ -217,8 +217,8 @@ void ScenePlay::update() {
 		game->screen_tex.setView(game->view);
 	}
 
-	sFade();
 	frame_current++;
+	sFade();
 }
 
 

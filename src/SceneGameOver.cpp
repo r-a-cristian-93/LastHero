@@ -48,8 +48,8 @@ void SceneGameOver::update() {
 		setFade(FADE_OUT, 60, Game::GAME_SCENE_SCORE);
 	}
 
-	sFade();
 	frame_current++;
+	sFade();
 }
 
 void SceneGameOver::doAction(const Action* a) {

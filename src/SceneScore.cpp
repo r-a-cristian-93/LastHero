@@ -143,8 +143,8 @@ void SceneScore::update() {
 
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 
-	sFade();
 	frame_current++;
+	sFade();
 }
 
 void SceneScore::copyCells(WidgetVec& src, WidgetVec& dst, sf::IntRect rect) {
