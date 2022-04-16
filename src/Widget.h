@@ -5,7 +5,7 @@
 #include "Border.h"
 
 class Widget {
-protected:
+public://protected:
 	std::vector<Widget> childs;
 
 	sf::Vector2i pos_rel;
@@ -22,6 +22,7 @@ protected:
 //box
 
 //text
+	size_t link;
 	int* link_int;
 	sf::Text* text;
 //text
@@ -51,6 +52,7 @@ public:
 		LINK_PLAYER_HP,
 		LINK_BASE_HP,
 		LINK_TOTAL_KILLS,
+		LINK_COUNT
 	};
 
 	void setText(std::string t, sf::Font& font, unsigned int size);

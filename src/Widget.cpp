@@ -10,6 +10,7 @@ Widget::Widget()
 	,border(nullptr)
 	,text(nullptr)
 	,link_int(nullptr)
+	,link(0)
 	{}
 
 Widget::Widget(const Widget& w)
@@ -20,6 +21,7 @@ Widget::Widget(const Widget& w)
 	,border(nullptr)
 	,text(nullptr)
 	,link_int(w.link_int)
+	,link(w.link)
 	,childs(w.childs)
 {
 	if (w.background) setBackground(*w.background, w.bg_offset);
@@ -137,11 +139,11 @@ void Widget::setText(std::string t) {
 }
 
 void Widget::setText(sf::Text& t) {
-	if (text) {
-		text = new sf::Text(t);
-		drawables.push_back(text);
-		updateOrigin();
-	}
+	delete text;
+
+	text = new sf::Text(t);
+	drawables.push_back(text);
+	updateOrigin();
 }
 
 void Widget::linkToInt(int& value) {
@@ -151,6 +153,9 @@ void Widget::linkToInt(int& value) {
 void Widget::updateText() {
 	if (link_int)  {
 		setText(std::to_string(*link_int));
+		updateOrigin();
+	}
+	else {
 		updateOrigin();
 	}
 }

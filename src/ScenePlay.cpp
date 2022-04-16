@@ -23,22 +23,24 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::D, Action::MOVE_RIGHT);
-
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::FIRE_PRIMARY);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::FIRE_SECONDARY);
-
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
 
 	load_level(level_path);
 
-	game->assets.getWidget("player_health_text").linkToInt(player->get<CStats>()->effective[CStats::HEALTH]);
-	game->assets.getWidget("base_health_text").linkToInt(base->get<CStats>()->effective[CStats::HEALTH]);
-	game->assets.getWidget("total_kills_text").linkToInt(total_kills);
 
-	interface.add(game->assets.getWidget("player_health"));
-	interface.add(game->assets.getWidget("base_health"));
-	interface.add(game->assets.getWidget("total_kills"));
+	// setup interface
+	interface.add(game->assets.getWidget("play_ui"));
+
+	int* links[Widget::LINK_COUNT];
+	links[Widget::LINK_PLAYER_HP] = &player->get<CStats>()->effective[CStats::HEALTH];
+	links[Widget::LINK_BASE_HP] = &base->get<CStats>()->effective[CStats::HEALTH];
+	links[Widget::LINK_TOTAL_KILLS] = &total_kills;
+
+	interface.setLinks(links);
+
 
 	// run this block to display level;
 	{

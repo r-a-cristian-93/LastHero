@@ -600,7 +600,7 @@ void Assets::loadWidget() {
 	sf::Vector2i size, pos_rel, pos_abs;
 	sf::Vector2i spr_offset;
 	int tex_offset(0), w(0), h(0), font_size(0);
-	size_t font_id(NONE);
+	size_t font_id(NONE), link(0);
 	std::vector<std::string> childs;
 	sf::Color text_color(255, 255, 255);
 
@@ -609,6 +609,16 @@ void Assets::loadWidget() {
 		else if (word == "name") file >> name;
 		else if (word == "type") file >> type;
 		else if (word == "size") file >> size.x >> size.y;
+		else if (word == "link") {
+			file >> word;
+			if (word == "player_health") link = Widget::LINK_PLAYER_HP;
+			else if (word == "base_health") link = Widget::LINK_BASE_HP;
+			else if (word == "total_kills") link = Widget::LINK_TOTAL_KILLS;
+			else {
+				std::cout << "Invalid link: " << word << std::endl;
+				exit(0);
+			}
+		}
 		else if (word == "pos_rel") file >> pos_rel.x >> pos_rel.y;
 		else if (word == "pos_abs") file >> pos_abs.x >> pos_abs.y;
 		else if (word == "bg_sprite") file >> bg_sprite >> spr_offset.x >> spr_offset.y;
@@ -649,6 +659,7 @@ void Assets::loadWidget() {
 			widget.setSize(size);
 			widget.setText("TEXT", fonts[font_id], font_size);
 			widget.setTextColor(text_color);
+			widget.link = link;
 		}
 		else {
 			std::cout << "Invalid widget type \"" << type << "\".\n";
