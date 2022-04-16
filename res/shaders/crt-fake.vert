@@ -1,10 +1,7 @@
-// CRT Emulation
-// by Mattias
-// https://www.shadertoy.com/view/lsB3DV
 #version 130
 
-#pragma parameter CURVATURE "Curvature" 0.5 0.0 1.0 0.05
-#pragma parameter SCANSPEED "Scanline Crawl Speed" 1.0 0.0 10.0 0.5
+#define CURVATURE // applies barrel distortion to the screen
+#define SCANLINES  // applies horizontal scanline effect
 
 #if __VERSION__ >= 130
 #define COMPAT_VARYING out
@@ -27,7 +24,6 @@ COMPAT_ATTRIBUTE vec4 COLOR;
 //COMPAT_ATTRIBUTE vec4 TexCoord;
 COMPAT_VARYING vec4 COL0;
 COMPAT_VARYING vec4 TEX0;
-// out variables go here as COMPAT_VARYING whatever
 
 vec4 _oPosition1;
 //uniform mat4 MVPMatrix;
@@ -42,13 +38,18 @@ uniform COMPAT_PRECISION vec2 InputSize = vec2(1024, 768);
 #define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
 #define OutSize vec4(OutputSize, 1.0 / OutputSize)
 
+#ifdef PARAMETER_UNIFORM
+uniform COMPAT_PRECISION float WHATEVER;
+#else
+#define WHATEVER 0.0
+#endif
+
 void main()
 {
 	mat4 MVPMatrix = gl_ModelViewProjectionMatrix;
 	vec4 VertexCoord = gl_Vertex;
 	vec4 TexCoord = gl_TextureMatrix[0] * gl_MultiTexCoord0;
 
-
     gl_Position = MVPMatrix * VertexCoord;
-    TEX0.xy = TexCoord.xy;
+    TEX0.xy = TexCoord.xy*1.0001;
 }

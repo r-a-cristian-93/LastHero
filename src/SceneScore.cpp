@@ -28,10 +28,10 @@ void SceneScore::init() {
 		}
 
 		sf::Font& font = game->assets.getFont(Assets::FONT_COURIER);
-		unsigned int size = static_cast<unsigned int>(game->app_conf.window_h * title_h);
+		unsigned int size = static_cast<unsigned int>(game->app_conf.game_h * title_h);
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.window_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.window_h*(header_h+title_h/2));
+		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
+		pos.y = static_cast<int>(game->app_conf.game_h*(header_h+title_h/2));
 
 		title.setText(string, font, size);
 		title.setPosAbs(pos);
@@ -70,10 +70,10 @@ void SceneScore::init() {
 		for (int c=0; c<cols; c++) {
 			string = "";
 			color = {255, 255, 255};
-			unsigned int size = static_cast<unsigned int>(game->app_conf.window_h*row_h * 0.8);
+			unsigned int size = static_cast<unsigned int>(game->app_conf.game_h*row_h * 0.8);
 			sf::Vector2i pos;
-			pos.x = static_cast<int>(game->app_conf.window_w * (c*col_w + indent_left + col_w/2));
-			pos.y = static_cast<int>(game->app_conf.window_h * (r*row_h + header_h + title_h + spacer_h + row_h/2));
+			pos.x = static_cast<int>(game->app_conf.game_w * (c*col_w + indent_left + col_w/2));
+			pos.y = static_cast<int>(game->app_conf.game_h * (r*row_h + header_h + title_h + spacer_h + row_h/2));
 
 			// table header
 			if (r == 0) {

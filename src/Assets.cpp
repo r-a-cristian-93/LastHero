@@ -790,6 +790,8 @@ void Assets::loadShaders() {
 	shaders["crt-vga"].loadFromFile("res/shaders/crt-vga.vert", "res/shaders/crt-vga.frag");
 	shaders["crt-geom"].loadFromFile("res/shaders/crt-geom.vert", "res/shaders/crt-geom.frag");
 	shaders["crt-mattias"].loadFromFile("res/shaders/crt-mattias.vert", "res/shaders/crt-mattias.frag");
+	shaders["crt-easy"].loadFromFile("res/shaders/crt-easy.vert", "res/shaders/crt-easy.frag");
+	shaders["crt-fake"].loadFromFile("res/shaders/crt-fake.vert", "res/shaders/crt-fake.frag");
 }
 
 sf::Shader& Assets::getShader(std::string name) {

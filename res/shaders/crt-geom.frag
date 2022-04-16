@@ -1,8 +1,8 @@
 #version 130
 
 #ifndef PARAMETER_UNIFORM
-#define CRTgamma 4.4
-#define monitorgamma 3.2
+#define CRTgamma 2.4
+#define monitorgamma 2.2
 #define d 1.6
 #define CURVATURE 1.0
 #define R 2.0
@@ -14,7 +14,7 @@
 #define overscan_y 100.0
 #define DOTMASK 0.3
 #define SHARPER 1.0
-#define scanline_weight 1.0
+#define scanline_weight 1
 #define lum 0.0
 #define interlace_detect 1.0
 #define SATURATION 1.0

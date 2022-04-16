@@ -32,7 +32,7 @@
 #define overscan_y 100.0
 #define DOTMASK 0.3
 #define SHARPER 1.0
-#define scanline_weight 0.3
+#define scanline_weight 1
 #define lum 0.0
 #define interlace_detect 1.0
 #define SATURATION 1.0
@@ -64,9 +64,9 @@ vec4 _oPosition1;
 //uniform mat4 MVPMatrix;
 uniform COMPAT_PRECISION int FrameDirection;
 uniform COMPAT_PRECISION int FrameCount;
-uniform COMPAT_PRECISION vec2 OutputSize = vec2(2000, 1000);
-uniform COMPAT_PRECISION vec2 TextureSize = vec2(2000, 1000);
-uniform COMPAT_PRECISION vec2 InputSize = vec2(2000, 1000);
+uniform COMPAT_PRECISION vec2 OutputSize = vec2(1024, 768);
+uniform COMPAT_PRECISION vec2 TextureSize = vec2(1024, 768);
+uniform COMPAT_PRECISION vec2 InputSize = vec2(1024, 768);
 
 COMPAT_VARYING vec2 overscan;
 COMPAT_VARYING vec2 aspect;

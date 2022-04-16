@@ -52,11 +52,18 @@ void Game::init(std::string file_name) {
 	file.close();
 
 	//load texture after creating the window causes sementation fault;
-	//assets = Assets();
 
-	screen_tex.create(app_conf.window_w, app_conf.window_h);
+	screen_tex.create(app_conf.game_w, app_conf.game_h);
 	screen_tex.setView(view);
 	screen_sprite = sf::Sprite(screen_tex.getTexture());
+	float scale = static_cast<float>(app_conf.window_h) / app_conf.game_h;
+	scale *= 0.95;
+	screen_sprite.setScale(scale,scale);
+
+	float offset_x = (app_conf.window_w - screen_sprite.getGlobalBounds().width)/2;
+	float offset_y = (app_conf.window_h - screen_sprite.getGlobalBounds().height)/2;
+
+	screen_sprite.setPosition(offset_x, offset_y);
 
 	window.create(sf::VideoMode(app_conf.window_w, app_conf.window_h), app_conf.window_name, app_conf.window_style);
 	window.setFramerateLimit(app_conf.max_fps);
@@ -86,10 +93,10 @@ void Game::run() {
 
 			screen_tex.display();
 
-			//window.draw(screen_sprite, &assets->getShader("crt-geom"));
 			{
 				PROFILE_SCOPE("window.draw()");
-				window.draw(screen_sprite);
+				//window.draw(screen_sprite);
+				window.draw(screen_sprite, &assets.getShader("crt-easy"));
 			}
 			{
 				PROFILE_SCOPE("window.display()");

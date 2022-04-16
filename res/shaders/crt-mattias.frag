@@ -29,9 +29,9 @@ out COMPAT_PRECISION vec4 FragColor;
 
 uniform COMPAT_PRECISION int FrameDirection;
 uniform COMPAT_PRECISION int FrameCount;
-uniform COMPAT_PRECISION vec2 OutputSize;
-uniform COMPAT_PRECISION vec2 TextureSize;
-uniform COMPAT_PRECISION vec2 InputSize;
+uniform COMPAT_PRECISION vec2 OutputSize = vec2(1024, 768);
+uniform COMPAT_PRECISION vec2 TextureSize = vec2(1024, 768);
+uniform COMPAT_PRECISION vec2 InputSize = vec2(1024, 768);
 uniform sampler2D Texture;
 COMPAT_VARYING vec4 TEX0;
 
@@ -45,8 +45,8 @@ COMPAT_VARYING vec4 TEX0;
 #ifdef PARAMETER_UNIFORM
 uniform COMPAT_PRECISION float CURVATURE, SCANSPEED;
 #else
-#define CURVATURE 0.5
-#define SCANSPEED 1.0
+#define CURVATURE 0
+#define SCANSPEED 0
 #endif
 
 #define iChannel0 Texture
