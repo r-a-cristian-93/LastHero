@@ -52,18 +52,10 @@ void Game::init(std::string file_name) {
 	file.close();
 
 	//load texture after creating the window causes sementation fault;
-
+	//view.setViewport(sf::FloatRect(0, 0, app_conf.game_w, app_conf.game_h));
 	screen_tex.create(app_conf.game_w, app_conf.game_h);
-	screen_tex.setView(view);
-	screen_sprite = sf::Sprite(screen_tex.getTexture());
-	float scale = static_cast<float>(app_conf.window_h) / app_conf.game_h;
-	scale *= 0.95;
-	screen_sprite.setScale(scale,scale);
-
-	float offset_x = (app_conf.window_w - screen_sprite.getGlobalBounds().width)/2;
-	float offset_y = (app_conf.window_h - screen_sprite.getGlobalBounds().height)/2;
-
-	screen_sprite.setPosition(offset_x, offset_y);
+	//screen_tex.setView(view);
+	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf.game_w, app_conf.game_h});
 
 	window.create(sf::VideoMode(app_conf.window_w, app_conf.window_h), app_conf.window_name, app_conf.window_style);
 	window.setFramerateLimit(app_conf.max_fps);
@@ -76,6 +68,22 @@ void Game::init(std::string file_name) {
 	running = true;
 }
 
+void Game::reset(sf::Sprite& sprite) {
+	sprite.setScale(1,1);
+	sprite.setPosition(0,0);
+}
+
+void Game::fit(sf::Sprite& sprite) {
+	float scale = static_cast<float>(app_conf.window_h) / app_conf.game_h;
+	scale *= 0.95;
+	sprite.setScale(scale,scale);
+
+	float offset_x = (app_conf.window_w - screen_sprite.getGlobalBounds().width)/2;
+	float offset_y = (app_conf.window_h - screen_sprite.getGlobalBounds().height)/2;
+
+	sprite.setPosition(offset_x, offset_y);
+}
+
 void Game::run() {
 	sf::Event event;
 	sf::FloatRect lim(0,0,app_conf.window_w,app_conf.window_h);
@@ -85,23 +93,25 @@ void Game::run() {
 
 		if (window.isOpen()) {
 			screen_tex.clear();
-			window.clear();
 
 			sUserInput();
-
 			if (current_scene) current_scene->update();
 
 			screen_tex.display();
+			{
+				// fade and shade
+				reset(screen_sprite);
+				screen_tex.setView(sf::View(sf::FloatRect(0,0,app_conf.game_w, app_conf.game_h)));
+				screen_tex.draw(screen_sprite);
+				screen_tex.display();
+				screen_tex.setView(view);
+				fit(screen_sprite);
+			}
 
-			{
-				PROFILE_SCOPE("window.draw()");
-				//window.draw(screen_sprite);
-				window.draw(screen_sprite, &assets.getShader("crt-easy"));
-			}
-			{
-				PROFILE_SCOPE("window.display()");
-				window.display();
-			}
+			window.clear();
+			//window.draw(screen_sprite);
+			window.draw(screen_sprite, &assets.getShader("crt-easy"));
+			window.display();
 		}
 	}
 }

@@ -115,7 +115,7 @@ uniform COMPAT_PRECISION float vstr;
 #define maskLight    1.50     // Light "Phosphor"
 #define CGWG         0.40     // CGWG Mask Strength
 #define warpX        0.06   // Curvature X
-#define warpY        0.06   // Curvature Y
+#define warpY        0.04   // Curvature Y
 #define vignette 1			// on/off
 #define vpower 7
 #define vstr 500.0

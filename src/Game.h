@@ -60,6 +60,9 @@ public:
 	size_t stagesCount();
 	void run();
 
+	void reset(sf::Sprite& sprite);
+	void fit(sf::Sprite& sprite);
+
 	Game(std::string file_name);
 	~Game();
 };

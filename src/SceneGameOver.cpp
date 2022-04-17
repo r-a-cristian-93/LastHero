@@ -37,11 +37,10 @@ void SceneGameOver::init() {
 		msg.setPosAbs(pos);
 		interface.add(msg);
 	}
-
-	game->screen_tex.setView(gui_view);
 }
 
 void SceneGameOver::update() {
+	game->screen_tex.setView(gui_view);
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 
 	if (frame_current == 120) {

@@ -129,8 +129,6 @@ void SceneScore::init() {
 			if (!kills.empty()) it_k++;
 		}
 	}
-
-	game->screen_tex.setView(gui_view);
 }
 
 void SceneScore::update() {
@@ -141,6 +139,8 @@ void SceneScore::update() {
 	if (frame_current == FRAME_ROW_LINE) copyCells(all_table_widgets, interface.getWidgets(), {2,rows-2,3,rows-2});
 	if (frame_current == FRAME_ROW_TOTAL) copyCells(all_table_widgets, interface.getWidgets(), {1,rows-1,3,rows-1});
 
+
+	game->screen_tex.setView(gui_view);
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 
 	frame_current++;
