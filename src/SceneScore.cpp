@@ -27,8 +27,8 @@ void SceneScore::init() {
 			string = "STAGE " + std::to_string(game->stagePrev() + 1);
 		}
 
-		sf::Font& font = game->assets.getFont(Assets::FONT_COURIER);
-		unsigned int size = static_cast<unsigned int>(game->app_conf.game_h * title_h);
+		sf::Font& font = game->assets.getFont(Assets::FONT_PRESS_START);
+		unsigned int size = static_cast<unsigned int>(game->app_conf.game_h * title_h * 0.5);
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
 		pos.y = static_cast<int>(game->app_conf.game_h*(header_h+title_h/2));
@@ -62,7 +62,7 @@ void SceneScore::init() {
 	col_w = (1 - indent_left - indent_right) / cols;
 
 	std::string string = "";
-	sf::Font& font = game->assets.getFont(Assets::FONT_COURIER);
+	sf::Font& font = game->assets.getFont(Assets::FONT_PRESS_START);
 	sf::Color color({255,255,255});
 
 	it_k = kills.cbegin();
@@ -70,7 +70,7 @@ void SceneScore::init() {
 		for (int c=0; c<cols; c++) {
 			string = "";
 			color = {255, 255, 255};
-			unsigned int size = static_cast<unsigned int>(game->app_conf.game_h*row_h * 0.8);
+			unsigned int size = static_cast<unsigned int>(game->app_conf.game_h*row_h * 0.5);
 			sf::Vector2i pos;
 			pos.x = static_cast<int>(game->app_conf.game_w * (c*col_w + indent_left + col_w/2));
 			pos.y = static_cast<int>(game->app_conf.game_h * (r*row_h + header_h + title_h + spacer_h + row_h/2));
@@ -129,6 +129,8 @@ void SceneScore::init() {
 			if (!kills.empty()) it_k++;
 		}
 	}
+
+	game->screen_tex.setView(gui_view);
 }
 
 void SceneScore::update() {
@@ -139,8 +141,6 @@ void SceneScore::update() {
 	if (frame_current == FRAME_ROW_LINE) copyCells(all_table_widgets, interface.getWidgets(), {2,rows-2,3,rows-2});
 	if (frame_current == FRAME_ROW_TOTAL) copyCells(all_table_widgets, interface.getWidgets(), {1,rows-1,3,rows-1});
 
-
-	game->screen_tex.setView(gui_view);
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 
 	frame_current++;

@@ -114,8 +114,8 @@ uniform COMPAT_PRECISION float vstr;
 #define maskDark     0.50     // Dark "Phosphor"
 #define maskLight    1.50     // Light "Phosphor"
 #define CGWG         0.40     // CGWG Mask Strength
-#define warpX        0.06   // Curvature X
-#define warpY        0.04   // Curvature Y
+#define warpX        0.0   // Curvature X
+#define warpY        0.0   // Curvature Y
 #define vignette 1			// on/off
 #define vpower 7
 #define vstr 500.0
@@ -389,5 +389,5 @@ void main()
         	color = vec3(0.0);
 	#endif
 
-    FragColor = vec4(color, 1.0);
+    FragColor = vec4(color, 1.0) * gl_Color;
 }

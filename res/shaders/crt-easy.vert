@@ -59,7 +59,7 @@
 #endif
 
 //COMPAT_ATTRIBUTE vec4 VertexCoord;
-COMPAT_ATTRIBUTE vec4 COLOR;
+//COMPAT_ATTRIBUTE vec4 COLOR;
 //COMPAT_ATTRIBUTE vec4 TexCoord;
 COMPAT_VARYING vec4 COL0;
 COMPAT_VARYING vec4 TEX0;
@@ -80,6 +80,6 @@ void main()
 
 
     gl_Position = MVPMatrix * VertexCoord;
-    COL0 = COLOR;
+    gl_FrontColor = gl_Color;
     TEX0.xy = TexCoord.xy * 1.00001;
 }

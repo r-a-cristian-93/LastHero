@@ -36,12 +36,13 @@ void SceneMainMenu::init() {
 		buttons.push_back(&w);
 	}
 	buttons[SELECT_PLAY]->setColor(mod_highlight);
+
+	game->screen_tex.setView(gui_view);
 }
 
 void SceneMainMenu::update() {
 	interface.update();
 
-	game->screen_tex.setView(gui_view);
 	game->screen_tex.draw(*background);
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 

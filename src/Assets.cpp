@@ -518,6 +518,18 @@ void Assets::loadFonts() {
 	if (!fonts[FONT_MILITARY].loadFromFile("res/military.ttf")) {
 		std::cout << "Can't load font MILITARY\n";
 	}
+
+	if (!fonts[FONT_ARCADE_CLASSIC].loadFromFile("res/arcade_classic.ttf")) {
+		std::cout << "Can't load font MILITARY\n";
+	}
+
+	if (!fonts[FONT_ARCADE_KARMATIC].loadFromFile("res/arcade_karmatic.ttf")) {
+		std::cout << "Can't load font MILITARY\n";
+	}
+
+	if (!fonts[FONT_PRESS_START].loadFromFile("res/press_start_2p.ttf")) {
+		std::cout << "Can't load font MILITARY\n";
+	}
 }
 
 void Assets::loadGUI() {
@@ -630,6 +642,9 @@ void Assets::loadWidget() {
 			file >> word >> font_size;
 			if (word == "courier") font_id = FONT_COURIER;
 			else if (word == "military") font_id = FONT_MILITARY;
+			else if (word == "classic") font_id = FONT_ARCADE_CLASSIC;
+			else if (word == "karmatic") font_id = FONT_ARCADE_KARMATIC;
+			else if (word == "2p") font_id = FONT_PRESS_START;
 			else {
 				std::cout << "Invalid font specified \"" << word << "\".\n";
 				exit(0);

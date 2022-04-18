@@ -52,14 +52,13 @@ void Game::init(std::string file_name) {
 	file.close();
 
 	//load texture after creating the window causes sementation fault;
-	//view.setViewport(sf::FloatRect(0, 0, app_conf.game_w, app_conf.game_h));
 	screen_tex.create(app_conf.game_w, app_conf.game_h);
-	//screen_tex.setView(view);
 	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf.game_w, app_conf.game_h});
-
+	fit(screen_sprite);
 	window.create(sf::VideoMode(app_conf.window_w, app_conf.window_h), app_conf.window_name, app_conf.window_style);
 	window.setFramerateLimit(app_conf.max_fps);
 	window.setKeyRepeatEnabled(false);
+	window.setMouseCursorVisible(false);
 
 	act_mgr = ActionManager();
 
@@ -98,18 +97,8 @@ void Game::run() {
 			if (current_scene) current_scene->update();
 
 			screen_tex.display();
-			{
-				// fade and shade
-				reset(screen_sprite);
-				screen_tex.setView(sf::View(sf::FloatRect(0,0,app_conf.game_w, app_conf.game_h)));
-				screen_tex.draw(screen_sprite);
-				screen_tex.display();
-				screen_tex.setView(view);
-				fit(screen_sprite);
-			}
 
 			window.clear();
-			//window.draw(screen_sprite);
 			window.draw(screen_sprite, &assets.getShader("crt-easy"));
 			window.display();
 		}
