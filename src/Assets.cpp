@@ -158,6 +158,7 @@ void Assets::loadEntity() {
 			data_ent.weapon_primary = getRecipeNameID(word);
 			file >> data_ent.primary_cooldown;
 			file >> data_ent.p_rounds;
+			file >> data_ent.p_delay;
 		}
 		else if (word == "weapon_secondary") {
 			file >> word;
@@ -167,6 +168,7 @@ void Assets::loadEntity() {
 			data_ent.weapon_secondary = getRecipeNameID(word);
 			file >> data_ent.secondary_cooldown;
 			file >> data_ent.s_rounds;
+			file >> data_ent.s_delay;
 		}
 		else if (word == "projectile_spawn") {
 			for (int i=1; i<=8; i++) {
@@ -328,6 +330,10 @@ void Assets::loadEntity() {
 				weapon.s_cooldown = data_ent.secondary_cooldown;
 				weapon.p_rounds = data_ent.p_rounds;
 				weapon.s_rounds = data_ent.s_rounds;
+				weapon.p_delay = data_ent.p_delay;
+				weapon.s_delay = data_ent.s_delay;
+				weapon.p_delay_current = data_ent.p_delay;
+				weapon.s_delay_current = data_ent.s_delay;
 				recipe[data_ent.tag][data_ent.name_id].add<CWeapon>(new CWeapon(weapon));
 				//add CInput
 			recipe[data_ent.tag][data_ent.name_id].add<CInput>(new CInput());
