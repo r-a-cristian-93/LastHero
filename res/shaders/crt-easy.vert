@@ -81,5 +81,5 @@ void main()
 
     gl_Position = MVPMatrix * VertexCoord;
     gl_FrontColor = gl_Color;
-    TEX0.xy = TexCoord.xy * 1.00001;
+    TEX0.xy = TexCoord.xy;
 }

@@ -17,8 +17,8 @@ vec2 curvature = vec2(4.0, 4.0);
 float vignetteRoundness = 0.5;
 float vignetteOpacity = 2.0;
 vec2 screenResolution = vec2(1024, 768);
-vec2 scanLineOpacity = vec2(0.01, 0.05);
-vec2 scanLineScale = vec2(0.5, 0.3); // 0.5 /
+vec2 scanLineOpacity = vec2(0.06, 0);
+vec2 scanLineScale = vec2(0.7, 0.2);
 float brightness = 1.1;
 
 

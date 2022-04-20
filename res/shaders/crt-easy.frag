@@ -108,7 +108,7 @@ uniform COMPAT_PRECISION float vstr;
 #define h_sharp      1.25     // pixel sharpness
 #define gamma_out    0.50     // output gamma
 #define sat          1.5     // saturation
-#define shadowMask   0      // Shadow mask type
+#define shadowMask   0     // Shadow mask type
 #define masksize     1.0      // Shadow mask size
 #define mcut         0.20     // Mask 5&6 cutoff
 #define maskDark     0.50     // Dark "Phosphor"

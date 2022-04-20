@@ -61,7 +61,7 @@ uniform COMPAT_PRECISION float crt_gamma;
 uniform COMPAT_PRECISION float monitor_gamma;
 uniform COMPAT_PRECISION float boost;
 #else
-#define SCANLINE_BASE_BRIGHTNESS 7.0
+#define SCANLINE_BASE_BRIGHTNESS 2.0
 #define SCANLINE_SINE_COMP_A 0.0
 #define SCANLINE_SINE_COMP_B 0.0
 #define warpX 0.031
