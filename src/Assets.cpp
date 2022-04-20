@@ -813,6 +813,7 @@ void Assets::loadShaders() {
 	shaders["crt-mattias"].loadFromFile("res/shaders/crt-mattias.vert", "res/shaders/crt-mattias.frag");
 	shaders["crt-easy"].loadFromFile("res/shaders/crt-easy.vert", "res/shaders/crt-easy.frag");
 	shaders["crt-fake"].loadFromFile("res/shaders/crt-fake.vert", "res/shaders/crt-fake.frag");
+	shaders["crt-drigax"].loadFromFile("res/shaders/crt-drigax.vert", "res/shaders/crt-drigax.frag");
 }
 
 sf::Shader& Assets::getShader(std::string name) {
