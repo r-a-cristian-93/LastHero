@@ -99,7 +99,7 @@ void Game::run() {
 			screen_tex.display();
 
 			window.clear();
-			window.draw(screen_sprite, &assets.getShader("crt-easy"));
+			window.draw(screen_sprite, &assets.getShader("crt-mattias"));
 			window.display();
 		}
 	}

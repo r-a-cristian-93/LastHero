@@ -1,10 +1,7 @@
 // CRT Emulation
-// by Mattias
-// https://www.shadertoy.com/view/lsB3DV
+// inspired by crt-mattias
+// https://github.com/libretro/glsl-shaders/blob/master/crt/shaders/crt-mattias.glsl
 #version 130
-
-#pragma parameter CURVATURE "Curvature" 0.5 0.0 1.0 0.05
-#pragma parameter SCANSPEED "Scanline Crawl Speed" 1.0 0.0 10.0 0.5
 
 #ifdef GL_ES
 #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -17,164 +14,139 @@ precision mediump float;
 #define COMPAT_PRECISION
 #endif
 
-#if __VERSION__ >= 130
-#define COMPAT_VARYING in
-#define COMPAT_TEXTURE texture
 out COMPAT_PRECISION vec4 FragColor;
-#else
-#define COMPAT_VARYING varying
-#define FragColor gl_FragColor
-#define COMPAT_TEXTURE texture2D
-#endif
 
-uniform COMPAT_PRECISION int FrameDirection;
-uniform COMPAT_PRECISION int FrameCount;
+in vec4 TEX0;
+in vec4 COL0;
 uniform COMPAT_PRECISION vec2 OutputSize = vec2(1024, 768);
 uniform COMPAT_PRECISION vec2 TextureSize = vec2(1024, 768);
 uniform COMPAT_PRECISION vec2 InputSize = vec2(1024, 768);
 uniform sampler2D Texture;
-COMPAT_VARYING vec4 TEX0;
 
-// compatibility #defines
-#define Source Texture
-#define vTexCoord TEX0.xy
-
-#define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
-#define OutSize vec4(OutputSize, 1.0 / OutputSize)
 
 #ifdef PARAMETER_UNIFORM
-uniform COMPAT_PRECISION float CURVATURE, SCANSPEED;
+uniform COMPAT_PRECISION float CURVATURE;
 #else
-#define CURVATURE 0
-#define SCANSPEED 0
+#define CURVE_SCREEN 1		// 0-OFF, 1-ON
+#define BLUR_TYPE 3			// 0-NONE, 1-FAST, 2-FAST2, 3-ORIGINAL
+#define BLUR_AMOUNT 0.1
+#define CORNER_RADIUS 0.5
+#define CORNER_STRENGTH 3
+#define VIGNETTE_RADIUS 50
+#define VIGNETTE_STRENGTH 0.2
+#define BRIGHTNESS 2
+#define SCANLINE_INTENSITY 0.5
 #endif
 
-#define iChannel0 Texture
-#define iTime (float(FrameCount) / 60.0)
-#define iResolution OutputSize.xy
-#define fragCoord gl_FragCoord.xy
+vec2 curvature = vec2(4, 4);
 
-vec3 sample_( sampler2D tex, vec2 tc )
-{
-	vec3 s = pow(COMPAT_TEXTURE(tex,tc).rgb, vec3(2.2));
+
+
+vec3 sample( sampler2D tex, vec2 tc ) {
+	vec3 s = pow(texture(tex,tc).rgb, vec3(2.2));
 	return s;
 }
 
-vec3 blur(sampler2D tex, vec2 tc, float offs)
-{
-	vec4 xoffs = offs * vec4(-2.0, -1.0, 1.0, 2.0) / (iResolution.x * TextureSize.x / InputSize.x);
-	vec4 yoffs = offs * vec4(-2.0, -1.0, 1.0, 2.0) / (iResolution.y * TextureSize.y / InputSize.y);
+vec3 blur_fast(sampler2D image, vec2 uv, vec2 resolution) {
+  vec4 color = vec4(0.0);
+  vec2 off1 = vec2(BLUR_AMOUNT);
+  color += texture2D(image, uv) * 0.29411764705882354;
+  color += texture2D(image, uv + (off1 / resolution)) * 0.35294117647058826;
+  color += texture2D(image, uv - (off1 / resolution)) * 0.35294117647058826;
+  return color.xyz;
+}
+
+vec3 blur(sampler2D tex, vec2 tc, float offs) {
+	vec4 xoffs = offs * vec4(-2.0, -1.0, 1.0, 2.0) / (OutputSize.x * TextureSize.x / InputSize.x) * BLUR_AMOUNT;
+	vec4 yoffs = offs * vec4(-2.0, -1.0, 1.0, 2.0) / (OutputSize.y * TextureSize.y / InputSize.y) * BLUR_AMOUNT;
    tc = tc * InputSize / TextureSize;
 
 	vec3 color = vec3(0.0, 0.0, 0.0);
-	color += sample_(tex,tc + vec2(xoffs.x, yoffs.x)) * 0.00366;
-	color += sample_(tex,tc + vec2(xoffs.y, yoffs.x)) * 0.01465;
-	color += sample_(tex,tc + vec2(    0.0, yoffs.x)) * 0.02564;
-	color += sample_(tex,tc + vec2(xoffs.z, yoffs.x)) * 0.01465;
-	color += sample_(tex,tc + vec2(xoffs.w, yoffs.x)) * 0.00366;
+	color += sample(tex,tc + vec2(xoffs.x, yoffs.x)) * 0.00366;
+	color += sample(tex,tc + vec2(xoffs.y, yoffs.x)) * 0.01465;
+	color += sample(tex,tc + vec2(    0.0, yoffs.x)) * 0.02564;
+	color += sample(tex,tc + vec2(xoffs.z, yoffs.x)) * 0.01465;
+	color += sample(tex,tc + vec2(xoffs.w, yoffs.x)) * 0.00366;
 
-	color += sample_(tex,tc + vec2(xoffs.x, yoffs.y)) * 0.01465;
-	color += sample_(tex,tc + vec2(xoffs.y, yoffs.y)) * 0.05861;
-	color += sample_(tex,tc + vec2(    0.0, yoffs.y)) * 0.09524;
-	color += sample_(tex,tc + vec2(xoffs.z, yoffs.y)) * 0.05861;
-	color += sample_(tex,tc + vec2(xoffs.w, yoffs.y)) * 0.01465;
+	color += sample(tex,tc + vec2(xoffs.x, yoffs.y)) * 0.01465;
+	color += sample(tex,tc + vec2(xoffs.y, yoffs.y)) * 0.05861;
+	color += sample(tex,tc + vec2(    0.0, yoffs.y)) * 0.09524;
+	color += sample(tex,tc + vec2(xoffs.z, yoffs.y)) * 0.05861;
+	color += sample(tex,tc + vec2(xoffs.w, yoffs.y)) * 0.01465;
 
-	color += sample_(tex,tc + vec2(xoffs.x, 0.0)) * 0.02564;
-	color += sample_(tex,tc + vec2(xoffs.y, 0.0)) * 0.09524;
-	color += sample_(tex,tc + vec2(    0.0, 0.0)) * 0.15018;
-	color += sample_(tex,tc + vec2(xoffs.z, 0.0)) * 0.09524;
-	color += sample_(tex,tc + vec2(xoffs.w, 0.0)) * 0.02564;
+	color += sample(tex,tc + vec2(xoffs.x, 0.0)) * 0.02564;
+	color += sample(tex,tc + vec2(xoffs.y, 0.0)) * 0.09524;
+	color += sample(tex,tc + vec2(    0.0, 0.0)) * 0.15018;
+	color += sample(tex,tc + vec2(xoffs.z, 0.0)) * 0.09524;
+	color += sample(tex,tc + vec2(xoffs.w, 0.0)) * 0.02564;
 
-	color += sample_(tex,tc + vec2(xoffs.x, yoffs.z)) * 0.01465;
-	color += sample_(tex,tc + vec2(xoffs.y, yoffs.z)) * 0.05861;
-	color += sample_(tex,tc + vec2(    0.0, yoffs.z)) * 0.09524;
-	color += sample_(tex,tc + vec2(xoffs.z, yoffs.z)) * 0.05861;
-	color += sample_(tex,tc + vec2(xoffs.w, yoffs.z)) * 0.01465;
+	color += sample(tex,tc + vec2(xoffs.x, yoffs.z)) * 0.01465;
+	color += sample(tex,tc + vec2(xoffs.y, yoffs.z)) * 0.05861;
+	color += sample(tex,tc + vec2(    0.0, yoffs.z)) * 0.09524;
+	color += sample(tex,tc + vec2(xoffs.z, yoffs.z)) * 0.05861;
+	color += sample(tex,tc + vec2(xoffs.w, yoffs.z)) * 0.01465;
 
-	color += sample_(tex,tc + vec2(xoffs.x, yoffs.w)) * 0.00366;
-	color += sample_(tex,tc + vec2(xoffs.y, yoffs.w)) * 0.01465;
-	color += sample_(tex,tc + vec2(    0.0, yoffs.w)) * 0.02564;
-	color += sample_(tex,tc + vec2(xoffs.z, yoffs.w)) * 0.01465;
-	color += sample_(tex,tc + vec2(xoffs.w, yoffs.w)) * 0.00366;
+	color += sample(tex,tc + vec2(xoffs.x, yoffs.w)) * 0.00366;
+	color += sample(tex,tc + vec2(xoffs.y, yoffs.w)) * 0.01465;
+	color += sample(tex,tc + vec2(    0.0, yoffs.w)) * 0.02564;
+	color += sample(tex,tc + vec2(xoffs.z, yoffs.w)) * 0.01465;
+	color += sample(tex,tc + vec2(xoffs.w, yoffs.w)) * 0.00366;
 
 	return color;
 }
 
-//Canonical noise function; replaced to prevent precision errors
-//float rand(vec2 co){
-//    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-//}
-
-float rand(vec2 co)
-{
-    float a = 12.9898;
-    float b = 78.233;
-    float c = 43758.5453;
-    float dt= dot(co.xy ,vec2(a,b));
-    float sn= mod(dt,3.14);
-    return fract(sin(sn) * c);
+vec2 curve(vec2 uv) {
+    uv = uv * 2.0 -1.0;
+    vec2 offset = abs(uv.yx) / vec2(curvature.x, curvature.y);
+    uv = uv + uv * offset * offset;
+    uv = uv * 0.5 + 0.5;
+    return uv;
 }
 
-vec2 curve(vec2 uv)
-{
-	uv = (uv - 0.5) * 2.0;
-	uv *= 1.1;
-	uv.x *= 1.0 + pow((abs(uv.y) / 5.0), 2.0);
-	uv.y *= 1.0 + pow((abs(uv.x) / 4.0), 2.0);
-	uv  = (uv / 2.0) + 0.5;
-	uv =  uv *0.92 + 0.04;
-	return uv;
+vec4 roundness(vec2 uv, vec2 resolution, float opacity, float roundness) {
+    float intensity = uv.x * uv.y * (1.0 - uv.x) * (1.0 - uv.y);
+    return vec4(vec3(clamp(pow((resolution.x / roundness) * intensity, opacity), 0.0, 1.0)), 1.0);
 }
 
-void main()
-{
-    vec2 q = (vTexCoord.xy * TextureSize.xy / InputSize.xy);//fragCoord.xy / iResolution.xy;
-    vec2 uv = q;
-    uv = mix( uv, curve( uv ), CURVATURE ) * InputSize.xy / TextureSize.xy;
+void main() {
+    vec2 uv = TEX0.xy;
+
+    // curve screen
+    if (CURVE_SCREEN > 0) uv = curve(uv);
+
+	// blur image
     vec3 col;
-	float x =  sin(0.1*iTime+uv.y*21.0)*sin(0.23*iTime+uv.y*29.0)*sin(0.3+0.11*iTime+uv.y*31.0)*0.0017;
-	float o =2.0*mod(fragCoord.y,2.0)/iResolution.x;
-	x+=o;
-   uv = uv * TextureSize / InputSize;
-    col.r = 1.0*blur(iChannel0,vec2(uv.x+0.0009,uv.y+0.0009),1.2).x+0.005;
-    col.g = 1.0*blur(iChannel0,vec2(uv.x+0.000,uv.y-0.0015),1.2).y+0.005;
-    col.b = 1.0*blur(iChannel0,vec2(uv.x-0.0015,uv.y+0.000),1.2).z+0.005;
-    col.r += 0.2*blur(iChannel0,vec2(uv.x+0.0009,uv.y+0.0009),2.25).x-0.005;
-    col.g += 0.2*blur(iChannel0,vec2(uv.x+0.000,uv.y-0.0015),1.75).y-0.005;
-    col.b += 0.2*blur(iChannel0,vec2(uv.x-0.0015,uv.y+0.000),1.25).z-0.005;
-    float ghs = 0.05;
-	col.r += ghs*(1.0-0.299)*blur(iChannel0,0.75*vec2(0.01, -0.027)+vec2(uv.x+0.001,uv.y+0.001),7.0).x;
-    col.g += ghs*(1.0-0.587)*blur(iChannel0,0.75*vec2(-0.022, -0.02)+vec2(uv.x+0.000,uv.y-0.002),5.0).y;
-    col.b += ghs*(1.0-0.114)*blur(iChannel0,0.75*vec2(-0.02, -0.0)+vec2(uv.x-0.002,uv.y+0.000),3.0).z;
+    if (BLUR_TYPE == 0) col = texture2D(Texture, uv).xyz;
+    if (BLUR_TYPE == 1) col = blur_fast(Texture, uv, OutputSize);
+    if (BLUR_TYPE == 2) {
+		col.x = blur_fast(Texture, uv+0.002, OutputSize).x;
+		col.y = blur_fast(Texture, uv+0.000, OutputSize).y;
+		col.z = blur_fast(Texture, uv+0.001, OutputSize).z;
+	}
+	if (BLUR_TYPE == 3) {
+		col.r = blur(Texture,vec2(uv.x+0.0009,uv.y+0.0009),1.2).x+0.005;
+		col.g = blur(Texture,vec2(uv.x+0.000,uv.y-0.0015),1.2).y+0.005;
+		col.b = blur(Texture,vec2(uv.x-0.0015,uv.y+0.000),1.2).z+0.005;
+	}
 
+    // round corners
+    if (CORNER_RADIUS > 0) col *= roundness(uv, InputSize, CORNER_STRENGTH, CORNER_RADIUS).xyz;
 
+	// vignette
+    if (VIGNETTE_RADIUS > 0) col *= roundness(uv, InputSize, VIGNETTE_STRENGTH, VIGNETTE_RADIUS).xyz;
 
-    col = clamp(col*0.4+0.6*col*col*1.0,0.0,1.0);
-    float vig = (0.0 + 1.0*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y));
-	vig = pow(vig,0.3);
-	col *= vec3(vig);
+	// brightness
+	col = mix( col, col * col, 0.3) * BRIGHTNESS;
 
-    col *= vec3(0.95,1.05,0.95);
-	col = mix( col, col * col, 0.3) * 3.8;
+	if (SCANLINE_INTENSITY > 0) {
+		float scans = clamp( 0.35+0.15*sin(uv.y*OutputSize.y*1.5), 0.0, 1.0);
+		float s = pow(scans, SCANLINE_INTENSITY);
+		col = col*vec3(s) ;
+		col = pow(col, vec3(0.45));
+	}
 
-	float scans = clamp( 0.35+0.15*sin(3.5*(iTime * SCANSPEED)+uv.y*iResolution.y*1.5), 0.0, 1.0);
+	if (uv.x < 0.0 || uv.x > 1.0) col *= 0.0;
+	if (uv.y < 0.0 || uv.y > 1.0) col *= 0.0;
 
-	float s = pow(scans,0.9);
-	col = col*vec3( s) ;
-
-    col *= 1.0+0.0015*sin(300.0*iTime);
-
-	col*=1.0-0.15*vec3(clamp((mod(fragCoord.x+o, 2.0)-1.0)*2.0,0.0,1.0));
-	col *= vec3( 1.0 ) - 0.25*vec3( rand( uv+0.0001*iTime),  rand( uv+0.0001*iTime + 0.3 ),  rand( uv+0.0001*iTime+ 0.5 )  );
-	col = pow(col, vec3(0.45));
-
-	if (uv.x < 0.0 || uv.x > 1.0)
-		col *= 0.0;
-	if (uv.y < 0.0 || uv.y > 1.0)
-		col *= 0.0;
-
-
-    float comp = smoothstep( 0.1, 0.9, sin(iTime) );
-
-    FragColor = vec4(col,1.0);
+    FragColor = vec4(col,1.0) * COL0;
 }
