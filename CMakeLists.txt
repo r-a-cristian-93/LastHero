@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16.3)
-project(Spinners)
+project(LastHero)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
@@ -8,8 +8,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
 find_package(SFML 2.5 COMPONENTS system window graphics audio REQUIRED)
 
 set(SOURCE_FILES
-	src/Spinners.cpp
-	src/Vec2.cpp
+	src/LastHero.cpp
 	src/CTransform.cpp
 	src/CCollision.cpp
 	src/CShape.cpp
@@ -49,6 +48,6 @@ set(SOURCE_FILES
 	src/Tilemap.cpp
 )
 
-add_executable(Spinners ${SOURCE_FILES})
-target_link_libraries(Spinners sfml-graphics sfml-audio)
+add_executable(LastHero ${SOURCE_FILES})
+target_link_libraries(LastHero sfml-graphics sfml-audio)
 include_directories(${PROJECT_SOURCE_DIR})

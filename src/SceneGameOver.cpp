@@ -27,12 +27,12 @@ void SceneGameOver::init() {
 			color = {255, 50, 50};
 		}
 
-		sf::Font& font = game->assets.getFont(Assets::FONT_COURIER);
+		sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
 		pos.y = static_cast<int>(game->app_conf.game_h*0.5);
 
-		msg.setText(string, font, 150);
+		msg.setText(string, font, 50);
 		msg.setColor(color);
 		msg.setPosAbs(pos);
 		interface.add(msg);

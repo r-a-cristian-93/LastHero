@@ -95,11 +95,7 @@ private:
 public:
 	enum {
 		NONE = 0,
-		FONT_COURIER,
-		FONT_MILITARY,
-		FONT_ARCADE_CLASSIC,
-		FONT_ARCADE_KARMATIC,
-		FONT_PRESS_START
+		FONT_PIXEL
 	};
 
 	Assets();

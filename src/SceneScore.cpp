@@ -27,7 +27,7 @@ void SceneScore::init() {
 			string = "STAGE " + std::to_string(game->stagePrev() + 1);
 		}
 
-		sf::Font& font = game->assets.getFont(Assets::FONT_PRESS_START);
+		sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
 		unsigned int size = static_cast<unsigned int>(game->app_conf.game_h * title_h * 0.5);
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
@@ -62,7 +62,7 @@ void SceneScore::init() {
 	col_w = (1 - indent_left - indent_right) / cols;
 
 	std::string string = "";
-	sf::Font& font = game->assets.getFont(Assets::FONT_PRESS_START);
+	sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
 	sf::Color color({255,255,255});
 
 	it_k = kills.cbegin();
