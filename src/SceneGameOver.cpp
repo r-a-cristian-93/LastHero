@@ -24,7 +24,7 @@ void SceneGameOver::init() {
 		}
 		else {
 			string = "YOU LOSE";
-			color = {255, 50, 50};
+			color = {220, 50, 50};
 		}
 
 		sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
@@ -32,7 +32,7 @@ void SceneGameOver::init() {
 		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
 		pos.y = static_cast<int>(game->app_conf.game_h*0.5);
 
-		msg.setText(string, font, 50);
+		msg.setText(string, font, 40);
 		msg.setColor(color);
 		msg.setPosAbs(pos);
 		interface.add(msg);

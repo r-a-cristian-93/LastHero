@@ -5,22 +5,21 @@
 #include "Interface.h"
 
 class SceneMainMenu: public Scene {
-	sf::Sprite* background;
-	Interface interface;
-	std::vector<Widget*> buttons;
-
-	sf::Color mod_highlight = {255, 255, 255};
-	sf::Color mod_dark = {100, 100, 100};
-
 	enum {
-		SELECT_PLAY,
+		SELECT_PLAY = 0,
 		SELECT_EXIT,
 	};
+
+	sf::Sprite* background;
+	Interface interface;
+
+	sf::Color mod_highlight = {220, 220, 220};
+	sf::Color mod_dark = {100, 100, 100};
 
 	size_t selection = SELECT_PLAY;
 
 	void init();
-	void setHighlight();
+	void select(size_t s);
 
 public:
 	void update() override;

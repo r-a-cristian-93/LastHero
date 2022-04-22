@@ -119,6 +119,9 @@ vec4 roundness(vec2 uv, vec2 resolution, float opacity, float roundness) {
 void main() {
     vec2 uv = TEX0.xy;
 
+    // curve screen
+    if (CURVE_SCREEN > 0) uv = curve(uv);
+
 	// blur image
     vec3 col;
 
@@ -147,9 +150,6 @@ void main() {
 		col = col*vec3(s) ;
 		col = pow(col, vec3(0.45));
 	}
-
-    // curve screen
-    if (CURVE_SCREEN > 0) uv = curve(uv);
 
     // round corners
     if (CORNER_RADIUS > 0) col *= roundness(uv, ScreenSize, CORNER_STRENGTH, CORNER_RADIUS).xyz;
