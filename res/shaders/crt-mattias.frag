@@ -18,24 +18,33 @@ out COMPAT_PRECISION vec4 FragColor;
 
 in vec4 TEX0;
 in vec4 COL0;
-uniform COMPAT_PRECISION vec2 OutputSize = vec2(1024, 768);
-uniform COMPAT_PRECISION vec2 TextureSize = vec2(1024, 768);
-uniform COMPAT_PRECISION vec2 InputSize = vec2(1024, 768);
+uniform COMPAT_PRECISION vec2 ScreenSize = vec2(1024, 768);
 uniform sampler2D Texture;
 
+#define FULL_RETRO
 
-#ifdef PARAMETER_UNIFORM
-uniform COMPAT_PRECISION float CURVATURE;
+#ifdef FULL_RETRO
+#define CURVE_SCREEN 1		// 0-OFF, 1-ON
+#define BLUR_TYPE 4			// 0-NONE, 1-FAST, 2-FAST2, 3-ORIGINAL
+#define BLUR_AMOUNT 0.1
+#define CORNER_RADIUS 0.5
+#define CORNER_STRENGTH 1
+#define VIGNETTE_RADIUS 50
+#define VIGNETTE_STRENGTH 0.08
+#define BRIGHTNESS 1.0
+#define CONTRAST 1.40
+#define SCANLINE_INTENSITY 0.2
 #else
 #define CURVE_SCREEN 1		// 0-OFF, 1-ON
-#define BLUR_TYPE 3			// 0-NONE, 1-FAST, 2-FAST2, 3-ORIGINAL
+#define BLUR_TYPE 4			// 0-NONE, 1-FAST, 2-FAST2, 3-ORIGINAL
 #define BLUR_AMOUNT 0.1
 #define CORNER_RADIUS 0.5
 #define CORNER_STRENGTH 3
 #define VIGNETTE_RADIUS 50
-#define VIGNETTE_STRENGTH 0.2
-#define BRIGHTNESS 2
-#define SCANLINE_INTENSITY 0.5
+#define VIGNETTE_STRENGTH 0.15
+#define BRIGHTNESS 1.8
+#define CONTRAST 1.0
+#define SCANLINE_INTENSITY 0
 #endif
 
 vec2 curvature = vec2(4, 4);
@@ -57,9 +66,8 @@ vec3 blur_fast(sampler2D image, vec2 uv, vec2 resolution) {
 }
 
 vec3 blur(sampler2D tex, vec2 tc, float offs) {
-	vec4 xoffs = offs * vec4(-2.0, -1.0, 1.0, 2.0) / (OutputSize.x * TextureSize.x / InputSize.x) * BLUR_AMOUNT;
-	vec4 yoffs = offs * vec4(-2.0, -1.0, 1.0, 2.0) / (OutputSize.y * TextureSize.y / InputSize.y) * BLUR_AMOUNT;
-   tc = tc * InputSize / TextureSize;
+	vec4 xoffs = offs * vec4(-2.0, -1.0, 1.0, 2.0) / ScreenSize.x * BLUR_AMOUNT;
+	vec4 yoffs = offs * vec4(-2.0, -1.0, 1.0, 2.0) / ScreenSize.y * BLUR_AMOUNT;
 
 	vec3 color = vec3(0.0, 0.0, 0.0);
 	color += sample(tex,tc + vec2(xoffs.x, yoffs.x)) * 0.00366;
@@ -111,39 +119,49 @@ vec4 roundness(vec2 uv, vec2 resolution, float opacity, float roundness) {
 void main() {
     vec2 uv = TEX0.xy;
 
-    // curve screen
-    if (CURVE_SCREEN > 0) uv = curve(uv);
-
 	// blur image
     vec3 col;
+
     if (BLUR_TYPE == 0) col = texture2D(Texture, uv).xyz;
-    if (BLUR_TYPE == 1) col = blur_fast(Texture, uv, OutputSize);
+    if (BLUR_TYPE == 1) col = blur_fast(Texture, uv, ScreenSize);
     if (BLUR_TYPE == 2) {
-		col.x = blur_fast(Texture, uv+0.002, OutputSize).x;
-		col.y = blur_fast(Texture, uv+0.000, OutputSize).y;
-		col.z = blur_fast(Texture, uv+0.001, OutputSize).z;
+		col.x = blur_fast(Texture, uv+0.002, ScreenSize).x;
+		col.y = blur_fast(Texture, uv+0.000, ScreenSize).y;
+		col.z = blur_fast(Texture, uv+0.001, ScreenSize).z;
 	}
 	if (BLUR_TYPE == 3) {
 		col.r = blur(Texture,vec2(uv.x+0.0009,uv.y+0.0009),1.2).x+0.005;
 		col.g = blur(Texture,vec2(uv.x+0.000,uv.y-0.0015),1.2).y+0.005;
 		col.b = blur(Texture,vec2(uv.x-0.0015,uv.y+0.000),1.2).z+0.005;
 	}
+	if (BLUR_TYPE == 4) {
+		col.r = blur(Texture,vec2(uv.x+0.0002,uv.y+0.0002),1.2).x+0.005;
+		col.g = blur(Texture,vec2(uv.x+0.000,uv.y-0.0005),1.2).y+0.005;
+		col.b = blur(Texture,vec2(uv.x-0.0005,uv.y+0.000),1.2).z+0.005;
+	}
 
-    // round corners
-    if (CORNER_RADIUS > 0) col *= roundness(uv, InputSize, CORNER_STRENGTH, CORNER_RADIUS).xyz;
-
-	// vignette
-    if (VIGNETTE_RADIUS > 0) col *= roundness(uv, InputSize, VIGNETTE_STRENGTH, VIGNETTE_RADIUS).xyz;
-
-	// brightness
-	col = mix( col, col * col, 0.3) * BRIGHTNESS;
-
+	// scanlines
 	if (SCANLINE_INTENSITY > 0) {
-		float scans = clamp( 0.35+0.15*sin(uv.y*OutputSize.y*1.5), 0.0, 1.0);
+		float scans = clamp( 0.35+0.15*sin(uv.y*ScreenSize.y*1.5), 0.0, 1.0);
 		float s = pow(scans, SCANLINE_INTENSITY);
 		col = col*vec3(s) ;
 		col = pow(col, vec3(0.45));
 	}
+
+    // curve screen
+    if (CURVE_SCREEN > 0) uv = curve(uv);
+
+    // round corners
+    if (CORNER_RADIUS > 0) col *= roundness(uv, ScreenSize, CORNER_STRENGTH, CORNER_RADIUS).xyz;
+
+	// vignette
+    if (VIGNETTE_RADIUS > 0) col *= roundness(uv, ScreenSize, VIGNETTE_STRENGTH, VIGNETTE_RADIUS).xyz;
+
+	// brightness
+	col = mix( col, col * col, 0.3) * BRIGHTNESS;
+
+	//contrast
+	col = ((col - 0.5) * max(CONTRAST, 0.0)) + 0.5;
 
 	if (uv.x < 0.0 || uv.x > 1.0) col *= 0.0;
 	if (uv.y < 0.0 || uv.y > 1.0) col *= 0.0;
