@@ -10,6 +10,7 @@ Assets::Assets() {
 	loadEntities();
 	loadFonts();
 	loadShaders();
+	loadSounds();
 }
 
 Components& Assets::getRecipe(size_t tag, size_t name_id) {
@@ -70,6 +71,36 @@ Widget& Assets::getWidget(std::string name) {
 	if (widgets.count(name)) return widgets.at(name);
 
 	std::cout << "Widget " << name << " could not be found.\n";
+	exit(0);
+}
+
+
+void Assets::loadSounds() {
+	if (!bg_music["intro"].openFromFile("res/sounds/00_intro.ogg")) {
+		std::cout << "Could not load sound file INTRO\n";
+		exit(0);
+	}
+
+	if (!bg_music["game-game"].openFromFile("res/sounds/01_game-game.ogg")) {
+		std::cout << "Could not load sound file INTRO\n";
+		exit(0);
+	}
+
+	if (!bg_music["game-over"].openFromFile("res/sounds/14_game_over.ogg")) {
+		std::cout << "Could not load sound file INTRO\n";
+		exit(0);
+	}
+
+	if (!bg_music["game-win"].openFromFile("res/sounds/15_level_win.ogg")) {
+		std::cout << "Could not load sound file INTRO\n";
+		exit(0);
+	}
+}
+
+sf::Music& Assets::getSound(std::string name) {
+	if (bg_music.count(name)) return bg_music.at(name);
+
+	std::cout << "Sound " << name << " could not be found.\n";
 	exit(0);
 }
 

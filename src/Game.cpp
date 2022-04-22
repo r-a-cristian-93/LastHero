@@ -16,6 +16,7 @@ Game::Game(std::string file_name)
 	,current_scene(nullptr)
 	,next_stage(0)
 	,prev_stage(0)
+	,next_scene(0)
 {
 	init(file_name);
 }
@@ -93,7 +94,6 @@ void Game::run() {
 		if (window.isOpen()) {
 			screen_tex.clear();
 
-			sUserInput();
 			if (current_scene) current_scene->update();
 
 			screen_tex.display();
@@ -101,6 +101,9 @@ void Game::run() {
 			window.clear();
 			window.draw(screen_sprite, &assets.getShader("crt-mattias"));
 			window.display();
+
+			sUserInput();
+			sChangeScene();
 		}
 	}
 }
@@ -146,6 +149,13 @@ void Game::sUserInput() {
 	}
 }
 
+void Game::sChangeScene() {
+	if (next_scene) {
+		setScene(next_scene);
+		next_scene = 0;
+	}
+}
+
 void Game::setScene(size_t id) {
 	act_mgr = ActionManager();
 
@@ -168,7 +178,14 @@ void Game::setScene(size_t id) {
 		case GAME_SCENE_SCORE:
 			current_scene = new SceneScore(this);
 		break;
+		case GAME_SCENE_EXIT:
+			running = false;
+		break;
 	}
+}
+
+void Game::setNextScene(size_t id) {
+	next_scene = id;
 }
 
 void Game::addKills(std::map<size_t, size_t> kills) {

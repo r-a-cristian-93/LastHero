@@ -15,6 +15,8 @@ protected:
 	Game* game;
 	EntityManager ent_mgr;
 	sf::View gui_view;
+	sf::Music* bg_music;
+	std::string name;
 
 	int frame_current;
 	bool paused, has_ended;
@@ -40,7 +42,6 @@ public:
 	void sFade();
 	void setFade(FadeType fade, size_t frames);
 	void setFade(FadeType fade, size_t frames, size_t scene);
-	void setNextScene(size_t scene);
 	bool isFading();
 
 	Scene();

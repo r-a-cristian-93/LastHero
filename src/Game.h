@@ -22,6 +22,8 @@ typedef std::map<size_t, size_t> KillsMap;
 class Game {
 private:
 	Scene* current_scene;
+	size_t next_scene;
+
 	std::vector<std::string> stages;
 	size_t next_stage;
 	size_t prev_stage;
@@ -29,6 +31,8 @@ private:
 	void init(std::string file_name);
 
 	void sUserInput();
+	void sChangeScene();
+	void setScene(size_t id);
 
 public:
 	KillsMap kills_per_enemy;
@@ -40,6 +44,7 @@ public:
 		GAME_SCENE_PLAY,
 		GAME_SCENE_OVER,
 		GAME_SCENE_SCORE,
+		GAME_SCENE_EXIT,
 	};
 
 	bool running;
@@ -51,7 +56,6 @@ public:
 	ActionManager act_mgr;
 	Assets assets;
 
-	void setScene(size_t id);
 	void addKills(std::map<size_t, size_t> kills_per_enemy);
 	bool stageNext();
 	void stageReset();
@@ -60,6 +64,7 @@ public:
 	size_t stagesCount();
 	void run();
 
+	void setNextScene(size_t id);
 	void reset(sf::Sprite& sprite);
 	void fit(sf::Sprite& sprite);
 

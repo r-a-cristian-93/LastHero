@@ -15,6 +15,7 @@ ScenePlay::ScenePlay(Game* g, std::string lp)
 ScenePlay::~ScenePlay() {}
 
 void ScenePlay::init() {
+	name = "SCENE PLAY";
 	PROFILE_FUNCTION();
 
 	setFade(FADE_IN, 60);
@@ -55,6 +56,11 @@ void ScenePlay::init() {
 		// focus camera on player
 		cam.pos = player->get<CTransform>()->pos;
 	}
+
+	bg_music = &game->assets.getSound("game-game");
+	bg_music->setLoop(true);
+	bg_music->setVolume(100);
+	bg_music->play();
 }
 
 void ScenePlay::load_level(std::string path) {

@@ -9,6 +9,7 @@
 
 #include <string>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 #define PI 3.14159265
 

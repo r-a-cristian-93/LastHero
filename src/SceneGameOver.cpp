@@ -21,11 +21,16 @@ void SceneGameOver::init() {
 		if (game->stagePrev() + 1 == game->stagesCount()) {
 			string = "YOU WIN";
 			color = {135, 155, 70};
+			bg_music = &game->assets.getSound("game-win");
 		}
 		else {
 			string = "YOU LOSE";
 			color = {220, 50, 50};
+			bg_music = &game->assets.getSound("game-over");
 		}
+
+		bg_music->setVolume(100);
+		bg_music->play();
 
 		sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
 		sf::Vector2i pos;
@@ -44,7 +49,7 @@ void SceneGameOver::init() {
 void SceneGameOver::update() {
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 
-	if (frame_current == 120) {
+	if (frame_current == 240) {
 		setFade(FADE_OUT, 60, Game::GAME_SCENE_SCORE);
 	}
 

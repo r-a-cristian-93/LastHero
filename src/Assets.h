@@ -69,12 +69,14 @@ private:
 	std::map<std::string, Border> borders;
 	std::map<std::string, sf::Shader> shaders;
 	std::map<std::string, Widget> widgets;
+	std::map<std::string, sf::Music> bg_music;
 
 	void loadEntities();
 	void loadFonts();
 	void loadGUI();
 	void loadWidgets();
 	void loadShaders();
+	void loadSounds();
 
 	void loadEntity();
 	void loadTexture();
@@ -112,6 +114,7 @@ public:
 	sf::Sprite& getIconSmall(size_t name_id);
 	sf::Shader& getShader(std::string name);
 	Widget& getWidget(std::string name);
+	sf::Music& getSound(std::string name);
 };
 
 #endif

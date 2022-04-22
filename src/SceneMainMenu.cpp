@@ -12,6 +12,8 @@ SceneMainMenu::SceneMainMenu(Game* g)
 SceneMainMenu::~SceneMainMenu() {}
 
 void SceneMainMenu::init() {
+	name = 	("SCENE MAIN MENU");
+
 	setFade(FADE_IN, 60);
 
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
@@ -57,6 +59,13 @@ void SceneMainMenu::init() {
 	}
 
 	game->screen_tex.setView(gui_view);
+
+
+	bg_music = &game->assets.getSound("intro");
+	bg_music->setLoopPoints(sf::Music::TimeSpan(sf::seconds(0),sf::seconds(32)));
+	bg_music->setLoop(true);
+	bg_music->setVolume(100);
+	bg_music->play();
 }
 
 void SceneMainMenu::update() {
@@ -74,7 +83,7 @@ void SceneMainMenu::doAction(const Action* a) {
 		switch (*a->code) {
 			case Action::MENU_SELECT:
 				if (selection == SELECT_EXIT) {
-					game->running = false;
+					setFade(FADE_OUT, 60, Game::GAME_SCENE_EXIT);
 				}
 				else if (selection == SELECT_PLAY) {
 					setFade(FADE_OUT, 60, Game::GAME_SCENE_PLAY);
@@ -87,7 +96,7 @@ void SceneMainMenu::doAction(const Action* a) {
 				if (!isFading()) select(SELECT_EXIT);
 			break;
 			case Action::GAME_EXIT:
-				game->running = false;
+				setFade(FADE_OUT, 60, Game::GAME_SCENE_EXIT);
 			default:
 			break;
 		}
