@@ -74,6 +74,38 @@ Widget& Assets::getWidget(std::string name) {
 	exit(0);
 }
 
+sf::Music& Assets::getSound(std::string name) {
+	if (bg_music.count(name)) return bg_music.at(name);
+
+	std::cout << "Music " << name << " could not be found.\n";
+	exit(0);
+}
+
+sf::SoundBuffer& Assets::getSoundBuffer(size_t id) {
+	if (sound_buffers.count(id)) return sound_buffers.at(id);
+
+	std::cout << "Sound buffer " << id << " could not be found.\n";
+	exit(0);
+}
+
+sf::SoundBuffer& Assets::getSoundBuffer(std::string name) {
+	size_t id = getSoundBufferNameID(name);
+
+	if (sound_buffers.count(id)) return sound_buffers.at(id);
+
+	std::cout << "Sound buffer " << name << " could not be found.\n";
+	exit(0);
+}
+
+size_t Assets::getSoundBufferNameID(std::string sound_name) {
+	if (sound_buffer_name_id.count(sound_name)) {
+		return sound_buffer_name_id[sound_name];
+	}
+
+	std::cout << "sound_buffer_name_id \"" << sound_name << "\" not found.\n";
+	exit(0);
+}
+
 
 void Assets::loadSounds() {
 	if (!bg_music["intro"].openFromFile("res/sounds/00_intro.ogg")) {
@@ -96,31 +128,46 @@ void Assets::loadSounds() {
 		exit(0);
 	}
 
-	 if (!sound_buffers[0].loadFromFile("res/sounds/17_menu_select.ogg")) {
-        std::cout << "Could not load sound file INTRO\n";
-		exit(0);
-	}
-	sounds[0].setBuffer(sound_buffers[0]);
+	file.open("res/sounds.cfg");
 
-	 if (!sound_buffers[1].loadFromFile("res/sounds/18_menu_confirm.ogg")) {
-        std::cout << "Could not load sound file INTRO\n";
-		exit(0);
+	while (file >> word) {
+		if (word == "_SOUND_BUFFER") loadSound();
 	}
-	sounds[1].setBuffer(sound_buffers[1]);
+
+	file.close();
 }
 
-sf::Music& Assets::getSound(std::string name) {
-	if (bg_music.count(name)) return bg_music.at(name);
+void Assets::loadSound() {
+	std::string name("");
+	std::string path("");
+	size_t id(0);
 
-	std::cout << "Music " << name << " could not be found.\n";
-	exit(0);
-}
+	while (file >> word) {
+		if (word == "_END") break;
+		else if (word == "name") file >> name;
+		else if (word == "path") file >> path;
+		else {
+			std::cout << "Invalid keyword: " << word << " in res/sounds.cfg.\n";
+			exit(0);
+		}
+	}
 
-sf::Sound& Assets::getSound(size_t name) {
-	if (sounds.count(name)) return sounds.at(name);
+	if (!name.empty() && !path.empty()) {
+		if (!sound_buffer_name_id.count(name)) {
+			size_t new_id = sound_buffer_name_id.size();
+			sound_buffer_name_id[name] = new_id;
+		}
 
-	std::cout << "Sound " << name << " could not be found.\n";
-	exit(0);
+		id = getSoundBufferNameID(name);
+
+		if (!sound_buffers[id].loadFromFile(path)) {
+			std::cout << "Could not load sound file: " << path << std::endl;
+			exit(0);
+		}
+		else {
+			std::cout << "Loaded sound file: " << path << std::endl;
+		}
+	}
 }
 
 void Assets::loadEntities() {
@@ -634,7 +681,7 @@ void Assets::loadBorders() {
 }
 
 void Assets::loadWidgets() {
-	file_path = "res/interface/widgets.cfg";
+	file_path = "res/widgets.cfg";
 	file.open(file_path);
 
 	while (file >> word) {

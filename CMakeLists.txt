@@ -46,6 +46,7 @@ set(SOURCE_FILES
 	src/Widget.cpp
 	src/Border.cpp
 	src/Tilemap.cpp
+	src/SoundManager.cpp
 )
 
 add_executable(LastHero ${SOURCE_FILES})

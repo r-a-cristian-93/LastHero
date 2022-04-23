@@ -1,8 +1,6 @@
 #ifndef ASSETS
 #define ASSETS
 
-#include <vector>
-#include <string>
 #include <fstream>
 #include "Common.h"
 #include "Enums.h"
@@ -70,8 +68,9 @@ private:
 	std::map<std::string, sf::Shader> shaders;
 	std::map<std::string, Widget> widgets;
 	std::map<std::string, sf::Music> bg_music;
-	std::map<size_t, sf::Sound> sounds;
+
 	std::map<size_t, sf::SoundBuffer> sound_buffers;
+	std::map<std::string, size_t> sound_buffer_name_id = {{"", NONE}};
 
 	void loadEntities();
 	void loadFonts();
@@ -85,6 +84,7 @@ private:
 	void loadSprite();
 	void loadBorders();
 	void loadWidget();
+	void loadSound();
 	void loadBorderRepeatable(std::string border_name, size_t sprite_name, std::string texture_name);
 	void loadAnimationSet(std::string path, AnimationSet& animation_set);
 	void loadAnimation(AnimationSet& anim_set);
@@ -117,8 +117,9 @@ public:
 	sf::Shader& getShader(std::string name);
 	Widget& getWidget(std::string name);
 	sf::Music& getSound(std::string name);
-	sf::SoundBuffer& getSoundBuffer(size_t name);
-	sf::Sound& getSound(size_t name);
+	sf::SoundBuffer& getSoundBuffer(size_t id);
+	sf::SoundBuffer& getSoundBuffer(std::string name);
+	size_t getSoundBufferNameID(std::string sound_name);
 };
 
 #endif

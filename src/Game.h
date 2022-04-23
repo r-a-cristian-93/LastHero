@@ -9,6 +9,7 @@
 #include "EntityManager.h"
 #include "ActionManager.h"
 #include "ActionStream.h"
+#include "SoundManager.h"
 #include "Common.h"
 #include "Assets.h"
 #include "Scene.h"
@@ -54,6 +55,7 @@ public:
 	sf::View view;
 	AppConfig app_conf;
 	ActionManager act_mgr;
+	SoundManager snd_mgr;
 	Assets assets;
 
 	void addKills(std::map<size_t, size_t> kills_per_enemy);

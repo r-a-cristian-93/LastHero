@@ -83,7 +83,7 @@ void SceneMainMenu::doAction(const Action* a) {
 		switch (*a->code) {
 			case Action::MENU_SELECT:
 				if (!isFading()) {
-					game->assets.getSound(1).play();
+					game->snd_mgr.playSound("menu_confirm");
 					if (selection == SELECT_EXIT) {
 						setFade(FADE_OUT, 60, Game::GAME_SCENE_EXIT);
 					}
@@ -124,5 +124,5 @@ void SceneMainMenu::select(size_t s) {
 		}
 	}
 
-	game->assets.getSound(0).play();
+	game->snd_mgr.playSound("menu_select");
 }

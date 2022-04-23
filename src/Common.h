@@ -7,6 +7,8 @@
 #define DEBUG_SPAWN_ENTITY
 //#define DEBUG_ENEMIES_LEFT
 
+#include <cstddef>
+#include <vector>
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>

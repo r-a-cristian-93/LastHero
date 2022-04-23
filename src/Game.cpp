@@ -62,6 +62,7 @@ void Game::init(std::string file_name) {
 	window.setMouseCursorVisible(false);
 
 	act_mgr = ActionManager();
+	snd_mgr = SoundManager(&assets);
 
 	setScene(GAME_SCENE_MENU);
 

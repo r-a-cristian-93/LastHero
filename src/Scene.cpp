@@ -1,5 +1,4 @@
 #include "Scene.h"
-#include <iostream>
 
 Scene::Scene() {
 	if (bg_music) {
