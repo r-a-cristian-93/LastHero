@@ -70,6 +70,8 @@ private:
 	std::map<std::string, sf::Shader> shaders;
 	std::map<std::string, Widget> widgets;
 	std::map<std::string, sf::Music> bg_music;
+	std::map<size_t, sf::Sound> sounds;
+	std::map<size_t, sf::SoundBuffer> sound_buffers;
 
 	void loadEntities();
 	void loadFonts();
@@ -115,6 +117,8 @@ public:
 	sf::Shader& getShader(std::string name);
 	Widget& getWidget(std::string name);
 	sf::Music& getSound(std::string name);
+	sf::SoundBuffer& getSoundBuffer(size_t name);
+	sf::Sound& getSound(size_t name);
 };
 
 #endif

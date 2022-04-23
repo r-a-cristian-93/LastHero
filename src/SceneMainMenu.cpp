@@ -82,11 +82,14 @@ void SceneMainMenu::doAction(const Action* a) {
 	if (*a->type == Action::TYPE_START) {
 		switch (*a->code) {
 			case Action::MENU_SELECT:
-				if (selection == SELECT_EXIT) {
-					setFade(FADE_OUT, 60, Game::GAME_SCENE_EXIT);
-				}
-				else if (selection == SELECT_PLAY) {
-					setFade(FADE_OUT, 60, Game::GAME_SCENE_PLAY);
+				if (!isFading()) {
+					game->assets.getSound(1).play();
+					if (selection == SELECT_EXIT) {
+						setFade(FADE_OUT, 60, Game::GAME_SCENE_EXIT);
+					}
+					else if (selection == SELECT_PLAY) {
+						setFade(FADE_OUT, 60, Game::GAME_SCENE_PLAY);
+					}
 				}
 			break;
 			case Action::MOVE_UP:
@@ -120,4 +123,6 @@ void SceneMainMenu::select(size_t s) {
 			interface.getWidgets()[i].setColor(mod_dark);
 		}
 	}
+
+	game->assets.getSound(0).play();
 }

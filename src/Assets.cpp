@@ -95,10 +95,29 @@ void Assets::loadSounds() {
 		std::cout << "Could not load sound file INTRO\n";
 		exit(0);
 	}
+
+	 if (!sound_buffers[0].loadFromFile("res/sounds/17_menu_select.ogg")) {
+        std::cout << "Could not load sound file INTRO\n";
+		exit(0);
+	}
+	sounds[0].setBuffer(sound_buffers[0]);
+
+	 if (!sound_buffers[1].loadFromFile("res/sounds/18_menu_confirm.ogg")) {
+        std::cout << "Could not load sound file INTRO\n";
+		exit(0);
+	}
+	sounds[1].setBuffer(sound_buffers[1]);
 }
 
 sf::Music& Assets::getSound(std::string name) {
 	if (bg_music.count(name)) return bg_music.at(name);
+
+	std::cout << "Music " << name << " could not be found.\n";
+	exit(0);
+}
+
+sf::Sound& Assets::getSound(size_t name) {
+	if (sounds.count(name)) return sounds.at(name);
 
 	std::cout << "Sound " << name << " could not be found.\n";
 	exit(0);
