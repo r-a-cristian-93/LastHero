@@ -84,6 +84,7 @@ private:
 	void loadSprite();
 	void loadBorders();
 	void loadWidget();
+	void loadSong();
 	void loadSound();
 	void loadBorderRepeatable(std::string border_name, size_t sprite_name, std::string texture_name);
 	void loadAnimationSet(std::string path, AnimationSet& animation_set);

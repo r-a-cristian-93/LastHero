@@ -3,10 +3,12 @@
 
 SoundManager::SoundManager()
 	:assets(nullptr)
+	,bg_music(nullptr)
 	{}
 
 SoundManager::SoundManager(Assets* _assets)
 	:assets(_assets)
+	,bg_music(nullptr)
 	{}
 
 void SoundManager::playSound(size_t id) {
@@ -32,3 +34,34 @@ void SoundManager::playSound(std::string name) {
 
 	playSound(id);
 }
+
+void SoundManager::playBgMusic(std::string name) {
+	if (bg_music == &assets->getSound(name)) {
+		if (bg_music->getStatus() != sf::SoundSource::Status::Playing) {
+			bg_music->setVolume(100);
+			bg_music->play();
+		}
+
+		return;
+	}
+	else {
+		if (bg_music) {
+			bg_music->stop();
+			bg_music = nullptr;
+		}
+
+		bg_music = &assets->getSound(name);
+		bg_music->setVolume(100);
+		bg_music->play();
+	}
+}
+
+void SoundManager::setBgMusicVolume(float v) {
+	if (bg_music) bg_music->setVolume(v);
+}
+
+void SoundManager::stopBgMusic() {
+	if (bg_music) bg_music->stop();
+}
+
+

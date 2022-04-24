@@ -108,33 +108,36 @@ size_t Assets::getSoundBufferNameID(std::string sound_name) {
 
 
 void Assets::loadSounds() {
-	if (!bg_music["intro"].openFromFile("res/sounds/00_intro.ogg")) {
-		std::cout << "Could not load sound file INTRO\n";
-		exit(0);
-	}
-
-	if (!bg_music["game-game"].openFromFile("res/sounds/01_game-game.ogg")) {
-		std::cout << "Could not load sound file INTRO\n";
-		exit(0);
-	}
-
-	if (!bg_music["game-over"].openFromFile("res/sounds/14_game_over.ogg")) {
-		std::cout << "Could not load sound file INTRO\n";
-		exit(0);
-	}
-
-	if (!bg_music["game-win"].openFromFile("res/sounds/15_level_win.ogg")) {
-		std::cout << "Could not load sound file INTRO\n";
-		exit(0);
-	}
-
 	file.open("res/sounds.cfg");
 
 	while (file >> word) {
-		if (word == "_SOUND_BUFFER") loadSound();
+		if (word == "_SONG") loadSong();
+		else if (word == "_SOUND_BUFFER") loadSound();
 	}
 
 	file.close();
+}
+
+void Assets::loadSong() {
+	std::string name("");
+	std::string path("");
+
+	while (file >> word) {
+		if (word == "_END") break;
+		else if (word == "name") file >> name;
+		else if (word == "path") file >> path;
+		else {
+			std::cout << "Invalid keyword: " << word << " in res/sounds.cfg.\n";
+			exit(0);
+		}
+	}
+
+	if (!name.empty() && !path.empty()) {
+		if (!bg_music[name].openFromFile(path)) {
+			std::cout << "Could not load sound file INTRO\n";
+			exit(0);
+		}
+	}
 }
 
 void Assets::loadSound() {

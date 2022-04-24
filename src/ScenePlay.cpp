@@ -19,6 +19,7 @@ void ScenePlay::init() {
 	PROFILE_FUNCTION();
 
 	setFade(FADE_IN, 60);
+	music_fade_out = true;
 
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
@@ -56,11 +57,6 @@ void ScenePlay::init() {
 		// focus camera on player
 		cam.pos = player->get<CTransform>()->pos;
 	}
-
-	bg_music = &game->assets.getSound("game-game");
-	bg_music->setLoop(true);
-	bg_music->setVolume(100);
-	bg_music->play();
 }
 
 void ScenePlay::load_level(std::string path) {
@@ -92,6 +88,10 @@ void ScenePlay::load_level(std::string path) {
 				}
 				else if (word == "texture") {
 					file >> texture_name;
+				}
+				else if (word == "bg_music") {
+					file >> word;
+					game->snd_mgr.playBgMusic(word);
 				}
 			}
 		}

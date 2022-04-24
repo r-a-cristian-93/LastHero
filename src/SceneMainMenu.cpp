@@ -12,9 +12,11 @@ SceneMainMenu::SceneMainMenu(Game* g)
 SceneMainMenu::~SceneMainMenu() {}
 
 void SceneMainMenu::init() {
-	name = 	("SCENE MAIN MENU");
+	name = "SCENE MAIN MENU";
 
 	setFade(FADE_IN, 60);
+	music_fade_out = true;
+	game->snd_mgr.playBgMusic("intro");
 
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
@@ -59,13 +61,6 @@ void SceneMainMenu::init() {
 	}
 
 	game->screen_tex.setView(gui_view);
-
-
-	bg_music = &game->assets.getSound("intro");
-	bg_music->setLoopPoints(sf::Music::TimeSpan(sf::seconds(0),sf::seconds(32)));
-	bg_music->setLoop(true);
-	bg_music->setVolume(100);
-	bg_music->play();
 }
 
 void SceneMainMenu::update() {

@@ -15,11 +15,13 @@ protected:
 	Game* game;
 	EntityManager ent_mgr;
 	sf::View gui_view;
-	sf::Music* bg_music;
 	std::string name;
 
 	int frame_current;
 	bool paused, has_ended;
+
+	bool music_fade_in;
+	bool music_fade_out;
 
 	enum {
 		FADE_NONE = 0,
@@ -46,7 +48,7 @@ public:
 
 	Scene();
 	Scene(Game* g);
-	virtual ~Scene() {}
+	virtual ~Scene();
 };
 
 #endif

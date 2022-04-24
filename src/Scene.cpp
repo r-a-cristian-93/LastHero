@@ -1,18 +1,14 @@
 #include "Scene.h"
 
-Scene::Scene() {
-	if (bg_music) {
-		bg_music->stop();
-		bg_music = nullptr;
-	}
-}
+Scene::Scene() {}
 
 Scene::Scene(Game* g)
 	:game(g)
 	,frame_current(0)
 	,paused(false)
 	,has_ended(false)
-	,bg_music(nullptr)
+	,music_fade_in(false)
+	,music_fade_out(false)
 {
 	init();
 }
@@ -48,13 +44,13 @@ void Scene::sFade() {
 				game->setNextScene(next_scene);
 			}
 
-			if (bg_music) {
+			if (music_fade_out) {
 				float v = 0;
 
 				if (current_fade_frames[fade] > 0) {
 					v = current_fade_frames[fade] * (100.0f/fade_frames[fade]);
 				}
-				bg_music->setVolume(v);
+				game->snd_mgr.setBgMusicVolume(v);
 			}
 		}
 		break;
@@ -78,5 +74,7 @@ bool Scene::isFading() {
 	return false;
 }
 
-
+Scene::~Scene() {
+	game->snd_mgr.stopBgMusic();
+}
 
