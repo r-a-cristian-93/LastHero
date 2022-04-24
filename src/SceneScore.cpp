@@ -134,12 +134,30 @@ void SceneScore::init() {
 }
 
 void SceneScore::update() {
-	if (frame_current == FRAME_COL_0) copyCells(all_table_widgets, interface.getWidgets(), {0,0,0,rows-3});
-	if (frame_current == FRAME_COL_1) copyCells(all_table_widgets, interface.getWidgets(), {1,0,1,rows-3});
-	if (frame_current == FRAME_COL_2) copyCells(all_table_widgets, interface.getWidgets(), {2,0,2,rows-3});
-	if (frame_current == FRAME_COL_3) copyCells(all_table_widgets, interface.getWidgets(), {3,0,3,rows-3});
-	if (frame_current == FRAME_ROW_LINE) copyCells(all_table_widgets, interface.getWidgets(), {2,rows-2,3,rows-2});
-	if (frame_current == FRAME_ROW_TOTAL) copyCells(all_table_widgets, interface.getWidgets(), {1,rows-1,3,rows-1});
+	if (frame_current == FRAME_COL_0) {
+		copyCells(all_table_widgets, interface.getWidgets(), {0,0,0,rows-3});
+		if (total_kills) game->snd_mgr.playSound("menu_punch");
+	}
+	if (frame_current == FRAME_COL_1) {
+		copyCells(all_table_widgets, interface.getWidgets(), {1,0,1,rows-3});
+		if (!game->new_kills_per_enemy.empty()) game->snd_mgr.playSound("menu_punch");
+	}
+	if (frame_current == FRAME_COL_2) {
+		copyCells(all_table_widgets, interface.getWidgets(), {2,0,2,rows-3});
+		if (total_kills) game->snd_mgr.playSound("menu_punch");
+	}
+	if (frame_current == FRAME_COL_3) {
+		copyCells(all_table_widgets, interface.getWidgets(), {3,0,3,rows-3});
+		if (total_kills) game->snd_mgr.playSound("menu_punch");
+	}
+	if (frame_current == FRAME_ROW_LINE) {
+		copyCells(all_table_widgets, interface.getWidgets(), {2,rows-2,3,rows-2});
+		if (total_kills) game->snd_mgr.playSound("menu_punch");
+	}
+	if (frame_current == FRAME_ROW_TOTAL) {
+		copyCells(all_table_widgets, interface.getWidgets(), {1,rows-1,3,rows-1});
+		game->snd_mgr.playSound("menu_punch");
+	}
 
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 
