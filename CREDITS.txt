@@ -1,0 +1,51 @@
+CREDITS
+
+Title: "Game-Game"
+Author: "Metaruka"
+Source: "Game-Game" - https://opengameart.org/content/game-game?destination=node/3443
+License: "CC BY-SA 3.0" - https://creativecommons.org/licenses/by-sa/3.0/
+	- original work
+	/res/sound/00_intro.ogg
+	/res/sound/01_game-game.ogg
+	/res/sound/02_lava_city.ogg
+	/res/sound/03_ship_interior.ogg
+	/res/sound/04_underground_cavern.ogg
+	/res/sound/05_gaseous_tethanus.ogg
+	/res/sound/06_pirates_attack.ogg
+	/res/sound/07_high_in_the_mountains.ogg
+	/res/sound/08_endless_sands.ogg
+	/res/sound/09_green_forest.ogg
+	/res/sound/10_running_wild.ogg
+	/res/sound/11_die_vonstantine.ogg
+	/res/sound/12_final_battle.ogg
+	/res/sound/13_the_end.ogg
+	/res/sound/14_game_over.ogg
+	/res/sound/15_level_win.ogg
+	/res/sound/16_short_interlude.ogg
+	- derivative work
+	/res/sound/17_menu_select.ogg
+	/res/sound/18_menu_confirm.ogg
+Derivative work is part of "LastHero sound assets" which is licensed under CC BY-SA 3.0 by r.a.cristian.93.
+
+
+
+Title: "Press Start 2P"
+Author: "CodeMan38"
+Source: "Press Start 2P" - http://www.zone38.net/font/#pressstart
+License: "SIL OPEN FONT LICENSE Version 1.1" - http://scripts.sil.org/OFL
+	- derivative work
+	/res/fonts/pixel_font.ttf
+Derivative work "pixel_font" is licensed under SIL OPEN FONT LICENSE Version 1.1 by r.a.cristian.93.
+
+
+
+
+
+
+
+
+
+
+
+
+
