@@ -5,12 +5,12 @@
 #include "Settings.h"
 
 Assets::Assets() {
+	loadSounds();
 	loadGUI();
 	loadWidgets();
 	loadEntities();
 	loadFonts();
 	loadShaders();
-	loadSounds();
 }
 
 Components& Assets::getRecipe(size_t tag, size_t name_id) {
@@ -101,9 +101,10 @@ size_t Assets::getSoundBufferNameID(std::string sound_name) {
 	if (sound_buffer_name_id.count(sound_name)) {
 		return sound_buffer_name_id[sound_name];
 	}
-
-	std::cout << "sound_buffer_name_id \"" << sound_name << "\" not found.\n";
-	exit(0);
+	else {
+		std::cout << "WRANING: sound_buffer_name_id \"" << sound_name << "\" not found.\n";
+		return 0;
+	}
 }
 
 
@@ -116,6 +117,14 @@ void Assets::loadSounds() {
 	}
 
 	file.close();
+
+//#ifdef DEBUG_SOUND_NAME_ID
+	std::cout << "DEBUG_SOUND_NAME_ID";
+	std::map<std::string, size_t>::iterator it;
+	for (it = sound_buffer_name_id.begin(); it != sound_buffer_name_id.end(); it++) {
+		std::cout << it->first << " " << it->second << std::endl;
+	}
+//#endif
 }
 
 void Assets::loadSong() {
@@ -183,15 +192,6 @@ void Assets::loadEntities() {
 	}
 
 	file.close();
-
-#ifdef DEBUG_RECIPE_NAME_ID
-	std::cout << "DEBUG_RECIPE_NAME_ID";
-	std::map<std::string, size_t>::iterator it;
-	for (it = recipe_name_id.begin(); it != recipe_name_id.end(); it++) {
-		std::cout << it->first << " " << it->second << std::endl;
-	}
-#endif
-
 }
 
 void Assets::loadEntity() {
@@ -259,6 +259,9 @@ void Assets::loadEntity() {
 			file >> data_ent.primary_cooldown;
 			file >> data_ent.p_rounds;
 			file >> data_ent.p_delay;
+
+			file >> word;
+			data_ent.p_sfx = getSoundBufferNameID(word);
 		}
 		else if (word == "weapon_secondary") {
 			file >> word;
@@ -269,6 +272,9 @@ void Assets::loadEntity() {
 			file >> data_ent.secondary_cooldown;
 			file >> data_ent.s_rounds;
 			file >> data_ent.s_delay;
+
+			file >> word;
+			data_ent.s_sfx = getSoundBufferNameID(word);
 		}
 		else if (word == "projectile_spawn") {
 			for (int i=1; i<=8; i++) {
@@ -434,6 +440,8 @@ void Assets::loadEntity() {
 				weapon.s_delay = data_ent.s_delay;
 				weapon.p_delay_current = data_ent.p_delay;
 				weapon.s_delay_current = data_ent.s_delay;
+				weapon.p_sfx = data_ent.p_sfx;
+				weapon.s_sfx = data_ent.s_sfx;
 				recipe[data_ent.tag][data_ent.name_id].add<CWeapon>(new CWeapon(weapon));
 				//add CInput
 			recipe[data_ent.tag][data_ent.name_id].add<CInput>(new CInput());

@@ -12,6 +12,8 @@ SoundManager::SoundManager(Assets* _assets)
 	{}
 
 void SoundManager::playSound(size_t id) {
+	if (!id) return;
+
 	if (channels.size() >= MAX_CHANNELS) {
 		std::vector<sf::Sound>::iterator it = channels.begin();
 

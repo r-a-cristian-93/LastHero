@@ -15,6 +15,8 @@ CWeapon::CWeapon()
 	,s_delay(0)
 	,p_delay_current(0)
 	,s_delay_current(0)
+	,p_sfx(0)
+	,s_sfx(0)
 	,projectile_spawn()
 	{}
 
@@ -33,6 +35,8 @@ CWeapon::CWeapon(const CWeapon& c)
 	,s_delay(c.s_delay)
 	,p_delay_current(c.p_delay)
 	,s_delay_current(c.s_delay)
+	,p_sfx(c.p_sfx)
+	,s_sfx(c.s_sfx)
 	,projectile_spawn(c.projectile_spawn)
 	{}
 
@@ -51,5 +55,7 @@ CWeapon::CWeapon(size_t _primary, size_t _secondary)
 	,s_delay(0)
 	,p_delay_current(0)
 	,s_delay_current(0)
+	,p_sfx(0)
+	,s_sfx(0)
 	,projectile_spawn()
 	{}

@@ -25,6 +25,8 @@ public:
 	size_t s_delay;
 	size_t p_delay_current;
 	size_t s_delay_current;
+	size_t p_sfx;
+	size_t s_sfx;
 
 	CWeapon();
 	CWeapon(const CWeapon& c);

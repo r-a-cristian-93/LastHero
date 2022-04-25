@@ -790,6 +790,7 @@ void ScenePlay::sFireWeapon() {
 				if (e->get<CInput>()->fire_primary && comp_w.p_rounds) {
 					if (comp_w.p_delay_current == 0) {
 						spawnEntity(comp_w.p_tag, comp_w.primary, e, pos, Entity::STATE_RUN, facing);
+						game->snd_mgr.playSound(comp_w.p_sfx);
 
 						e->get<CInput>()->fire_primary = false;
 						comp_w.p_rounds--;
@@ -803,6 +804,7 @@ void ScenePlay::sFireWeapon() {
 				else if (e->get<CInput>()->fire_secondary && comp_w.s_rounds) {
 					if (comp_w.s_delay_current == 0) {
 						spawnEntity(comp_w.s_tag, comp_w.secondary, e, pos, Entity::STATE_RUN, facing);
+						game->snd_mgr.playSound(comp_w.s_sfx);
 
 						e->get<CInput>()->fire_secondary = false;
 						comp_w.s_rounds--;

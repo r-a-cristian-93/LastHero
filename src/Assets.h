@@ -33,6 +33,8 @@ struct EntityDataset {
 	size_t s_rounds = 0;
 	size_t p_delay = 0;
 	size_t s_delay = 0;
+	size_t p_sfx = 0;
+	size_t s_sfx = 0;
 	std::map<size_t, sf::Vector2f> projectile_spawn;
 	size_t prio = 0;
 	std::vector<HitBox> hitbox;

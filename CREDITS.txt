@@ -28,7 +28,23 @@ License: "CC BY-SA 3.0" - https://creativecommons.org/licenses/by-sa/3.0/
 	/res/sounds/19_menu_punch.ogg
 Derivative work is part of "LastHero sound assets" which is licensed under CC BY-SA 3.0 by r.a.cristian.93.
 
+Title: "The Essential Retro Video Game Sound Effects Collection [512 sounds]"
+Author: "SubspaceAudio"
+Source: "The Essential Retro Video Game Sound Effects Collection [512 sounds]" - https://opengameart.org/content/512-sound-effects-8-bit-style
+License: "CC0" - https://creativecommons.org/publicdomain/zero/1.0/
+	- original work
+	/res/sounds/sfx_wpn_laser7.ogg
+	- derivative work
+	/res/sounds/sfx_wpn_laser13.ogg
+	/res/sounds/sfx_wpn_punch5.ogg
+	/res/sounds/sfx_wpn_sword4.ogg
 
+Title: "water-splash-slime-sfx"
+Author: "rubberduck" https://opengameart.org/users/rubberduck
+Source: "water-splash-slime-sfx" - https://opengameart.org/content/40-cc0-water-splash-slime-sfx
+License: "CC0" - https://creativecommons.org/publicdomain/zero/1.0/
+	- derivative work
+	/res/sounds/slime_17.ogg
 
 Title: "Press Start 2P"
 Author: "CodeMan38"
@@ -37,16 +53,3 @@ License: "SIL OPEN FONT LICENSE Version 1.1" - http://scripts.sil.org/OFL
 	- derivative work
 	/res/fonts/pixel_font.ttf
 Derivative work "pixel_font" is licensed under SIL OPEN FONT LICENSE Version 1.1 by r.a.cristian.93.
-
-
-
-
-
-
-
-
-
-
-
-
-
