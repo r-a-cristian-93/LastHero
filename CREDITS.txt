@@ -4,28 +4,15 @@ Title: "Game-Game"
 Author: "Metaruka"
 Source: "Game-Game" - https://opengameart.org/content/game-game?destination=node/3443
 License: "CC BY-SA 3.0" - https://creativecommons.org/licenses/by-sa/3.0/
-	- original work
-	/res/sounds/00_intro.ogg
-	/res/sounds/01_game-game.ogg
-	/res/sounds/02_lava_city.ogg
-	/res/sounds/03_ship_interior.ogg
-	/res/sounds/04_underground_cavern.ogg
-	/res/sounds/05_gaseous_tethanus.ogg
-	/res/sounds/06_pirates_attack.ogg
-	/res/sounds/07_high_in_the_mountains.ogg
-	/res/sounds/08_endless_sands.ogg
-	/res/sounds/09_green_forest.ogg
-	/res/sounds/10_running_wild.ogg
-	/res/sounds/11_die_vonstantine.ogg
-	/res/sounds/12_final_battle.ogg
-	/res/sounds/13_the_end.ogg
-	/res/sounds/14_game_over.ogg
-	/res/sounds/15_level_win.ogg
-	/res/sounds/16_short_interlude.ogg
 	- derivative work
-	/res/sounds/17_menu_select.ogg
-	/res/sounds/18_menu_confirm.ogg
-	/res/sounds/19_menu_punch.ogg
+	/res/sounds/intro.ogg
+	/res/sounds/stage_01.ogg
+	/res/sounds/game_win.ogg
+	/res/sounds/game_lose.ogg
+	/res/sounds/menu_select.ogg
+	/res/sounds/menu_confirm.ogg
+	/res/sounds/menu_punch.ogg
+
 Derivative work is part of "LastHero sound assets" which is licensed under CC BY-SA 3.0 by r.a.cristian.93.
 
 Title: "The Essential Retro Video Game Sound Effects Collection [512 sounds]"

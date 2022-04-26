@@ -146,6 +146,9 @@ void Assets::loadSong() {
 			std::cout << "Could not load sound file INTRO\n";
 			exit(0);
 		}
+		else {
+			bg_music[name].setLoop(true);
+		}
 	}
 }
 
