@@ -868,6 +868,8 @@ void Assets::loadSprite() {
 	std::string texture_name("");
 	std::string sprite_name("");
 	sf::Vector2f origin(0, 0);
+	sf::IntRect rect(0,0,0,0);
+	sf::Color color_mod(255,255,255,255);
 
 	while (file >> word) {
 		if (word == "_END") break;
@@ -878,15 +880,26 @@ void Assets::loadSprite() {
 			file >> sprite_name;
 		}
 		else if (word == "rectangle") {
-			sprites[sprite_name] = sf::Sprite(textures[texture_name], loadRect(file));
+			rect = loadRect(file);
 		}
 		else if (word == "origin") {
 			file >> origin.x >> origin.y;
-			sprites[sprite_name].setOrigin(origin);
+		}
+		else if (word == "color_mod") {
+			int r, g, b, a;
+			file >> r >> g >> b >> a;
+			color_mod = sf::Color(r,g,b,a);
 		}
 		else {
-			std::cout << "In file: " << file_path << " unknown key: " << word << std::endl;
+			std::cout << "In file: " << file_path << " unknown key: " << word << " at sprite " << sprite_name << std::endl;
+			exit(0);
 		}
+	}
+
+	if (!texture_name.empty() && !sprite_name.empty()) {
+		sprites[sprite_name] = sf::Sprite(textures[texture_name], rect);
+		sprites[sprite_name].setOrigin(origin);
+		sprites[sprite_name].setColor(color_mod);
 	}
 }
 
