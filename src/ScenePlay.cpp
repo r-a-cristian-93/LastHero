@@ -715,8 +715,11 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 			}
 		break;
 		case TR::BASE_NOT_PROTECTED:
-			if (checkCollision(player, base, bc.data_start)) {
+			if (!checkCollision(player, base, bc.data_start)) {
 				e->get<CBChase>()->target = base;
+			}
+			else if (checkCollision(player, base, bc.data_stop)) {
+				e->get<CBChase>()->target = nullptr;
 			}
 		break;
 		case TR::BASE_LOW_HP:
