@@ -615,10 +615,17 @@ void ScenePlay::sAI() {
 				has_target = true;
 
 				// move twards target if it's not too close;
-				if (!checkCollision(e, e->get<CBChase>()->target, 2)) {
-					lookAt(*e->get<CInput>(), e->get<CBChase>()->target->get<CTransform>()->pos, e->get<CTransform>()->pos);
+				size_t range = 0;
+				if (e->get<CWeapon>()) {
+					size_t p_r = e->get<CWeapon>()->p_range;
+					size_t s_r = e->get<CWeapon>()->s_range;
+
+					if (p_r) range = p_r;
+					if (s_r && s_r < p_r) range = s_r;
 				}
-				else {
+
+				lookAt(*e->get<CInput>(), e->get<CBChase>()->target->get<CTransform>()->pos, e->get<CTransform>()->pos);
+				if (checkCollision(e, e->get<CBChase>()->target, range*0.2)) {
 					e->get<CInput>()->right = false;
 					e->get<CInput>()->left = false;
 					e->get<CInput>()->up = false;
@@ -639,6 +646,8 @@ void ScenePlay::sAI() {
 				}
 			}
 		}
+
+
 
 		if (e->get<CBPatrol>() && e->get<CInput>() && !has_target) {
 			switch (e->get<CBPatrol>()->patrol) {
@@ -705,7 +714,9 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 			}
 			// lose agro if target got too far
 			else if (!checkCollision(e, player, bc.data_stop)) {
-				e->get<CBChase>()->target = nullptr;
+				if (e->get<CBChase>()->target = player) {
+					e->get<CBChase>()->target = nullptr;
+				}
 			}
 		}
 		break;
@@ -713,13 +724,22 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 			if (checkCollision(e, base, bc.data_start)) {
 				e->get<CBChase>()->target = base;
 			}
+			// lose agro if target got too far
+			else if (!checkCollision(e, base, bc.data_stop)) {
+				if (e->get<CBChase>()->target == base) {
+					e->get<CBChase>()->target = nullptr;
+				}
+			}
 		break;
 		case TR::BASE_NOT_PROTECTED:
 			if (!checkCollision(player, base, bc.data_start)) {
 				e->get<CBChase>()->target = base;
 			}
+			// lose agro if target got too far
 			else if (checkCollision(player, base, bc.data_stop)) {
-				e->get<CBChase>()->target = nullptr;
+				if (e->get<CBChase>()->target == base) {
+					e->get<CBChase>()->target = nullptr;
+				}
 			}
 		break;
 		case TR::BASE_LOW_HP:
@@ -733,6 +753,8 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 void ScenePlay::handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, bool& fire_weapon) {
 	// MUST CHECK COLLISION BETWEEN PROJECTILE SPAWN POSTION AND TARGET
 	// ADD NEW checkCollision() FUNCTION
+
+	e->get<CBFire>()->target = nullptr;
 
 	switch (bc.trigger) {
 		case TR::CONTINUOUS:

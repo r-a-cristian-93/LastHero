@@ -380,7 +380,7 @@ void Assets::loadEntity() {
 		case TAG::MISSLE:
 		case TAG::FX:
 		{
-			// add Transform
+			// add CTransform
 			recipe[data_ent.tag][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
 
 			// add CShape
@@ -431,6 +431,29 @@ void Assets::loadEntity() {
 
 			// add CWeapon
 			if (data_ent.weapon_primary!=NONE || data_ent.weapon_secondary!=NONE) {
+				float velocity = 0;
+				int lifespan = 0;
+				size_t p_range = 0;
+				size_t s_range = 0;
+
+				if (data_ent.weapon_primary!=NONE) {
+					Components& w_recipe = getRecipe(data_ent.p_tag, data_ent.weapon_primary);
+					if (w_recipe.get<CTransform>()) velocity = w_recipe.get<CTransform>()->max_velocity;
+					if (w_recipe.get<CLifespan>()) lifespan = w_recipe.get<CLifespan>()->lifespan;
+					if (!velocity) velocity = 1;
+					if (!lifespan) lifespan = 1;
+					p_range = static_cast<size_t>(velocity * lifespan);
+				}
+
+				if (data_ent.weapon_secondary!=NONE) {
+					Components& w_recipe = getRecipe(data_ent.s_tag, data_ent.weapon_secondary);
+					if (w_recipe.get<CTransform>()) velocity = w_recipe.get<CTransform>()->max_velocity;
+					if (w_recipe.get<CLifespan>()) lifespan = w_recipe.get<CLifespan>()->lifespan;
+					s_range = static_cast<size_t>(velocity * lifespan);
+					if (!velocity) velocity = 1;
+					if (!lifespan) lifespan = 1;
+				}
+
 				CWeapon weapon(data_ent.weapon_primary, data_ent.weapon_secondary);
 				weapon.p_tag = data_ent.p_tag;
 				weapon.s_tag = data_ent.s_tag;
@@ -445,6 +468,8 @@ void Assets::loadEntity() {
 				weapon.s_delay_current = data_ent.s_delay;
 				weapon.p_sfx = data_ent.p_sfx;
 				weapon.s_sfx = data_ent.s_sfx;
+				weapon.p_range = p_range;
+				weapon.s_range = s_range;
 				recipe[data_ent.tag][data_ent.name_id].add<CWeapon>(new CWeapon(weapon));
 				//add CInput
 			recipe[data_ent.tag][data_ent.name_id].add<CInput>(new CInput());
