@@ -27,6 +27,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define MAP_COLLISION_H
 
 #include "Common.h"
+#include "EntityManager.h"
 
 typedef std::vector< std::vector<unsigned short> > CollisionLayer;
 
@@ -90,11 +91,11 @@ public:
 		BLOCKS_ENEMIES = 8  // an ally is standing on that tile, so the hero could pass if ENABLE_ALLY_COLLISION is false
 	};
 
-	MapCollision();
+	MapCollision(EntityManager& _ent_mgr);
 	~MapCollision();
 	float calcDist(const sf::Vector2f& p1, const sf::Vector2f& p2);
 
-	void setMap(const CollisionLayer& _colmap, unsigned short w, unsigned short h);
+	void setMap(CollisionLayer& _colmap, sf::Vector2u _tile_size, unsigned short _resolution);
 	bool move(float &x, float &y, float step_x, float step_y, int movement_type, int collide_type);
 
 	bool isOutsideMap(const float& tile_x, const float& tile_y) const;
@@ -119,8 +120,13 @@ public:
 		return hero ? COLLIDE_HERO : COLLIDE_NORMAL;
 	}
 
-	CollisionLayer colmap;
-	sf::Vector2i map_size;
+	void updateColmap();
+
+	CollisionLayer* colmap;
+	sf::Vector2u map_size;
+	sf::Vector2u tile_size;
+	unsigned short resolution;
+	EntityManager& ent_mgr;
 };
 
 #endif

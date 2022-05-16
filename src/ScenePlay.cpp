@@ -10,6 +10,7 @@ ScenePlay::ScenePlay(Game* g, std::string lp)
 	,tile_size(0,0)
 	,total_kills(0)
 	,game_state(GAME_PLAY)
+	,collision_map(ent_mgr)
 {
 	init();
 }
@@ -201,7 +202,7 @@ void ScenePlay::updateCollisionLayer() {
 		}
 	}
 
-	collision_map.setMap(collision_layer, map_size.x*colmap_div, map_size.y*colmap_div);
+	collision_map.setMap(collision_layer, tile_size, colmap_div);
 }
 
 void ScenePlay::drawPath(std::vector<sf::Vector2f>& path) {
@@ -209,7 +210,7 @@ void ScenePlay::drawPath(std::vector<sf::Vector2f>& path) {
 	circle.setFillColor(sf::Color(0, 255, 0, 80));
 
 	for (sf::Vector2f p: path) {
-		circle.setPosition(sf::Vector2f(abs(p.x*(tile_size.x/colmap_div)),abs(p.y*(tile_size.y/colmap_div))));
+		circle.setPosition(sf::Vector2f(p.x, p.y));
 		game->screen_tex.draw(circle);
 	}
 }
@@ -682,8 +683,8 @@ void ScenePlay::sAI() {
 			if (e->get<CBChase>()->target && e->tag != TAG::ENVIRONMENT) {
 				has_target = true;
 
-				sf::Vector2f start = e->get<CTransform>()->pos / float(tile_size.x/colmap_div);
-				sf::Vector2f end = e->get<CBChase>()->target->get<CTransform>()->pos / float(tile_size.x/colmap_div);
+				sf::Vector2f start = e->get<CTransform>()->pos;
+				sf::Vector2f end = e->get<CBChase>()->target->get<CTransform>()->pos;
 				std::vector<sf::Vector2f>& path = e->get<CBChase>()->path;
 				bool has_path = collision_map.computePath(start, end, path, MapCollision::MOVE_NORMAL, 0);
 
@@ -698,7 +699,7 @@ void ScenePlay::sAI() {
 				}
 
 				if (has_path) {
-					lookAt(*e->get<CInput>(), path.back() * float(tile_size.x/colmap_div), e->get<CTransform>()->pos);
+					lookAt(*e->get<CInput>(), path.back(), e->get<CTransform>()->pos);
 				}
 				else {
 					lookAt(*e->get<CInput>(), e->get<CBChase>()->target->get<CTransform>()->pos, e->get<CTransform>()->pos);

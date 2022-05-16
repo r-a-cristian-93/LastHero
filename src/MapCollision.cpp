@@ -37,30 +37,47 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 // so if an entity has a position of (1-MIN_TILE_GAP, 0) and moves to the east, they will move to (1,0)
 const float MapCollision::MIN_TILE_GAP = 0.001f;
 
-MapCollision::MapCollision()
+MapCollision::MapCollision(EntityManager& _ent_mgr)
 	: map_size(sf::Vector2i())
+	, tile_size(sf::Vector2i())
+	, resolution(0)
+	, colmap(nullptr)
+	, ent_mgr(_ent_mgr)
 {
-	colmap.resize(1);
-	colmap[0].resize(1);
+
 }
 
-void MapCollision::setMap(const CollisionLayer& _colmap, unsigned short w, unsigned short h) {
-	colmap.resize(w);
-	for (unsigned i=0; i<w; ++i) {
-		colmap[i].resize(h);
-	}
-	for (unsigned i=0; i<w; i++)
-		for (unsigned j=0; j<h; j++)
-			colmap[i][j] = _colmap[i][j];
+void MapCollision::setMap(CollisionLayer& _colmap, sf::Vector2u _tile_size, unsigned short _resolution) {
+	colmap = &_colmap;
+	tile_size = _tile_size;
+	resolution = _resolution;
 
-	map_size.x = w;
-	map_size.y = h;
+	map_size.x = colmap->size();
+	map_size.y = (*colmap)[0].size();
 }
 
 int sgn(float f) {
 	if (f > 0)		return 1;
 	else if (f < 0)	return -1;
 	else			return 0;
+}
+
+void MapCollision::updateColmap() {
+
+	for (std::shared_ptr<Entity>& e: ent_mgr.getEntities()) {
+		if (e->get<CCollision>()) {
+			if (!e->get<CCollision>()->hitbox.empty()) {
+				for (HitBox& hb_e : e->get<CCollision>()->hitbox) {
+					sf::Vector2f pos_e = e->get<CTransform>()->pos + hb_e.offset[e->facing];
+					sf::Vector2u m_pos(abs(pos_e.x/(tile_size.x/resolution)), abs(pos_e.y/(tile_size.y/resolution)));
+
+					if (m_pos.x && m_pos.y && m_pos.x < map_size.x && m_pos.y < map_size.y) {
+						(*colmap)[m_pos.x][m_pos.y] = MapCollision::BLOCKS_ALL;
+					}
+				}
+			}
+		}
+	}
 }
 
 bool MapCollision::smallStep(float &x, float &y, float step_x, float step_y, int movement_type, int collide_type) {
@@ -213,7 +230,7 @@ bool MapCollision::isEmpty(const float& x, const float& y) const {
 	if (isTileOutsideMap(tile_x, tile_y)) return false;
 
 	// collision type check
-	return (colmap[tile_x][tile_y] == BLOCKS_NONE || colmap[tile_x][tile_y] == MAP_ONLY || colmap[tile_x][tile_y] == MAP_ONLY_ALT);
+	return ((*colmap)[tile_x][tile_y] == BLOCKS_NONE || (*colmap)[tile_x][tile_y] == MAP_ONLY || (*colmap)[tile_x][tile_y] == MAP_ONLY_ALT);
 }
 
 /**
@@ -227,7 +244,7 @@ bool MapCollision::isWall(const float& x, const float& y) const {
 	if (isTileOutsideMap(tile_x, tile_y)) return true;
 
 	// collision type check
-	return (colmap[tile_x][tile_y] == BLOCKS_ALL || colmap[tile_x][tile_y] == BLOCKS_ALL_HIDDEN);
+	return ((*colmap)[tile_x][tile_y] == BLOCKS_ALL || (*colmap)[tile_x][tile_y] == BLOCKS_ALL_HIDDEN);
 }
 
 /**
@@ -238,14 +255,14 @@ bool MapCollision::isValidTile(const int& tile_x, const int& tile_y, int movemen
 	if (isTileOutsideMap(tile_x,tile_y)) return false;
 
 	if (collide_type == COLLIDE_NORMAL) {
-		if (colmap[tile_x][tile_y] == BLOCKS_ENEMIES)
+		if ((*colmap)[tile_x][tile_y] == BLOCKS_ENEMIES)
 			return false;
-		if (colmap[tile_x][tile_y] == BLOCKS_ENTITIES)
+		if ((*colmap)[tile_x][tile_y] == BLOCKS_ENTITIES)
 			return false;
 	}
 	else if (collide_type == COLLIDE_HERO) {
-		//if (colmap[tile_x][tile_y] == BLOCKS_ENEMIES && !eset->misc.enable_ally_collision)
-		if (colmap[tile_x][tile_y] == BLOCKS_ENEMIES)
+		//if ((*colmap)[tile_x][tile_y] == BLOCKS_ENEMIES && !eset->misc.enable_ally_collision)
+		if ((*colmap)[tile_x][tile_y] == BLOCKS_ENEMIES)
 			return true;
 	}
 
@@ -255,14 +272,14 @@ bool MapCollision::isValidTile(const int& tile_x, const int& tile_y, int movemen
 
 	// flying creatures can't be in walls
 	if (movement_type == MOVE_FLYING) {
-		return (!(colmap[tile_x][tile_y] == BLOCKS_ALL || colmap[tile_x][tile_y] == BLOCKS_ALL_HIDDEN));
+		return (!((*colmap)[tile_x][tile_y] == BLOCKS_ALL || (*colmap)[tile_x][tile_y] == BLOCKS_ALL_HIDDEN));
 	}
 
-	if (colmap[tile_x][tile_y] == MAP_ONLY || colmap[tile_x][tile_y] == MAP_ONLY_ALT)
+	if ((*colmap)[tile_x][tile_y] == MAP_ONLY || (*colmap)[tile_x][tile_y] == MAP_ONLY_ALT)
 		return true;
 
 	// normal creatures can only be in empty spaces
-	return (colmap[tile_x][tile_y] == BLOCKS_NONE);
+	return ((*colmap)[tile_x][tile_y] == BLOCKS_NONE);
 }
 
 /**
@@ -335,8 +352,8 @@ bool MapCollision::lineOfMovement(const float& x1, const float& y1, const float&
 	int tile_x = int(x2);
 	int tile_y = int(y2);
 	bool target_blocks = false;
-	int target_blocks_type = colmap[tile_x][tile_y];
-	if (colmap[tile_x][tile_y] == BLOCKS_ENTITIES || colmap[tile_x][tile_y] == BLOCKS_ENEMIES) {
+	int target_blocks_type = (*colmap)[tile_x][tile_y];
+	if ((*colmap)[tile_x][tile_y] == BLOCKS_ENTITIES || (*colmap)[tile_x][tile_y] == BLOCKS_ENEMIES) {
 		target_blocks = true;
 		unblock(x2,y2);
 	}
@@ -383,8 +400,11 @@ bool MapCollision::isFacing(const float& x1, const float& y1, char direction, co
 * @return true if a path is found
 */
 bool MapCollision::computePath(const sf::Vector2f& start_pos, const sf::Vector2f& end_pos, std::vector<sf::Vector2f> &path, int movement_type, unsigned int limit) {
+	// convert start & end to MapCollision precision
+	sf::Vector2i start(start_pos / float(tile_size.x/resolution));
+	sf::Vector2i end(end_pos / float(tile_size.x/resolution));
 
-	if (isOutsideMap(end_pos.x, end_pos.y)) return false;
+	if (isOutsideMap(end.x, end.y)) return false;
 
 	// default limit set to 10% of the total map size
 	if (limit == 0)
@@ -394,14 +414,10 @@ bool MapCollision::computePath(const sf::Vector2f& start_pos, const sf::Vector2f
 	if (!path.empty())
 		path.clear();
 
-	// convert start & end to MapCollision precision
-	sf::Vector2i start(start_pos);
-	sf::Vector2i end(end_pos);
-
 	// if the target square has an entity, temporarily clear it to compute the path
 	bool target_blocks = false;
-	int target_blocks_type = colmap[end.x][end.y];
-	if (colmap[end.x][end.y] == BLOCKS_ENTITIES || colmap[end.x][end.y] == BLOCKS_ENEMIES) {
+	int target_blocks_type = (*colmap)[end.x][end.y];
+	if ((*colmap)[end.x][end.y] == BLOCKS_ENTITIES || (*colmap)[end.x][end.y] == BLOCKS_ENEMIES) {
 		target_blocks = true;
 		unblock(end_pos.x, end_pos.y);
 	}
@@ -500,11 +516,11 @@ void MapCollision::block(const float& map_x, const float& map_y, bool is_ally) {
 	if (isTileOutsideMap(tile_x, tile_y))
 		return;
 
-	if (colmap[tile_x][tile_y] == BLOCKS_NONE) {
+	if ((*colmap)[tile_x][tile_y] == BLOCKS_NONE) {
 		if(is_ally)
-			colmap[tile_x][tile_y] = BLOCKS_ENEMIES;
+			(*colmap)[tile_x][tile_y] = BLOCKS_ENEMIES;
 		else
-			colmap[tile_x][tile_y] = BLOCKS_ENTITIES;
+			(*colmap)[tile_x][tile_y] = BLOCKS_ENTITIES;
 	}
 
 }
@@ -516,8 +532,8 @@ void MapCollision::unblock(const float& map_x, const float& map_y) {
 	if (isTileOutsideMap(tile_x, tile_y))
 		return;
 
-	if (colmap[tile_x][tile_y] == BLOCKS_ENTITIES || colmap[tile_x][tile_y] == BLOCKS_ENEMIES) {
-		colmap[tile_x][tile_y] = BLOCKS_NONE;
+	if ((*colmap)[tile_x][tile_y] == BLOCKS_ENTITIES || (*colmap)[tile_x][tile_y] == BLOCKS_ENEMIES) {
+		(*colmap)[tile_x][tile_y] = BLOCKS_NONE;
 	}
 
 }
@@ -548,8 +564,8 @@ sf::Vector2f MapCollision::getRandomNeighbor(const sf::Vector2i& target, int ran
 
 sf::Vector2f MapCollision::collisionToMap(const sf::Vector2i& p) {
 	sf::Vector2f ret;
-	ret.x = static_cast<float>(p.x) + 0.5f;
-	ret.y = static_cast<float>(p.y) + 0.5f;
+	ret.x = static_cast<float>(p.x) * (tile_size.x/resolution);
+	ret.y = static_cast<float>(p.y) * (tile_size.y/resolution);
 	return ret;
 }
 
