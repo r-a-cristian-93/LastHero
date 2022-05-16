@@ -180,10 +180,10 @@ void ScenePlay::load_level(std::string path) {
 
 void ScenePlay::updateCollisionLayer() {
 	collision_layer.clear();
-	collision_layer.resize(map_size.x*2);
+	collision_layer.resize(map_size.x*colmap_div);
 
-	for (size_t x = 0; x < map_size.x*2; x++) {
-		collision_layer[x].resize(map_size.y*2);
+	for (size_t x = 0; x < map_size.x*colmap_div; x++) {
+		collision_layer[x].resize(map_size.y*colmap_div);
 	}
 
 	for (std::shared_ptr<Entity>& e: ent_mgr.getEntities()) {
@@ -191,9 +191,9 @@ void ScenePlay::updateCollisionLayer() {
 			if (!e->get<CCollision>()->hitbox.empty()) {
 				for (HitBox& hb_e : e->get<CCollision>()->hitbox) {
 					sf::Vector2f pos_e = e->get<CTransform>()->pos + hb_e.offset[e->facing];
-					sf::Vector2u m_pos(abs(pos_e.x/(tile_size.x/2)), abs(pos_e.y/(tile_size.y/2)));
+					sf::Vector2u m_pos(abs(pos_e.x/(tile_size.x/colmap_div)), abs(pos_e.y/(tile_size.y/colmap_div)));
 
-					if (m_pos.x && m_pos.y && m_pos.x < map_size.x*2 && m_pos.y < map_size.y*2) {
+					if (m_pos.x && m_pos.y && m_pos.x < map_size.x*colmap_div && m_pos.y < map_size.y*colmap_div) {
 						collision_layer[m_pos.x][m_pos.y] = MapCollision::BLOCKS_ALL;
 					}
 				}
@@ -201,28 +201,28 @@ void ScenePlay::updateCollisionLayer() {
 		}
 	}
 
-	collision_map.setMap(collision_layer, map_size.x*2, map_size.y*2);
+	collision_map.setMap(collision_layer, map_size.x*colmap_div, map_size.y*colmap_div);
 }
 
 void ScenePlay::drawPath(std::vector<sf::Vector2f>& path) {
-	sf::CircleShape circle(tile_size.x/4);
+	sf::CircleShape circle(tile_size.x/(colmap_div*2));
 	circle.setFillColor(sf::Color(0, 255, 0, 80));
 
 	for (sf::Vector2f p: path) {
-		circle.setPosition(sf::Vector2f(p.x*(tile_size.x/2),p.y*(tile_size.y/2)));
+		circle.setPosition(sf::Vector2f(abs(p.x*(tile_size.x/colmap_div)),abs(p.y*(tile_size.y/colmap_div))));
 		game->screen_tex.draw(circle);
 	}
 }
 
 void ScenePlay::drawCollisionLayer() {
-	sf::RectangleShape square(sf::Vector2f(tile_size.x/2, tile_size.y/2));
+	sf::RectangleShape square(sf::Vector2f(tile_size.x/colmap_div, tile_size.y/colmap_div));
+	square.setFillColor(sf::Color(255, 0, 0, 80));
 
-	for (int y = 0; y < map_size.y*2; y++) {
-		for (int x = 0; x < map_size.x*2; x++) {
-			square.setPosition(sf::Vector2f(x*tile_size.x/2,y*tile_size.y/2));
+	for (int y = 0; y < map_size.y*colmap_div; y++) {
+		for (int x = 0; x < map_size.x*colmap_div; x++) {
+			square.setPosition(sf::Vector2f(x*tile_size.x/colmap_div,y*tile_size.y/colmap_div));
 
 			if (collision_layer[x][y]) {
-				square.setFillColor(sf::Color(255, 0, 0, 80));
 				game->screen_tex.draw(square);
 			}
 		}
@@ -682,8 +682,8 @@ void ScenePlay::sAI() {
 			if (e->get<CBChase>()->target && e->tag != TAG::ENVIRONMENT) {
 				has_target = true;
 
-				sf::Vector2f start = e->get<CTransform>()->pos / float(tile_size.x/2);
-				sf::Vector2f end = e->get<CBChase>()->target->get<CTransform>()->pos / float(tile_size.x/2);
+				sf::Vector2f start = e->get<CTransform>()->pos / float(tile_size.x/colmap_div);
+				sf::Vector2f end = e->get<CBChase>()->target->get<CTransform>()->pos / float(tile_size.x/colmap_div);
 				std::vector<sf::Vector2f>& path = e->get<CBChase>()->path;
 				bool has_path = collision_map.computePath(start, end, path, MapCollision::MOVE_NORMAL, 0);
 
@@ -698,7 +698,7 @@ void ScenePlay::sAI() {
 				}
 
 				if (has_path) {
-					lookAt(*e->get<CInput>(), path.back() * float(tile_size.x/2), e->get<CTransform>()->pos);
+					lookAt(*e->get<CInput>(), path.back() * float(tile_size.x/colmap_div), e->get<CTransform>()->pos);
 				}
 				else {
 					lookAt(*e->get<CInput>(), e->get<CBChase>()->target->get<CTransform>()->pos, e->get<CTransform>()->pos);
