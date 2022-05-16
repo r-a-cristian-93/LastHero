@@ -47,6 +47,9 @@ set(SOURCE_FILES
 	src/Border.cpp
 	src/Tilemap.cpp
 	src/SoundManager.cpp
+	src/AStarContainer.cpp
+	src/AStarNode.cpp
+	src/MapCollision.cpp
 )
 
 add_executable(LastHero ${SOURCE_FILES})

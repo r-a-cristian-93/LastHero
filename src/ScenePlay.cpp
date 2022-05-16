@@ -6,6 +6,8 @@
 ScenePlay::ScenePlay(Game* g, std::string lp)
 	:Scene(g)
 	,level_path(lp)
+	,map_size(0,0)
+	,tile_size(0,0)
 	,total_kills(0)
 	,game_state(GAME_PLAY)
 {
@@ -65,7 +67,6 @@ void ScenePlay::load_level(std::string path) {
 	std::ifstream file(path);
 	std::string word;
 
-	sf::Vector2u tile_size(0, 0), map_size(0, 0);
 	std::string texture_name = "";
 	int* level_layer;
 
@@ -171,6 +172,61 @@ void ScenePlay::load_level(std::string path) {
 		doAction(action);
 		delete action;
 	}
+
+	// build collision_map here
+	ent_mgr.update();
+	updateCollisionLayer();
+}
+
+void ScenePlay::updateCollisionLayer() {
+	collision_layer.clear();
+	collision_layer.resize(map_size.x*2);
+
+	for (size_t x = 0; x < map_size.x*2; x++) {
+		collision_layer[x].resize(map_size.y*2);
+	}
+
+	for (std::shared_ptr<Entity>& e: ent_mgr.getEntities()) {
+		if (e->get<CCollision>()) {
+			if (!e->get<CCollision>()->hitbox.empty()) {
+				for (HitBox& hb_e : e->get<CCollision>()->hitbox) {
+					sf::Vector2f pos_e = e->get<CTransform>()->pos + hb_e.offset[e->facing];
+					sf::Vector2u m_pos(abs(pos_e.x/(tile_size.x/2)), abs(pos_e.y/(tile_size.y/2)));
+
+					if (m_pos.x && m_pos.y && m_pos.x < map_size.x*2 && m_pos.y < map_size.y*2) {
+						collision_layer[m_pos.x][m_pos.y] = MapCollision::BLOCKS_ALL;
+					}
+				}
+			}
+		}
+	}
+
+	collision_map.setMap(collision_layer, map_size.x*2, map_size.y*2);
+}
+
+void ScenePlay::drawPath(std::vector<sf::Vector2f>& path) {
+	sf::CircleShape circle(tile_size.x/4);
+	circle.setFillColor(sf::Color(0, 255, 0, 80));
+
+	for (sf::Vector2f p: path) {
+		circle.setPosition(sf::Vector2f(p.x*(tile_size.x/2),p.y*(tile_size.y/2)));
+		game->screen_tex.draw(circle);
+	}
+}
+
+void ScenePlay::drawCollisionLayer() {
+	sf::RectangleShape square(sf::Vector2f(tile_size.x/2, tile_size.y/2));
+
+	for (int y = 0; y < map_size.y*2; y++) {
+		for (int x = 0; x < map_size.x*2; x++) {
+			square.setPosition(sf::Vector2f(x*tile_size.x/2,y*tile_size.y/2));
+
+			if (collision_layer[x][y]) {
+				square.setFillColor(sf::Color(255, 0, 0, 80));
+				game->screen_tex.draw(square);
+			}
+		}
+	}
 }
 
 void ScenePlay::update() {
@@ -183,6 +239,7 @@ void ScenePlay::update() {
 			//sEnemySpawner();
 			sLevelUp();
 			sLifespan();
+			updateCollisionLayer();
 			sAI();
 			//sMissleGuidance();
 
@@ -209,6 +266,17 @@ void ScenePlay::update() {
 		PROFILE_SCOPE("sDrawEntities");
 		SDraw::drawEntities(&game->screen_tex, ent_mgr.getEntities());
 	}
+
+#ifdef DEBUG_COLLISION_LAYER
+	drawCollisionLayer();
+	for (std::shared_ptr<Entity>& e: ent_mgr.getEntities()) {
+		if (e->get<CBChase>()) {
+			if (!e->get<CBChase>()->path.empty()) {
+				drawPath(e->get<CBChase>()->path);
+			}
+		}
+	}
+#endif
 
 	if (glitter.m_lifetime >=0) {
 		glitter.update();
@@ -614,6 +682,11 @@ void ScenePlay::sAI() {
 			if (e->get<CBChase>()->target && e->tag != TAG::ENVIRONMENT) {
 				has_target = true;
 
+				sf::Vector2f start = e->get<CTransform>()->pos / float(tile_size.x/2);
+				sf::Vector2f end = e->get<CBChase>()->target->get<CTransform>()->pos / float(tile_size.x/2);
+				std::vector<sf::Vector2f>& path = e->get<CBChase>()->path;
+				bool has_path = collision_map.computePath(start, end, path, MapCollision::MOVE_NORMAL, 0);
+
 				// move twards target if it's not too close;
 				size_t range = 0;
 				if (e->get<CWeapon>()) {
@@ -624,7 +697,13 @@ void ScenePlay::sAI() {
 					if (s_r && s_r < p_r) range = s_r;
 				}
 
-				lookAt(*e->get<CInput>(), e->get<CBChase>()->target->get<CTransform>()->pos, e->get<CTransform>()->pos);
+				if (has_path) {
+					lookAt(*e->get<CInput>(), path.back() * float(tile_size.x/2), e->get<CTransform>()->pos);
+				}
+				else {
+					lookAt(*e->get<CInput>(), e->get<CBChase>()->target->get<CTransform>()->pos, e->get<CTransform>()->pos);
+				}
+
 				if (checkCollision(e, e->get<CBChase>()->target, range*0.2)) {
 					e->get<CInput>()->right = false;
 					e->get<CInput>()->left = false;

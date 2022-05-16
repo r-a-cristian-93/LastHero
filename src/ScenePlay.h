@@ -6,6 +6,7 @@
 #include "ParticlesEmitter.h"
 #include "Tilemap.h"
 #include "Enums.h"
+#include "MapCollision.h"
 
 struct Camera {
 	sf::Vector2f pos, target;
@@ -23,7 +24,12 @@ class ScenePlay: public Scene {
 	ParticlesEmitter glitter;
 
 	std::string level_path;
+	sf::Vector2u tile_size;
+	sf::Vector2u map_size;
+
 	Tilemap map_ground;
+	MapCollision collision_map;
+	CollisionLayer collision_layer;
 
 	Camera cam;
 	Interface interface;
@@ -73,9 +79,13 @@ class ScenePlay: public Scene {
 	float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b);
 	bool checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entity>& b);
 	bool checkCollision(const std::shared_ptr<Entity>& a, const std::shared_ptr<Entity>& b, const size_t threshold);
+	void updateCollisionLayer();
 
 	void handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, bool& fire_weapon);
 	void handleChase(std::shared_ptr<Entity>& e, const BCondition& bc);
+
+	void drawCollisionLayer();
+	void drawPath(std::vector<sf::Vector2f>& path);
 
 public:
 	void update() override;

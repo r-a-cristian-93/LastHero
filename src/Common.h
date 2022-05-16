@@ -2,10 +2,11 @@
 #define COMMON
 
 //#define DEBUG_PROFILING
-//#define DRAW_COLLISION_BOX
+#define DRAW_COLLISION_BOX
 #define DEBUG_RECIPE_NAME_ID
 #define DEBUG_SPAWN_ENTITY
 //#define DEBUG_ENEMIES_LEFT
+#define DEBUG_COLLISION_LAYER
 
 #include <cstddef>
 #include <vector>
