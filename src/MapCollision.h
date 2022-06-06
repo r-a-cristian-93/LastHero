@@ -95,7 +95,7 @@ public:
 	~MapCollision();
 	float calcDist(const sf::Vector2f& p1, const sf::Vector2f& p2);
 
-	void setMap(CollisionLayer& _colmap, sf::Vector2u _tile_size, unsigned short _resolution);
+	void setMap(sf::Vector2u _map_size, sf::Vector2u _tile_size, unsigned short _resolution);
 	bool move(float &x, float &y, float step_x, float step_y, int movement_type, int collide_type);
 
 	bool isOutsideMap(const float& tile_x, const float& tile_y) const;
@@ -122,7 +122,7 @@ public:
 
 	void updateColmap();
 
-	CollisionLayer* colmap;
+	CollisionLayer colmap;
 	sf::Vector2u map_size;
 	sf::Vector2u tile_size;
 	unsigned short resolution;

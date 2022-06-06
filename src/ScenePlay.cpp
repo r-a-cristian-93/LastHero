@@ -34,6 +34,7 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
 
 	load_level(level_path);
+	collision_map.setMap(map_size, tile_size, colmap_div);
 
 
 	// setup interface
@@ -176,39 +177,10 @@ void ScenePlay::load_level(std::string path) {
 
 	// build collision_map here
 	ent_mgr.update();
-	updateCollisionLayer();
 }
 
 void ScenePlay::updateCollisionLayer() {
-	collision_layer.clear();
-	collision_layer.resize(map_size.x*colmap_div);
-
-	for (size_t x = 0; x < map_size.x*colmap_div; x++) {
-		collision_layer[x].resize(map_size.y*colmap_div);
-	}
-
-	for (std::shared_ptr<Entity>& e: ent_mgr.getEntities()) {
-		if (e->get<CCollision>()) {
-			if (!e->get<CCollision>()->hitbox.empty()) {
-				for (HitBox& hb_e : e->get<CCollision>()->hitbox) {
-					sf::Vector2f pos_e = e->get<CTransform>()->pos + hb_e.offset[e->facing];
-					sf::Vector2u m_pos(abs(pos_e.x/(tile_size.x/colmap_div)), abs(pos_e.y/(tile_size.y/colmap_div)));
-					float dx = hb_e.radius*2/(tile_size.x/colmap_div);
-					float dy = hb_e.radius*2/(tile_size.y/colmap_div);
-
-					for (int x = m_pos.x - dx; x <= m_pos.x + dx; x++) {
-						for (int y = m_pos.y - dy; y <= m_pos.y + dy; y++) {
-							if (x && y && x < map_size.x*colmap_div && y < map_size.y*colmap_div) {
-								collision_layer[x][y] = MapCollision::BLOCKS_ALL;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	collision_map.setMap(collision_layer, tile_size, colmap_div);
+	collision_map.updateColmap();
 }
 
 void ScenePlay::drawPath(std::vector<sf::Vector2f>& path) {
@@ -222,6 +194,10 @@ void ScenePlay::drawPath(std::vector<sf::Vector2f>& path) {
 }
 
 void ScenePlay::drawCollisionLayer() {
+	if (collision_map.colmap.empty()) {
+		return;
+	}
+
 	sf::RectangleShape square(sf::Vector2f(tile_size.x/colmap_div, tile_size.y/colmap_div));
 	square.setFillColor(sf::Color(255, 0, 0, 80));
 
@@ -229,7 +205,7 @@ void ScenePlay::drawCollisionLayer() {
 		for (int x = 0; x < map_size.x*colmap_div; x++) {
 			square.setPosition(sf::Vector2f(x*tile_size.x/colmap_div,y*tile_size.y/colmap_div));
 
-			if (collision_layer[x][y]) {
+			if (collision_map.colmap[x][y]) {
 				game->screen_tex.draw(square);
 			}
 		}
