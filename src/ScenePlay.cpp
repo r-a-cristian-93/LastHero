@@ -179,7 +179,7 @@ void ScenePlay::load_level(std::string path) {
 	ent_mgr.update();
 }
 
-void ScenePlay::updateCollisionLayer() {
+void ScenePlay::sPathFind() {
 	collision_map.updateColmap();
 }
 
@@ -222,7 +222,7 @@ void ScenePlay::update() {
 			//sEnemySpawner();
 			sLevelUp();
 			sLifespan();
-			updateCollisionLayer();
+			sPathFind();
 			sAI();
 			//sMissleGuidance();
 

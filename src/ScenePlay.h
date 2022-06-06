@@ -67,6 +67,7 @@ class ScenePlay: public Scene {
 	void sView();
 	void sGameState();
 	void sPlayFx();
+	void sPathFind();
 
 	void checkLifespan(std::shared_ptr<Entity>& e);
 	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);
@@ -79,7 +80,6 @@ class ScenePlay: public Scene {
 	float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b);
 	bool checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entity>& b);
 	bool checkCollision(const std::shared_ptr<Entity>& a, const std::shared_ptr<Entity>& b, const size_t threshold);
-	void updateCollisionLayer();
 
 	void handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, bool& fire_weapon);
 	void handleChase(std::shared_ptr<Entity>& e, const BCondition& bc);
