@@ -56,6 +56,8 @@ private:
 
 	sf::Vector2f collisionToMap(const sf::Vector2i& p);
 
+	void setBlocksType(sf::Vector2i m_pos, int blocks_type);
+
 public:
 	// const flags
 	static const bool IGNORE_BLOCKED = true;
@@ -105,14 +107,10 @@ public:
 	bool isValidPosition(const float& x, const float& y, int movement_type, int collide_type) const;
 
 	bool lineOfSight(const float& x1, const float& y1, const float& x2, const float& y2);
-	bool lineOfMovement(const float& x1, const float& y1, const float& x2, const float& y2, int movement_type);
 
 	bool isFacing(const float& x1, const float& y1, char direction, const float& x2, const float& y2);
 
 	bool computePath(const sf::Vector2f& start, const sf::Vector2f& end, std::vector<sf::Vector2f> &path, int movement_type, unsigned int limit);
-
-	void block(const float& map_x, const float& map_y, bool is_ally);
-	void unblock(const float& map_x, const float& map_y);
 
 	sf::Vector2f getRandomNeighbor(const sf::Vector2i& target, int range, bool ignore_blocked);
 

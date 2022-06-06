@@ -84,6 +84,7 @@ class ScenePlay: public Scene {
 	void handleChase(std::shared_ptr<Entity>& e, const BCondition& bc);
 
 	void drawCollisionLayer();
+	void drawDirectionVectors();
 
 public:
 	void update() override;

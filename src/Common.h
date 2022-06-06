@@ -7,6 +7,7 @@
 //#define DEBUG_SPAWN_ENTITY
 //#define DEBUG_ENEMIES_LEFT
 #define DEBUG_COLLISION_LAYER
+#define DEBUG_DIRECTION
 
 #include <cstddef>
 #include <vector>

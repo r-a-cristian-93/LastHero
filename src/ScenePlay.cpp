@@ -215,6 +215,24 @@ void ScenePlay::drawCollisionLayer() {
 	}
 }
 
+void ScenePlay::drawDirectionVectors() {
+	for (std::shared_ptr<Entity>& e: ent_mgr.getEntities()) {
+		if (e->get<CTransform>()) {
+			if (e->get<CTransform>()->max_velocity) {
+				sf::Vector2f dir = dirOf(e->facing);
+				dir.x *= tile_size.x/2;
+				dir.y *= tile_size.x/2;
+
+				sf::Vertex line[] = {
+					sf::Vertex(e->get<CTransform>()->pos),
+					sf::Vertex(e->get<CTransform>()->pos + dir)
+				};
+				game->screen_tex.draw(line, 2, sf::Lines);
+			}
+		}
+	}
+}
+
 void ScenePlay::update() {
 	{
 		PROFILE_SCOPE("SCENE_LOGIC");
@@ -256,6 +274,11 @@ void ScenePlay::update() {
 #ifdef DEBUG_COLLISION_LAYER
 	drawCollisionLayer();
 #endif
+
+#ifdef DEBUG_DIRECTION
+	drawDirectionVectors();
+#endif
+
 
 	if (glitter.m_lifetime >=0) {
 		glitter.update();

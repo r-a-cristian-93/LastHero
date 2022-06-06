@@ -76,7 +76,6 @@ void MapCollision::updateColmap() {
 		update_frame = update_interval;
 	}
 
-
 	colmap.clear();
 	colmap.resize(map_size.x*resolution);
 
@@ -92,17 +91,9 @@ void MapCollision::updateColmap() {
 			if (!e->get<CCollision>()->hitbox.empty()) {
 				for (HitBox& hb_e : e->get<CCollision>()->hitbox) {
 					sf::Vector2f pos_e = e->get<CTransform>()->pos + hb_e.offset[e->facing];
-					sf::Vector2u m_pos(abs(pos_e.x/(tile_size.x/resolution)), abs(pos_e.y/(tile_size.y/resolution)));
-					float dx = hb_e.radius*2/(tile_size.x/resolution);
-					float dy = hb_e.radius*2/(tile_size.y/resolution);
+					sf::Vector2i m_pos(abs(pos_e.x/(tile_size.x/resolution)), abs(pos_e.y/(tile_size.y/resolution)));
 
-					for (size_t x = m_pos.x - dx; x <= m_pos.x + dx; x++) {
-						for (size_t y = m_pos.y - dy; y <= m_pos.y + dy; y++) {
-							if (x && y && x < map_size.x*resolution && y < map_size.y*resolution) {
-								colmap[x][y] = MapCollision::BLOCKS_ALL;
-							}
-						}
-					}
+					setBlocksType(m_pos, hb_e.radius);
 				}
 			}
 		}
@@ -371,28 +362,6 @@ bool MapCollision::lineOfSight(const float& x1, const float& y1, const float& x2
 	return lineCheck(x1, y1, x2, y2, CHECK_SIGHT, MOVE_NORMAL);
 }
 
-bool MapCollision::lineOfMovement(const float& x1, const float& y1, const float& x2, const float& y2, int movement_type) {
-	if (isOutsideMap(x2, y2)) return false;
-
-	// intangible entities can always move
-	if (movement_type == MOVE_INTANGIBLE) return true;
-
-	// if the target is blocking, clear it temporarily
-	int tile_x = int(x2);
-	int tile_y = int(y2);
-	bool target_blocks = false;
-	int target_blocks_type = colmap[tile_x][tile_y];
-	if (colmap[tile_x][tile_y] == BLOCKS_ENTITIES || colmap[tile_x][tile_y] == BLOCKS_ENEMIES) {
-		target_blocks = true;
-		unblock(x2,y2);
-	}
-
-	bool has_movement = lineCheck(x1, y1, x2, y2, CHECK_MOVEMENT, movement_type);
-
-	if (target_blocks) block(x2,y2, target_blocks_type == BLOCKS_ENEMIES);
-	return has_movement;
-
-}
 
 /**
  * Checks whether the entity in pos 1 is facing the sf::Vector2i at pos 2
@@ -444,12 +413,10 @@ bool MapCollision::computePath(const sf::Vector2f& start_pos, const sf::Vector2f
 		path.clear();
 
 	// if the target square has an entity, temporarily clear it to compute the path
-	bool target_blocks = false;
+	int chaser_blocks_type = colmap[start.x][end.y];
 	int target_blocks_type = colmap[end.x][end.y];
-	if (colmap[end.x][end.y] == BLOCKS_ENTITIES || colmap[end.x][end.y] == BLOCKS_ENEMIES) {
-		target_blocks = true;
-		unblock(end_pos.x, end_pos.y);
-	}
+	setBlocksType(end, 0);
+	setBlocksType(start, 0);
 
 	sf::Vector2i current = start;
 	AStarNode* node = new AStarNode(start);
@@ -533,49 +500,24 @@ bool MapCollision::computePath(const sf::Vector2f& start_pos, const sf::Vector2f
 		}
 	}
 	// reblock target if needed
-	if (target_blocks) block(end_pos.x, end_pos.y, target_blocks_type == BLOCKS_ENEMIES);
-/*
-	for (int i = path.size()-1; i>=0; i--) {
-		if (i%2 == 0) {
-			path.erase(path.begin()+i);
-		}
-	}
+	setBlocksType(end, target_blocks_type);
+	setBlocksType(start, chaser_blocks_type);
 
-	if (!path.size() >= 3) {
-		path.erase(path.begin());
-		path.erase(path.end());
-	}
-*/
 	return !path.empty();
 }
 
-void MapCollision::block(const float& map_x, const float& map_y, bool is_ally) {
-	const int tile_x = int(map_x);
-	const int tile_y = int(map_y);
+void MapCollision::setBlocksType(sf::Vector2i m_pos, int blocks_type) {
+	int radius = blocks_type;
+	float dx = radius*2/(tile_size.x/resolution);
+	float dy = radius*2/(tile_size.y/resolution);
 
-	if (isTileOutsideMap(tile_x, tile_y))
-		return;
-
-	if (colmap[tile_x][tile_y] == BLOCKS_NONE) {
-		if(is_ally)
-			colmap[tile_x][tile_y] = BLOCKS_ENEMIES;
-		else
-			colmap[tile_x][tile_y] = BLOCKS_ENTITIES;
+	for (size_t x = m_pos.x - dx; x <= m_pos.x + dx; x++) {
+		for (size_t y = m_pos.y - dy; y <= m_pos.y + dy; y++) {
+			if (!isTileOutsideMap(m_pos.x, m_pos.y)) {
+				colmap[x][y] = blocks_type;
+			}
+		}
 	}
-
-}
-
-void MapCollision::unblock(const float& map_x, const float& map_y) {
-	const int tile_x = int(map_x);
-	const int tile_y = int(map_y);
-
-	if (isTileOutsideMap(tile_x, tile_y))
-		return;
-
-	if (colmap[tile_x][tile_y] == BLOCKS_ENTITIES || colmap[tile_x][tile_y] == BLOCKS_ENEMIES) {
-		colmap[tile_x][tile_y] = BLOCKS_NONE;
-	}
-
 }
 
 /**
