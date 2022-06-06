@@ -32,7 +32,6 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <math.h>
 #include <cassert>
 #include <cstring>
-#include <iostream>
 
 // this value is used to determine the greatest possible position within a tile before transitioning to the next tile
 // so if an entity has a position of (1-MIN_TILE_GAP, 0) and moves to the east, they will move to (1,0)

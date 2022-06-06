@@ -183,30 +183,34 @@ void ScenePlay::sPathFind() {
 	collision_map.updateColmap();
 }
 
-void ScenePlay::drawPath(std::vector<sf::Vector2f>& path) {
+void ScenePlay::drawCollisionLayer() {
+	//DRAW BLOCKING
+	if (!collision_map.colmap.empty()) {
+		sf::RectangleShape square(sf::Vector2f(tile_size.x/colmap_div, tile_size.y/colmap_div));
+		square.setFillColor(sf::Color(255, 0, 0, 80));
+
+		for (int y = 0; y < map_size.y*colmap_div; y++) {
+			for (int x = 0; x < map_size.x*colmap_div; x++) {
+				square.setPosition(sf::Vector2f(x*tile_size.x/colmap_div,y*tile_size.y/colmap_div));
+
+				if (collision_map.colmap[x][y]) {
+					game->screen_tex.draw(square);
+				}
+			}
+		}
+	}
+
+	//DRAW PATHS
 	sf::CircleShape circle(tile_size.x/(colmap_div*2));
 	circle.setFillColor(sf::Color(0, 255, 255, 80));
 
-	for (sf::Vector2f p: path) {
-		circle.setPosition(sf::Vector2f(p.x, p.y));
-		game->screen_tex.draw(circle);
-	}
-}
-
-void ScenePlay::drawCollisionLayer() {
-	if (collision_map.colmap.empty()) {
-		return;
-	}
-
-	sf::RectangleShape square(sf::Vector2f(tile_size.x/colmap_div, tile_size.y/colmap_div));
-	square.setFillColor(sf::Color(255, 0, 0, 80));
-
-	for (int y = 0; y < map_size.y*colmap_div; y++) {
-		for (int x = 0; x < map_size.x*colmap_div; x++) {
-			square.setPosition(sf::Vector2f(x*tile_size.x/colmap_div,y*tile_size.y/colmap_div));
-
-			if (collision_map.colmap[x][y]) {
-				game->screen_tex.draw(square);
+	for (std::shared_ptr<Entity>& e: ent_mgr.getEntities()) {
+		if (e->get<CBChase>()) {
+			if (!e->get<CBChase>()->path.empty()) {
+				for (sf::Vector2f p: e->get<CBChase>()->path) {
+					circle.setPosition(sf::Vector2f(p.x, p.y));
+					game->screen_tex.draw(circle);
+				}
 			}
 		}
 	}
@@ -252,13 +256,6 @@ void ScenePlay::update() {
 
 #ifdef DEBUG_COLLISION_LAYER
 	drawCollisionLayer();
-	for (std::shared_ptr<Entity>& e: ent_mgr.getEntities()) {
-		if (e->get<CBChase>()) {
-			if (!e->get<CBChase>()->path.empty()) {
-				drawPath(e->get<CBChase>()->path);
-			}
-		}
-	}
 #endif
 
 	if (glitter.m_lifetime >=0) {
