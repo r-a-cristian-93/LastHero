@@ -34,8 +34,7 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
 
 	load_level(level_path);
-	collision_map.setMap(map_size, tile_size, game->app_conf.colmap_res);
-
+	collision_map.setMap(map_size, tile_size, game->app_conf.colmap_res, game->app_conf.colmap_update);
 
 	// setup interface
 	interface.add(game->assets.getWidget("play_ui"));
@@ -775,6 +774,7 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 			else if (!checkCollision(e, player, bc.data_stop)) {
 				if (e->get<CBChase>()->target = player) {
 					e->get<CBChase>()->target = nullptr;
+					e->get<CBChase>()->path.clear();
 				}
 			}
 		}
@@ -787,6 +787,7 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 			else if (!checkCollision(e, base, bc.data_stop)) {
 				if (e->get<CBChase>()->target == base) {
 					e->get<CBChase>()->target = nullptr;
+					e->get<CBChase>()->path.clear();
 				}
 			}
 		break;
@@ -798,6 +799,7 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 			else if (checkCollision(player, base, bc.data_stop)) {
 				if (e->get<CBChase>()->target == base) {
 					e->get<CBChase>()->target = nullptr;
+					e->get<CBChase>()->path.clear();
 				}
 			}
 		break;

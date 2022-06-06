@@ -46,10 +46,12 @@ MapCollision::MapCollision(EntityManager& _ent_mgr)
 
 }
 
-void MapCollision::setMap(sf::Vector2u _map_size, sf::Vector2u _tile_size, unsigned short _resolution) {
+void MapCollision::setMap(sf::Vector2u _map_size, sf::Vector2u _tile_size, unsigned short _resolution, unsigned short _update) {
 	tile_size = _tile_size;
 	resolution = _resolution;
 	map_size = sf::Vector2u(_map_size.x*_resolution, _map_size.y*_resolution);
+	update_interval = _update;
+	update_frame = _update;
 
 	colmap.clear();
 	colmap.resize(map_size.x*resolution);
@@ -66,6 +68,15 @@ int sgn(float f) {
 }
 
 void MapCollision::updateColmap() {
+	update_frame--;
+	if (update_frame) {
+		return;
+	}
+	else {
+		update_frame = update_interval;
+	}
+
+
 	colmap.clear();
 	colmap.resize(map_size.x*resolution);
 
@@ -74,6 +85,9 @@ void MapCollision::updateColmap() {
 	}
 
 	for (std::shared_ptr<Entity>& e: ent_mgr.getEntities()) {
+		if (e->tag == TAG::PROJECTILE) continue;
+		if (e->tag == TAG::FX) continue;
+
 		if (e->get<CCollision>()) {
 			if (!e->get<CCollision>()->hitbox.empty()) {
 				for (HitBox& hb_e : e->get<CCollision>()->hitbox) {
@@ -520,7 +534,18 @@ bool MapCollision::computePath(const sf::Vector2f& start_pos, const sf::Vector2f
 	}
 	// reblock target if needed
 	if (target_blocks) block(end_pos.x, end_pos.y, target_blocks_type == BLOCKS_ENEMIES);
+/*
+	for (int i = path.size()-1; i>=0; i--) {
+		if (i%2 == 0) {
+			path.erase(path.begin()+i);
+		}
+	}
 
+	if (!path.size() >= 3) {
+		path.erase(path.begin());
+		path.erase(path.end());
+	}
+*/
 	return !path.empty();
 }
 

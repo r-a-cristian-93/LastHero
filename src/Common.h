@@ -27,6 +27,7 @@ struct AppConfig {
 	float cam_speed, cam_treshold;
 	int directions = 8;
 	unsigned int colmap_res = 1;
+	unsigned int colmap_update = 20;
 };
 
 #endif
