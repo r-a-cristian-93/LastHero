@@ -193,9 +193,15 @@ void ScenePlay::updateCollisionLayer() {
 				for (HitBox& hb_e : e->get<CCollision>()->hitbox) {
 					sf::Vector2f pos_e = e->get<CTransform>()->pos + hb_e.offset[e->facing];
 					sf::Vector2u m_pos(abs(pos_e.x/(tile_size.x/colmap_div)), abs(pos_e.y/(tile_size.y/colmap_div)));
+					float dx = hb_e.radius*2/(tile_size.x/colmap_div);
+					float dy = hb_e.radius*2/(tile_size.y/colmap_div);
 
-					if (m_pos.x && m_pos.y && m_pos.x < map_size.x*colmap_div && m_pos.y < map_size.y*colmap_div) {
-						collision_layer[m_pos.x][m_pos.y] = MapCollision::BLOCKS_ALL;
+					for (int x = m_pos.x - dx; x <= m_pos.x + dx; x++) {
+						for (int y = m_pos.y - dy; y <= m_pos.y + dy; y++) {
+							if (x && y && x < map_size.x*colmap_div && y < map_size.y*colmap_div) {
+								collision_layer[x][y] = MapCollision::BLOCKS_ALL;
+							}
+						}
 					}
 				}
 			}
@@ -207,7 +213,7 @@ void ScenePlay::updateCollisionLayer() {
 
 void ScenePlay::drawPath(std::vector<sf::Vector2f>& path) {
 	sf::CircleShape circle(tile_size.x/(colmap_div*2));
-	circle.setFillColor(sf::Color(0, 255, 0, 80));
+	circle.setFillColor(sf::Color(0, 255, 255, 80));
 
 	for (sf::Vector2f p: path) {
 		circle.setPosition(sf::Vector2f(p.x, p.y));

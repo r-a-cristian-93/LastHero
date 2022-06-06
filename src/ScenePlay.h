@@ -30,7 +30,7 @@ class ScenePlay: public Scene {
 	Tilemap map_ground;
 	MapCollision collision_map;
 	CollisionLayer collision_layer;
-	unsigned int colmap_div = 2;
+	unsigned int colmap_div = 4;
 
 	Camera cam;
 	Interface interface;
