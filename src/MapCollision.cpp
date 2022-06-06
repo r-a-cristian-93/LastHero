@@ -500,14 +500,18 @@ bool MapCollision::computePath(const sf::Vector2f& start_pos, const sf::Vector2f
 		}
 	}
 	// reblock target if needed
-	setBlocksType(end, target_blocks_type);
-	setBlocksType(start, chaser_blocks_type);
+	//setBlocksType(end, target_blocks_type);
+	//setBlocksType(start, chaser_blocks_type);
 
 	return !path.empty();
 }
 
 void MapCollision::setBlocksType(sf::Vector2i m_pos, int blocks_type) {
 	int radius = blocks_type;
+
+	if (!radius) {
+		radius = colmap[m_pos.x][m_pos.y];
+	}
 	float dx = radius*2/(tile_size.x/resolution);
 	float dy = radius*2/(tile_size.y/resolution);
 
