@@ -3,8 +3,8 @@
 
 //#define DEBUG_PROFILING
 #define DRAW_COLLISION_BOX
-#define DEBUG_RECIPE_NAME_ID
-#define DEBUG_SPAWN_ENTITY
+//#define DEBUG_RECIPE_NAME_ID
+//#define DEBUG_SPAWN_ENTITY
 //#define DEBUG_ENEMIES_LEFT
 #define DEBUG_COLLISION_LAYER
 
@@ -26,6 +26,7 @@ struct AppConfig {
 	int font_r, font_g, font_b;
 	float cam_speed, cam_treshold;
 	int directions = 8;
+	unsigned int colmap_res = 1;
 };
 
 #endif

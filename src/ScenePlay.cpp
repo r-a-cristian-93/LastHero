@@ -34,7 +34,7 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
 
 	load_level(level_path);
-	collision_map.setMap(map_size, tile_size, colmap_div);
+	collision_map.setMap(map_size, tile_size, game->app_conf.colmap_res);
 
 
 	// setup interface
@@ -186,12 +186,12 @@ void ScenePlay::sPathFind() {
 void ScenePlay::drawCollisionLayer() {
 	//DRAW BLOCKING
 	if (!collision_map.colmap.empty()) {
-		sf::RectangleShape square(sf::Vector2f(tile_size.x/colmap_div, tile_size.y/colmap_div));
+		sf::RectangleShape square(sf::Vector2f(tile_size.x/game->app_conf.colmap_res, tile_size.y/game->app_conf.colmap_res));
 		square.setFillColor(sf::Color(255, 0, 0, 80));
 
-		for (int y = 0; y < map_size.y*colmap_div; y++) {
-			for (int x = 0; x < map_size.x*colmap_div; x++) {
-				square.setPosition(sf::Vector2f(x*tile_size.x/colmap_div,y*tile_size.y/colmap_div));
+		for (int y = 0; y < map_size.y*game->app_conf.colmap_res; y++) {
+			for (int x = 0; x < map_size.x*game->app_conf.colmap_res; x++) {
+				square.setPosition(sf::Vector2f(x*tile_size.x/game->app_conf.colmap_res,y*tile_size.y/game->app_conf.colmap_res));
 
 				if (collision_map.colmap[x][y]) {
 					game->screen_tex.draw(square);
@@ -201,7 +201,7 @@ void ScenePlay::drawCollisionLayer() {
 	}
 
 	//DRAW PATHS
-	sf::CircleShape circle(tile_size.x/(colmap_div*2));
+	sf::CircleShape circle(tile_size.x/(game->app_conf.colmap_res*2));
 	circle.setFillColor(sf::Color(0, 255, 255, 80));
 
 	for (std::shared_ptr<Entity>& e: ent_mgr.getEntities()) {

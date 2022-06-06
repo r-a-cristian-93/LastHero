@@ -48,6 +48,9 @@ void Game::init(std::string file_name) {
 			file >> word;
 			stages.push_back(word);
 		}
+		if (word == "Colmap_res") {
+			file >> app_conf.colmap_res;
+		}
 	}
 
 	file.close();

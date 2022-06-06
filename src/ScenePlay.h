@@ -29,7 +29,6 @@ class ScenePlay: public Scene {
 
 	Tilemap map_ground;
 	MapCollision collision_map;
-	unsigned int colmap_div = 4;
 
 	Camera cam;
 	Interface interface;
