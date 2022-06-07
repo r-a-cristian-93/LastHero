@@ -65,6 +65,9 @@ void Game::init(std::string file_name) {
 			app_conf.scene_fade_frames[scene_type][FADE::IN] = in;
 			app_conf.scene_fade_frames[scene_type][FADE::OUT] = out;
 		}
+		if (word == "FADE_MULTIPLYER") {
+			file >> app_conf.fade_multiplier;
+		}
 	}
 
 	file.close();
