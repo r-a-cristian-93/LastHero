@@ -8,6 +8,7 @@
 //#define DEBUG_ENEMIES_LEFT
 #define DEBUG_COLLISION_LAYER
 #define DEBUG_DIRECTION
+#define DEBUG_GRID
 
 #include <cstddef>
 #include <vector>

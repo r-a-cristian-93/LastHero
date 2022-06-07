@@ -85,6 +85,7 @@ class ScenePlay: public Scene {
 
 	void drawCollisionLayer();
 	void drawDirectionVectors();
+	void drawGrid();
 
 public:
 	void update() override;

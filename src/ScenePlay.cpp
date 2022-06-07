@@ -233,6 +233,21 @@ void ScenePlay::drawDirectionVectors() {
 	}
 }
 
+void ScenePlay::drawGrid() {
+	sf::RectangleShape rect;
+	rect.setSize(sf::Vector2f(tile_size));
+	rect.setFillColor(sf::Color(0,0,0,0));
+	rect.setOutlineColor(sf::Color(0,0,0,50));
+	rect.setOutlineThickness(-1);
+
+	for (size_t x = 0; x < map_size.x; x++) {
+		for (size_t y = 0; y < map_size.y; y++) {
+			rect.setPosition(sf::Vector2f(x*tile_size.x, y*tile_size.y));
+			game->screen_tex.draw(rect);
+		}
+	}
+}
+
 void ScenePlay::update() {
 	{
 		PROFILE_SCOPE("SCENE_LOGIC");
@@ -270,6 +285,10 @@ void ScenePlay::update() {
 		PROFILE_SCOPE("sDrawEntities");
 		SDraw::drawEntities(&game->screen_tex, ent_mgr.getEntities());
 	}
+
+#ifdef DEBUG_GRID
+	drawGrid();
+#endif
 
 #ifdef DEBUG_COLLISION_LAYER
 	drawCollisionLayer();
