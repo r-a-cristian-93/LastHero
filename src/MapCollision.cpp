@@ -55,9 +55,14 @@ void MapCollision::setMap(sf::Vector2u _map_size, sf::Vector2u _tile_size, unsig
 
 	colmap.clear();
 	colmap.resize(map_size.x*resolution);
-
 	for (size_t x = 0; x < map_size.x*resolution; x++) {
 		colmap[x].resize(map_size.y*resolution);
+	}
+
+	colmap_r.clear();
+	colmap_r.resize(map_size.x*resolution);
+	for (size_t x = 0; x < map_size.x*resolution; x++) {
+		colmap_r[x].resize(map_size.y*resolution);
 	}
 }
 
@@ -78,9 +83,14 @@ void MapCollision::updateColmap() {
 
 	colmap.clear();
 	colmap.resize(map_size.x*resolution);
-
 	for (size_t x = 0; x < map_size.x*resolution; x++) {
 		colmap[x].resize(map_size.y*resolution);
+	}
+
+	colmap_r.clear();
+	colmap_r.resize(map_size.x*resolution);
+	for (size_t x = 0; x < map_size.x*resolution; x++) {
+		colmap_r[x].resize(map_size.y*resolution);
 	}
 
 	for (std::shared_ptr<Entity>& e: ent_mgr.getEntities()) {
@@ -93,7 +103,7 @@ void MapCollision::updateColmap() {
 					sf::Vector2f pos_e = e->get<CTransform>()->pos + hb_e.offset[e->facing];
 					sf::Vector2i m_pos(abs(pos_e.x/(tile_size.x/resolution)), abs(pos_e.y/(tile_size.y/resolution)));
 
-					setBlocksType(m_pos, hb_e.radius);
+					setCell(m_pos, hb_e.radius);
 				}
 			}
 		}
@@ -413,10 +423,10 @@ bool MapCollision::computePath(const sf::Vector2f& start_pos, const sf::Vector2f
 		path.clear();
 
 	// if the target square has an entity, temporarily clear it to compute the path
-	int chaser_blocks_type = colmap[start.x][end.y];
-	int target_blocks_type = colmap[end.x][end.y];
-	setBlocksType(end, 0);
-	setBlocksType(start, 0);
+	int chaser_r = colmap_r[start.x][start.y];
+	int target_r = colmap_r[end.x][end.y];
+	setCell(end, 0);
+	setCell(start, 0);
 
 	sf::Vector2i current = start;
 	AStarNode* node = new AStarNode(start);
@@ -500,25 +510,33 @@ bool MapCollision::computePath(const sf::Vector2f& start_pos, const sf::Vector2f
 		}
 	}
 	// reblock target if needed
-	//setBlocksType(end, target_blocks_type);
-	//setBlocksType(start, chaser_blocks_type);
+	setCell(start, chaser_r);
+	setCell(end, target_r);
 
 	return !path.empty();
 }
 
-void MapCollision::setBlocksType(sf::Vector2i m_pos, int blocks_type) {
-	int radius = blocks_type;
+void MapCollision::setCell(sf::Vector2i m_pos, int r) {
+	int radius = r;
 
 	if (!radius) {
-		radius = colmap[m_pos.x][m_pos.y];
+		radius = colmap_r[m_pos.x][m_pos.y];
 	}
-	float dx = radius*2/(tile_size.x/resolution);
-	float dy = radius*2/(tile_size.y/resolution);
+	float dx = ceil(radius/(tile_size.x/resolution)) + 1;
+	float dy = ceil(radius/(tile_size.y/resolution)) + 1;
 
 	for (size_t x = m_pos.x - dx; x <= m_pos.x + dx; x++) {
 		for (size_t y = m_pos.y - dy; y <= m_pos.y + dy; y++) {
 			if (!isTileOutsideMap(m_pos.x, m_pos.y)) {
-				colmap[x][y] = blocks_type;
+				colmap_r[x][y] = r;
+				if (r) {
+					colmap[x][y]++;
+				}
+				else {
+					if (colmap[x][y]) {
+						colmap[x][y]--;
+					}
+				}
 			}
 		}
 	}

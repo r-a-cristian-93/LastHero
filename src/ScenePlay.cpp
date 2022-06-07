@@ -183,24 +183,24 @@ void ScenePlay::sPathFind() {
 }
 
 void ScenePlay::drawCollisionLayer() {
+	sf::CircleShape circle(tile_size.x/(game->app_conf.colmap_res*2));
+
 	//DRAW BLOCKING
 	if (!collision_map.colmap.empty()) {
-		sf::RectangleShape square(sf::Vector2f(tile_size.x/game->app_conf.colmap_res, tile_size.y/game->app_conf.colmap_res));
-		square.setFillColor(sf::Color(255, 0, 0, 80));
+		circle.setFillColor(sf::Color(255, 0, 0, 80));
 
-		for (int y = 0; y < map_size.y*game->app_conf.colmap_res; y++) {
-			for (int x = 0; x < map_size.x*game->app_conf.colmap_res; x++) {
-				square.setPosition(sf::Vector2f(x*tile_size.x/game->app_conf.colmap_res,y*tile_size.y/game->app_conf.colmap_res));
+		for (int y = 0; y < collision_map.map_size.x; y++) {
+			for (int x = 0; x < collision_map.map_size.x; x++) {
+				circle.setPosition(sf::Vector2f(x*tile_size.x/game->app_conf.colmap_res,y*tile_size.y/game->app_conf.colmap_res));
 
 				if (collision_map.colmap[x][y]) {
-					game->screen_tex.draw(square);
+					game->screen_tex.draw(circle);
 				}
 			}
 		}
 	}
 
 	//DRAW PATHS
-	sf::CircleShape circle(tile_size.x/(game->app_conf.colmap_res*2));
 	circle.setFillColor(sf::Color(0, 255, 255, 80));
 
 	for (std::shared_ptr<Entity>& e: ent_mgr.getEntities()) {

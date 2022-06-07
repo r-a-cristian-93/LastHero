@@ -56,7 +56,7 @@ private:
 
 	sf::Vector2f collisionToMap(const sf::Vector2i& p);
 
-	void setBlocksType(sf::Vector2i m_pos, int blocks_type);
+	void setCell(sf::Vector2i m_pos, int blocks_type);
 
 public:
 	// const flags
@@ -120,7 +120,8 @@ public:
 
 	void updateColmap();
 
-	CollisionLayer colmap;
+	CollisionLayer colmap;			// numbers of occupants
+	CollisionLayer colmap_r;		// radius of hitbox
 	sf::Vector2u map_size;
 	sf::Vector2u tile_size;
 	unsigned short resolution;
