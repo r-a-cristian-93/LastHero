@@ -4,7 +4,7 @@
 #include "SDraw.h"
 
 SceneMainMenu::SceneMainMenu(Game* g)
-	:Scene(g)
+	:Scene(g, GAME_SCENE::MENU)
 	,background(nullptr)
 {
 	init();
@@ -12,9 +12,6 @@ SceneMainMenu::SceneMainMenu(Game* g)
 SceneMainMenu::~SceneMainMenu() {}
 
 void SceneMainMenu::init() {
-	name = "SCENE MAIN MENU";
-
-	setFade(FADE_IN, 60);
 	music_fade_out = true;
 	game->snd_mgr.playBgMusic("intro");
 
@@ -77,24 +74,24 @@ void SceneMainMenu::doAction(const Action* a) {
 	if (*a->type == Action::TYPE_START) {
 		switch (*a->code) {
 			case Action::MENU_SELECT:
-				if (getCurrentFade() != FADE_OUT) {
+				if (getCurrentFade() != FADE::OUT) {
 					game->snd_mgr.playSound("menu_confirm");
 					if (selection == SELECT_EXIT) {
-						setFade(FADE_OUT, 60, Game::GAME_SCENE_EXIT);
+						setFade(FADE::OUT, 60, GAME_SCENE::EXIT);
 					}
 					else if (selection == SELECT_PLAY) {
-						setFade(FADE_OUT, 60, Game::GAME_SCENE_PLAY);
+						setFade(FADE::OUT, 60, GAME_SCENE::PLAY);
 					}
 				}
 			break;
 			case Action::MOVE_UP:
-				if (getCurrentFade() != FADE_OUT) select(SELECT_PLAY);
+				if (getCurrentFade() != FADE::OUT) select(SELECT_PLAY);
 			break;
 			case Action::MOVE_DOWN:
-				if (getCurrentFade() != FADE_OUT) select(SELECT_EXIT);
+				if (getCurrentFade() != FADE::OUT) select(SELECT_EXIT);
 			break;
 			case Action::GAME_EXIT:
-				setFade(FADE_OUT, 60, Game::GAME_SCENE_EXIT);
+				setFade(FADE::OUT, 60, GAME_SCENE::EXIT);
 			default:
 			break;
 		}

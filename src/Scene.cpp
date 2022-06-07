@@ -2,8 +2,9 @@
 
 Scene::Scene() {}
 
-Scene::Scene(Game* g)
+Scene::Scene(Game* g, SceneType type)
 	:game(g)
+	,scene_type(type)
 	,frame_current(0)
 	,paused(false)
 	,has_ended(false)
@@ -15,31 +16,32 @@ Scene::Scene(Game* g)
 
 void Scene::init() {
 	ent_mgr = EntityManager(game->assets);
+	setFade(FADE::IN);
 
 	gui_view.reset(sf::FloatRect(0, 0, game->app_conf.game_w, game->app_conf.game_h));
 }
 
 void Scene::sFade() {
 	switch (fade) {
-		case FADE_IN: {
+		case FADE::IN: {
 			current_fade_frames[fade]++;
-			unsigned char c = static_cast<size_t>(current_fade_frames[fade] * (255/fade_frames[fade]));
+			unsigned char c = current_fade_frames[fade] * (255/fade_frames[fade]);
 			game->screen_sprite.setColor({c, c, c});
 
 			if (current_fade_frames[fade] >= fade_frames[fade]) {
 				game->screen_sprite.setColor({255, 255, 255});
-				fade = FADE_NONE;
+				fade = FADE::NONE;
 			}
 
 		}
 		break;
-		case FADE_OUT: {
+		case FADE::OUT: {
 			if (current_fade_frames[fade] > 0) current_fade_frames[fade]--;
 			unsigned char c = static_cast<size_t>(current_fade_frames[fade] * (255/fade_frames[fade]));
 			game->screen_sprite.setColor({c, c, c});
 
 			if (current_fade_frames[fade] == 0) {
-				fade = FADE_NONE;
+				fade = FADE::NONE;
 				game->screen_sprite.setColor({0, 0, 0});
 				game->setNextScene(next_scene);
 			}
@@ -57,12 +59,17 @@ void Scene::sFade() {
 	}
 }
 
-void Scene::setFade(FadeType _fade, size_t frames) {
+void Scene::setFade(FadeType _fade) {
+	fade = _fade;
+	fade_frames[fade] = game->app_conf.scene_fade_frames[scene_type][_fade];
+}
+
+void Scene::setFade(FadeType _fade, unsigned char frames) {
 	fade = _fade;
 	fade_frames[fade] = frames;
 }
 
-void Scene::setFade(FadeType _fade, size_t frames, size_t scene) {
+void Scene::setFade(FadeType _fade, unsigned char frames, size_t scene) {
 	next_scene = scene;
 	fade = _fade;
 	fade_frames[fade] = frames;

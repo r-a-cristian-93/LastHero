@@ -4,14 +4,12 @@
 #include "SDraw.h"
 
 SceneScore::SceneScore(Game* g)
-	:Scene(g)
+	:Scene(g, GAME_SCENE::SCORE)
 {
 	init();
 }
 
 void SceneScore::init() {
-	setFade(FADE_IN, 60);
-
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::MENU_SELECT);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::MENU_SELECT);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Enter, Action::MENU_SELECT);
@@ -183,10 +181,10 @@ void SceneScore::doAction(const Action* a) {
 			case Action::MENU_SELECT:
 				if (frame_current > FRAME_CONTINUE) {
 					if (game->stageCurrent()) {
-						setFade(FADE_OUT, 60, Game::GAME_SCENE_PLAY);
+						setFade(FADE::OUT, 60, GAME_SCENE::PLAY);
 					}
 					else {
-						setFade(FADE_OUT, 60, Game::GAME_SCENE_MENU);
+						setFade(FADE::OUT, 60, GAME_SCENE::MENU);
 					}
 				}
 			break;

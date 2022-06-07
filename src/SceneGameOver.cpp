@@ -4,15 +4,13 @@
 #include "SDraw.h"
 
 SceneGameOver::SceneGameOver(Game* g)
-	:Scene(g)
+	:Scene(g, GAME_SCENE::OVER)
 {
 	init();
 }
 SceneGameOver::~SceneGameOver() {}
 
 void SceneGameOver::init() {
-	setFade(FADE_IN, 60);
-
 	{
 		Widget msg = Widget();
 		std::string string = "";
@@ -47,7 +45,7 @@ void SceneGameOver::update() {
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 
 	if (frame_current == 240) {
-		setFade(FADE_OUT, 60, Game::GAME_SCENE_SCORE);
+		setFade(FADE::OUT, 60, GAME_SCENE::SCORE);
 	}
 
 	frame_current++;

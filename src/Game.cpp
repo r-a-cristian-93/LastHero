@@ -68,7 +68,7 @@ void Game::init(std::string file_name) {
 	act_mgr = ActionManager();
 	snd_mgr = SoundManager(&assets);
 
-	setScene(GAME_SCENE_MENU);
+	setScene(GAME_SCENE::MENU);
 
 	running = true;
 }
@@ -167,23 +167,23 @@ void Game::setScene(size_t id) {
 	delete current_scene;
 
 	switch (id) {
-		case GAME_SCENE_MENU:
+		case GAME_SCENE::MENU:
 			current_scene = new SceneMainMenu(this);
 		break;
-		case GAME_SCENE_PLAY:
+		case GAME_SCENE::PLAY:
 			current_scene = new ScenePlay(this, stages[next_stage]);
 			if (next_stage == 0) {
 				kills_per_enemy.clear();
 				new_kills_per_enemy.clear();
 			}
 		break;
-		case GAME_SCENE_OVER:
+		case GAME_SCENE::OVER:
 			current_scene = new SceneGameOver(this);
 		break;
-		case GAME_SCENE_SCORE:
+		case GAME_SCENE::SCORE:
 			current_scene = new SceneScore(this);
 		break;
-		case GAME_SCENE_EXIT:
+		case GAME_SCENE::EXIT:
 			running = false;
 		break;
 	}
