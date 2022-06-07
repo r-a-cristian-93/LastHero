@@ -77,10 +77,10 @@ void SceneMainMenu::doAction(const Action* a) {
 				if (getCurrentFade() != FADE::OUT) {
 					game->snd_mgr.playSound("menu_confirm");
 					if (selection == SELECT_EXIT) {
-						setFade(FADE::OUT, 60, GAME_SCENE::EXIT);
+						setFade(FADE::OUT, GAME_SCENE::EXIT);
 					}
 					else if (selection == SELECT_PLAY) {
-						setFade(FADE::OUT, 60, GAME_SCENE::PLAY);
+						setFade(FADE::OUT, GAME_SCENE::PLAY);
 					}
 				}
 			break;
@@ -91,7 +91,7 @@ void SceneMainMenu::doAction(const Action* a) {
 				if (getCurrentFade() != FADE::OUT) select(SELECT_EXIT);
 			break;
 			case Action::GAME_EXIT:
-				setFade(FADE::OUT, 60, GAME_SCENE::EXIT);
+				setFade(FADE::OUT, GAME_SCENE::EXIT);
 			default:
 			break;
 		}

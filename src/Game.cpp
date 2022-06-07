@@ -52,6 +52,19 @@ void Game::init(std::string file_name) {
 			file >> app_conf.colmap_res;
 			file >> app_conf.colmap_update;
 		}
+		if (word == "Scene") {
+			size_t scene_type, in, out;
+			file >> word >> in >> out;
+
+			if (word == "MENU") scene_type = GAME_SCENE::MENU;
+			else if (word == "PLAY") scene_type = GAME_SCENE::PLAY;
+			else if (word == "OVER") scene_type = GAME_SCENE::OVER;
+			else if (word == "SCORE") scene_type = GAME_SCENE::SCORE;
+			else scene_type = GAME_SCENE::NONE;
+
+			app_conf.scene_fade_frames[scene_type][FADE::IN] = in;
+			app_conf.scene_fade_frames[scene_type][FADE::OUT] = out;
+		}
 	}
 
 	file.close();

@@ -1157,7 +1157,7 @@ void ScenePlay::doAction(const Action* a) {
 				paused = !paused;
 			break;
 			case Action::CHANGE_SCENE_MENU:
-				setFade(FADE::OUT, 60, GAME_SCENE::MENU);
+				setFade(FADE::OUT, GAME_SCENE::MENU);
 			break;
 			case Action::SPAWN_ENTITY:
 				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
@@ -1271,18 +1271,18 @@ void ScenePlay::sGameState() {
 		game_state = GAME_OVER;
 		game->addKills(kills_per_enemy);
 		game->stageReset();
-		setFade(FADE::OUT, 60, GAME_SCENE::OVER);
+		setFade(FADE::OUT, GAME_SCENE::OVER);
 	}
 
 	if (ent_mgr.getEntities(TAG::ENEMY).empty()) {
 		game_state = GAME_OVER;
 		game->addKills(kills_per_enemy);
 		if (game->stageNext()) {
-			setFade(FADE::OUT, 60, GAME_SCENE::SCORE);
+			setFade(FADE::OUT, GAME_SCENE::SCORE);
 		}
 		else {
 			game->stageReset();
-			setFade(FADE::OUT, 60, GAME_SCENE::OVER);
+			setFade(FADE::OUT, GAME_SCENE::OVER);
 		}
 	}
 #ifdef DEBUG_ENEMIES_LEFT

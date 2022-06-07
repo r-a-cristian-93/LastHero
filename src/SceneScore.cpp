@@ -181,10 +181,10 @@ void SceneScore::doAction(const Action* a) {
 			case Action::MENU_SELECT:
 				if (frame_current > FRAME_CONTINUE) {
 					if (game->stageCurrent()) {
-						setFade(FADE::OUT, 60, GAME_SCENE::PLAY);
+						setFade(FADE::OUT, GAME_SCENE::PLAY);
 					}
 					else {
-						setFade(FADE::OUT, 60, GAME_SCENE::MENU);
+						setFade(FADE::OUT, GAME_SCENE::MENU);
 					}
 				}
 			break;

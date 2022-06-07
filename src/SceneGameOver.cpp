@@ -45,7 +45,7 @@ void SceneGameOver::update() {
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 
 	if (frame_current == 240) {
-		setFade(FADE::OUT, 60, GAME_SCENE::SCORE);
+		setFade(FADE::OUT, GAME_SCENE::SCORE);
 	}
 
 	frame_current++;

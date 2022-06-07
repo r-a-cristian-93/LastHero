@@ -38,8 +38,7 @@ public:
 	virtual void doAction(const Action* a) = 0;
 	void sFade();
 	void setFade(FadeType fade);
-	void setFade(FadeType fade, unsigned char frames);
-	void setFade(FadeType fade, unsigned char frames, size_t scene);
+	void setFade(FadeType fade, size_t scene);
 	bool isFading();
 	const FadeType getCurrentFade();
 

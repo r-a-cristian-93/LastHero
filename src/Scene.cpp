@@ -64,15 +64,10 @@ void Scene::setFade(FadeType _fade) {
 	fade_frames[fade] = game->app_conf.scene_fade_frames[scene_type][_fade];
 }
 
-void Scene::setFade(FadeType _fade, unsigned char frames) {
-	fade = _fade;
-	fade_frames[fade] = frames;
-}
-
-void Scene::setFade(FadeType _fade, unsigned char frames, size_t scene) {
+void Scene::setFade(FadeType _fade, size_t scene) {
 	next_scene = scene;
 	fade = _fade;
-	fade_frames[fade] = frames;
+	fade_frames[fade] = game->app_conf.scene_fade_frames[scene_type][_fade];
 }
 
 bool Scene::isFading() {
