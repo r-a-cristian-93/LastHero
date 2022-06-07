@@ -45,6 +45,7 @@ public:
 	void setFade(FadeType fade, size_t frames);
 	void setFade(FadeType fade, size_t frames, size_t scene);
 	bool isFading();
+	const FadeType getCurrentFade();
 
 	Scene();
 	Scene(Game* g);

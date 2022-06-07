@@ -74,6 +74,10 @@ bool Scene::isFading() {
 	return false;
 }
 
+const FadeType Scene::getCurrentFade() {
+	return fade;
+}
+
 Scene::~Scene() {
 	game->snd_mgr.stopBgMusic();
 }
