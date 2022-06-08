@@ -53,8 +53,25 @@ void Game::init(std::string file_name) {
 			file >> app_conf.colmap_update;
 		}
 		if (word == "Scene") {
-			size_t scene_type, in, out;
+			size_t scene_type = 0, in = 1, out = 1;
 			file >> word >> in >> out;
+
+			if (in <= 0) {
+				in = 1;
+				std::cout << "Fade in frames of scene " << word << " must be greater than 0. Set to default value 1.\n";
+			}
+			if (out <= 0) {
+				out = 1;
+				std::cout << "Fade out frames of scene " << word << " must be greater than 0. Set to default value 1.\n";
+			}
+			if (in > 255) {
+				in = 255;
+				std::cout << "Fade in frames of scene " << word << " must be lower than 256. Set to default value 255.\n";
+			}
+			if (out > 255) {
+				out = 255;
+				std::cout << "Fade out frames of scene " << word << " must be lower than 255. Set to default value 255.\n";
+			}
 
 			if (word == "MENU") scene_type = GAME_SCENE::MENU;
 			else if (word == "PLAY") scene_type = GAME_SCENE::PLAY;
@@ -66,7 +83,15 @@ void Game::init(std::string file_name) {
 			app_conf.scene_fade_frames[scene_type][FADE::OUT] = out;
 		}
 		if (word == "FADE_MULTIPLYER") {
-			file >> app_conf.fade_multiplier;
+			float m = 1;
+			file >> m;
+
+			if (m <= 0) {
+				m = 1;
+				std::cout << "Fade multipilier must be greater than 0. Set to default value 1.\n";
+			}
+
+			app_conf.fade_multiplier = m;
 		}
 	}
 

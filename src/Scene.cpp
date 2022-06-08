@@ -37,7 +37,7 @@ void Scene::sFade() {
 		break;
 		case FADE::OUT: {
 			if (current_fade_frames[fade] > 0) current_fade_frames[fade]--;
-			unsigned char c = static_cast<size_t>(current_fade_frames[fade] * (255/fade_frames[fade]));
+			unsigned char c = current_fade_frames[fade] * (255/fade_frames[fade]);
 			game->screen_sprite.setColor({c, c, c});
 
 			if (current_fade_frames[fade] == 0) {
