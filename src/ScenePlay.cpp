@@ -4,7 +4,7 @@
 #include "SDraw.h"
 
 ScenePlay::ScenePlay(Game* g, std::string lp)
-	:Scene(g)
+	:Scene(g, GAME_SCENE::PLAY)
 	,level_path(lp)
 	,map_size(0,0)
 	,tile_size(0,0)
@@ -18,10 +18,8 @@ ScenePlay::ScenePlay(Game* g, std::string lp)
 ScenePlay::~ScenePlay() {}
 
 void ScenePlay::init() {
-	name = "SCENE PLAY";
 	PROFILE_FUNCTION();
 
-	setFade(FADE_IN, 60);
 	music_fade_out = true;
 
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
@@ -1159,7 +1157,7 @@ void ScenePlay::doAction(const Action* a) {
 				paused = !paused;
 			break;
 			case Action::CHANGE_SCENE_MENU:
-				setFade(FADE_OUT, 60, Game::GAME_SCENE_MENU);
+				setFade(FADE::OUT, GAME_SCENE::MENU);
 			break;
 			case Action::SPAWN_ENTITY:
 				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
@@ -1273,18 +1271,18 @@ void ScenePlay::sGameState() {
 		game_state = GAME_OVER;
 		game->addKills(kills_per_enemy);
 		game->stageReset();
-		setFade(FADE_OUT, 60, Game::GAME_SCENE_OVER);
+		setFade(FADE::OUT, GAME_SCENE::OVER);
 	}
 
 	if (ent_mgr.getEntities(TAG::ENEMY).empty()) {
 		game_state = GAME_OVER;
 		game->addKills(kills_per_enemy);
 		if (game->stageNext()) {
-			setFade(FADE_OUT, 60, Game::GAME_SCENE_SCORE);
+			setFade(FADE::OUT, GAME_SCENE::SCORE);
 		}
 		else {
 			game->stageReset();
-			setFade(FADE_OUT, 60, Game::GAME_SCENE_OVER);
+			setFade(FADE::OUT, GAME_SCENE::OVER);
 		}
 	}
 #ifdef DEBUG_ENEMIES_LEFT

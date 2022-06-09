@@ -4,7 +4,7 @@
 #include "SDraw.h"
 
 SceneMainMenu::SceneMainMenu(Game* g)
-	:Scene(g)
+	:Scene(g, GAME_SCENE::MENU)
 	,background(nullptr)
 {
 	init();
@@ -12,9 +12,6 @@ SceneMainMenu::SceneMainMenu(Game* g)
 SceneMainMenu::~SceneMainMenu() {}
 
 void SceneMainMenu::init() {
-	name = "SCENE MAIN MENU";
-
-	setFade(FADE_IN, 60);
 	music_fade_out = true;
 	game->snd_mgr.playBgMusic("intro");
 
@@ -34,27 +31,20 @@ void SceneMainMenu::init() {
 
 	// set main menu buttons
 	{
-		Widget play = Widget();
-
-		sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
+		Widget& play = game->assets.getWidget("button_play");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
 		pos.y = static_cast<int>(game->app_conf.game_h*0.7);
-
-		play.setText("PLAY", font, 32);
 		play.setColor(mod_highlight);
 		play.setPosAbs(pos);
 		interface.add(play);
 	}
-	{
-		Widget exit = Widget();
 
-		sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
+	{
+		Widget& exit = game->assets.getWidget("button_exit");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
 		pos.y = static_cast<int>(game->app_conf.game_h*0.77);
-
-		exit.setText("EXIT", font, 32);
 		exit.setColor(mod_dark);
 		exit.setPosAbs(pos);
 		interface.add(exit);
@@ -77,24 +67,24 @@ void SceneMainMenu::doAction(const Action* a) {
 	if (*a->type == Action::TYPE_START) {
 		switch (*a->code) {
 			case Action::MENU_SELECT:
-				if (!isFading()) {
+				if (getCurrentFade() != FADE::OUT) {
 					game->snd_mgr.playSound("menu_confirm");
 					if (selection == SELECT_EXIT) {
-						setFade(FADE_OUT, 60, Game::GAME_SCENE_EXIT);
+						setFade(FADE::OUT, GAME_SCENE::EXIT);
 					}
 					else if (selection == SELECT_PLAY) {
-						setFade(FADE_OUT, 60, Game::GAME_SCENE_PLAY);
+						setFade(FADE::OUT, GAME_SCENE::PLAY);
 					}
 				}
 			break;
 			case Action::MOVE_UP:
-				if (!isFading()) select(SELECT_PLAY);
+				if (getCurrentFade() != FADE::OUT) select(SELECT_PLAY);
 			break;
 			case Action::MOVE_DOWN:
-				if (!isFading()) select(SELECT_EXIT);
+				if (getCurrentFade() != FADE::OUT) select(SELECT_EXIT);
 			break;
 			case Action::GAME_EXIT:
-				setFade(FADE_OUT, 60, Game::GAME_SCENE_EXIT);
+				setFade(FADE::OUT, GAME_SCENE::EXIT);
 			default:
 			break;
 		}

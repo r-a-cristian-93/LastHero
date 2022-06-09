@@ -52,6 +52,54 @@ void Game::init(std::string file_name) {
 			file >> app_conf.colmap_res;
 			file >> app_conf.colmap_update;
 		}
+		if (word == "FADE_SCENE") {
+			int frames = 1;
+
+			for (size_t f_type=1; f_type<FADE::COUNT; f_type++) {
+				file >> frames;
+				if (frames <= 0) {
+					frames = 1;
+					std::cout << "FADE_SCENE frames must be greater than 0. Set to default value 1.\n";
+				}
+				if (frames > 255) {
+					frames = 255;
+					std::cout << "FADE_SCENE frames must be lower than 256. Set to default value 1.\n";
+				}
+
+				app_conf.scene_fade_frames[f_type] = frames;
+			}
+		}
+		if (word == "FRAMES_SCORE") {
+			int frames = 1;
+
+			for (size_t f_type=1; f_type<FRAMES_SCORE::COUNT; f_type++) {
+				file >> frames;
+				if (frames <= 0) {
+					frames = 1;
+					std::cout << "FRAMES_SCORE frames must be greater than 0. Set to default value 1.\n";
+				}
+
+				app_conf.score_key_frames[f_type] = frames;
+			}
+		}
+		if (word == "FADE_MULTIPLYER") {
+			float m = 1;
+			file >> m;
+
+			if (m <= 0) {
+				m = 1;
+				std::cout << "Fade multipilier must be greater than 0. Set to default value 1.\n";
+			}
+			app_conf.fade_multiplier = m;
+
+			// apply multiplier
+			for (size_t f=0; f<FADE::COUNT; f++) {
+				app_conf.scene_fade_frames[f] *= m;
+			}
+			for (size_t f=0; f<FRAMES_SCORE::COUNT; f++) {
+				app_conf.score_key_frames[f] *= m;
+			}
+		}
 	}
 
 	file.close();
@@ -68,7 +116,7 @@ void Game::init(std::string file_name) {
 	act_mgr = ActionManager();
 	snd_mgr = SoundManager(&assets);
 
-	setScene(GAME_SCENE_MENU);
+	setScene(GAME_SCENE::MENU);
 
 	running = true;
 }
@@ -167,23 +215,23 @@ void Game::setScene(size_t id) {
 	delete current_scene;
 
 	switch (id) {
-		case GAME_SCENE_MENU:
+		case GAME_SCENE::MENU:
 			current_scene = new SceneMainMenu(this);
 		break;
-		case GAME_SCENE_PLAY:
+		case GAME_SCENE::PLAY:
 			current_scene = new ScenePlay(this, stages[next_stage]);
 			if (next_stage == 0) {
 				kills_per_enemy.clear();
 				new_kills_per_enemy.clear();
 			}
 		break;
-		case GAME_SCENE_OVER:
+		case GAME_SCENE::OVER:
 			current_scene = new SceneGameOver(this);
 		break;
-		case GAME_SCENE_SCORE:
+		case GAME_SCENE::SCORE:
 			current_scene = new SceneScore(this);
 		break;
-		case GAME_SCENE_EXIT:
+		case GAME_SCENE::EXIT:
 			running = false;
 		break;
 	}

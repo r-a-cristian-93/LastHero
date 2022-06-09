@@ -39,15 +39,6 @@ public:
 	KillsMap kills_per_enemy;
 	KillsMap new_kills_per_enemy;
 
-	enum {
-		NONE,
-		GAME_SCENE_MENU,
-		GAME_SCENE_PLAY,
-		GAME_SCENE_OVER,
-		GAME_SCENE_SCORE,
-		GAME_SCENE_EXIT,
-	};
-
 	bool running;
 	sf::RenderWindow window;
 	sf::RenderTexture screen_tex;

@@ -29,4 +29,40 @@ namespace TR {
 	};
 }
 
+
+namespace GAME_SCENE {
+	enum {
+		NONE = 0,
+		MENU,
+		PLAY,
+		OVER,
+		SCORE,
+		EXIT,
+		COUNT
+	};
+}
+
+namespace FADE {
+	enum {
+		NONE = 0,
+		IN,
+		OUT,
+		COUNT
+	};
+}
+
+namespace FRAMES_SCORE {
+	enum {
+		NONE = 0,
+		COL_0,
+		COL_1,
+		COL_2,
+		COL_3,
+		ROW_LINE,
+		ROW_TOTAL,
+		CONTINUE,
+		COUNT
+	};
+}
+
 #endif

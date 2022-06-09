@@ -4,18 +4,16 @@
 #include "SDraw.h"
 
 SceneScore::SceneScore(Game* g)
-	:Scene(g)
+	:Scene(g, GAME_SCENE::SCORE)
 {
 	init();
 }
 
 void SceneScore::init() {
-	setFade(FADE_IN, 60);
-
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::MENU_SELECT);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::MENU_SELECT);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Enter, Action::MENU_SELECT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SELECT);
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SKIP);
 
 	{
 		Widget title;
@@ -36,6 +34,15 @@ void SceneScore::init() {
 		title.setText(string, font, size);
 		title.setPosAbs(pos);
 		interface.add(title);
+	}
+
+	{
+		Widget& skip = game->assets.getWidget("menu_skip");
+		sf::Vector2i pos;
+		pos.x = static_cast<int>(game->app_conf.game_w*0.2);
+		pos.y = static_cast<int>(game->app_conf.game_h*0.95);
+		skip.setPosAbs(pos);
+		interface.add(skip);
 	}
 
 	const KillsMap& kills = game->kills_per_enemy;
@@ -134,31 +141,31 @@ void SceneScore::init() {
 }
 
 void SceneScore::update() {
-	if (frame_current == FRAME_COL_0) {
+	if (frame_current == key_frames[FRAMES_SCORE::COL_0] || skip_key_frames) {
 		copyCells(all_table_widgets, interface.getWidgets(), {0,0,0,rows-3});
-		if (total_kills) game->snd_mgr.playSound("menu_punch");
+		if (total_kills && !skip_key_frames) game->snd_mgr.playSound("menu_punch");
 	}
-	if (frame_current == FRAME_COL_1) {
+	if (frame_current == key_frames[FRAMES_SCORE::COL_1] || skip_key_frames) {
 		copyCells(all_table_widgets, interface.getWidgets(), {1,0,1,rows-3});
-		if (!game->new_kills_per_enemy.empty()) game->snd_mgr.playSound("menu_punch");
+		if (!game->new_kills_per_enemy.empty() && !skip_key_frames) game->snd_mgr.playSound("menu_punch");
 	}
-	if (frame_current == FRAME_COL_2) {
+	if (frame_current == key_frames[FRAMES_SCORE::COL_2] || skip_key_frames) {
 		copyCells(all_table_widgets, interface.getWidgets(), {2,0,2,rows-3});
-		if (total_kills) game->snd_mgr.playSound("menu_punch");
+		if (total_kills && !skip_key_frames) game->snd_mgr.playSound("menu_punch");
 	}
-	if (frame_current == FRAME_COL_3) {
+	if (frame_current == key_frames[FRAMES_SCORE::COL_3] || skip_key_frames) {
 		copyCells(all_table_widgets, interface.getWidgets(), {3,0,3,rows-3});
-		if (total_kills) game->snd_mgr.playSound("menu_punch");
+		if (total_kills && !skip_key_frames) game->snd_mgr.playSound("menu_punch");
 	}
-	if (frame_current == FRAME_ROW_LINE) {
+	if (frame_current == key_frames[FRAMES_SCORE::ROW_LINE] || skip_key_frames) {
 		copyCells(all_table_widgets, interface.getWidgets(), {2,rows-2,3,rows-2});
-		if (total_kills) game->snd_mgr.playSound("menu_punch");
+		if (total_kills && !skip_key_frames) game->snd_mgr.playSound("menu_punch");
 	}
-	if (frame_current == FRAME_ROW_TOTAL) {
+	if (frame_current == key_frames[FRAMES_SCORE::ROW_TOTAL] || skip_key_frames) {
 		copyCells(all_table_widgets, interface.getWidgets(), {1,rows-1,3,rows-1});
-		game->snd_mgr.playSound("menu_punch");
+		if (!skip_key_frames) game->snd_mgr.playSound("menu_punch");
 	}
-
+	game->screen_tex.clear(sf::Color(10, 70, 10));
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 
 	frame_current++;
@@ -170,7 +177,10 @@ void SceneScore::copyCells(WidgetVec& src, WidgetVec& dst, sf::IntRect rect) {
 	for (int r=0; r<rows; r++) {
 		for (int c=0; c<cols; c++) {
 			if (r >= rect.top && r <= rect.height && c >= rect.left && c <= rect.width) {
-				dst.push_back(src[k]);
+				if (!src[k].drawables.empty())
+					dst.push_back(src[k]);
+
+				src[k].drawables.clear();
 			}
 			k++;
 		}
@@ -180,13 +190,18 @@ void SceneScore::copyCells(WidgetVec& src, WidgetVec& dst, sf::IntRect rect) {
 void SceneScore::doAction(const Action* a) {
 	if (*a->type == Action::TYPE_START) {
 		switch (*a->code) {
+			case Action::MENU_SKIP: {
+				skip_key_frames = true;
+				game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SELECT);
+			}
+			break;
 			case Action::MENU_SELECT:
-				if (frame_current > FRAME_CONTINUE) {
+				if ((frame_current > key_frames[FRAMES_SCORE::CONTINUE] || skip_key_frames) && getCurrentFade()!=FADE::OUT) {
 					if (game->stageCurrent()) {
-						setFade(FADE_OUT, 60, Game::GAME_SCENE_PLAY);
+						setFade(FADE::OUT, GAME_SCENE::PLAY);
 					}
 					else {
-						setFade(FADE_OUT, 60, Game::GAME_SCENE_MENU);
+						setFade(FADE::OUT, GAME_SCENE::MENU);
 					}
 				}
 			break;

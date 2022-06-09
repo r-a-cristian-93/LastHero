@@ -30,6 +30,7 @@ class SceneScore: public Scene {
 		FRAME_ROW_TOTAL = 240,
 		FRAME_CONTINUE = 280
 	};
+	const unsigned int* key_frames = game->app_conf.score_key_frames;
 
 	Interface interface;
 	WidgetVec all_table_widgets;

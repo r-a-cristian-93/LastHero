@@ -11,10 +11,12 @@
 #define DEBUG_GRID
 
 #include <cstddef>
+#include <cstring>
 #include <vector>
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "Enums.h"
 
 #define PI 3.14159265
 
@@ -30,6 +32,13 @@ struct AppConfig {
 	int directions = 8;
 	unsigned int colmap_res = 1;
 	unsigned int colmap_update = 20;
+	unsigned int scene_fade_frames[FADE::COUNT];
+	unsigned int score_key_frames[FRAMES_SCORE::COUNT];
+	float fade_multiplier = 1;
+
+	AppConfig() {
+		std::memset(scene_fade_frames, 20, sizeof(scene_fade_frames));
+	}
 };
 
 #endif
