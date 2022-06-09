@@ -31,27 +31,20 @@ void SceneMainMenu::init() {
 
 	// set main menu buttons
 	{
-		Widget play = Widget();
-
-		sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
+		Widget& play = game->assets.getWidget("button_play");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
 		pos.y = static_cast<int>(game->app_conf.game_h*0.7);
-
-		play.setText("PLAY", font, 32);
 		play.setColor(mod_highlight);
 		play.setPosAbs(pos);
 		interface.add(play);
 	}
-	{
-		Widget exit = Widget();
 
-		sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
+	{
+		Widget& exit = game->assets.getWidget("button_exit");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
 		pos.y = static_cast<int>(game->app_conf.game_h*0.77);
-
-		exit.setText("EXIT", font, 32);
 		exit.setColor(mod_dark);
 		exit.setPosAbs(pos);
 		interface.add(exit);
