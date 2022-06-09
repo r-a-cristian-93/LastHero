@@ -44,6 +44,11 @@ void ScenePlay::init() {
 
 	interface.setLinks(links);
 
+	paused_widget = &game->assets.getWidget("menu_paused");
+	sf::Vector2i pos;
+	pos.x = static_cast<int>(game->app_conf.game_w*0.5);
+	pos.y = static_cast<int>(game->app_conf.game_h*0.5);
+	paused_widget->setPosAbs(pos);
 
 	// run this block to display level;
 	{
@@ -1153,8 +1158,11 @@ void ScenePlay::doAction(const Action* a) {
 			case Action::FIRE_SECONDARY:
 				player->get<CInput>()->fire_secondary = true;
 			break;
-			case Action::GAME_PAUSE:
+			case Action::GAME_PAUSE: {
 				paused = !paused;
+				if (paused) interface.add(*paused_widget);
+				else interface.getWidgets().pop_back();
+			}
 			break;
 			case Action::CHANGE_SCENE_MENU:
 				setFade(FADE::OUT, GAME_SCENE::MENU);

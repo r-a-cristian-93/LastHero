@@ -32,6 +32,7 @@ class ScenePlay: public Scene {
 
 	Camera cam;
 	Interface interface;
+	Widget* paused_widget = nullptr;
 	int total_kills;
 	KillsMap kills_per_enemy;
 	GameState game_state;
