@@ -51,4 +51,18 @@ namespace FADE {
 	};
 }
 
+namespace FRAMES_SCORE {
+	enum {
+		NONE = 0,
+		COL_0,
+		COL_1,
+		COL_2,
+		COL_3,
+		ROW_LINE,
+		ROW_TOTAL,
+		CONTINUE,
+		COUNT
+	};
+}
+
 #endif

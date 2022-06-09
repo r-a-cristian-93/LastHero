@@ -52,35 +52,35 @@ void Game::init(std::string file_name) {
 			file >> app_conf.colmap_res;
 			file >> app_conf.colmap_update;
 		}
-		if (word == "Scene") {
-			size_t scene_type = 0, in = 1, out = 1;
-			file >> word >> in >> out;
+		if (word == "FADE_SCENE") {
+			int frames = 1;
 
-			if (in <= 0) {
-				in = 1;
-				std::cout << "Fade in frames of scene " << word << " must be greater than 0. Set to default value 1.\n";
-			}
-			if (out <= 0) {
-				out = 1;
-				std::cout << "Fade out frames of scene " << word << " must be greater than 0. Set to default value 1.\n";
-			}
-			if (in > 255) {
-				in = 255;
-				std::cout << "Fade in frames of scene " << word << " must be lower than 256. Set to default value 255.\n";
-			}
-			if (out > 255) {
-				out = 255;
-				std::cout << "Fade out frames of scene " << word << " must be lower than 255. Set to default value 255.\n";
-			}
+			for (size_t f_type=1; f_type<FADE::COUNT; f_type++) {
+				file >> frames;
+				if (frames <= 0) {
+					frames = 1;
+					std::cout << "FADE_SCENE frames must be greater than 0. Set to default value 1.\n";
+				}
+				if (frames > 255) {
+					frames = 255;
+					std::cout << "FADE_SCENE frames must be lower than 256. Set to default value 1.\n";
+				}
 
-			if (word == "MENU") scene_type = GAME_SCENE::MENU;
-			else if (word == "PLAY") scene_type = GAME_SCENE::PLAY;
-			else if (word == "OVER") scene_type = GAME_SCENE::OVER;
-			else if (word == "SCORE") scene_type = GAME_SCENE::SCORE;
-			else scene_type = GAME_SCENE::NONE;
+				app_conf.scene_fade_frames[f_type] = frames;
+			}
+		}
+		if (word == "FRAMES_SCORE") {
+			int frames = 1;
 
-			app_conf.scene_fade_frames[scene_type][FADE::IN] = in;
-			app_conf.scene_fade_frames[scene_type][FADE::OUT] = out;
+			for (size_t f_type=1; f_type<FRAMES_SCORE::COUNT; f_type++) {
+				file >> frames;
+				if (frames <= 0) {
+					frames = 1;
+					std::cout << "FRAMES_SCORE frames must be greater than 0. Set to default value 1.\n";
+				}
+
+				app_conf.score_key_frames[f_type] = frames;
+			}
 		}
 		if (word == "FADE_MULTIPLYER") {
 			float m = 1;
@@ -90,8 +90,15 @@ void Game::init(std::string file_name) {
 				m = 1;
 				std::cout << "Fade multipilier must be greater than 0. Set to default value 1.\n";
 			}
-
 			app_conf.fade_multiplier = m;
+
+			// apply multiplier
+			for (size_t f=0; f<FADE::COUNT; f++) {
+				app_conf.scene_fade_frames[f] *= m;
+			}
+			for (size_t f=0; f<FRAMES_SCORE::COUNT; f++) {
+				app_conf.score_key_frames[f] *= m;
+			}
 		}
 	}
 

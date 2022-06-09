@@ -19,6 +19,7 @@ protected:
 	std::string name = "";
 	SceneType scene_type = GAME_SCENE::NONE;
 
+	const unsigned int* fade_frames = nullptr;
 	int frame_current;
 	bool paused, has_ended;
 
@@ -29,8 +30,8 @@ protected:
 
 private:
 	FadeType fade = FADE::NONE;
-	unsigned char fade_frames[FADE::COUNT] = {0, 0, 0};
-	unsigned char current_fade_frames[FADE::COUNT] = {0, 0, 0};
+	unsigned char current_fade_frames[FADE::COUNT] = {0};
+
 	size_t next_scene = 0;
 
 public:
