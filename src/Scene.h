@@ -22,6 +22,7 @@ protected:
 	const unsigned int* fade_frames = nullptr;
 	int frame_current;
 	bool paused, has_ended;
+	bool skip_key_frames = false;
 
 	bool music_fade_in;
 	bool music_fade_out;

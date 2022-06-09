@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <regex>
 #include "Common.h"
 #include "Assets.h"
 #include "Settings.h"
@@ -741,6 +742,7 @@ void Assets::loadWidget() {
 	size_t font_id(NONE), link(0);
 	std::vector<std::string> childs;
 	sf::Color text_color(255, 255, 255);
+	std::string text = "TEXT";
 
 	while (file >> word) {
 		if (word == "_END") break;
@@ -764,6 +766,10 @@ void Assets::loadWidget() {
 		else if (word == "bg_tex_hover") file >> bg_tex_hover >> tex_offset;
 		else if (word == "border") file >> border;
 		else if (word == "border_hover") file >> border_hover;
+		else if (word == "text") {
+			file >> text;
+			text = std::regex_replace(text, std::regex("_"), " ");
+		}
 		else if (word == "font") {
 			file >> word >> font_size;
 			if (word == "pixel") font_id = FONT_PIXEL;
@@ -794,7 +800,7 @@ void Assets::loadWidget() {
 		}
 		else if (type == "text") {
 			widget.setSize(size);
-			widget.setText("TEXT", fonts[font_id], font_size);
+			widget.setText(text, fonts[font_id], font_size);
 			widget.setTextColor(text_color);
 			widget.link = link;
 		}

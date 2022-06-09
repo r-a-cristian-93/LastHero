@@ -11,6 +11,8 @@ SceneGameOver::SceneGameOver(Game* g)
 SceneGameOver::~SceneGameOver() {}
 
 void SceneGameOver::init() {
+	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SKIP);
+
 	{
 		Widget msg = Widget();
 		std::string string = "";
@@ -38,13 +40,22 @@ void SceneGameOver::init() {
 		interface.add(msg);
 	}
 
+	{
+		Widget& skip = game->assets.getWidget("menu_skip");
+		sf::Vector2i pos;
+		pos.x = static_cast<int>(game->app_conf.game_w*0.2);
+		pos.y = static_cast<int>(game->app_conf.game_h*0.95);
+		skip.setPosAbs(pos);
+		interface.add(skip);
+	}
+
 	game->screen_tex.setView(gui_view);
 }
 
 void SceneGameOver::update() {
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 
-	if (frame_current == 240) {
+	if ((frame_current == 240 || skip_key_frames) && getCurrentFade() != FADE::OUT) {
 		setFade(FADE::OUT, GAME_SCENE::SCORE);
 	}
 
@@ -55,6 +66,9 @@ void SceneGameOver::update() {
 void SceneGameOver::doAction(const Action* a) {
 	if (*a->type == Action::TYPE_START) {
 		switch (*a->code) {
+			case Action::MENU_SKIP:
+				skip_key_frames = true;
+			break;
 			default:
 			break;
 		}

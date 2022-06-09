@@ -36,6 +36,15 @@ void SceneScore::init() {
 		interface.add(title);
 	}
 
+	{
+		Widget& skip = game->assets.getWidget("menu_skip");
+		sf::Vector2i pos;
+		pos.x = static_cast<int>(game->app_conf.game_w*0.2);
+		pos.y = static_cast<int>(game->app_conf.game_h*0.95);
+		skip.setPosAbs(pos);
+		interface.add(skip);
+	}
+
 	const KillsMap& kills = game->kills_per_enemy;
 	const KillsMap& n_kills = game->new_kills_per_enemy;
 	KillsMap::const_iterator it_k;
@@ -156,7 +165,7 @@ void SceneScore::update() {
 		copyCells(all_table_widgets, interface.getWidgets(), {1,rows-1,3,rows-1});
 		if (!skip_key_frames) game->snd_mgr.playSound("menu_punch");
 	}
-
+	game->screen_tex.clear(sf::Color(10, 70, 10));
 	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
 
 	frame_current++;
@@ -181,9 +190,13 @@ void SceneScore::copyCells(WidgetVec& src, WidgetVec& dst, sf::IntRect rect) {
 void SceneScore::doAction(const Action* a) {
 	if (*a->type == Action::TYPE_START) {
 		switch (*a->code) {
-			case Action::MENU_SKIP:
+			case Action::MENU_SKIP: {
+				skip_key_frames = true;
+				game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SELECT);
+			}
+			break;
 			case Action::MENU_SELECT:
-				if (frame_current > key_frames[FRAMES_SCORE::CONTINUE] || skip_key_frames) {
+				if ((frame_current > key_frames[FRAMES_SCORE::CONTINUE] || skip_key_frames) && getCurrentFade()!=FADE::OUT) {
 					if (game->stageCurrent()) {
 						setFade(FADE::OUT, GAME_SCENE::PLAY);
 					}
@@ -191,8 +204,6 @@ void SceneScore::doAction(const Action* a) {
 						setFade(FADE::OUT, GAME_SCENE::MENU);
 					}
 				}
-
-				skip_key_frames = true;
 			break;
 			default:
 			break;

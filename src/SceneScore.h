@@ -31,7 +31,6 @@ class SceneScore: public Scene {
 		FRAME_CONTINUE = 280
 	};
 	const unsigned int* key_frames = game->app_conf.score_key_frames;
-	bool skip_key_frames = false;
 
 	Interface interface;
 	WidgetVec all_table_widgets;
