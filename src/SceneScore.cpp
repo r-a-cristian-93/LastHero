@@ -194,7 +194,6 @@ void SceneScore::doAction(const Action* a) {
 
 				skip_key_frames = true;
 			break;
-			break;
 			default:
 			break;
 		}
