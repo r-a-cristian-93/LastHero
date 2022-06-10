@@ -1139,49 +1139,52 @@ void ScenePlay::lookAt(CInput& c_input, const sf::Vector2f& a, const sf::Vector2
 
 void ScenePlay::doAction(const Action* a) {
 	if (*a->type == Action::TYPE_START) {
-		switch (*a->code) {
-			case Action::MOVE_UP:
-				player->get<CInput>()->up = true;
-			break;
-			case Action::MOVE_LEFT:
-				player->get<CInput>()->left = true;
-			break;
-			case Action::MOVE_DOWN:
-				player->get<CInput>()->down = true;
-			break;
-			case Action::MOVE_RIGHT:
-				player->get<CInput>()->right = true;
-			break;
-			case Action::FIRE_PRIMARY:
-				player->get<CInput>()->fire_primary = true;
-			break;
-			case Action::FIRE_SECONDARY:
-				player->get<CInput>()->fire_secondary = true;
-			break;
-			case Action::GAME_PAUSE: {
-				paused = !paused;
-				if (paused) interface.add(*paused_widget);
-				else interface.getWidgets().pop_back();
-			}
-			break;
-			case Action::CHANGE_SCENE_MENU:
-				setFade(FADE::OUT, GAME_SCENE::MENU);
-			break;
-			case Action::SPAWN_ENTITY:
-				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
-			break;
-			case Action::SPAWN_PLAYER:
-				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
-				ent_mgr.update();
-				player = ent_mgr.getEntities(TAG::PLAYER)[0];
-			break;
-			case Action::SPAWN_BASE:
-				spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
-				ent_mgr.update();
-				base = ent_mgr.getEntities(TAG::BASE)[0];
-			default:
-			break;
+		if (*a->code == Action::GAME_PAUSE) {
+			paused = !paused;
+			if (paused) interface.add(*paused_widget);
+			else interface.getWidgets().pop_back();
 		}
+		else if (!paused && getCurrentFade() != FADE::OUT) {
+			switch (*a->code) {
+				case Action::MOVE_UP:
+					player->get<CInput>()->up = true;
+				break;
+				case Action::MOVE_LEFT:
+					player->get<CInput>()->left = true;
+				break;
+				case Action::MOVE_DOWN:
+					player->get<CInput>()->down = true;
+				break;
+				case Action::MOVE_RIGHT:
+					player->get<CInput>()->right = true;
+				break;
+				case Action::FIRE_PRIMARY:
+					player->get<CInput>()->fire_primary = true;
+				break;
+				case Action::FIRE_SECONDARY:
+					player->get<CInput>()->fire_secondary = true;
+				break;
+				case Action::CHANGE_SCENE_MENU:
+					setFade(FADE::OUT, GAME_SCENE::MENU);
+				break;
+				case Action::SPAWN_ENTITY:
+					spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
+				break;
+				case Action::SPAWN_PLAYER:
+					spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
+					ent_mgr.update();
+					player = ent_mgr.getEntities(TAG::PLAYER)[0];
+				break;
+				case Action::SPAWN_BASE:
+					spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
+					ent_mgr.update();
+					base = ent_mgr.getEntities(TAG::BASE)[0];
+				default:
+				break;
+			}
+		}
+
+
 	}
 	if (*a->type == Action::TYPE_END) {
 		switch (*a->code) {
