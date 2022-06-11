@@ -152,7 +152,8 @@ void Game::run() {
 			screen_tex.display();
 
 			window.clear();
-			window.draw(screen_sprite, &assets.getShader("crt-mattias"));
+			//window.draw(screen_sprite, &assets.getShader("crt-mattias"));
+			window.draw(screen_sprite);
 			window.display();
 
 			sUserInput();
@@ -232,6 +233,7 @@ void Game::setScene(size_t id) {
 			current_scene = new SceneScore(this);
 		break;
 		case GAME_SCENE::EXIT:
+			current_scene = nullptr;
 			running = false;
 		break;
 	}
