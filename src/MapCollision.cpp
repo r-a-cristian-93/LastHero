@@ -513,6 +513,8 @@ bool MapCollision::computePath(const sf::Vector2f& start_pos, const sf::Vector2f
 	setCell(start, chaser_r);
 	setCell(end, target_r);
 
+	path.pop_back();
+
 	return !path.empty();
 }
 
