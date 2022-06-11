@@ -9,6 +9,7 @@
 #define DEBUG_COLLISION_LAYER
 #define DEBUG_DIRECTION
 #define DEBUG_GRID
+#define DEBUG_ENTITY_POS
 
 #include <cstddef>
 #include <cstring>

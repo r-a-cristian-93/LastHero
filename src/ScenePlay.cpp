@@ -190,7 +190,7 @@ void ScenePlay::drawCollisionLayer() {
 
 	//DRAW BLOCKING
 	if (!collision_map.colmap.empty()) {
-		circle.setFillColor(sf::Color(255, 0, 0, 80));
+		circle.setFillColor(sf::Color(255, 0, 0, 50));
 
 		for (int y = 0; y < collision_map.map_size.x; y++) {
 			for (int x = 0; x < collision_map.map_size.x; x++) {
@@ -251,6 +251,25 @@ void ScenePlay::drawGrid() {
 	}
 }
 
+void ScenePlay::drawEntityPosition() {
+	sf::Color col(255,0,0);
+	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
+		if (e->get<CTransform>()) {
+			sf::Vector2f pos = e->get<CTransform>()->pos;
+			float d = 10;
+
+			sf::Vertex crosshair[] {
+				sf::Vertex(pos - sf::Vector2f(d,0), col),
+				sf::Vertex(pos + sf::Vector2f(d,0), col),
+				sf::Vertex(pos - sf::Vector2f(0,d), col),
+				sf::Vertex(pos + sf::Vector2f(0,d), col)
+			};
+
+			game->screen_tex.draw(crosshair, 4, sf::Lines);
+		}
+	}
+}
+
 void ScenePlay::update() {
 	{
 		PROFILE_SCOPE("SCENE_LOGIC");
@@ -301,6 +320,9 @@ void ScenePlay::update() {
 	drawDirectionVectors();
 #endif
 
+#ifdef DEBUG_ENTITY_POS
+	drawEntityPosition();
+#endif
 
 	if (glitter.m_lifetime >=0) {
 		glitter.update();
