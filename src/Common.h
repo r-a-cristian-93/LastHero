@@ -34,7 +34,7 @@ struct AppConfig {
 	unsigned int colmap_res = 1;
 	unsigned int colmap_update = 20;
 	unsigned int scene_fade_frames[FADE::COUNT];
-	unsigned int score_key_frames[FRAMES_SCORE::COUNT];
+	unsigned int score_key_frames[FRAMES_SCORE::COUNT] = {0};
 	float fade_multiplier = 1;
 
 	AppConfig() {
