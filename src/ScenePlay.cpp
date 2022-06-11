@@ -727,18 +727,16 @@ void ScenePlay::sAI() {
 
 			if (e->get<CBChase>()->target && e->tag != TAG::ENVIRONMENT) {
 				std::shared_ptr<Entity>& t = e->get<CBChase>()->target;
-
 				has_target = true;
 
 				sf::Vector2f start = e->get<CTransform>()->pos;
 				if (e->get<CCollision>()) {
-					start += e->get<CCollision>()->hitbox[0].offset[e->facing];
+					if (!e->get<CCollision>()->hitbox.empty()) {
+						start += e->get<CCollision>()->hitbox[0].offset[e->facing];
+					}
 				}
 
 				sf::Vector2f end = t->get<CTransform>()->pos;
-				if (t->get<CCollision>()) {
-				//	end += t->get<CCollision>()->hitbox[0].offset[t->facing];
-				}
 
 				std::vector<sf::Vector2f>& path = e->get<CBChase>()->path;
 				bool has_path = collision_map.computePath(start, end, path, MapCollision::MOVE_NORMAL, 0);
