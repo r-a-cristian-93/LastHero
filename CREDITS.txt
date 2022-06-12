@@ -12,6 +12,7 @@ License: "CC BY-SA 3.0" - https://creativecommons.org/licenses/by-sa/3.0/
 	/res/sounds/menu_select.ogg
 	/res/sounds/menu_confirm.ogg
 	/res/sounds/menu_punch.ogg
+	/res/sounds/menu_pause.ogg
 
 Derivative work is part of "LastHero sound assets" which is licensed under CC BY-SA 3.0 by r.a.cristian.93.
 
