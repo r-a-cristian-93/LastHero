@@ -1168,13 +1168,20 @@ void ScenePlay::lookAt(CInput& c_input, const sf::Vector2f& a, const sf::Vector2
 }
 
 void ScenePlay::doAction(const Action* a) {
-	if (*a->type == Action::TYPE_START) {
+	if (*a->type == Action::TYPE_START && getCurrentFade() != FADE::OUT) {
 		if (*a->code == Action::GAME_PAUSE) {
 			paused = !paused;
-			if (paused) interface.add(*paused_widget);
-			else interface.getWidgets().pop_back();
+			if (paused) {
+				game->snd_mgr.pauseBgMusic();
+				game->snd_mgr.playSound("menu_pause");
+				interface.add(*paused_widget);
+			}
+			else {
+				game->snd_mgr.playBgMusic();
+				interface.getWidgets().pop_back();
+			}
 		}
-		else if (!paused && getCurrentFade() != FADE::OUT) {
+		else if (!paused) {
 			switch (*a->code) {
 				case Action::MOVE_UP:
 					player->get<CInput>()->up = true;

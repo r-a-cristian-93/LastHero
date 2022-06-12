@@ -17,6 +17,8 @@ public:
 	void playSound(std::string name);
 
 	void playBgMusic(std::string name);
+	void playBgMusic();
+	void pauseBgMusic();
 	void stopBgMusic();
 	void setBgMusicVolume(float v);
 

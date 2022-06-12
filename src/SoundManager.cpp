@@ -66,4 +66,12 @@ void SoundManager::stopBgMusic() {
 	if (bg_music) bg_music->stop();
 }
 
+void SoundManager::playBgMusic() {
+	if (bg_music) bg_music->play();
+}
+
+void SoundManager::pauseBgMusic() {
+	if (bg_music) bg_music->pause();
+}
+
 
