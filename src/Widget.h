@@ -23,7 +23,7 @@ public://protected:
 
 //text
 	size_t link;
-	int* link_int;
+	const int* link_int;
 	sf::Text* text;
 //text
 
@@ -52,6 +52,8 @@ public:
 		LINK_PLAYER_HP,
 		LINK_BASE_HP,
 		LINK_TOTAL_KILLS,
+		LINK_SECONDARY_ROUNDS,
+		LINK_SECONDARY_ROUNDS_CURRENT,
 		LINK_COUNT
 	};
 

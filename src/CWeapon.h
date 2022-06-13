@@ -19,8 +19,10 @@ public:
 	size_t s_cooldown;
 	size_t p_cooldown_current;
 	size_t s_cooldown_current;
-	size_t p_rounds;
-	size_t s_rounds;
+	int p_rounds;
+	int s_rounds;
+	int p_rounds_current;
+	int s_rounds_current;
 	size_t p_delay;
 	size_t s_delay;
 	size_t p_delay_current;

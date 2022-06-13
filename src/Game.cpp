@@ -152,8 +152,8 @@ void Game::run() {
 			screen_tex.display();
 
 			window.clear();
-			//window.draw(screen_sprite, &assets.getShader("crt-mattias"));
-			window.draw(screen_sprite);
+			window.draw(screen_sprite, &assets.getShader("crt-mattias"));
+			//window.draw(screen_sprite);
 			window.display();
 
 			sUserInput();

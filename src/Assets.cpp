@@ -463,6 +463,8 @@ void Assets::loadEntity() {
 				weapon.s_cooldown = data_ent.secondary_cooldown;
 				weapon.p_rounds = data_ent.p_rounds;
 				weapon.s_rounds = data_ent.s_rounds;
+				weapon.p_rounds_current = data_ent.p_rounds;
+				weapon.s_rounds_current = data_ent.s_rounds;
 				weapon.p_delay = data_ent.p_delay;
 				weapon.s_delay = data_ent.s_delay;
 				weapon.p_delay_current = data_ent.p_delay;
@@ -754,6 +756,8 @@ void Assets::loadWidget() {
 			if (word == "player_health") link = Widget::LINK_PLAYER_HP;
 			else if (word == "base_health") link = Widget::LINK_BASE_HP;
 			else if (word == "total_kills") link = Widget::LINK_TOTAL_KILLS;
+			else if (word == "secondary_rounds") link = Widget::LINK_SECONDARY_ROUNDS;
+			else if (word == "secondary_rounds_current") link = Widget::LINK_SECONDARY_ROUNDS_CURRENT;
 			else {
 				std::cout << "Invalid link: " << word << std::endl;
 				exit(0);

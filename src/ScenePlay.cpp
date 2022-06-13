@@ -41,6 +41,8 @@ void ScenePlay::init() {
 	links[Widget::LINK_PLAYER_HP] = &player->get<CStats>()->effective[CStats::HEALTH];
 	links[Widget::LINK_BASE_HP] = &base->get<CStats>()->effective[CStats::HEALTH];
 	links[Widget::LINK_TOTAL_KILLS] = &total_kills;
+	links[Widget::LINK_SECONDARY_ROUNDS] = &player->get<CWeapon>()->s_rounds;
+	links[Widget::LINK_SECONDARY_ROUNDS_CURRENT] = &player->get<CWeapon>()->s_rounds_current;
 
 	interface.setLinks(links);
 
@@ -676,13 +678,13 @@ void ScenePlay::sStateFacing() {
 			if (e->get<CInput>() && e->get<CWeapon>()) {
 				CWeapon& comp_w = *e->get<CWeapon>();
 
-				if (e->get<CInput>()->fire_primary && comp_w.p_cooldown_current == 0 && comp_w.p_rounds) {
+				if (e->get<CInput>()->fire_primary && comp_w.p_cooldown_current == 0 && comp_w.p_rounds_current) {
 					if (e->get<CAnimation>()->anim_set.animations[Entity::STATE_FIRE_PRIMARY].count(e->facing) != 0) {
 						e->state = Entity::STATE_FIRE_PRIMARY;
 						e->blocked = true;
 					}
 				}
-				else if (e->get<CInput>()->fire_secondary && comp_w.s_cooldown_current == 0 && comp_w.s_rounds) {
+				else if (e->get<CInput>()->fire_secondary && comp_w.s_cooldown_current == 0 && comp_w.s_rounds_current) {
 					if (e->get<CAnimation>()->anim_set.animations[Entity::STATE_FIRE_SECONDARY].count(e->facing) != 0) {
 						e->state = Entity::STATE_FIRE_SECONDARY;
 						e->blocked = true;
@@ -948,13 +950,13 @@ void ScenePlay::sFireWeapon() {
 			// use only one weapon at a time
 			// the weapon cooldown time should be slightly higher than the firing animation
 			if (comp_w.p_cooldown_current == 0 && comp_w.s_cooldown_current == 0) {
-				if (e->get<CInput>()->fire_primary && comp_w.p_rounds) {
+				if (e->get<CInput>()->fire_primary && comp_w.p_rounds_current) {
 					if (comp_w.p_delay_current == 0) {
 						spawnEntity(comp_w.p_tag, comp_w.primary, e, pos, Entity::STATE_RUN, facing);
 						game->snd_mgr.playSound(comp_w.p_sfx);
 
 						e->get<CInput>()->fire_primary = false;
-						comp_w.p_rounds--;
+						comp_w.p_rounds_current--;
 						comp_w.p_cooldown_current = comp_w.p_cooldown;
 						comp_w.p_delay_current = comp_w.p_delay;
 					}
@@ -962,13 +964,13 @@ void ScenePlay::sFireWeapon() {
 						comp_w.p_delay_current--;
 					}
 				}
-				else if (e->get<CInput>()->fire_secondary && comp_w.s_rounds) {
+				else if (e->get<CInput>()->fire_secondary && comp_w.s_rounds_current) {
 					if (comp_w.s_delay_current == 0) {
 						spawnEntity(comp_w.s_tag, comp_w.secondary, e, pos, Entity::STATE_RUN, facing);
 						game->snd_mgr.playSound(comp_w.s_sfx);
 
 						e->get<CInput>()->fire_secondary = false;
-						comp_w.s_rounds--;
+						comp_w.s_rounds_current--;
 						comp_w.s_cooldown_current = comp_w.s_cooldown;
 						comp_w.s_delay_current = comp_w.s_delay;
 					}
