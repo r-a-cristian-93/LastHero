@@ -18,12 +18,14 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "Enums.h"
+#include <iostream>
 
 #define PI 3.14159265
 
 struct AppConfig {
 	std::string window_name;
 	int window_w, window_h;
+	sf::Vector2f window_res;
 	int game_w, game_h;
 	int max_fps;
 	int window_style;
@@ -36,9 +38,16 @@ struct AppConfig {
 	unsigned int scene_fade_frames[FADE::COUNT];
 	unsigned int score_key_frames[FRAMES_SCORE::COUNT] = {0};
 	float fade_multiplier = 1;
+	std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
 
 	AppConfig() {
 		std::memset(scene_fade_frames, 20, sizeof(scene_fade_frames));
+		for (int i = 0; i < modes.size(); i++) {
+			std::cout << "Mode #" << i << "\t"
+					  << modes[i].width << "x" << modes[i].height << " \t "
+					  << modes[i].bitsPerPixel << " bpp" << std::endl;
+		}
+
 	}
 };
 
