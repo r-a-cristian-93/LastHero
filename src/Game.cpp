@@ -10,6 +10,7 @@
 #include "SceneMainMenu.h"
 #include "SceneGameOver.h"
 #include "SceneScore.h"
+#include "SceneSettings.h"
 
 Game::Game(std::string file_name)
 	:running(false)
@@ -211,13 +212,15 @@ void Game::sChangeScene() {
 }
 
 void Game::setScene(size_t id) {
-	act_mgr = ActionManager();
-
 	delete current_scene;
+	act_mgr = ActionManager();
 
 	switch (id) {
 		case GAME_SCENE::MENU:
 			current_scene = new SceneMainMenu(this);
+		break;
+		case GAME_SCENE::SETTINGS:
+			current_scene = new SceneSettings(this);
 		break;
 		case GAME_SCENE::PLAY:
 			current_scene = new ScenePlay(this, stages[next_stage]);
@@ -235,6 +238,9 @@ void Game::setScene(size_t id) {
 		case GAME_SCENE::EXIT:
 			current_scene = nullptr;
 			running = false;
+		break;
+		default:
+			std::cout << __FILE__ << ":" << __LINE__ << " ERROR : Scene id " << id << " not handled\n";
 		break;
 	}
 }
