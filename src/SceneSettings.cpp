@@ -29,6 +29,36 @@ void SceneSettings::init() {
 		exit.setPosAbs(pos);
 		interface.add(exit);
 	}
+	{
+		Widget& key_res = game->assets.getWidget("key_res");
+		sf::Vector2i pos;
+		pos.x = static_cast<int>(game->app_conf.game_w*0.3);
+		pos.y = static_cast<int>(game->app_conf.game_h*0.2);
+		key_res.setColor(mod_highlight);
+		key_res.setPosAbs(pos);
+		interface.add(key_res);
+	}
+	{
+		Widget& val_res = game->assets.getWidget("val_res");
+		sf::Vector2i pos;
+		pos.x = static_cast<int>(game->app_conf.game_w*0.6);
+		pos.y = static_cast<int>(game->app_conf.game_h*0.2);
+		val_res.setColor(mod_highlight);
+		val_res.setPosAbs(pos);
+		interface.add(val_res);
+	}
+
+	selected_res = std::to_string(game->app_conf.mode_current->width)
+					+ "x"
+					+ std::to_string(game->app_conf.mode_current->height)
+					+ " "
+					+ std::to_string(game->app_conf.mode_current->bitsPerPixel)
+					+ "bpp";
+
+	std::string* links[Widget::LINK_COUNT];
+	links[Widget::LINK_RESOLUTION] = &selected_res;
+
+	interface.setLinks(links);
 
 	game->screen_tex.setView(gui_view);
 }

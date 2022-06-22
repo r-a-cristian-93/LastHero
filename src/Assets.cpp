@@ -758,6 +758,7 @@ void Assets::loadWidget() {
 			else if (word == "total_kills") link = Widget::LINK_TOTAL_KILLS;
 			else if (word == "secondary_rounds") link = Widget::LINK_SECONDARY_ROUNDS;
 			else if (word == "secondary_rounds_current") link = Widget::LINK_SECONDARY_ROUNDS_CURRENT;
+			else if (word == "res") link = Widget::LINK_RESOLUTION;
 			else {
 				std::cout << "Invalid link: " << word << std::endl;
 				exit(0);

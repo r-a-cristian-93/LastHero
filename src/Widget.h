@@ -24,6 +24,7 @@ public://protected:
 //text
 	size_t link;
 	const int* link_int;
+	const std::string* link_str;
 	sf::Text* text;
 //text
 
@@ -54,6 +55,7 @@ public:
 		LINK_TOTAL_KILLS,
 		LINK_SECONDARY_ROUNDS,
 		LINK_SECONDARY_ROUNDS_CURRENT,
+		LINK_RESOLUTION,
 		LINK_COUNT
 	};
 
@@ -62,6 +64,7 @@ public:
 	void setText(sf::Text& t);
 	void setTextColor(sf::Color color);
 	void linkToInt(int& value);
+	void linkToStr(std::string& value);
 	void updateText();
 	void updateOrigin();
 //text

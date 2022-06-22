@@ -24,7 +24,7 @@
 
 struct AppConfig {
 	std::string window_name;
-	int window_w, window_h;
+	//int window_w, window_h;
 	sf::Vector2f window_res;
 	int game_w, game_h;
 	int max_fps;
@@ -39,6 +39,7 @@ struct AppConfig {
 	unsigned int score_key_frames[FRAMES_SCORE::COUNT] = {0};
 	float fade_multiplier = 1;
 	std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
+	sf::VideoMode* mode_current = &modes[0];
 
 	AppConfig() {
 		std::memset(scene_fade_frames, 20, sizeof(scene_fade_frames));

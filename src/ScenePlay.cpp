@@ -345,14 +345,14 @@ void ScenePlay::update() {
 
 
 void ScenePlay::spawnPlayer() {
-	const sf::Vector2f pos(game->app_conf.window_w/2, game->app_conf.window_h/2);
+	const sf::Vector2f pos(game->app_conf.mode_current->width/2, game->app_conf.mode_current->height/2);
 
 	player = ent_mgr.add(TAG::PLAYER);
 	player->get<CTransform>()->pos = pos;
 }
 
 void ScenePlay::spawnBase() {
-	const sf::Vector2f pos(game->app_conf.window_w/2 + 200, game->app_conf.window_h/2);
+	const sf::Vector2f pos(game->app_conf.mode_current->width/2 + 200, game->app_conf.mode_current->height/2);
 
 
 	size_t recipe = game->assets.getRecipeNameID("cow");
@@ -380,8 +380,8 @@ void ScenePlay::spawnEnemy() {
 	int radius = 50;
 
 	while (!position_is_valid) {
-		pos.x = rand() % static_cast<int>(game->app_conf.window_w - radius*2) + radius;
-		pos.y = rand() % static_cast<int>(game->app_conf.window_h - radius*2) + radius;
+		pos.x = rand() % static_cast<int>(game->app_conf.mode_current->width - radius*2) + radius;
+		pos.y = rand() % static_cast<int>(game->app_conf.mode_current->height - radius*2) + radius;
 
 		float square_min_dist = (player_radius*10 + radius) * (player_radius*10 + radius);
 		float square_current_dist = squareDistance(pos, player->get<CTransform>()->pos);
@@ -1037,7 +1037,7 @@ std::shared_ptr<Entity> ScenePlay::findTarget(const std::shared_ptr<Entity>& mis
 	}
 
 	std::shared_ptr<Entity> target;
-	float prev_dist(game->app_conf.window_w*game->app_conf.window_w);
+	float prev_dist(game->app_conf.mode_current->width*game->app_conf.mode_current->width);
 	float dist;
 
 	for (std::shared_ptr<Entity>& enemy : reachable) {

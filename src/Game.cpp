@@ -31,12 +31,19 @@ void Game::init(std::string file_name) {
 	while(file >> word) {
 		if (word == "Window") {
 			file >> app_conf.window_name;
-			file >> app_conf.window_w;
-			file >> app_conf.window_h;
+			file >> app_conf.mode_current->width;
+			file >> app_conf.mode_current->height;
 			file >> app_conf.max_fps;
 			int style_bits;
 			file >> style_bits;
 			app_conf.window_style = 1 << style_bits;
+		}
+		if (word == "VideoMode") {
+			size_t mode_id = 0;
+			file >> mode_id;
+			if (mode_id < app_conf.modes.size()) {
+				app_conf.mode_current = &app_conf.modes[mode_id];
+			}
 		}
 		if (word == "Game") {
 			file >> app_conf.game_w;
@@ -109,7 +116,7 @@ void Game::init(std::string file_name) {
 	screen_tex.create(app_conf.game_w, app_conf.game_h);
 	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf.game_w, app_conf.game_h});
 	fit(screen_sprite);
-	window.create(sf::VideoMode(app_conf.window_w, app_conf.window_h), app_conf.window_name, app_conf.window_style);
+	window.create(*app_conf.mode_current, app_conf.window_name, app_conf.window_style);
 	window.setFramerateLimit(app_conf.max_fps);
 	window.setKeyRepeatEnabled(false);
 	window.setMouseCursorVisible(false);
@@ -128,19 +135,19 @@ void Game::reset(sf::Sprite& sprite) {
 }
 
 void Game::fit(sf::Sprite& sprite) {
-	float scale = static_cast<float>(app_conf.window_h) / app_conf.game_h;
+	float scale = static_cast<float>(app_conf.mode_current->height) / app_conf.game_h;
 	scale *= 0.95;
 	sprite.setScale(scale,scale);
 
-	float offset_x = (app_conf.window_w - screen_sprite.getGlobalBounds().width)/2;
-	float offset_y = (app_conf.window_h - screen_sprite.getGlobalBounds().height)/2;
+	float offset_x = (app_conf.mode_current->width - screen_sprite.getGlobalBounds().width)/2;
+	float offset_y = (app_conf.mode_current->height - screen_sprite.getGlobalBounds().height)/2;
 
 	sprite.setPosition(offset_x, offset_y);
 }
 
 void Game::run() {
 	sf::Event event;
-	sf::FloatRect lim(0,0,app_conf.window_w,app_conf.window_h);
+	sf::FloatRect lim(0,0,app_conf.mode_current->width, app_conf.mode_current->height);
 
 	while(running) {
 		PROFILE_SCOPE("MAIN_GAME_LOOP");

@@ -10,6 +10,8 @@ class SceneSettings: public Scene {
 		SELECT_COUNT
 	};
 
+	std::string selected_res = "RESxRES";
+
 	Interface interface;
 
 	sf::Color mod_highlight = {220, 220, 220};
