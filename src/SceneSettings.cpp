@@ -25,7 +25,7 @@ void SceneSettings::init() {
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
 		pos.y = static_cast<int>(game->app_conf.game_h*0.84);
-		exit.setColor(mod_highlight);
+		exit.setColor(mod_dark);
 		exit.setPosAbs(pos);
 		interface.add(exit);
 	}
@@ -41,7 +41,7 @@ void SceneSettings::init() {
 	{
 		Widget& val_res = game->assets.getWidget("val_res");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.6);
+		pos.x = static_cast<int>(game->app_conf.game_w*0.7);
 		pos.y = static_cast<int>(game->app_conf.game_h*0.2);
 		val_res.setColor(mod_highlight);
 		val_res.setPosAbs(pos);

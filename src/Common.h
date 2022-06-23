@@ -24,7 +24,6 @@
 
 struct AppConfig {
 	std::string window_name;
-	//int window_w, window_h;
 	sf::Vector2f window_res;
 	int game_w, game_h;
 	int max_fps;
@@ -43,12 +42,6 @@ struct AppConfig {
 
 	AppConfig() {
 		std::memset(scene_fade_frames, 20, sizeof(scene_fade_frames));
-		for (int i = 0; i < modes.size(); i++) {
-			std::cout << "Mode #" << i << "\t"
-					  << modes[i].width << "x" << modes[i].height << " \t "
-					  << modes[i].bitsPerPixel << " bpp" << std::endl;
-		}
-
 	}
 };
 

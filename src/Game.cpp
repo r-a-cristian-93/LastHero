@@ -31,18 +31,19 @@ void Game::init(std::string file_name) {
 	while(file >> word) {
 		if (word == "Window") {
 			file >> app_conf.window_name;
-			file >> app_conf.mode_current->width;
-			file >> app_conf.mode_current->height;
 			file >> app_conf.max_fps;
 			int style_bits;
 			file >> style_bits;
-			app_conf.window_style = 1 << style_bits;
+			app_conf.window_style = style_bits;
 		}
 		if (word == "VideoMode") {
 			size_t mode_id = 0;
 			file >> mode_id;
 			if (mode_id < app_conf.modes.size()) {
 				app_conf.mode_current = &app_conf.modes[mode_id];
+			}
+			else {
+				std::cout << "ERROR: Resolution not supported\n";
 			}
 		}
 		if (word == "Game") {
