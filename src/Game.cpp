@@ -40,7 +40,7 @@ void Game::init(std::string file_name) {
 			size_t mode_id = 0;
 			file >> mode_id;
 			if (mode_id < app_conf.modes.size()) {
-				app_conf.mode_current = &app_conf.modes[mode_id];
+				app_conf.current_mode_id = mode_id;
 			}
 			else {
 				std::cout << "ERROR: Resolution not supported\n";
@@ -117,7 +117,7 @@ void Game::init(std::string file_name) {
 	screen_tex.create(app_conf.game_w, app_conf.game_h);
 	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf.game_w, app_conf.game_h});
 	fit(screen_sprite);
-	window.create(*app_conf.mode_current, app_conf.window_name, app_conf.window_style);
+	window.create(app_conf.modes[app_conf.current_mode_id], app_conf.window_name, app_conf.window_style);
 	window.setFramerateLimit(app_conf.max_fps);
 	window.setKeyRepeatEnabled(false);
 	window.setMouseCursorVisible(false);
@@ -136,19 +136,19 @@ void Game::reset(sf::Sprite& sprite) {
 }
 
 void Game::fit(sf::Sprite& sprite) {
-	float scale = static_cast<float>(app_conf.mode_current->height) / app_conf.game_h;
+	float scale = static_cast<float>(app_conf.modes[app_conf.current_mode_id].height) / app_conf.game_h;
 	scale *= 0.95;
 	sprite.setScale(scale,scale);
 
-	float offset_x = (app_conf.mode_current->width - screen_sprite.getGlobalBounds().width)/2;
-	float offset_y = (app_conf.mode_current->height - screen_sprite.getGlobalBounds().height)/2;
+	float offset_x = (app_conf.modes[app_conf.current_mode_id].width - screen_sprite.getGlobalBounds().width)/2;
+	float offset_y = (app_conf.modes[app_conf.current_mode_id].height - screen_sprite.getGlobalBounds().height)/2;
 
 	sprite.setPosition(offset_x, offset_y);
 }
 
 void Game::run() {
 	sf::Event event;
-	sf::FloatRect lim(0,0,app_conf.mode_current->width, app_conf.mode_current->height);
+	sf::FloatRect lim(0,0,app_conf.modes[app_conf.current_mode_id].width, app_conf.modes[app_conf.current_mode_id].height);
 
 	while(running) {
 		PROFILE_SCOPE("MAIN_GAME_LOOP");

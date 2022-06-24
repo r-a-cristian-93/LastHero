@@ -38,7 +38,7 @@ struct AppConfig {
 	unsigned int score_key_frames[FRAMES_SCORE::COUNT] = {0};
 	float fade_multiplier = 1;
 	std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
-	sf::VideoMode* mode_current = &modes[0];
+	size_t current_mode_id = 0;
 
 	AppConfig() {
 		std::memset(scene_fade_frames, 20, sizeof(scene_fade_frames));

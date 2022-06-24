@@ -48,12 +48,7 @@ void SceneSettings::init() {
 		interface.add(val_res);
 	}
 
-	selected_res = std::to_string(game->app_conf.mode_current->width)
-					+ "x"
-					+ std::to_string(game->app_conf.mode_current->height)
-					+ " "
-					+ std::to_string(game->app_conf.mode_current->bitsPerPixel)
-					+ "bpp";
+	selected_res = to_string(game->app_conf.modes[game->app_conf.current_mode_id]);
 
 	std::string* links[Widget::LINK_COUNT];
 	links[Widget::LINK_RESOLUTION] = &selected_res;
@@ -124,4 +119,17 @@ void SceneSettings::select(size_t s) {
 	}
 
 	game->snd_mgr.playSound("menu_select");
+}
+
+std::string SceneSettings::to_string(sf::VideoMode& mode) {
+	std::string str = "";
+
+	str = std::to_string(mode.width)
+			+ "x"
+			+ std::to_string(mode.height)
+			+ " "
+			+ std::to_string(mode.bitsPerPixel)
+			+ "bpp";
+
+	return str;
 }

@@ -10,7 +10,8 @@ class SceneSettings: public Scene {
 		SELECT_COUNT
 	};
 
-	std::string selected_res = "RESxRES";
+	AppConfig temp_conf;
+	std::string selected_res = "";
 
 	Interface interface;
 
@@ -21,6 +22,7 @@ class SceneSettings: public Scene {
 
 	void init();
 	void select(size_t s);
+	std::string to_string(sf::VideoMode& mode);
 
 public:
 	void update() override;
