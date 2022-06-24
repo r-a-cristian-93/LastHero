@@ -32,7 +32,7 @@ void SceneSettings::init() {
 	{
 		Widget& key_res = game->assets.getWidget("key_res");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.3);
+		pos.x = static_cast<int>(game->app_conf.game_w*0.2);
 		pos.y = static_cast<int>(game->app_conf.game_h*0.2);
 		key_res.setColor(mod_highlight);
 		key_res.setPosAbs(pos);
@@ -46,6 +46,25 @@ void SceneSettings::init() {
 		val_res.setColor(mod_highlight);
 		val_res.setPosAbs(pos);
 		interface.add(val_res);
+	}
+
+	{
+		Widget& arrow_left = game->assets.getWidget("arrow_left");
+		sf::Vector2i pos;
+		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
+		pos.y = static_cast<int>(game->app_conf.game_h*0.2);
+		arrow_left.setColor(mod_highlight);
+		arrow_left.setPosAbs(pos);
+		interface.add(arrow_left);
+	}
+	{
+		Widget& arrow_right = game->assets.getWidget("arrow_right");
+		sf::Vector2i pos;
+		pos.x = static_cast<int>(game->app_conf.game_w*0.9);
+		pos.y = static_cast<int>(game->app_conf.game_h*0.2);
+		arrow_right.setColor(mod_highlight);
+		arrow_right.setPosAbs(pos);
+		interface.add(arrow_right);
 	}
 
 	selected_res = to_string(game->app_conf.modes[game->app_conf.current_mode_id]);
