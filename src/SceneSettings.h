@@ -17,6 +17,7 @@ class SceneSettings: public Scene {
 
 	AppConfig temp_conf = game->app_conf;
 	std::string selected_res = "";
+	std::string selected_style = "";
 
 	Interface interface;
 	int cols = 4;

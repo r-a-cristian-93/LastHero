@@ -29,14 +29,18 @@ void Game::init(std::string file_name) {
 	std::string word;
 
 	while(file >> word) {
-		if (word == "Window") {
+		if (word == "WINDOW_NAME") {
 			file >> app_conf.window_name;
-			file >> app_conf.max_fps;
+		}
+		if (word == "WINDOW_STYLE") {
 			int style_bits;
 			file >> style_bits;
 			app_conf.window_style = style_bits;
 		}
-		if (word == "VideoMode") {
+		if (word == "MAX_FPS") {
+			file >> app_conf.max_fps;
+		}
+		if (word == "WINDOW_RES") {
 			size_t mode_id = 0;
 			file >> mode_id;
 			if (mode_id < app_conf.modes.size()) {
@@ -46,19 +50,24 @@ void Game::init(std::string file_name) {
 				std::cout << "ERROR: Resolution not supported\n";
 			}
 		}
-		if (word == "Game") {
+		if (word == "GAME_RES") {
 			file >> app_conf.game_w;
 			file >> app_conf.game_h;
 		}
-		if (word == "Camera") {
-			file >> app_conf.cam_speed >> app_conf.cam_treshold;
+		if (word == "CAM_SPEED") {
+			file >> app_conf.cam_speed;
 		}
-		if (word == "stage") {
+		if (word == "CAM_TRESHOLD") {
+			file >> app_conf.cam_treshold;
+		}
+		if (word == "STAGE") {
 			file >> word;
 			stages.push_back(word);
 		}
-		if (word == "Colmap") {
+		if (word == "COLMAP_RES") {
 			file >> app_conf.colmap_res;
+		}
+		if (word == "COLMAP_UPDATE") {
 			file >> app_conf.colmap_update;
 		}
 		if (word == "FADE_SCENE") {
