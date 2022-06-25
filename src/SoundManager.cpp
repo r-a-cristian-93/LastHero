@@ -3,11 +3,13 @@
 
 SoundManager::SoundManager()
 	:assets(nullptr)
+	,app_conf(nullptr)
 	,bg_music(nullptr)
 	{}
 
-SoundManager::SoundManager(Assets* _assets)
+SoundManager::SoundManager(Assets* _assets, AppConfig* _config)
 	:assets(_assets)
+	,app_conf(_config)
 	,bg_music(nullptr)
 	{}
 
@@ -28,6 +30,7 @@ void SoundManager::playSound(size_t id) {
 	}
 
 	channels.push_back(sf::Sound(assets->getSoundBuffer(id)));
+	channels.back().setVolume(app_conf->sfx_volume);
 	channels.back().play();
 }
 
@@ -40,7 +43,7 @@ void SoundManager::playSound(std::string name) {
 void SoundManager::playBgMusic(std::string name) {
 	if (bg_music == &assets->getSound(name)) {
 		if (bg_music->getStatus() != sf::SoundSource::Status::Playing) {
-			bg_music->setVolume(100);
+			bg_music->setVolume(app_conf->music_volume);
 			bg_music->play();
 		}
 
@@ -53,7 +56,7 @@ void SoundManager::playBgMusic(std::string name) {
 		}
 
 		bg_music = &assets->getSound(name);
-		bg_music->setVolume(100);
+		bg_music->setVolume(app_conf->music_volume);
 		bg_music->play();
 	}
 }
@@ -72,6 +75,14 @@ void SoundManager::playBgMusic() {
 
 void SoundManager::pauseBgMusic() {
 	if (bg_music) bg_music->pause();
+}
+
+bool SoundManager::bgPlaying() {
+	if (bg_music)
+		if (bg_music->getStatus() == sf::SoundSource::Status::Playing)
+			return true;
+
+	return false;
 }
 
 

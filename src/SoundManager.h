@@ -9,6 +9,7 @@
 class SoundManager {
 private:
 	Assets* assets;
+	AppConfig* app_conf;
 	std::vector<sf::Sound> channels;
 	sf::Music* bg_music;
 
@@ -21,9 +22,10 @@ public:
 	void pauseBgMusic();
 	void stopBgMusic();
 	void setBgMusicVolume(float v);
+	bool bgPlaying();
 
 	SoundManager();
-	SoundManager(Assets* assets);
+	SoundManager(Assets* assets, AppConfig* config);
 };
 
 #endif

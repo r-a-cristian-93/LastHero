@@ -16,7 +16,6 @@ protected:
 	Game* game;
 	EntityManager ent_mgr;
 	sf::View gui_view;
-	std::string name = "";
 	SceneType scene_type = GAME_SCENE::NONE;
 
 	const unsigned int* fade_frames = nullptr;

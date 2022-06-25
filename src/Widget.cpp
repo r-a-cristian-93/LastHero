@@ -10,6 +10,7 @@ Widget::Widget()
 	,border(nullptr)
 	,text(nullptr)
 	,link_int(nullptr)
+	,link_str(nullptr)
 	,link(0)
 	{}
 
@@ -21,6 +22,7 @@ Widget::Widget(const Widget& w)
 	,border(nullptr)
 	,text(nullptr)
 	,link_int(w.link_int)
+	,link_str(w.link_str)
 	,link(w.link)
 	,childs(w.childs)
 {
@@ -150,14 +152,19 @@ void Widget::linkToInt(int& value) {
 	link_int = & value;
 }
 
+void Widget::linkToStr(std::string& value) {
+	link_str = &value;
+}
+
 void Widget::updateText() {
 	if (link_int)  {
 		setText(std::to_string(*link_int));
-		updateOrigin();
 	}
-	else {
-		updateOrigin();
+	else if (link_str) {
+		setText(*link_str);
 	}
+
+	updateOrigin();
 }
 
 void Widget::updateOrigin() {

@@ -13,7 +13,7 @@ SceneMainMenu::~SceneMainMenu() {}
 
 void SceneMainMenu::init() {
 	music_fade_out = true;
-	game->snd_mgr.playBgMusic("intro");
+	//game->snd_mgr.playBgMusic("intro");
 
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
@@ -41,10 +41,20 @@ void SceneMainMenu::init() {
 	}
 
 	{
-		Widget& exit = game->assets.getWidget("button_exit");
+		Widget& settings = game->assets.getWidget("button_settings");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
 		pos.y = static_cast<int>(game->app_conf.game_h*0.77);
+		settings.setColor(mod_dark);
+		settings.setPosAbs(pos);
+		interface.add(settings);
+	}
+
+	{
+		Widget& exit = game->assets.getWidget("button_exit");
+		sf::Vector2i pos;
+		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
+		pos.y = static_cast<int>(game->app_conf.game_h*0.84);
 		exit.setColor(mod_dark);
 		exit.setPosAbs(pos);
 		interface.add(exit);
@@ -75,13 +85,22 @@ void SceneMainMenu::doAction(const Action* a) {
 					else if (selection == SELECT_PLAY) {
 						setFade(FADE::OUT, GAME_SCENE::PLAY);
 					}
+					else if (selection == SELECT_SETTINGS) {
+						setFade(FADE::OUT, GAME_SCENE::SETTINGS);
+					}
 				}
 			break;
 			case Action::MOVE_UP:
-				if (getCurrentFade() != FADE::OUT) select(SELECT_PLAY);
+				if (getCurrentFade() != FADE::OUT) {
+					if (selection > 0) select(selection-1);
+				}
 			break;
 			case Action::MOVE_DOWN:
-				if (getCurrentFade() != FADE::OUT) select(SELECT_EXIT);
+				if (getCurrentFade() != FADE::OUT) {
+					if (selection < SELECT_COUNT-1) {
+						select(selection + 1);
+					}
+				}
 			break;
 			case Action::GAME_EXIT:
 				setFade(FADE::OUT, GAME_SCENE::EXIT);

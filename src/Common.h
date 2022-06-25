@@ -18,24 +18,34 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "Enums.h"
+#include <iostream>
 
 #define PI 3.14159265
 
 struct AppConfig {
-	std::string window_name;
-	int window_w, window_h;
-	int game_w, game_h;
-	int max_fps;
-	int window_style;
-	int font_size;
-	int font_r, font_g, font_b;
-	float cam_speed, cam_treshold;
+	enum {
+		STYLE_WINDOWED = 6,
+		STYLE_FULLSCREEN = 8
+	};
+
+	std::string window_name = "LastHero";
+	int window_style = STYLE_WINDOWED;
+	int max_fps = 60;
+	int game_w = 1024;
+	int game_h = 768;
+	float cam_speed = 15;
+	float cam_treshold = 10;
 	int directions = 8;
-	unsigned int colmap_res = 1;
-	unsigned int colmap_update = 20;
+	unsigned int colmap_res = 4;
+	unsigned int colmap_update = 30;
 	unsigned int scene_fade_frames[FADE::COUNT];
 	unsigned int score_key_frames[FRAMES_SCORE::COUNT] = {0};
 	float fade_multiplier = 1;
+	std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
+	size_t current_mode_id = 0;
+
+	float music_volume = 100;
+	float sfx_volume = 100;
 
 	AppConfig() {
 		std::memset(scene_fade_frames, 20, sizeof(scene_fade_frames));

@@ -34,6 +34,7 @@ namespace GAME_SCENE {
 	enum {
 		NONE = 0,
 		MENU,
+		SETTINGS,
 		PLAY,
 		OVER,
 		SCORE,

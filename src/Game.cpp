@@ -10,6 +10,7 @@
 #include "SceneMainMenu.h"
 #include "SceneGameOver.h"
 #include "SceneScore.h"
+#include "SceneSettings.h"
 
 Game::Game(std::string file_name)
 	:running(false)
@@ -28,31 +29,52 @@ void Game::init(std::string file_name) {
 	std::string word;
 
 	while(file >> word) {
-		if (word == "Window") {
+		if (word == "WINDOW_NAME") {
 			file >> app_conf.window_name;
-			file >> app_conf.window_w;
-			file >> app_conf.window_h;
-			file >> app_conf.max_fps;
-			int style_bits;
-			file >> style_bits;
-			app_conf.window_style = 1 << style_bits;
 		}
-		if (word == "Game") {
+		else if (word == "WINDOW_STYLE") {
+			file >> app_conf.window_style;
+		}
+		else if (word == "MAX_FPS") {
+			file >> app_conf.max_fps;
+		}
+		else if (word == "WINDOW_RES") {
+			size_t mode_id = 0;
+			file >> mode_id;
+			if (mode_id < app_conf.modes.size()) {
+				app_conf.current_mode_id = mode_id;
+			}
+			else {
+				std::cout << "ERROR: Resolution not supported\n";
+			}
+		}
+		else if (word == "MUSIC_VOLUME") {
+			file >> app_conf.music_volume;
+		}
+		else if (word == "SFX_VOLUME") {
+			file >> app_conf.sfx_volume;
+		}
+		else if (word == "GAME_RES") {
 			file >> app_conf.game_w;
 			file >> app_conf.game_h;
 		}
-		if (word == "Camera") {
-			file >> app_conf.cam_speed >> app_conf.cam_treshold;
+		else if (word == "CAM_SPEED") {
+			file >> app_conf.cam_speed;
 		}
-		if (word == "stage") {
+		else if (word == "CAM_TRESHOLD") {
+			file >> app_conf.cam_treshold;
+		}
+		else if (word == "STAGE") {
 			file >> word;
 			stages.push_back(word);
 		}
-		if (word == "Colmap") {
+		else if (word == "COLMAP_RES") {
 			file >> app_conf.colmap_res;
+		}
+		else if (word == "COLMAP_UPDATE") {
 			file >> app_conf.colmap_update;
 		}
-		if (word == "FADE_SCENE") {
+		else if (word == "FADE_SCENE") {
 			int frames = 1;
 
 			for (size_t f_type=1; f_type<FADE::COUNT; f_type++) {
@@ -69,7 +91,7 @@ void Game::init(std::string file_name) {
 				app_conf.scene_fade_frames[f_type] = frames;
 			}
 		}
-		if (word == "FRAMES_SCORE") {
+		else if (word == "FRAMES_SCORE") {
 			int frames = 1;
 
 			for (size_t f_type=1; f_type<FRAMES_SCORE::COUNT; f_type++) {
@@ -82,7 +104,7 @@ void Game::init(std::string file_name) {
 				app_conf.score_key_frames[f_type] = frames;
 			}
 		}
-		if (word == "FADE_MULTIPLYER") {
+		else if (word == "FADE_MULTIPLYER") {
 			float m = 1;
 			file >> m;
 
@@ -107,14 +129,11 @@ void Game::init(std::string file_name) {
 	//load texture after creating the window causes sementation fault;
 	screen_tex.create(app_conf.game_w, app_conf.game_h);
 	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf.game_w, app_conf.game_h});
-	fit(screen_sprite);
-	window.create(sf::VideoMode(app_conf.window_w, app_conf.window_h), app_conf.window_name, app_conf.window_style);
-	window.setFramerateLimit(app_conf.max_fps);
-	window.setKeyRepeatEnabled(false);
-	window.setMouseCursorVisible(false);
+
+	applySettings(app_conf);
 
 	act_mgr = ActionManager();
-	snd_mgr = SoundManager(&assets);
+	snd_mgr = SoundManager(&assets, &app_conf);
 
 	setScene(GAME_SCENE::MENU);
 
@@ -127,19 +146,19 @@ void Game::reset(sf::Sprite& sprite) {
 }
 
 void Game::fit(sf::Sprite& sprite) {
-	float scale = static_cast<float>(app_conf.window_h) / app_conf.game_h;
+	float scale = static_cast<float>(app_conf.modes[app_conf.current_mode_id].height) / app_conf.game_h;
 	scale *= 0.95;
 	sprite.setScale(scale,scale);
 
-	float offset_x = (app_conf.window_w - screen_sprite.getGlobalBounds().width)/2;
-	float offset_y = (app_conf.window_h - screen_sprite.getGlobalBounds().height)/2;
+	float offset_x = (app_conf.modes[app_conf.current_mode_id].width - screen_sprite.getGlobalBounds().width)/2;
+	float offset_y = (app_conf.modes[app_conf.current_mode_id].height - screen_sprite.getGlobalBounds().height)/2;
 
 	sprite.setPosition(offset_x, offset_y);
 }
 
 void Game::run() {
 	sf::Event event;
-	sf::FloatRect lim(0,0,app_conf.window_w,app_conf.window_h);
+	sf::FloatRect lim(0,0,app_conf.modes[app_conf.current_mode_id].width, app_conf.modes[app_conf.current_mode_id].height);
 
 	while(running) {
 		PROFILE_SCOPE("MAIN_GAME_LOOP");
@@ -211,13 +230,15 @@ void Game::sChangeScene() {
 }
 
 void Game::setScene(size_t id) {
-	act_mgr = ActionManager();
-
 	delete current_scene;
+	act_mgr = ActionManager();
 
 	switch (id) {
 		case GAME_SCENE::MENU:
 			current_scene = new SceneMainMenu(this);
+		break;
+		case GAME_SCENE::SETTINGS:
+			current_scene = new SceneSettings(this);
 		break;
 		case GAME_SCENE::PLAY:
 			current_scene = new ScenePlay(this, stages[next_stage]);
@@ -235,6 +256,9 @@ void Game::setScene(size_t id) {
 		case GAME_SCENE::EXIT:
 			current_scene = nullptr;
 			running = false;
+		break;
+		default:
+			std::cout << __FILE__ << ":" << __LINE__ << " ERROR : Scene id " << id << " not handled\n";
 		break;
 	}
 }
@@ -276,6 +300,16 @@ size_t Game::stagePrev() {
 
 size_t Game::stagesCount() {
 	return stages.size();
+}
+
+void Game::applySettings(AppConfig& conf) {
+	app_conf = conf;
+
+	fit(screen_sprite);
+	window.create(app_conf.modes[app_conf.current_mode_id], app_conf.window_name, app_conf.window_style);
+	window.setFramerateLimit(app_conf.max_fps);
+	window.setKeyRepeatEnabled(false);
+	window.setMouseCursorVisible(false);
 }
 
 Game::~Game() {

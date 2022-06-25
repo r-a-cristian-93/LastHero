@@ -7,7 +7,9 @@
 class SceneMainMenu: public Scene {
 	enum {
 		SELECT_PLAY = 0,
+		SELECT_SETTINGS,
 		SELECT_EXIT,
+		SELECT_COUNT
 	};
 
 	sf::Sprite* background;
