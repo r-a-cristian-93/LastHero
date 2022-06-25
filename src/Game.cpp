@@ -33,9 +33,7 @@ void Game::init(std::string file_name) {
 			file >> app_conf.window_name;
 		}
 		if (word == "WINDOW_STYLE") {
-			int style_bits;
-			file >> style_bits;
-			app_conf.window_style = style_bits;
+			file >> app_conf.window_style;
 		}
 		if (word == "MAX_FPS") {
 			file >> app_conf.max_fps;

@@ -68,7 +68,7 @@ void SceneSettings::init() {
 		interface.add(key_fullscreen);
 	}
 	{
-		Widget& val_fullscreen = game->assets.getWidget("key_fullscreen");
+		Widget& val_fullscreen = game->assets.getWidget("val_fullscreen");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(game->app_conf.game_w*0.7);
 		pos.y = static_cast<int>(game->app_conf.game_h*0.4);
@@ -196,8 +196,14 @@ void SceneSettings::init() {
 
 	selected_res = to_string(temp_conf.modes[temp_conf.current_mode_id]);
 
+	if (temp_conf.window_style == AppConfig::STYLE_WINDOWED)
+		selected_style = "OFF";
+	else if (temp_conf.window_style == AppConfig::STYLE_FULLSCREEN)
+		selected_style = "ON";
+
 	std::string* links[Widget::LINK_COUNT];
-	links[Widget::LINK_RESOLUTION] = &selected_res;
+	links[Widget::LINK_WINDOW_RESOLUTION] = &selected_res;
+	links[Widget::LINK_WINDOW_STYLE] = &selected_style;
 
 	interface.setLinks(links);
 
@@ -276,6 +282,16 @@ void SceneSettings::selectHorizontal(size_t action_code) {
 					temp_conf.current_mode_id++;
 					selected_res = to_string(temp_conf.modes[temp_conf.current_mode_id]);
 				}
+			}
+		break;
+		case SELECT_FULLSCREEN:
+			if (action_code == Action::MOVE_LEFT) {
+				temp_conf.window_style = AppConfig::STYLE_FULLSCREEN;
+				selected_style = "ON";
+			}
+			else if (action_code == Action::MOVE_RIGHT) {
+				temp_conf.window_style = AppConfig::STYLE_WINDOWED;
+				selected_style = "OFF";
 			}
 		break;
 	}
