@@ -32,13 +32,13 @@ void Game::init(std::string file_name) {
 		if (word == "WINDOW_NAME") {
 			file >> app_conf.window_name;
 		}
-		if (word == "WINDOW_STYLE") {
+		else if (word == "WINDOW_STYLE") {
 			file >> app_conf.window_style;
 		}
-		if (word == "MAX_FPS") {
+		else if (word == "MAX_FPS") {
 			file >> app_conf.max_fps;
 		}
-		if (word == "WINDOW_RES") {
+		else if (word == "WINDOW_RES") {
 			size_t mode_id = 0;
 			file >> mode_id;
 			if (mode_id < app_conf.modes.size()) {
@@ -48,27 +48,33 @@ void Game::init(std::string file_name) {
 				std::cout << "ERROR: Resolution not supported\n";
 			}
 		}
-		if (word == "GAME_RES") {
+		else if (word == "MUSIC_VOLUME") {
+			file >> app_conf.music_volume;
+		}
+		else if (word == "SFX_VOLUME") {
+			file >> app_conf.sfx_volume;
+		}
+		else if (word == "GAME_RES") {
 			file >> app_conf.game_w;
 			file >> app_conf.game_h;
 		}
-		if (word == "CAM_SPEED") {
+		else if (word == "CAM_SPEED") {
 			file >> app_conf.cam_speed;
 		}
-		if (word == "CAM_TRESHOLD") {
+		else if (word == "CAM_TRESHOLD") {
 			file >> app_conf.cam_treshold;
 		}
-		if (word == "STAGE") {
+		else if (word == "STAGE") {
 			file >> word;
 			stages.push_back(word);
 		}
-		if (word == "COLMAP_RES") {
+		else if (word == "COLMAP_RES") {
 			file >> app_conf.colmap_res;
 		}
-		if (word == "COLMAP_UPDATE") {
+		else if (word == "COLMAP_UPDATE") {
 			file >> app_conf.colmap_update;
 		}
-		if (word == "FADE_SCENE") {
+		else if (word == "FADE_SCENE") {
 			int frames = 1;
 
 			for (size_t f_type=1; f_type<FADE::COUNT; f_type++) {
@@ -85,7 +91,7 @@ void Game::init(std::string file_name) {
 				app_conf.scene_fade_frames[f_type] = frames;
 			}
 		}
-		if (word == "FRAMES_SCORE") {
+		else if (word == "FRAMES_SCORE") {
 			int frames = 1;
 
 			for (size_t f_type=1; f_type<FRAMES_SCORE::COUNT; f_type++) {
@@ -98,7 +104,7 @@ void Game::init(std::string file_name) {
 				app_conf.score_key_frames[f_type] = frames;
 			}
 		}
-		if (word == "FADE_MULTIPLYER") {
+		else if (word == "FADE_MULTIPLYER") {
 			float m = 1;
 			file >> m;
 
@@ -127,7 +133,7 @@ void Game::init(std::string file_name) {
 	applySettings(app_conf);
 
 	act_mgr = ActionManager();
-	snd_mgr = SoundManager(&assets);
+	snd_mgr = SoundManager(&assets, &app_conf);
 
 	setScene(GAME_SCENE::MENU);
 

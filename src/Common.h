@@ -44,6 +44,9 @@ struct AppConfig {
 	std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
 	size_t current_mode_id = 0;
 
+	float music_volume = 100;
+	float sfx_volume = 100;
+
 	AppConfig() {
 		std::memset(scene_fade_frames, 20, sizeof(scene_fade_frames));
 	}

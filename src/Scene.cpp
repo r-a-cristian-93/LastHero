@@ -52,7 +52,7 @@ void Scene::sFade() {
 				float v = 0;
 
 				if (current_fade_frames[fade] > 0) {
-					v = current_fade_frames[fade] * (100.0f/fade_frames[fade]);
+					v = current_fade_frames[fade] * (game->app_conf.music_volume/fade_frames[fade]);
 				}
 				game->snd_mgr.setBgMusicVolume(v);
 			}

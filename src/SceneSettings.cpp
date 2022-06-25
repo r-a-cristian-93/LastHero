@@ -104,7 +104,7 @@ void SceneSettings::init() {
 		interface.add(key_music_vol);
 	}
 	{
-		Widget& val_music_vol = game->assets.getWidget("key_music_vol");
+		Widget& val_music_vol = game->assets.getWidget("val_music_vol");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(game->app_conf.game_w*0.7);
 		pos.y = static_cast<int>(game->app_conf.game_h*0.5);
@@ -140,7 +140,7 @@ void SceneSettings::init() {
 		interface.add(key_sfx_vol);
 	}
 	{
-		Widget& val_sfx_vol = game->assets.getWidget("key_sfx_vol");
+		Widget& val_sfx_vol = game->assets.getWidget("val_sfx_vol");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(game->app_conf.game_w*0.7);
 		pos.y = static_cast<int>(game->app_conf.game_h*0.6);
@@ -165,15 +165,6 @@ void SceneSettings::init() {
 		arrow_right.setColor(mod_dark);
 		arrow_right.setPosAbs(pos);
 		interface.add(arrow_right);
-	}
-	{
-		Widget& button_apply = game->assets.getWidget("button_apply");
-		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.75);
-		button_apply.setColor(mod_dark);
-		button_apply.setPosAbs(pos);
-		interface.add(button_apply);
 	}
 	{
 		Widget& button_back = game->assets.getWidget("button_back");
@@ -201,9 +192,14 @@ void SceneSettings::init() {
 	else if (temp_conf.window_style == AppConfig::STYLE_FULLSCREEN)
 		selected_style = "ON";
 
+	selected_sfx_vol = to_string(temp_conf.sfx_volume);
+	selected_music_vol = to_string(temp_conf.music_volume);
+
 	std::string* links[Widget::LINK_COUNT];
 	links[Widget::LINK_WINDOW_RESOLUTION] = &selected_res;
 	links[Widget::LINK_WINDOW_STYLE] = &selected_style;
+	links[Widget::LINK_MUSIC_VOLUME] = &selected_music_vol;
+	links[Widget::LINK_SFX_VOLUME] = &selected_sfx_vol;
 
 	interface.setLinks(links);
 
@@ -228,9 +224,10 @@ void SceneSettings::doAction(const Action* a) {
 					if (selection == SELECT_BACK) {
 						setFade(FADE::OUT, GAME_SCENE::MENU);
 					}
-
-					if (selection == SELECT_APPLY) {
-						game->applySettings(temp_conf);
+					else if (selection == SELECT_RESOLUTION || selection == SELECT_FULLSCREEN) {
+						if (game->app_conf.window_style != temp_conf.window_style || game->app_conf.current_mode_id != temp_conf.current_mode_id) {
+							game->applySettings(temp_conf);
+						}
 					}
 				}
 			break;
@@ -274,15 +271,15 @@ void SceneSettings::selectHorizontal(size_t action_code) {
 			if (action_code == Action::MOVE_LEFT) {
 				if (temp_conf.current_mode_id > 0) {
 					temp_conf.current_mode_id--;
-					selected_res = to_string(temp_conf.modes[temp_conf.current_mode_id]);
 				}
 			}
 			else if (action_code == Action::MOVE_RIGHT) {
 				if (temp_conf.current_mode_id < temp_conf.modes.size() - 1) {
 					temp_conf.current_mode_id++;
-					selected_res = to_string(temp_conf.modes[temp_conf.current_mode_id]);
 				}
 			}
+
+			selected_res = to_string(temp_conf.modes[temp_conf.current_mode_id]);
 		break;
 		case SELECT_FULLSCREEN:
 			if (action_code == Action::MOVE_LEFT) {
@@ -294,13 +291,37 @@ void SceneSettings::selectHorizontal(size_t action_code) {
 				selected_style = "OFF";
 			}
 		break;
+		case SELECT_MUSIC:
+			if (action_code == Action::MOVE_LEFT) {
+				if (temp_conf.music_volume >= 5) temp_conf.music_volume -= 5;
+			}
+			else if (action_code == Action::MOVE_RIGHT) {
+				if (temp_conf.music_volume <= 95) temp_conf.music_volume += 5;
+			}
+
+			game->app_conf.music_volume = temp_conf.music_volume;
+			selected_music_vol = to_string(temp_conf.music_volume);
+		break;
+		case SELECT_SFX:
+			if (action_code == Action::MOVE_LEFT) {
+				if (temp_conf.sfx_volume >= 5) temp_conf.sfx_volume -=5;
+			}
+			else if (action_code == Action::MOVE_RIGHT) {
+				if (temp_conf.sfx_volume <= 95) temp_conf.sfx_volume += 5;
+			}
+
+			game->app_conf.sfx_volume = temp_conf.sfx_volume;
+			selected_sfx_vol = to_string(temp_conf.sfx_volume);
+		break;
 	}
+
+	game->snd_mgr.playSound("menu_select");
 }
 
 void SceneSettings::select(size_t s) {
 	selection = s;
 
-	for (size_t i = 0; i<rows + 2; i++) {		// + 2 for APPLY and BACK buttons
+	for (size_t i = 0; i<rows + 1; i++) {		// + 1 for BACK button
 		if (i == selection) {
 			if (i<cols) {
 				interface.getWidgets()[i*4+1].setColor(mod_highlight);
@@ -337,4 +358,8 @@ std::string SceneSettings::to_string(sf::VideoMode& mode) {
 			+ "bpp";
 
 	return str;
+}
+
+std::string SceneSettings::to_string(float volume) {
+	return std::to_string(static_cast<int>(volume)) + " %";
 }

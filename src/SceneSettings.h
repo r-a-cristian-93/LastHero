@@ -10,7 +10,6 @@ class SceneSettings: public Scene {
 		SELECT_FULLSCREEN,
 		SELECT_MUSIC,
 		SELECT_SFX,
-		SELECT_APPLY,
 		SELECT_BACK,
 		SELECT_COUNT
 	};
@@ -18,6 +17,8 @@ class SceneSettings: public Scene {
 	AppConfig temp_conf = game->app_conf;
 	std::string selected_res = "";
 	std::string selected_style = "";
+	std::string selected_music_vol = "";
+	std::string selected_sfx_vol = "";
 
 	Interface interface;
 	int cols = 4;
@@ -32,6 +33,7 @@ class SceneSettings: public Scene {
 	void select(size_t s);
 	void selectHorizontal(size_t action_code);
 	std::string to_string(sf::VideoMode& mode);
+	std::string to_string(float volume);
 
 public:
 	void update() override;
