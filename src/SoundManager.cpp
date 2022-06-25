@@ -77,4 +77,12 @@ void SoundManager::pauseBgMusic() {
 	if (bg_music) bg_music->pause();
 }
 
+bool SoundManager::bgPlaying() {
+	if (bg_music)
+		if (bg_music->getStatus() == sf::SoundSource::Status::Playing)
+			return true;
+
+	return false;
+}
+
 

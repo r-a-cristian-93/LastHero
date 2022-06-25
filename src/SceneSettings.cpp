@@ -300,6 +300,7 @@ void SceneSettings::selectHorizontal(size_t action_code) {
 			}
 
 			game->app_conf.music_volume = temp_conf.music_volume;
+			game->snd_mgr.setBgMusicVolume(temp_conf.music_volume);
 			selected_music_vol = to_string(temp_conf.music_volume);
 		break;
 		case SELECT_SFX:

@@ -22,6 +22,7 @@ public:
 	void pauseBgMusic();
 	void stopBgMusic();
 	void setBgMusicVolume(float v);
+	bool bgPlaying();
 
 	SoundManager();
 	SoundManager(Assets* assets, AppConfig* config);

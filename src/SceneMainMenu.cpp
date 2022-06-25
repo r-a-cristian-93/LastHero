@@ -13,7 +13,7 @@ SceneMainMenu::~SceneMainMenu() {}
 
 void SceneMainMenu::init() {
 	music_fade_out = true;
-	game->snd_mgr.playBgMusic("intro");
+	//game->snd_mgr.playBgMusic("intro");
 
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
