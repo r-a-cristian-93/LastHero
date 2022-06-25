@@ -116,11 +116,8 @@ void Game::init(std::string file_name) {
 	//load texture after creating the window causes sementation fault;
 	screen_tex.create(app_conf.game_w, app_conf.game_h);
 	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf.game_w, app_conf.game_h});
-	fit(screen_sprite);
-	window.create(app_conf.modes[app_conf.current_mode_id], app_conf.window_name, app_conf.window_style);
-	window.setFramerateLimit(app_conf.max_fps);
-	window.setKeyRepeatEnabled(false);
-	window.setMouseCursorVisible(false);
+
+	applySettings(app_conf);
 
 	act_mgr = ActionManager();
 	snd_mgr = SoundManager(&assets);
@@ -290,6 +287,16 @@ size_t Game::stagePrev() {
 
 size_t Game::stagesCount() {
 	return stages.size();
+}
+
+void Game::applySettings(AppConfig& conf) {
+	app_conf = conf;
+
+	fit(screen_sprite);
+	window.create(app_conf.modes[app_conf.current_mode_id], app_conf.window_name, app_conf.window_style);
+	window.setFramerateLimit(app_conf.max_fps);
+	window.setKeyRepeatEnabled(false);
+	window.setMouseCursorVisible(false);
 }
 
 Game::~Game() {

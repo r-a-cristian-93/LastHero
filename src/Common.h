@@ -23,14 +23,13 @@
 #define PI 3.14159265
 
 struct AppConfig {
-	std::string window_name;
-	sf::Vector2f window_res;
-	int game_w, game_h;
-	int max_fps;
-	int window_style;
-	int font_size;
-	int font_r, font_g, font_b;
-	float cam_speed, cam_treshold;
+	std::string window_name = "LastHero";
+	int window_style = 6;
+	int max_fps = 60;
+	int game_w = 1024;
+	int game_h = 768;
+	float cam_speed = 15;
+	float cam_treshold = 10;
 	int directions = 8;
 	unsigned int colmap_res = 1;
 	unsigned int colmap_update = 20;

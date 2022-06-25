@@ -61,6 +61,8 @@ public:
 	void reset(sf::Sprite& sprite);
 	void fit(sf::Sprite& sprite);
 
+	void applySettings(AppConfig& conf);
+
 	Game(std::string file_name);
 	~Game();
 };
