@@ -118,7 +118,7 @@ void AppConfig::write(std::string file_name) {
 	file << "// WINDOWED or FULLSCREEN.\n";
 	file << "WINDOW_STYLE ";
 	if (window_style == STYLE_WINDOWED) {
-		file << "WINDOW\n\n";
+		file << "WINDOWED\n\n";
 	}
 	else if (window_style == STYLE_FULLSCREEN) {
 		file << "FULLSCREEN\n\n";
