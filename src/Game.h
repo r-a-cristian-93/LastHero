@@ -1,8 +1,6 @@
 #ifndef GAME
 #define GAME
 
-#include <SFML/Graphics.hpp>
-#include <string>
 #include <deque>
 
 #include "Entity.h"
@@ -13,6 +11,7 @@
 #include "Common.h"
 #include "Assets.h"
 #include "Scene.h"
+#include "AppConfig.h"
 
 #include "Profiler.h"
 
@@ -29,7 +28,7 @@ private:
 	size_t next_stage;
 	size_t prev_stage;
 
-	void init(std::string file_name);
+	void init();
 
 	void sUserInput();
 	void sChangeScene();
@@ -63,7 +62,7 @@ public:
 
 	void applySettings(AppConfig& conf);
 
-	Game(std::string file_name);
+	Game();
 	~Game();
 };
 

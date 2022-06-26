@@ -227,6 +227,7 @@ void SceneSettings::doAction(const Action* a) {
 					else if (selection == SELECT_RESOLUTION || selection == SELECT_FULLSCREEN) {
 						if (game->app_conf.window_style != temp_conf.window_style || game->app_conf.current_mode_id != temp_conf.current_mode_id) {
 							game->applySettings(temp_conf);
+							temp_conf.write("user.cfg");
 						}
 					}
 				}
@@ -302,6 +303,7 @@ void SceneSettings::selectHorizontal(size_t action_code) {
 			game->app_conf.music_volume = temp_conf.music_volume;
 			game->snd_mgr.setBgMusicVolume(temp_conf.music_volume);
 			selected_music_vol = to_string(temp_conf.music_volume);
+			temp_conf.write("user.cfg");
 		break;
 		case SELECT_SFX:
 			if (action_code == Action::MOVE_LEFT) {
@@ -313,6 +315,7 @@ void SceneSettings::selectHorizontal(size_t action_code) {
 
 			game->app_conf.sfx_volume = temp_conf.sfx_volume;
 			selected_sfx_vol = to_string(temp_conf.sfx_volume);
+			temp_conf.write("user.cfg");
 		break;
 	}
 

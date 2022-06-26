@@ -5,135 +5,45 @@
 #include "Game.h"
 #include "SDraw.h"
 #include "SUpdate.h"
-#include "Assets.h"
 #include "ScenePlay.h"
 #include "SceneMainMenu.h"
 #include "SceneGameOver.h"
 #include "SceneScore.h"
 #include "SceneSettings.h"
 
-Game::Game(std::string file_name)
+Game::Game()
 	:running(false)
 	,current_scene(nullptr)
 	,next_stage(0)
 	,prev_stage(0)
 	,next_scene(0)
 {
-	init(file_name);
+	init();
 }
 
-void Game::init(std::string file_name) {
+void Game::init() {
 	PROFILE_FUNCTION();
 
-	std::ifstream file(file_name);
-	std::string word;
+	// load default settings
+	app_conf.read("game.cfg");
 
-	while(file >> word) {
-		if (word == "WINDOW_NAME") {
-			file >> app_conf.window_name;
-		}
-		else if (word == "WINDOW_STYLE") {
-			file >> word;
-			if (word == "WINDOWED") {
-				app_conf.window_style = AppConfig::STYLE_WINDOWED;
-			}
-			else if (word == "FULLSCREEN") {
-				app_conf.window_style = AppConfig::STYLE_FULLSCREEN;
-			}
-			else {
-				std::cout << "ERROR: invalid WINDOW_STYLE: " << word << std::endl;
-			}
-		}
-		else if (word == "MAX_FPS") {
-			file >> app_conf.max_fps;
-		}
-		else if (word == "WINDOW_RES") {
-			size_t mode_id = 0;
-			file >> mode_id;
-			if (mode_id < app_conf.modes.size()) {
-				app_conf.current_mode_id = mode_id;
-			}
-			else {
-				std::cout << "ERROR: Resolution not supported\n";
-			}
-		}
-		else if (word == "MUSIC_VOLUME") {
-			file >> app_conf.music_volume;
-		}
-		else if (word == "SFX_VOLUME") {
-			file >> app_conf.sfx_volume;
-		}
-		else if (word == "GAME_RES") {
-			file >> app_conf.game_w;
-			file >> app_conf.game_h;
-		}
-		else if (word == "CAM_SPEED") {
-			file >> app_conf.cam_speed;
-		}
-		else if (word == "CAM_TRESHOLD") {
-			file >> app_conf.cam_treshold;
-		}
-		else if (word == "STAGE") {
-			file >> word;
-			stages.push_back(word);
-		}
-		else if (word == "COLMAP_RES") {
-			file >> app_conf.colmap_res;
-		}
-		else if (word == "COLMAP_UPDATE") {
-			file >> app_conf.colmap_update;
-		}
-		else if (word == "FADE_SCENE") {
-			int frames = 1;
+	// load user settings
+	app_conf.read("user.cfg");
 
-			for (size_t f_type=1; f_type<FADE::COUNT; f_type++) {
-				file >> frames;
-				if (frames <= 0) {
-					frames = 1;
-					std::cout << "FADE_SCENE frames must be greater than 0. Set to default value 1.\n";
-				}
-				if (frames > 255) {
-					frames = 255;
-					std::cout << "FADE_SCENE frames must be lower than 256. Set to default value 1.\n";
-				}
+	// read game stages
+	{
+		std::ifstream file("stages.cfg");
+		std::string word;
 
-				app_conf.scene_fade_frames[f_type] = frames;
+		while(file >> word) {
+			if (word == "STAGE") {
+				file >> word;
+				stages.push_back(word);
 			}
 		}
-		else if (word == "FRAMES_SCORE") {
-			int frames = 1;
 
-			for (size_t f_type=1; f_type<FRAMES_SCORE::COUNT; f_type++) {
-				file >> frames;
-				if (frames <= 0) {
-					frames = 1;
-					std::cout << "FRAMES_SCORE frames must be greater than 0. Set to default value 1.\n";
-				}
-
-				app_conf.score_key_frames[f_type] = frames;
-			}
-		}
-		else if (word == "FADE_MULTIPLYER") {
-			float m = 1;
-			file >> m;
-
-			if (m <= 0) {
-				m = 1;
-				std::cout << "Fade multipilier must be greater than 0. Set to default value 1.\n";
-			}
-			app_conf.fade_multiplier = m;
-
-			// apply multiplier
-			for (size_t f=0; f<FADE::COUNT; f++) {
-				app_conf.scene_fade_frames[f] *= m;
-			}
-			for (size_t f=0; f<FRAMES_SCORE::COUNT; f++) {
-				app_conf.score_key_frames[f] *= m;
-			}
-		}
+		file.close();
 	}
-
-	file.close();
 
 	//load texture after creating the window causes sementation fault;
 	screen_tex.create(app_conf.game_w, app_conf.game_h);

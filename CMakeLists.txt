@@ -51,6 +51,7 @@ set(SOURCE_FILES
 	src/AStarContainer.cpp
 	src/AStarNode.cpp
 	src/MapCollision.cpp
+	src/AppConfig.cpp
 )
 
 add_executable(LastHero ${SOURCE_FILES})

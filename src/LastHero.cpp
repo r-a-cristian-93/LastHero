@@ -1,9 +1,9 @@
 #include "Game.h"
 
 int main() {
-	Game game("config.cfg");
-	
+	Game game;
+
 	game.run();
-	
+
 	return 0;
 }

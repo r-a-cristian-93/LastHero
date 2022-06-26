@@ -3,6 +3,7 @@
 
 #include "Common.h"
 #include "Assets.h"
+#include "AppConfig.h"
 
 #define MAX_CHANNELS 32
 
