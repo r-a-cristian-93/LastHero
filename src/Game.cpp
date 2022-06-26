@@ -33,7 +33,16 @@ void Game::init(std::string file_name) {
 			file >> app_conf.window_name;
 		}
 		else if (word == "WINDOW_STYLE") {
-			file >> app_conf.window_style;
+			file >> word;
+			if (word == "WINDOWED") {
+				app_conf.window_style = AppConfig::STYLE_WINDOWED;
+			}
+			else if (word == "FULLSCREEN") {
+				app_conf.window_style = AppConfig::STYLE_FULLSCREEN;
+			}
+			else {
+				std::cout << "ERROR: invalid WINDOW_STYLE: " << word << std::endl;
+			}
 		}
 		else if (word == "MAX_FPS") {
 			file >> app_conf.max_fps;
