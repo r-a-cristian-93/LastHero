@@ -128,8 +128,9 @@ void ScenePlay::load_level(std::string path) {
 					else if (word == "player") tag = TAG::PLAYER;
 					else if (word == "base") tag = TAG::BASE;
 					else if (word == "environment") tag = TAG::ENVIRONMENT;
+					else if (word == "powerup") tag = TAG::POWERUP;
 					else {
-						std::cout << "LOAD LEVEL: Tag \"" << "\" is not supported\n";
+						std::cout << "LOAD LEVEL: Tag \"" << word << "\" is not supported\n";
 						exit(0);
 					}
 

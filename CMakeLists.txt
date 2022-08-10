@@ -25,6 +25,7 @@ set(SOURCE_FILES
 	src/CBChase.cpp
 	src/CBFire.cpp
 	src/CBPatrol.cpp
+	src/CBPowerup.cpp
 	src/Entity.cpp
 	src/SUpdate.cpp
 	src/SDraw.cpp

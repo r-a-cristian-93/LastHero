@@ -365,6 +365,22 @@ void Assets::loadEntity() {
 					exit(0);
 				}
 			}
+			else if (word == "powerup") {
+				file >> word;
+
+				if (word == "player_hp") data_ent.cb_powerup.powerup = CBPowerup::PLAYER_HP;
+				else if (word == "base_hp") data_ent.cb_powerup.powerup = CBPowerup::BASE_HP;
+				else if (word == "weapon_rounds") data_ent.cb_powerup.powerup = CBPowerup::WEAPON_ROUNDS;
+				else {
+					std::cout << "Powerup type " << word << " is not supported.\n";
+					exit(0);
+				}
+
+				file >> word;
+				data_ent.cb_powerup.cond.trigger = parseTrigger(word);
+				file >> data_ent.cb_powerup.cond.data_start;
+				file >> data_ent.cb_powerup.percent;
+			}
 			else {
 				std::cout << "Behaviour " << word << " is not supported.\n";
 				exit(0);
@@ -380,6 +396,7 @@ void Assets::loadEntity() {
 		case TAG::PROJECTILE:
 		case TAG::MISSLE:
 		case TAG::FX:
+		case TAG::POWERUP:
 		{
 			// add CTransform
 			recipe[data_ent.tag][data_ent.name_id].add<CTransform>(new CTransform(data_ent.velocity));
@@ -523,6 +540,7 @@ size_t Assets::parseTag(const std::string& word) {
 	else if (word == "missle") return TAG::MISSLE;
 	else if (word == "enemy") return TAG::ENEMY;
 	else if (word == "fx") return TAG::FX;
+	else if (word == "powerup") return TAG::POWERUP;
 	else {
 		std::cout << "Invalid entity tag \"" << word << "\".\n";
 		exit(0);

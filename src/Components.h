@@ -15,6 +15,7 @@
 #include "CBFire.h"
 #include "CBPatrol.h"
 #include "CBChase.h"
+#include "CBPowerup.h"
 
 class Components {
 	std::tuple<
@@ -31,7 +32,8 @@ class Components {
 		CFx*,
 		CBFire*,
 		CBPatrol*,
-		CBChase*> components;
+		CBChase*,
+		CBPowerup*> components;
 
 public:
 	Components() {
@@ -49,6 +51,7 @@ public:
 		add<CBFire>(nullptr);
 		add<CBPatrol>(nullptr);
 		add<CBChase>(nullptr);
+		add<CBPowerup>(nullptr);
 	}
 
 	Components(
@@ -65,7 +68,8 @@ public:
 		CAnimation* c_a,
 		CBFire* cb_f,
 		CBPatrol* cb_p,
-		CBChase* cb_c)
+		CBChase* cb_c,
+		CBPowerup* cb_pw)
 	{
 		add<CTransform>(c_tr);
 		add<CShape>(c_sh);
@@ -81,6 +85,7 @@ public:
 		add<CBFire>(cb_f);
 		add<CBPatrol>(cb_p);
 		add<CBChase>(cb_c);
+		add<CBPowerup>(cb_pw);
 	}
 
 	Components(const Components& c) {
@@ -112,6 +117,8 @@ public:
 			add<CBPatrol>(new CBPatrol(*c.get<CBPatrol>()));
 		if (c.get<CBChase>())
 			add<CBChase>(new CBChase(*c.get<CBChase>()));
+		if (c.get<CBPowerup>())
+			add<CBPowerup>(new CBPowerup(*c.get<CBPowerup>()));
 	}
 
 	~Components() {
@@ -129,6 +136,7 @@ public:
 		if (get<CBFire>()) delete get<CBFire>();
 		if (get<CBPatrol>()) delete get<CBPatrol>();
 		if (get<CBChase>()) delete get<CBChase>();
+		if (get<CBPowerup>()) delete get<CBPowerup>();
 	}
 
 	template<class T>

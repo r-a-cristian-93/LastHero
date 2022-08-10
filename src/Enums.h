@@ -11,6 +11,7 @@ namespace TAG {
 		PROJECTILE,
 		MISSLE,
 		FX,
+		POWERUP,
 	};
 }
 
