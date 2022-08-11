@@ -515,6 +515,11 @@ void Assets::loadEntity() {
 				recipe[data_ent.tag][data_ent.name_id].add<CBChase>(new CBChase(data_ent.cb_chase));
 			}
 
+			//add CBPowerup
+			if (data_ent.cb_powerup.powerup != 0) {
+				recipe[data_ent.tag][data_ent.name_id].add<CBPowerup>(new CBPowerup(data_ent.cb_powerup));
+			}
+
 			// add icon
 			if (!data_ent.icon.empty()) {
 				icon_small[data_ent.name_id] = &getSprite(data_ent.icon);

@@ -68,6 +68,7 @@ class ScenePlay: public Scene {
 	void sGameState();
 	void sPlayFx();
 	void sPathFind();
+	void sPowerup();
 
 	void checkLifespan(std::shared_ptr<Entity>& e);
 	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);

@@ -285,6 +285,7 @@ void ScenePlay::update() {
 			sLifespan();
 			sPathFind();
 			sAI();
+			sPowerup();
 			//sMissleGuidance();
 
 			SUpdate::updatePosition(ent_mgr.getEntities(), map_ground.getBounds());
@@ -517,7 +518,12 @@ void ScenePlay::sCollisionSolve() {
 	for (std::shared_ptr<Entity>& entity : ent_mgr.getEntities()) {
 
 		// if it's not a projectile and has CCollision
-		if (!entity->get<CLifespan>() && entity->get<CCollision>() && entity->alive) {
+		if (entity->tag != TAG::PROJECTILE &&
+			entity->tag != TAG::POWERUP &&
+			entity->tag != TAG::FX &&
+			entity->get<CCollision>() && entity->alive)
+		{
+
 			EntityVec& colliders = entity->get<CCollision>()->colliders;
 			std::vector<HitBox*>& hitboxes_this = entity->get<CCollision>()->hitboxes_this;
 			std::vector<HitBox*>& hitboxes_collider = entity->get<CCollision>()->hitboxes_collider;
@@ -533,8 +539,13 @@ void ScenePlay::sCollisionSolve() {
 						}
 					}
 
-					// if it's a colliders[i](projectile) apply damage and kill colliders[i]
-					if (colliders[i]->get<CLifespan>() && colliders[i]->alive) {
+					// skip if collider is POWERUP
+					if (colliders[i]->tag == TAG::POWERUP) {
+						continue;
+					}
+
+					// if the collider[i] is a projectile apply damage and kill colliders[i]
+					if (colliders[i]->tag == TAG::PROJECTILE && colliders[i]->alive) {
 						colliders[i]->alive = false;
 						//spawnExplosion(colliders[i]->get<CTransform>()->pos);
 
@@ -641,6 +652,7 @@ void ScenePlay::sPlayFx() {
 		}
 	}
 }
+
 
 void ScenePlay::sStateFacing() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
@@ -836,6 +848,49 @@ void ScenePlay::sAI() {
 						e->get<CInput>()->right = false;
 					}
 				break;
+			}
+		}
+	}
+}
+
+void ScenePlay::sPowerup() {
+	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(TAG::POWERUP)) {
+		if (e->get<CBPowerup>()) {
+			CBPowerup& cb_powerup = *e->get<CBPowerup>();
+			//handle powerup
+			bool cond_met = false;
+
+			switch (cb_powerup.cond.trigger) {
+				case TR::PLAYER_NEARBY:
+					if (checkCollision(e, player)) {
+						cond_met = true;
+					}
+				break;
+			}
+
+			if (cond_met) {
+				switch (cb_powerup.powerup) {
+					case CBPowerup::PLAYER_HP:
+					{
+						int& initial_hp = player->get<CStats>()->initial[CStats::HEALTH];
+						int& effective_hp = player->get<CStats>()->effective[CStats::HEALTH];
+
+						int hp_value = cb_powerup.percent * initial_hp / 100;
+
+						effective_hp += hp_value;
+						if (effective_hp > initial_hp) effective_hp = initial_hp;
+					}
+					break;
+					case CBPowerup::BASE_HP:
+
+					break;
+					case CBPowerup::WEAPON_ROUNDS:
+
+					break;
+				}
+
+				cb_powerup.percent = 0;
+				e->alive = false;
 			}
 		}
 	}
