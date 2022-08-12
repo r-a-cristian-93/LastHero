@@ -872,7 +872,7 @@ void ScenePlay::sPowerup() {
 				switch (cb_powerup.powerup) {
 					case CBPowerup::PLAYER_HP:
 					{
-						int& initial_hp = player->get<CStats>()->initial[CStats::HEALTH];
+						const int& initial_hp = player->get<CStats>()->initial[CStats::HEALTH];
 						int& effective_hp = player->get<CStats>()->effective[CStats::HEALTH];
 
 						int hp_value = cb_powerup.percent * initial_hp / 100;
@@ -885,7 +885,13 @@ void ScenePlay::sPowerup() {
 
 					break;
 					case CBPowerup::WEAPON_ROUNDS:
+						const int& s_rounds = player->get<CWeapon>()->s_rounds;
+						int& s_rounds_current = player->get<CWeapon>()->s_rounds_current;
 
+						int rounds = cb_powerup.percent * s_rounds / 100;
+
+						s_rounds_current += rounds;
+						if (s_rounds_current > s_rounds) s_rounds_current = s_rounds;
 					break;
 				}
 
