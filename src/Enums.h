@@ -20,6 +20,7 @@ namespace TR {
 		NONE = 0,
 		PLAYER_LOW_HP,			// % of HP
 		PLAYER_NEARBY,			// distance in pixels
+		PLAYER_HURT,
 		BASE_LOW_HP,				// % of HP
 		BASE_NEARBY,				// distance in pixels
 		BASE_NOT_PROTECTED,		// distance in pixels

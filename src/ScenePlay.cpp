@@ -36,6 +36,7 @@ void ScenePlay::init() {
 
 	// setup interface
 	interface.add(game->assets.getWidget("play_ui"));
+	interface.add(game->assets.getWidget("blood_overlay"));
 
 	int* links[Widget::LINK_COUNT];
 	links[Widget::LINK_PLAYER_HP] = &player->get<CStats>()->effective[CStats::HEALTH];
