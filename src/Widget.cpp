@@ -12,6 +12,7 @@ Widget::Widget()
 	,link_int(nullptr)
 	,link_str(nullptr)
 	,link(0)
+	,current_fx(nullptr)
 	{}
 
 Widget::Widget(const Widget& w)
@@ -25,6 +26,7 @@ Widget::Widget(const Widget& w)
 	,link_str(w.link_str)
 	,link(w.link)
 	,childs(w.childs)
+	,current_fx(nullptr)
 {
 	if (w.background) setBackground(*w.background, w.bg_offset);
 	if (w.border) setBorder(*w.border);

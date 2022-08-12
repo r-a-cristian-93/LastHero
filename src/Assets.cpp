@@ -558,6 +558,7 @@ size_t Assets::parseTrigger(const std::string& word) {
 	else if (word == "tr_cont") return TR::CONTINUOUS;
 	else if (word == "tr_player_low_hp") return TR::PLAYER_LOW_HP;
 	else if (word == "tr_player_nearby") return TR::PLAYER_NEARBY;
+	else if (word == "tr_player_hurt") return TR::PLAYER_HURT;
 	else if (word == "tr_base_low_hp") return TR::BASE_LOW_HP;
 	else if (word == "tr_base_nearby") return TR::BASE_NEARBY;
 	else if (word == "tr_base_not_protected") return TR::BASE_NOT_PROTECTED;
@@ -817,6 +818,36 @@ void Assets::loadWidget() {
 		else if (word == "child") {
 			file >> word;
 			childs.push_back(word);
+		}
+		else if (word == "fx") {
+			WidgetFx fx;
+
+			file >> word;
+			if (word == "fade_in_out") fx.type = WidgetFx::Type::FADE_IN_OUT;
+			else if (word == "fade_in") fx.type = WidgetFx::Type::FADE_IN;
+			else if (word == "fade_out") fx.type = WidgetFx::Type::FADE_OUT;
+			else {
+				std::cout << "Invalid WIdgetFx::Type \"" << word << "\".\n";
+				exit(0);
+			}
+
+			if (fx.type == WidgetFx::Type::FADE_IN_OUT) {
+				file >> fx.data[WidgetFx::DataIndex::FRAMES_IN];
+				file >> fx.data[WidgetFx::DataIndex::FRAMES_OUT];
+				file >> fx.data[WidgetFx::DataIndex::OPACITY_HI];
+				file >> fx.data[WidgetFx::DataIndex::OPACITY_LOW];
+			}
+			if (fx.type == WidgetFx::Type::FADE_OUT) {
+				file >> fx.data[WidgetFx::DataIndex::FRAMES_OUT];
+				file >> fx.data[WidgetFx::DataIndex::OPACITY_LOW];
+			}
+			if (fx.type == WidgetFx::Type::FADE_IN) {
+				file >> fx.data[WidgetFx::DataIndex::FRAMES_IN];
+				file >> fx.data[WidgetFx::DataIndex::OPACITY_HI];
+			}
+
+			file >> word;
+			fx.cond.trigger = parseTrigger(word);
 		}
 	}
 

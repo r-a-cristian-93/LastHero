@@ -3,6 +3,33 @@
 
 #include "SFML/Graphics.hpp"
 #include "Border.h"
+#include "CommonBehaviour.h"
+
+struct WidgetFx {
+	//fx type
+	enum Type: int {
+		NONE = 0,
+		FADE_IN,
+		FADE_OUT,
+		FADE_IN_OUT,
+	};
+
+	//data index
+	enum DataIndex: int {
+		CURRENT_FRAME = 0,
+		FRAMES_IN,
+		FRAMES_OUT,
+		OPACITY_HI,
+		OPACITY_LOW,
+		COUNT
+	};
+
+	BCondition cond;
+	Type type;
+	int data[DataIndex::COUNT];
+};
+
+
 
 class Widget {
 public://protected:
@@ -12,6 +39,8 @@ public://protected:
 	sf::Vector2i pos_abs;
 	sf::Vector2i size;
 	std::vector<sf::Drawable*> drawables;
+	std::vector<WidgetFx> fx;
+	WidgetFx* current_fx;
 
 	void updateChildPos(Widget& child);
 
