@@ -857,7 +857,6 @@ void ScenePlay::sPowerup() {
 	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(TAG::POWERUP)) {
 		if (e->get<CBPowerup>()) {
 			CBPowerup& cb_powerup = *e->get<CBPowerup>();
-			//handle powerup
 			bool cond_met = false;
 
 			switch (cb_powerup.cond.trigger) {
@@ -874,7 +873,6 @@ void ScenePlay::sPowerup() {
 					{
 						const int& initial_hp = player->get<CStats>()->initial[CStats::HEALTH];
 						int& effective_hp = player->get<CStats>()->effective[CStats::HEALTH];
-
 						int hp_value = cb_powerup.percent * initial_hp / 100;
 
 						effective_hp += hp_value;
@@ -882,12 +880,18 @@ void ScenePlay::sPowerup() {
 					}
 					break;
 					case CBPowerup::BASE_HP:
+					{
+						const int& initial_hp = base->get<CStats>()->initial[CStats::HEALTH];
+						int& effective_hp = base->get<CStats>()->effective[CStats::HEALTH];
+						int hp_value = cb_powerup.percent * initial_hp / 100;
 
+						effective_hp += hp_value;
+						if (effective_hp > initial_hp) effective_hp = initial_hp;
+					}
 					break;
 					case CBPowerup::WEAPON_ROUNDS:
 						const int& s_rounds = player->get<CWeapon>()->s_rounds;
 						int& s_rounds_current = player->get<CWeapon>()->s_rounds_current;
-
 						int rounds = cb_powerup.percent * s_rounds / 100;
 
 						s_rounds_current += rounds;
