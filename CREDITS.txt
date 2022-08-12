@@ -41,3 +41,10 @@ License: "SIL OPEN FONT LICENSE Version 1.1" - http://scripts.sil.org/OFL
 	- derivative work
 	/res/fonts/pixel_font.ttf
 Derivative work "pixel_font" is licensed under SIL OPEN FONT LICENSE Version 1.1 by r.a.cristian.93.
+
+Title: "Blood overlay"
+Author: "1up Indie" https://opengameart.org/users/1up-indie
+Source: "Blood overlay" - https://opengameart.org/content/blood-overlay
+License: "CC0" - https://creativecommons.org/publicdomain/zero/1.0/
+	- derivative work
+	/res/images/blood_overlay.png
