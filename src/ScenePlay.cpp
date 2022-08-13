@@ -293,6 +293,7 @@ void ScenePlay::update() {
 
 			sCollisionCheck();
 			sCollisionSolve();
+			sWidgetFx();
 			sStateFacing();
 			sFireWeapon();
 			sInterface();
@@ -1315,6 +1316,29 @@ void ScenePlay::doAction(const Action* a) {
 void ScenePlay::sLevelUp() {
 
 }
+
+void ScenePlay::sWidgetFx() {
+	WidgetVec& widgets = interface.getWidgets();
+
+	for (Widget& w: widgets) {
+		handleWidgetFx(w);
+	}
+}
+
+void ScenePlay::handleWidgetFx(Widget& w) {
+	for (WidgetFx& wfx: w.fx) {
+		if (wfx.cond.trigger == TR::PLAYER_HURT && player->hit) {
+			w.current_fx = &wfx;
+		}
+	}
+
+	if (!w.childs.empty()) {
+		for (Widget& child: w.getChilds()) {
+			handleWidgetFx(child);
+		}
+	}
+}
+
 
 void ScenePlay::sInterface() {
 	interface.update();

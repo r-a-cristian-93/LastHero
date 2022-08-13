@@ -25,8 +25,8 @@ struct WidgetFx {
 	};
 
 	BCondition cond;
-	Type type;
-	int data[DataIndex::COUNT];
+	Type type = Type::NONE;
+	int data[DataIndex::COUNT] = {0};
 };
 
 

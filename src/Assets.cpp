@@ -769,6 +769,7 @@ void Assets::loadWidget() {
 	std::vector<std::string> childs;
 	sf::Color text_color(255, 255, 255);
 	std::string text = "TEXT";
+	WidgetFx fx;
 
 	while (file >> word) {
 		if (word == "_END") break;
@@ -820,8 +821,6 @@ void Assets::loadWidget() {
 			childs.push_back(word);
 		}
 		else if (word == "fx") {
-			WidgetFx fx;
-
 			file >> word;
 			if (word == "fade_in_out") fx.type = WidgetFx::Type::FADE_IN_OUT;
 			else if (word == "fade_in") fx.type = WidgetFx::Type::FADE_IN;
@@ -859,6 +858,7 @@ void Assets::loadWidget() {
 			if (!bg_sprite.empty()) widget.setBackground(sprites[bg_sprite], spr_offset);
 			if (!bg_tex.empty()) widget.setBackground(textures[bg_tex], tex_offset);
 			if (!border.empty()) widget.setBorder(borders[border]);
+			if (fx.type) widget.fx.push_back(fx);
 		}
 		else if (type == "text") {
 			widget.setSize(size);

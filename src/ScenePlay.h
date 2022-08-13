@@ -62,6 +62,7 @@ class ScenePlay: public Scene {
 	void sMissleGuidance();
 	void sPlayback();
 	void sLevelUp();
+	void sWidgetFx();
 	void sInterface();
 	void sAnimation();
 	void sView();
@@ -84,6 +85,7 @@ class ScenePlay: public Scene {
 
 	void handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, bool& fire_weapon);
 	void handleChase(std::shared_ptr<Entity>& e, const BCondition& bc);
+	void handleWidgetFx(Widget& w);
 
 	void drawCollisionLayer();
 	void drawDirectionVectors();

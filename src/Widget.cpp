@@ -26,6 +26,7 @@ Widget::Widget(const Widget& w)
 	,link_str(w.link_str)
 	,link(w.link)
 	,childs(w.childs)
+	,fx(w.fx)
 	,current_fx(nullptr)
 {
 	if (w.background) setBackground(*w.background, w.bg_offset);
@@ -188,6 +189,40 @@ void Widget::update() {
 	if (text) {
 		updateText();
 		updateOrigin();
+	}
+
+	if (current_fx) {
+		WidgetFx& fx = *current_fx;
+
+		int& current_frame = fx.data[WidgetFx::DataIndex::CURRENT_FRAME];
+		const int& frames_in = fx.data[WidgetFx::DataIndex::FRAMES_IN];
+		const int& frames_out = fx.data[WidgetFx::DataIndex::FRAMES_OUT];
+		const int& opacity_hi = fx.data[WidgetFx::DataIndex::OPACITY_HI];
+		const int& opacity_low = fx.data[WidgetFx::DataIndex::OPACITY_LOW];
+
+		current_frame++;
+
+		if (fx.type = WidgetFx::Type::FADE_IN_OUT) {
+			sf::Color color = background->getColor();
+			float alpha = 0;
+
+			if (current_frame <= frames_in) {
+				alpha =  (static_cast<float>(opacity_hi)/frames_in) * current_frame;
+				color.a = static_cast<int>(alpha);
+			}
+			else {
+				alpha = static_cast<float>(opacity_hi-opacity_low)/frames_out * ( frames_out - (current_frame - frames_in) );
+				color.a = static_cast<int>(alpha);
+			}
+
+			if (current_frame > frames_in + frames_out) {
+				current_frame = 0;
+				current_fx = nullptr;
+				color.a = opacity_low;
+			}
+
+			background->setColor(color);
+		}
 	}
 
 	if (!childs.empty()) {
