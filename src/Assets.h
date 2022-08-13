@@ -45,7 +45,10 @@ struct EntityDataset {
 	size_t cb_patrol_dist = 0;
 	std::vector<BCondition> cb_chase;
 	std::vector<Fx> c_fx;
+	size_t sfx_hurt = 0;
+	size_t sfx_die = 0;
 	CBPowerup cb_powerup;
+
 
 	~EntityDataset() {
 		delete[] stats_base;

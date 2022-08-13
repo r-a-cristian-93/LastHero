@@ -556,7 +556,6 @@ void ScenePlay::sCollisionSolve() {
 						entity->hit = true;
 
 						if (entity->get<CStats>() && colliders[i]->get<CStats>()) {
-
 							const int& collider_atk = colliders[i]->get<CStats>()->effective[CStats::ATTACK];
 							int& entity_hp = entity->get<CStats>()->effective[CStats::HEALTH];
 							int& entity_def = entity->get<CStats>()->effective[CStats::DEFENCE];
@@ -582,6 +581,13 @@ void ScenePlay::sCollisionSolve() {
 										total_kills++;
 									}
 								}
+							}
+
+							if (entity->get<CSfx>()) {
+								if (entity_hp <= 0)
+									game->snd_mgr.playSound(entity->get<CSfx>()->die);
+								else
+									game->snd_mgr.playSound(entity->get<CSfx>()->hurt);
 							}
 						}
 					}

@@ -304,6 +304,21 @@ void Assets::loadEntity() {
 
 			if (fx.id) 	data_ent.c_fx.push_back(fx);
 		}
+		else if (word == "sfx") {
+			file >> word;
+			if (word == "hurt") {
+				file >> word;
+				data_ent.sfx_hurt = getSoundBufferNameID(word);
+			}
+			else if (word == "die") {
+				file >> word;
+				data_ent.sfx_die = getSoundBufferNameID(word);
+			}
+			else {
+				std::cout << "Sfx tag " << word << " is not supported.\n";
+				exit(0);
+			}
+		}
 		else if (word == "hitbox") {
 			HitBox hb;
 			file >> hb.radius;
@@ -498,6 +513,11 @@ void Assets::loadEntity() {
 			// add CFx
 			if (!data_ent.c_fx.empty()) {
 				recipe[data_ent.tag][data_ent.name_id].add<CFx>(new CFx(data_ent.c_fx));
+			}
+
+			// add sfx
+			if (data_ent.sfx_hurt || data_ent.sfx_die) {
+				recipe[data_ent.tag][data_ent.name_id].add<CSfx>(new CSfx(data_ent.sfx_hurt, data_ent.sfx_die));
 			}
 
 			// add CBFire
