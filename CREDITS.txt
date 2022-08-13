@@ -48,3 +48,11 @@ Source: "Blood overlay" - https://opengameart.org/content/blood-overlay
 License: "CC0" - https://creativecommons.org/publicdomain/zero/1.0/
 	- derivative work
 	/res/images/blood_overlay.png
+
+Title: "grunts of male death and pain"
+Author: "thebardofblasphemy" https://opengameart.org/users/thebardofblasphemy
+Source: "grunts of male death and pain" - https://opengameart.org/content/grunts-male-death-and-pain
+License: "GPL 2.0" - https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+	- derivative work
+	/res/sounds/player_hurt_01.ogg
+	/res/sounds/player_die_01.ogg
