@@ -573,6 +573,7 @@ void ScenePlay::sCollisionSolve() {
 							}
 
 							if (entity_hp <= 0) {
+								entity_hp = 0;
 								entity->alive = false;
 
 								if (colliders[i]->owner) {
