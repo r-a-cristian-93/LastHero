@@ -187,9 +187,9 @@ void SceneScore::copyCells(WidgetVec& src, WidgetVec& dst, sf::IntRect rect) {
 	}
 }
 
-void SceneScore::doAction(const Action* a) {
-	if (*a->type == Action::TYPE_START) {
-		switch (*a->code) {
+void SceneScore::doAction(const Action& a) {
+	if (*a.type == Action::TYPE_START) {
+		switch (*a.code) {
 			case Action::MENU_SKIP: {
 				skip_key_frames = true;
 				game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SELECT);
@@ -209,8 +209,8 @@ void SceneScore::doAction(const Action* a) {
 			break;
 		}
 	}
-	if (*a->type == Action::TYPE_END) {
-		switch (*a->code) {
+	if (*a.type == Action::TYPE_END) {
+		switch (*a.code) {
 			default:
 			break;
 		}

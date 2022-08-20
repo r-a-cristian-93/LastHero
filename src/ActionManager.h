@@ -4,7 +4,6 @@
 #include <map>
 #include <deque>
 #include "Action.h"
-#include "ActionStream.h"
 
 //map<key, action_code>
 typedef std::map<int, int> ActionMap;

@@ -63,7 +63,7 @@ class SceneScore: public Scene {
 
 public:
 	void update() override;
-	void doAction(const Action* a) override;
+	void doAction(const Action& a) override;
 
 	SceneScore();
 	SceneScore(Game* g);

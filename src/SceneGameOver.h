@@ -18,7 +18,7 @@ class SceneGameOver: public Scene {
 
 public:
 	void update() override;
-	void doAction(const Action* a) override;
+	void doAction(const Action& a) override;
 
 	SceneGameOver();
 	SceneGameOver(Game* g);

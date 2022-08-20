@@ -36,7 +36,7 @@ private:
 
 public:
 	virtual void update() = 0;
-	virtual void doAction(const Action* a) = 0;
+	virtual void doAction(const Action& a) = 0;
 	void sFade();
 	void setFade(FadeType fade);
 	void setFade(FadeType fade, size_t scene);

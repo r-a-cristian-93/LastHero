@@ -215,9 +215,9 @@ void SceneSettings::update() {
 	sFade();
 }
 
-void SceneSettings::doAction(const Action* a) {
-	if (*a->type == Action::TYPE_START) {
-		switch (*a->code) {
+void SceneSettings::doAction(const Action& a) {
+	if (*a.type == Action::TYPE_START) {
+		switch (*a.code) {
 			case Action::MENU_SELECT:
 				if (getCurrentFade() != FADE::OUT) {
 					game->snd_mgr.playSound("menu_confirm");
@@ -247,7 +247,7 @@ void SceneSettings::doAction(const Action* a) {
 			case Action::MOVE_LEFT:
 			case Action::MOVE_RIGHT:
 				if (getCurrentFade() != FADE::OUT) {
-					selectHorizontal(*a->code);
+					selectHorizontal(*a.code);
 				}
 			break;
 			case Action::CHANGE_SCENE_MENU:
@@ -259,8 +259,8 @@ void SceneSettings::doAction(const Action* a) {
 			break;
 		}
 	}
-	if (*a->type == Action::TYPE_END) {
-		switch (*a->code) {
+	if (*a.type == Action::TYPE_END) {
+		switch (*a.code) {
 			default:
 			break;
 		}

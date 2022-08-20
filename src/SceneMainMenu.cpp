@@ -73,9 +73,9 @@ void SceneMainMenu::update() {
 	sFade();
 }
 
-void SceneMainMenu::doAction(const Action* a) {
-	if (*a->type == Action::TYPE_START) {
-		switch (*a->code) {
+void SceneMainMenu::doAction(const Action& a) {
+	if (*a.type == Action::TYPE_START) {
+		switch (*a.code) {
 			case Action::MENU_SELECT:
 				if (getCurrentFade() != FADE::OUT) {
 					game->snd_mgr.playSound("menu_confirm");
@@ -109,8 +109,8 @@ void SceneMainMenu::doAction(const Action* a) {
 			break;
 		}
 	}
-	if (*a->type == Action::TYPE_END) {
-		switch (*a->code) {
+	if (*a.type == Action::TYPE_END) {
+		switch (*a.code) {
 			default:
 			break;
 		}

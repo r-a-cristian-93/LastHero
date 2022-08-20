@@ -6,8 +6,6 @@
 ScenePlay::ScenePlay(Game* g, std::string lp)
 	:Scene(g, GAME_SCENE::PLAY)
 	,level_path(lp)
-	,map_size(0,0)
-	,tile_size(0,0)
 	,total_kills(0)
 	,game_state(GAME_PLAY)
 	,collision_map(ent_mgr)
@@ -32,7 +30,7 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
 
 	load_level(level_path);
-	collision_map.setMap(map_size, tile_size, game->app_conf.colmap_res, game->app_conf.colmap_update);
+	collision_map.setMap(level.map_size, level.tile_size, game->app_conf.colmap_res, game->app_conf.colmap_update);
 
 	// setup interface
 	interface.add(game->assets.getWidget("play_ui"));
@@ -56,7 +54,7 @@ void ScenePlay::init() {
 	// run this block to display level;
 	{
 		ent_mgr.update();
-		SUpdate::updatePosition(ent_mgr.getEntities(), map_ground.getBounds());
+		SUpdate::updatePosition(ent_mgr.getEntities(), level.map_ground.getBounds());
 		sCollisionCheck();
 		sCollisionSolve();
 		sStateFacing();
@@ -69,117 +67,14 @@ void ScenePlay::init() {
 }
 
 void ScenePlay::load_level(std::string path) {
-	PROFILE_FUNCTION();
+	level = Level(path, game->assets);
+	game->snd_mgr.playBgMusic(level.bg_music);
 
-	std::ifstream file(path);
-	std::string word;
-
-	std::string texture_name = "";
-	int* level_layer;
-
-	int frame, pos_x, pos_y, dir_x, dir_y;
-	size_t enemy_name;
-	size_t tag, code, type, state, facing;
-
-	ActionStream action_stream;
-
-	while (file >> word) {
-		if (word == "_HEADER") {
-			while (file>>word) {
-				if (word == "_END") break;
-				else if (word == "size")	{
-					file >> map_size.x >> map_size.y;
-					level_layer = new int[map_size.x*map_size.y];
-				}
-				else if (word == "tile_size") {
-					file >> tile_size.x >> tile_size.y;
-				}
-				else if (word == "texture") {
-					file >> texture_name;
-				}
-				else if (word == "bg_music") {
-					file >> word;
-					game->snd_mgr.playBgMusic(word);
-				}
-			}
-		}
-		if (word == "_LAYER") {
-			for (int t = 0; t < map_size.x*map_size.y; t++) {
-				file >> level_layer[t];
-			}
-		}
-		if (word == "_ACT") {
-			while (file >> word) {
-				if (word == "_END") break;
-				else if (word == "code") {
-					file >> word;
-					if (word == "spawn") code = Action::SPAWN_ENTITY;
-					else if (word  == "spawn_player") code = Action::SPAWN_PLAYER;
-					else if (word  == "spawn_base") code = Action::SPAWN_BASE;
-				}
-				else if (word == "type") {
-					file >> word;
-					if (word == "start") type = Action::TYPE_START;
-					else if (word == "end") type = Action::TYPE_END;
-				}
-				else if (word == "frame") file >> frame;
-				else if (word == "entity") {
-					file >> word;
-					if (word == "enemy") tag = TAG::ENEMY;
-					else if (word == "player") tag = TAG::PLAYER;
-					else if (word == "base") tag = TAG::BASE;
-					else if (word == "environment") tag = TAG::ENVIRONMENT;
-					else if (word == "powerup") tag = TAG::POWERUP;
-					else {
-						std::cout << "LOAD LEVEL: Tag \"" << word << "\" is not supported\n";
-						exit(0);
-					}
-
-					file >> word;
-					enemy_name = game->assets.getRecipeNameID(word);
-				}
-				else if (word == "pos") file >> pos_x >> pos_y;
-				else if (word == "state") {
-					file >> word;
-					if (word == "idle") state = Entity::STATE_IDLE;
-					else if (word == "run") state = Entity::STATE_RUN;
-					else if (word == "die") state = Entity::STATE_DIE;
-					else if (word == "spawn") state = Entity::STATE_SPAWN;
-				}
-				else if (word == "facing") {
-					file >> word;
-					if (word == "E") facing = Entity::FACING_E;
-					else if (word == "NE") facing = Entity::FACING_NE;
-					else if (word == "N") facing = Entity::FACING_N;
-					else if (word == "NW") facing = Entity::FACING_NW;
-					else if (word == "W") facing = Entity::FACING_W;
-					else if (word == "SW") facing = Entity::FACING_SW;
-					else if (word == "S") facing = Entity::FACING_S;
-					else if (word == "SE") facing = Entity::FACING_SE;
-				}
-			}
-
-			Action* action = new Action(code, type);
-			action->ent_tag = new size_t(tag);
-			action->ent_name = new size_t(enemy_name);
-			action->pos = new sf::Vector2f(pos_x, pos_y);
-			action->state = new size_t(state);
-			action->facing = new size_t(facing);
-
-			action_stream << action;
-		}
+	for (Action& a: level.actions) {
+		doAction(a);
 	}
 
-	map_ground.setTexture(game->assets.getTexture(texture_name));
-	map_ground.loadLevel(tile_size, level_layer, map_size);
-	delete[] level_layer;
-
-	while (!action_stream.empty()) {
-		Action* action;
-		action_stream >> action;
-		doAction(action);
-		delete action;
-	}
+	level.actions.clear();
 
 	// build collision_map here
 	ent_mgr.update();
@@ -190,7 +85,7 @@ void ScenePlay::sPathFind() {
 }
 
 void ScenePlay::drawCollisionLayer() {
-	sf::CircleShape circle(tile_size.x/(game->app_conf.colmap_res*2));
+	sf::CircleShape circle(level.tile_size.x/(game->app_conf.colmap_res*2));
 
 	//DRAW BLOCKING
 	if (!collision_map.colmap.empty()) {
@@ -198,7 +93,7 @@ void ScenePlay::drawCollisionLayer() {
 
 		for (int y = 0; y < collision_map.map_size.x; y++) {
 			for (int x = 0; x < collision_map.map_size.x; x++) {
-				circle.setPosition(sf::Vector2f(x*tile_size.x/game->app_conf.colmap_res,y*tile_size.y/game->app_conf.colmap_res));
+				circle.setPosition(sf::Vector2f(x*level.tile_size.x/game->app_conf.colmap_res,y*level.tile_size.y/game->app_conf.colmap_res));
 
 				if (collision_map.colmap[x][y]) {
 					game->screen_tex.draw(circle);
@@ -227,8 +122,8 @@ void ScenePlay::drawDirectionVectors() {
 		if (e->get<CTransform>()) {
 			if (e->get<CTransform>()->max_velocity) {
 				sf::Vector2f dir = dirOf(e->facing);
-				dir.x *= tile_size.x/2;
-				dir.y *= tile_size.x/2;
+				dir.x *= level.tile_size.x/2;
+				dir.y *= level.tile_size.x/2;
 
 				sf::Vertex line[] = {
 					sf::Vertex(e->get<CTransform>()->pos),
@@ -242,14 +137,14 @@ void ScenePlay::drawDirectionVectors() {
 
 void ScenePlay::drawGrid() {
 	sf::RectangleShape rect;
-	rect.setSize(sf::Vector2f(tile_size));
+	rect.setSize(sf::Vector2f(level.tile_size));
 	rect.setFillColor(sf::Color(0,0,0,0));
 	rect.setOutlineColor(sf::Color(0,0,0,50));
 	rect.setOutlineThickness(-1);
 
-	for (size_t x = 0; x < map_size.x; x++) {
-		for (size_t y = 0; y < map_size.y; y++) {
-			rect.setPosition(sf::Vector2f(x*tile_size.x, y*tile_size.y));
+	for (size_t x = 0; x < level.map_size.x; x++) {
+		for (size_t y = 0; y < level.map_size.y; y++) {
+			rect.setPosition(sf::Vector2f(x*level.tile_size.x, y*level.tile_size.y));
 			game->screen_tex.draw(rect);
 		}
 	}
@@ -289,7 +184,7 @@ void ScenePlay::update() {
 			sPowerup();
 			//sMissleGuidance();
 
-			SUpdate::updatePosition(ent_mgr.getEntities(), map_ground.getBounds());
+			SUpdate::updatePosition(ent_mgr.getEntities(), level.map_ground.getBounds());
 
 			sCollisionCheck();
 			sCollisionSolve();
@@ -306,7 +201,7 @@ void ScenePlay::update() {
 
 	{
 		PROFILE_SCOPE("sDrawBg");
-		game->screen_tex.draw(map_ground);
+		game->screen_tex.draw(level.map_ground);
 	}
 
 	{
@@ -345,28 +240,6 @@ void ScenePlay::update() {
 
 	frame_current++;
 	sFade();
-}
-
-
-void ScenePlay::spawnPlayer() {
-	const sf::Vector2f pos(game->app_conf.modes[game->app_conf.current_mode_id].width/2, game->app_conf.modes[game->app_conf.current_mode_id].height/2);
-
-	player = ent_mgr.add(TAG::PLAYER);
-	player->get<CTransform>()->pos = pos;
-}
-
-void ScenePlay::spawnBase() {
-	const sf::Vector2f pos(game->app_conf.modes[game->app_conf.current_mode_id].width/2 + 200, game->app_conf.modes[game->app_conf.current_mode_id].height/2);
-
-
-	size_t recipe = game->assets.getRecipeNameID("cow");
-	base = ent_mgr.add(TAG::ENEMY, recipe);
-	base->get<CTransform>()->pos = pos;
-	base->get<CTransform>()->dir = {-1, 1};
-	base->state = Entity::STATE_IDLE;
-	base->facing = Entity::FACING_SW;
-	base->get<CTransform>()->prev_dir = {-1, 1};
-	base->get<CAnimation>()->active_anim = &base->get<CAnimation>()->anim_set.animations[base->state][base->facing];
 }
 
 void ScenePlay::spawnEnemy() {
@@ -1244,9 +1117,9 @@ void ScenePlay::lookAt(CInput& c_input, const sf::Vector2f& a, const sf::Vector2
 	else if (dir.y < 0) c_input.up = true;
 }
 
-void ScenePlay::doAction(const Action* a) {
-	if (*a->type == Action::TYPE_START && getCurrentFade() != FADE::OUT) {
-		if (*a->code == Action::GAME_PAUSE) {
+void ScenePlay::doAction(const Action& a) {
+	if (*a.type == Action::TYPE_START && getCurrentFade() != FADE::OUT) {
+		if (*a.code == Action::GAME_PAUSE) {
 			paused = !paused;
 			if (paused) {
 				game->snd_mgr.pauseBgMusic();
@@ -1260,7 +1133,7 @@ void ScenePlay::doAction(const Action* a) {
 			}
 		}
 		else if (!paused) {
-			switch (*a->code) {
+			switch (*a.code) {
 				case Action::MOVE_UP:
 					player->get<CInput>()->up = true;
 				break;
@@ -1283,26 +1156,24 @@ void ScenePlay::doAction(const Action* a) {
 					setFade(FADE::OUT, GAME_SCENE::MENU);
 				break;
 				case Action::SPAWN_ENTITY:
-					spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
+					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
 				break;
 				case Action::SPAWN_PLAYER:
-					spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
+					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
 					ent_mgr.update();
 					player = ent_mgr.getEntities(TAG::PLAYER)[0];
 				break;
 				case Action::SPAWN_BASE:
-					spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
+					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
 					ent_mgr.update();
 					base = ent_mgr.getEntities(TAG::BASE)[0];
 				default:
 				break;
 			}
 		}
-
-
 	}
-	if (*a->type == Action::TYPE_END) {
-		switch (*a->code) {
+	if (*a.type == Action::TYPE_END) {
+		switch (*a.code) {
 			case Action::MOVE_UP:
 				player->get<CInput>()->up = false;
 			break;
@@ -1398,7 +1269,7 @@ void ScenePlay::sView() {
 	//update view position
 	int w = game->app_conf.game_w;
 	int h = game->app_conf.game_h;
-	sf::FloatRect world = map_ground.getBounds();
+	sf::FloatRect world = level.map_ground.getBounds();
 	sf::FloatRect rect(cam.pos.x-w/2, cam.pos.y-h/2, w, h);
 
 	//fix weird lines between map tiles when moving

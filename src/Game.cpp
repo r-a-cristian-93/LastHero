@@ -104,7 +104,6 @@ void Game::sUserInput() {
 	PROFILE_FUNCTION();
 
 	sf::Event event;
-	Action* action = nullptr;
 	int action_code = Action::NONE;
 
 	while (window.pollEvent(event)) {
@@ -115,27 +114,24 @@ void Game::sUserInput() {
 			action_code = act_mgr.getCode(ActionManager::DEV_KEYBOARD, event.key.code);
 
 			if (action_code) {
-				action = new Action(action_code, Action::TYPE_START);
+				Action action(action_code, Action::TYPE_START);
 				current_scene->doAction(action);
-				delete action;
 			}
 		}
 		else if (event.type == sf::Event::KeyReleased) {
 			action_code = act_mgr.getCode(ActionManager::DEV_KEYBOARD, event.key.code);
 
 			if (action_code) {
-				action = new Action(action_code, Action::TYPE_END);
+				Action action(action_code, Action::TYPE_END);
 				current_scene->doAction(action);
-				delete action;
 			}
 		}
 		else if (event.type == sf::Event::MouseButtonPressed){
 			action_code = act_mgr.getCode(ActionManager::DEV_MOUSE, event.mouseButton.button);
 
 			if (action_code != 0) {
-				action = new Action(action_code, Action::TYPE_START, sf::Mouse::getPosition());
+				Action action(action_code, Action::TYPE_START, sf::Mouse::getPosition());
 				current_scene->doAction(action);
-				delete action;
 			}
 		}
 	}

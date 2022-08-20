@@ -37,7 +37,7 @@ class SceneSettings: public Scene {
 
 public:
 	void update() override;
-	void doAction(const Action* a) override;
+	void doAction(const Action& a) override;
 
 	SceneSettings();
 	SceneSettings(Game* g);

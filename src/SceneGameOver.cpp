@@ -63,9 +63,9 @@ void SceneGameOver::update() {
 	sFade();
 }
 
-void SceneGameOver::doAction(const Action* a) {
-	if (*a->type == Action::TYPE_START) {
-		switch (*a->code) {
+void SceneGameOver::doAction(const Action& a) {
+	if (*a.type == Action::TYPE_START) {
+		switch (*a.code) {
 			case Action::MENU_SKIP:
 				skip_key_frames = true;
 			break;
@@ -73,8 +73,8 @@ void SceneGameOver::doAction(const Action* a) {
 			break;
 		}
 	}
-	if (*a->type == Action::TYPE_END) {
-		switch (*a->code) {
+	if (*a.type == Action::TYPE_END) {
+		switch (*a.code) {
 			default:
 			break;
 		}

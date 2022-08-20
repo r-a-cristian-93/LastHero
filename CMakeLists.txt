@@ -35,7 +35,6 @@ set(SOURCE_FILES
 	src/Game.cpp
 	src/Action.cpp
 	src/ActionManager.cpp
-	src/ActionStream.cpp
 	src/Assets.cpp
 	src/Animation.cpp
 	src/AnimationSet.cpp
@@ -49,6 +48,7 @@ set(SOURCE_FILES
 	src/Widget.cpp
 	src/Border.cpp
 	src/Tilemap.cpp
+	src/Level.cpp
 	src/SoundManager.cpp
 	src/AStarContainer.cpp
 	src/AStarNode.cpp
