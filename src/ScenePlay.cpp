@@ -1254,6 +1254,7 @@ void ScenePlay::doAction(const Action* a) {
 				interface.add(*paused_widget);
 			}
 			else {
+				game->snd_mgr.playSound("menu_unpause");
 				game->snd_mgr.playBgMusic();
 				interface.getWidgets().pop_back();
 			}

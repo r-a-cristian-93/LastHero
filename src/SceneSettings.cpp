@@ -252,6 +252,7 @@ void SceneSettings::doAction(const Action* a) {
 			break;
 			case Action::CHANGE_SCENE_MENU:
 				if (getCurrentFade() != FADE::OUT) {
+					game->snd_mgr.playSound("menu_cancel");
 					setFade(FADE::OUT, GAME_SCENE::MENU);
 				}
 			default:

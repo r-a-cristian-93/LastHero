@@ -103,6 +103,7 @@ void SceneMainMenu::doAction(const Action* a) {
 				}
 			break;
 			case Action::GAME_EXIT:
+				game->snd_mgr.playSound("menu_cancel");
 				setFade(FADE::OUT, GAME_SCENE::EXIT);
 			default:
 			break;
