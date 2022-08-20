@@ -13,6 +13,28 @@ SoundManager::SoundManager(Assets* _assets, AppConfig* _config)
 	,bg_music(nullptr)
 	{}
 
+bool SoundManager::isPlaying(size_t id) {
+	const sf::SoundBuffer* sb = &assets->getSoundBuffer(id);
+
+	for (sf::Sound& ch: channels) {
+		if (ch.getBuffer() == sb) {
+			if (ch.getStatus() == sf::SoundSource::Status::Playing) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+void SoundManager::playSoundUnique(size_t id) {
+	if (!isPlaying(id)) {
+		playSound(id);
+	}
+}
+
+
+
 void SoundManager::playSound(size_t id) {
 	if (!id) return;
 

@@ -586,9 +586,9 @@ void ScenePlay::sCollisionSolve() {
 
 							if (entity->get<CSfx>()) {
 								if (entity_hp <= 0)
-									game->snd_mgr.playSound(entity->get<CSfx>()->die);
+									game->snd_mgr.playSoundUnique(entity->get<CSfx>()->die);
 								else
-									game->snd_mgr.playSound(entity->get<CSfx>()->hurt);
+									game->snd_mgr.playSoundUnique(entity->get<CSfx>()->hurt);
 							}
 						}
 					}

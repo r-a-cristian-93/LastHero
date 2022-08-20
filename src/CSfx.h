@@ -7,6 +7,7 @@ class CSfx {
 public:
 	size_t hurt = 0;
 	size_t die = 0;
+	bool playing = false;
 
 	CSfx();
 	CSfx(const CSfx& c);

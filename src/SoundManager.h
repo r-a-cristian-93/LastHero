@@ -17,6 +17,7 @@ private:
 public:
 	void playSound(size_t id);
 	void playSound(std::string name);
+	void playSoundUnique(size_t id);
 
 	void playBgMusic(std::string name);
 	void playBgMusic();
@@ -24,6 +25,7 @@ public:
 	void stopBgMusic();
 	void setBgMusicVolume(float v);
 	bool bgPlaying();
+	bool isPlaying(size_t id);
 
 	SoundManager();
 	SoundManager(Assets* assets, AppConfig* config);
