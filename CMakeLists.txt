@@ -44,6 +44,7 @@ set(SOURCE_FILES
 	src/SceneSettings.cpp
 	src/SceneGameOver.cpp
 	src/SceneScore.cpp
+	src/SceneEditor.cpp
 	src/Interface.cpp
 	src/Widget.cpp
 	src/Border.cpp

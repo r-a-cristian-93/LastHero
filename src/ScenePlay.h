@@ -9,12 +9,6 @@
 #include "MapCollision.h"
 #include "Level.h"
 
-struct Camera {
-	sf::Vector2f pos, target;
-};
-
-typedef size_t GameState;
-
 class ScenePlay: public Scene {
 	enum {
 		GAME_INTRO,

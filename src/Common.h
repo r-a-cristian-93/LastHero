@@ -22,4 +22,12 @@
 
 #define PI 3.14159265
 
+
+struct Camera {
+	sf::Vector2f pos, target;
+};
+
+typedef size_t GameState;
+
+
 #endif

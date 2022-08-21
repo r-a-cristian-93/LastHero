@@ -10,6 +10,7 @@
 #include "SceneGameOver.h"
 #include "SceneScore.h"
 #include "SceneSettings.h"
+#include "SceneEditor.h"
 
 Game::Game()
 	:running(false)
@@ -161,6 +162,9 @@ void Game::setScene(size_t id) {
 				kills_per_enemy.clear();
 				new_kills_per_enemy.clear();
 			}
+		break;
+		case GAME_SCENE::EDITOR:
+			current_scene = new SceneEditor(this);
 		break;
 		case GAME_SCENE::OVER:
 			current_scene = new SceneGameOver(this);
