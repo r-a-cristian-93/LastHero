@@ -62,6 +62,7 @@ private:
 	std::ifstream file, file_two;
 	std::string word;
 
+	std::vector<std::string> stages;
 	std::map<size_t, std::map<size_t, Components>> recipe;
 	std::map<size_t, Components*> all_recipes;
 	std::map<std::string, size_t> recipe_name_id = {{"", NONE}};
@@ -84,6 +85,7 @@ private:
 	void loadWidgets();
 	void loadShaders();
 	void loadSounds();
+	void loadStages();
 
 	void loadEntity();
 	void loadTexture();
@@ -127,6 +129,7 @@ public:
 	sf::SoundBuffer& getSoundBuffer(size_t id);
 	sf::SoundBuffer& getSoundBuffer(std::string name);
 	size_t getSoundBufferNameID(std::string sound_name);
+	std::vector<std::string>& getStages();
 };
 
 #endif

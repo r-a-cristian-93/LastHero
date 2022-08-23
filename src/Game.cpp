@@ -31,21 +31,6 @@ void Game::init() {
 	// load user settings
 	app_conf.read("user.cfg");
 
-	// read game stages
-	{
-		std::ifstream file("stages.cfg");
-		std::string word;
-
-		while(file >> word) {
-			if (word == "STAGE") {
-				file >> word;
-				stages.push_back(word);
-			}
-		}
-
-		file.close();
-	}
-
 	//load texture after creating the window causes sementation fault;
 	screen_tex.create(app_conf.game_w, app_conf.game_h);
 	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf.game_w, app_conf.game_h});
@@ -157,7 +142,7 @@ void Game::setScene(size_t id) {
 			current_scene = new SceneSettings(this);
 		break;
 		case GAME_SCENE::PLAY:
-			current_scene = new ScenePlay(this, stages[next_stage]);
+			current_scene = new ScenePlay(this, assets.getStages()[next_stage]);
 			if (next_stage == 0) {
 				kills_per_enemy.clear();
 				new_kills_per_enemy.clear();
@@ -197,7 +182,7 @@ void Game::addKills(std::map<size_t, size_t> kills) {
 
 bool Game::stageNext() {
 	prev_stage = next_stage;
-	if (next_stage < stages.size()-1) {
+	if (next_stage < assets.getStages().size()-1) {
 		next_stage++;
 
 		return true;
@@ -218,7 +203,7 @@ size_t Game::stagePrev() {
 }
 
 size_t Game::stagesCount() {
-	return stages.size();
+	return assets.getStages().size();
 }
 
 void Game::applySettings(AppConfig& conf) {

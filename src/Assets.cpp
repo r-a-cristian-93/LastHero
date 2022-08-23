@@ -12,6 +12,7 @@ Assets::Assets() {
 	loadEntities();
 	loadFonts();
 	loadShaders();
+	loadStages();
 }
 
 Components& Assets::getRecipe(size_t tag, size_t name_id) {
@@ -108,6 +109,23 @@ size_t Assets::getSoundBufferNameID(std::string sound_name) {
 	}
 }
 
+std::vector<std::string>& Assets::getStages() {
+	return stages;
+}
+
+void Assets::loadStages() {
+	std::ifstream file("res/stages.cfg");
+	std::string word;
+
+	while(file >> word) {
+		if (word == "STAGE") {
+			file >> word;
+			stages.push_back(word);
+		}
+	}
+
+	file.close();
+}
 
 void Assets::loadSounds() {
 	file.open("res/sounds.cfg");

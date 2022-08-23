@@ -23,7 +23,6 @@ private:
 	Scene* current_scene;
 	size_t next_scene;
 
-	std::vector<std::string> stages;
 	size_t next_stage;
 	size_t prev_stage;
 
