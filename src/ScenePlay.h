@@ -10,10 +10,12 @@
 #include "Level.h"
 
 class ScenePlay: public Scene {
+protected:
 	enum {
 		GAME_INTRO,
 		GAME_PLAY,
-		GAME_OVER
+		GAME_OVER,
+		GAME_EDIT
 	};
 
 	ParticlesEmitter glitter;
@@ -88,6 +90,7 @@ public:
 
 	ScenePlay();
 	ScenePlay(Game* g, std::string lp);
+	ScenePlay(Game* g, size_t t, std::string lp);
 	~ScenePlay();
 };
 

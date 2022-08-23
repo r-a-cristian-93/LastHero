@@ -13,6 +13,14 @@ ScenePlay::ScenePlay(Game* g, std::string lp)
 	init();
 }
 
+ScenePlay::ScenePlay(Game* g, size_t t, std::string lp)
+	:Scene(g, t)
+	,level_path(lp)
+	,total_kills(0)
+	,game_state(GAME_PLAY)
+	,collision_map(ent_mgr)
+{}
+
 ScenePlay::~ScenePlay() {}
 
 void ScenePlay::init() {
@@ -75,8 +83,6 @@ void ScenePlay::load_level(std::string path) {
 	}
 
 	level.actions.clear();
-
-	// build collision_map here
 	ent_mgr.update();
 }
 

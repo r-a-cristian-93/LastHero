@@ -2,10 +2,12 @@
 #include "SUpdate.h"
 #include "SDraw.h"
 
-SceneEditor::SceneEditor(Game* g)
-	:Scene(g, GAME_SCENE::EDITOR)
+SceneEditor::SceneEditor(Game* g, std::string lp)
+	:ScenePlay(g, GAME_SCENE::EDITOR, lp)
 {
-	init();
+	game_state = GAME_EDIT;
+
+	SceneEditor::init();
 }
 
 SceneEditor::~SceneEditor() {}
@@ -26,27 +28,31 @@ void SceneEditor::init() {
 	interface.add(game->assets.getWidget("editor_side_bar"));
 
 	game->screen_tex.setView(gui_view);
-}
 
+	load_level(level_path);
+}
 
 
 void SceneEditor::update() {
 	if (!isFading()) {
 		ent_mgr.update();
 
-		//sStateFacing();
+		SUpdate::updatePosition(ent_mgr.getEntities(), level.map_ground.getBounds());
+		sCollisionCheck();
+		sCollisionSolve();
+		sStateFacing();
 		//sInterface();
-		//sAnimation();
-//		sGameState();
+		sAnimation();
+		sGameState();
 	}
-	//sView();
+	sView();
 
 	game->screen_tex.draw(level.map_ground);
 	SDraw::drawEntities(&game->screen_tex, ent_mgr.getEntities());
 
 
 #ifdef DEBUG_GRID
-	//drawGrid();
+	drawGrid();
 #endif
 
 #ifdef DEBUG_COLLISION_LAYER
@@ -54,11 +60,11 @@ void SceneEditor::update() {
 #endif
 
 #ifdef DEBUG_DIRECTION
-	//drawDirectionVectors();
+	drawDirectionVectors();
 #endif
 
 #ifdef DEBUG_ENTITY_POS
-	//drawEntityPosition();
+	drawEntityPosition();
 #endif
 
 	//change view in order to keep the interface relative to window
@@ -71,22 +77,3 @@ void SceneEditor::update() {
 	frame_current++;
 	sFade();
 }
-
-void SceneEditor::doAction(const Action& a) {
-	if (*a.type == Action::TYPE_START && getCurrentFade() != FADE::OUT) {
-		switch (*a.code) {
-			case Action::CHANGE_SCENE_MENU:
-				setFade(FADE::OUT, GAME_SCENE::MENU);
-			break;
-			default:
-			break;
-		}
-	}
-	if (*a.type == Action::TYPE_END) {
-		switch (*a.code) {
-			default:
-			break;
-		}
-	}
-}
-

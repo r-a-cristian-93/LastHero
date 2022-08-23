@@ -149,7 +149,7 @@ void Game::setScene(size_t id) {
 			}
 		break;
 		case GAME_SCENE::EDITOR:
-			current_scene = new SceneEditor(this);
+			current_scene = new SceneEditor(this, assets.getStages()[next_stage]);
 		break;
 		case GAME_SCENE::OVER:
 			current_scene = new SceneGameOver(this);
