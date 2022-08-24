@@ -954,7 +954,7 @@ void Assets::loadBorderRepeatable(std::string border_name, size_t sprite_name, s
 
 void Assets::loadTexture() {
 	std::string name("");
-	unsigned int w, h;
+	unsigned int w=0, h=0;
 	std::string* path;
 	sf::Color* color(nullptr);
 
@@ -969,9 +969,9 @@ void Assets::loadTexture() {
 		}
 		else if (word == "size") file >> w >> h;
 		else if (word == "color") {
-			size_t r, g ,b;
-			file >> r >> g >> b;
-			color = new sf::Color(r, g, b);
+			size_t r, g ,b, a;
+			file >> r >> g >> b >> a;
+			color = new sf::Color(r, g, b, a);
 		}
 		else {
 			std::cout << "In file: " << file_path << " unknown key: " << word << std::endl;
@@ -983,7 +983,6 @@ void Assets::loadTexture() {
 		sf::Texture tex;
 		img.create(w, h, *color);
 		tex.loadFromImage(img);
-		tex.setRepeated(true);
 		textures[name] = tex;
 		delete color;
 	}
