@@ -19,6 +19,10 @@ Components& Assets::getRecipe(size_t tag, size_t name_id) {
 	return recipe[tag][name_id];
 }
 
+const std::map<size_t, Components>& Assets::getRecipes(size_t tag) {
+	return recipe[tag];
+}
+
 size_t Assets::getScorePoints(size_t name_id) {
 	if (all_recipes.count(name_id)){
 		if (all_recipes[name_id]->get<CScore>()) {

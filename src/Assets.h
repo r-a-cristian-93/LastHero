@@ -117,6 +117,7 @@ public:
 	Components& getRecipe(size_t tag, size_t recipe_name);
 	size_t getRecipeName(size_t tag);
 	size_t getRecipeNameID(std::string entity_name);
+	const std::map<size_t, Components>& getRecipes(size_t tag);
 	size_t getScorePoints(size_t name_id);
 	sf::Font& getFont(size_t name);
 	Border& getBorder(std::string name);

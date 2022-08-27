@@ -82,7 +82,6 @@ void ScenePlay::load_level(std::string path) {
 		doAction(a);
 	}
 
-	level.actions.clear();
 	ent_mgr.update();
 }
 
