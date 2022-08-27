@@ -29,7 +29,11 @@ struct WidgetFx {
 	int data[DataIndex::COUNT] = {0};
 };
 
-
+enum ScrollType: size_t {
+	NONE = 0,
+	HORIZONTAL,
+	VERTICAL,
+};
 
 class Widget {
 public://protected:
@@ -56,6 +60,16 @@ public://protected:
 	const std::string* link_str;
 	sf::Text* text;
 //text
+
+//scroll
+	ScrollType scroll;
+	Widget* scroll_track;
+	Widget* scroll_thumb;
+	sf::RenderTexture* scroll_content_tex;
+	sf::Sprite* scroll_content_sprite;
+	float scroll_pos; // percentage
+//scroll
+
 
 public:
 	void setPosRel(sf::Vector2i pos);

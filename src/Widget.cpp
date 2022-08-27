@@ -13,6 +13,12 @@ Widget::Widget()
 	,link_str(nullptr)
 	,link(0)
 	,current_fx(nullptr)
+	,scroll(ScrollType::NONE)
+	,scroll_track(nullptr)
+	,scroll_thumb(nullptr)
+	,scroll_content_tex(nullptr)
+	,scroll_content_sprite(nullptr)
+	,scroll_pos()
 	{}
 
 Widget::Widget(const Widget& w)
@@ -28,6 +34,12 @@ Widget::Widget(const Widget& w)
 	,childs(w.childs)
 	,fx(w.fx)
 	,current_fx(nullptr)
+	,scroll(w.scroll)
+	,scroll_track(w.scroll_track)
+	,scroll_thumb(w.scroll_thumb)
+	,scroll_content_tex(w.scroll_content_tex)
+	,scroll_content_sprite(w.scroll_content_sprite)
+	,scroll_pos(w.scroll_pos)
 {
 	if (w.background) setBackground(*w.background, w.bg_offset);
 	if (w.border) setBorder(*w.border);
@@ -39,6 +51,10 @@ Widget::~Widget() {
 	delete background;
 	delete border;
 	delete text;
+	delete scroll_content_sprite;
+	delete scroll_content_tex;
+	delete scroll_track;
+	delete scroll_thumb;
 }
 
 void Widget::setPosRel(sf::Vector2i p) {
