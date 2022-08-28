@@ -4,6 +4,7 @@
 #include "Common.h"
 #include "Assets.h"
 #include "Settings.h"
+#include "Action.h"
 
 Assets::Assets() {
 	loadSounds();
@@ -813,6 +814,11 @@ void Assets::loadWidget() {
 	std::string text = "TEXT";
 	WidgetFx fx;
 
+	ScrollType scroll;
+	std::string scroll_track("");
+	std::string scroll_thumb("");
+	size_t on_click(0);
+
 	while (file >> word) {
 		if (word == "_END") break;
 		else if (word == "name") file >> name;
@@ -833,6 +839,19 @@ void Assets::loadWidget() {
 				std::cout << "Invalid link: " << word << std::endl;
 				exit(0);
 			}
+		}
+		else if (word == "scroll") {
+			file >> word;
+			if (word == "vertical") scroll = ScrollType::VERTICAL;
+			else if (word == "horizontal") scroll == ScrollType::HORIZONTAL;
+		}
+		else if (word == "scroll_thumb") file >> scroll_thumb;
+		else if (word == "scroll_track") file >> scroll_track;
+		else if (word == "on_click") {
+			file >> word;
+			if (word == "set_content_terrain") on_click = Action::SET_CONTENT_TERRAIN;
+			else if (word == "set_content_environment") on_click = Action::SET_CONTENT_ENVIRONMENT;
+			else if (word == "set_content_creatures") on_click = Action::SET_CONTENT_CREATURES;
 		}
 		else if (word == "pos_rel") file >> pos_rel.x >> pos_rel.y;
 		else if (word == "pos_abs") file >> pos_abs.x >> pos_abs.y;
@@ -915,6 +934,28 @@ void Assets::loadWidget() {
 
 		widget.setPosRel(pos_rel);
 		widget.setPosAbs(pos_abs);
+
+		if (on_click) widget.on_click = on_click;
+
+		if (!scroll_thumb.empty()) {
+			if (widgets.find(scroll_thumb) != widgets.end()) {
+				widget.addScrollThumb(widgets[scroll_thumb]);
+			}
+			else {
+				std::cout << "Widget \"" << scroll_thumb << "\" does not exist.\n";
+				exit(0);
+			}
+		}
+
+		if (!scroll_track.empty()) {
+			if (widgets.find(scroll_track) != widgets.end()) {
+				widget.addScrollTrack(widgets[scroll_track]);
+			}
+			else {
+				std::cout << "Widget \"" << scroll_track << "\" does not exist.\n";
+				exit(0);
+			}
+		}
 
 		if (childs.size() > 0) {
 			for (size_t i=0; i<childs.size(); i++) {

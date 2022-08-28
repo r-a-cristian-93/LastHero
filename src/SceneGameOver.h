@@ -2,11 +2,8 @@
 #define SCENE_GAME_OVER
 
 #include "Scene.h"
-#include "Interface.h"
 
 class SceneGameOver: public Scene {
-	Interface interface;
-
 	enum {
 		SELECT_PLAY,
 		SELECT_EXIT,

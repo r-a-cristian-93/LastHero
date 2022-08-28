@@ -30,6 +30,9 @@ private:
 
 	void sUserInput();
 	void sChangeScene();
+
+	void handleUIEvent(sf::Event& event, WidgetVec& widgets);
+
 	void setScene(size_t id);
 
 public:
@@ -42,6 +45,7 @@ public:
 	sf::Sprite screen_sprite;
 	sf::View view;
 	AppConfig app_conf;
+	AppConfig editor_conf;
 	ActionManager act_mgr;
 	SoundManager snd_mgr;
 	Assets assets;
@@ -55,8 +59,8 @@ public:
 	void run();
 
 	void setNextScene(size_t id);
-	void reset(sf::Sprite& sprite);
 	void fit(sf::Sprite& sprite);
+	void setStyleEditor();
 
 	void applySettings(AppConfig& conf);
 

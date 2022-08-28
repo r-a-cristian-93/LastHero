@@ -2,7 +2,6 @@
 #define SCENE_SETTINGS
 
 #include "Scene.h"
-#include "Interface.h"
 
 class SceneSettings: public Scene {
 	enum {
@@ -20,7 +19,6 @@ class SceneSettings: public Scene {
 	std::string selected_music_vol = "";
 	std::string selected_sfx_vol = "";
 
-	Interface interface;
 	int cols = 4;
 	int rows = 4;	// number of settings fields
 

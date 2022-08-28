@@ -5,6 +5,7 @@
 #include "EntityManager.h"
 #include "ActionManager.h"
 #include "Action.h"
+#include "Interface.h"
 
 class Game;
 
@@ -15,8 +16,6 @@ class Scene {
 protected:
 	Game* game;
 	EntityManager ent_mgr;
-	sf::View gui_view;
-	SceneType scene_type = GAME_SCENE::NONE;
 
 	const unsigned int* fade_frames = nullptr;
 	int frame_current;
@@ -35,6 +34,10 @@ private:
 	size_t next_scene = 0;
 
 public:
+	SceneType scene_type = GAME_SCENE::NONE;
+	Interface interface;
+	sf::View gui_view;
+
 	virtual void update() = 0;
 	virtual void doAction(const Action& a) = 0;
 	void sFade();
@@ -46,6 +49,7 @@ public:
 	Scene();
 	Scene(Game* g, SceneType scene_type);
 	virtual ~Scene();
+
 };
 
 #endif

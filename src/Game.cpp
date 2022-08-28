@@ -45,18 +45,13 @@ void Game::init() {
 	running = true;
 }
 
-void Game::reset(sf::Sprite& sprite) {
-	sprite.setScale(1,1);
-	sprite.setPosition(0,0);
-}
-
 void Game::fit(sf::Sprite& sprite) {
 	float scale = static_cast<float>(app_conf.modes[app_conf.current_mode_id].height) / app_conf.game_h;
-	scale *= 0.95;
+	scale *= app_conf.game_scale;
 	sprite.setScale(scale,scale);
 
-	float offset_x = (app_conf.modes[app_conf.current_mode_id].width - screen_sprite.getGlobalBounds().width)/2;
-	float offset_y = (app_conf.modes[app_conf.current_mode_id].height - screen_sprite.getGlobalBounds().height)/2;
+	float offset_x = (app_conf.modes[app_conf.current_mode_id].width - sprite.getGlobalBounds().width)/2;
+	float offset_y = (app_conf.modes[app_conf.current_mode_id].height - sprite.getGlobalBounds().height)/2;
 
 	sprite.setPosition(offset_x, offset_y);
 }
@@ -75,9 +70,9 @@ void Game::run() {
 
 			screen_tex.display();
 
-			window.clear();
-			window.draw(screen_sprite, &assets.getShader("crt-mattias"));
-			//window.draw(screen_sprite);
+			window.clear(sf::Color(255, 0, 0));
+			//window.draw(screen_sprite, &assets.getShader("crt-mattias"));
+			window.draw(screen_sprite);
 			window.display();
 
 			sUserInput();
@@ -112,7 +107,9 @@ void Game::sUserInput() {
 				current_scene->doAction(action);
 			}
 		}
-		else if (event.type == sf::Event::MouseButtonPressed){
+		else if (event.type == sf::Event::MouseButtonPressed) {
+			handleUIEvent(event, current_scene->interface.getWidgets());
+
 			action_code = act_mgr.getCode(ActionManager::DEV_MOUSE, event.mouseButton.button);
 
 			if (action_code != 0) {
@@ -120,6 +117,38 @@ void Game::sUserInput() {
 				current_scene->doAction(action);
 			}
 		}
+	}
+}
+
+void Game::handleUIEvent(sf::Event& event, WidgetVec& widgets) {
+	sf::Vector2i m_pos(sf::Mouse::getPosition(window));
+
+	float scale = static_cast<float>(app_conf.modes[app_conf.current_mode_id].height) / app_conf.game_h;
+	scale *= app_conf.game_scale;
+
+	float offset_x = (app_conf.modes[app_conf.current_mode_id].width - screen_sprite.getGlobalBounds().width)/2;
+	float offset_y = (app_conf.modes[app_conf.current_mode_id].height - screen_sprite.getGlobalBounds().height)/2;
+
+	m_pos.x -= offset_x;
+	m_pos.y -= offset_y;
+
+	m_pos.x/= scale;
+	m_pos.y/= scale;
+
+
+	for (Widget& w: widgets) {
+		if (w.on_click) {
+			sf::IntRect rect (w.getGlobalBounds());
+
+			std::cout << "Clicked something\n";
+			std::cout << "m_pos " << m_pos.x << " " << m_pos.y << std::endl;
+			std::cout << "rect " << rect.left << " " << rect.top << " " << rect.width << " " << rect.height << std::endl;
+
+			if (rect.contains(m_pos)) {
+				std::cout << "WIDGET HIT\n";
+			}
+		}
+		handleUIEvent(event, w.getChilds());
 	}
 }
 
@@ -150,6 +179,7 @@ void Game::setScene(size_t id) {
 		break;
 		case GAME_SCENE::EDITOR:
 			current_scene = new SceneEditor(this, assets.getStages()[next_stage]);
+			setStyleEditor();
 		break;
 		case GAME_SCENE::OVER:
 			current_scene = new SceneGameOver(this);
@@ -214,6 +244,13 @@ void Game::applySettings(AppConfig& conf) {
 	window.setFramerateLimit(app_conf.max_fps);
 	window.setKeyRepeatEnabled(false);
 	window.setMouseCursorVisible(false);
+}
+
+void Game::setStyleEditor() {
+	screen_tex.create(app_conf.modes[app_conf.current_mode_id].width, app_conf.modes[app_conf.current_mode_id].height);
+	screen_sprite.setScale(1, 1);
+	screen_sprite.setPosition(0, 0);
+	screen_sprite.setTextureRect(sf::IntRect(0, 0, app_conf.modes[app_conf.current_mode_id].width, app_conf.modes[app_conf.current_mode_id].height));
 }
 
 Game::~Game() {

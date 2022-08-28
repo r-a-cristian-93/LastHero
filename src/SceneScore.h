@@ -2,7 +2,6 @@
 #define SCENE_GAME_SCORE
 
 #include "Scene.h"
-#include "Interface.h"
 
 /*
  * The scoreboard is spaced vertically as follows
@@ -32,7 +31,6 @@ class SceneScore: public Scene {
 	};
 	const unsigned int* key_frames = game->app_conf.score_key_frames;
 
-	Interface interface;
 	WidgetVec all_table_widgets;
 	WidgetVec table_widgets;
 

@@ -19,6 +19,8 @@ Widget::Widget()
 	,scroll_content_tex(nullptr)
 	,scroll_content_sprite(nullptr)
 	,scroll_pos()
+	,state(State::DEFAULT)
+	,on_click(0)
 	{}
 
 Widget::Widget(const Widget& w)
@@ -35,15 +37,19 @@ Widget::Widget(const Widget& w)
 	,fx(w.fx)
 	,current_fx(nullptr)
 	,scroll(w.scroll)
-	,scroll_track(w.scroll_track)
-	,scroll_thumb(w.scroll_thumb)
-	,scroll_content_tex(w.scroll_content_tex)
-	,scroll_content_sprite(w.scroll_content_sprite)
+	,scroll_track(nullptr)
+	,scroll_thumb(nullptr)
+	,scroll_content_tex(nullptr)
+	,scroll_content_sprite(nullptr)
 	,scroll_pos(w.scroll_pos)
+	,state(w.state)
+	,on_click(w.on_click)
 {
 	if (w.background) setBackground(*w.background, w.bg_offset);
 	if (w.border) setBorder(*w.border);
 	if (w.text) setText(*w.text);
+	if (w.scroll_track) addScrollTrack(*w.scroll_track);
+	if (w.scroll_thumb) addScrollThumb(*w.scroll_thumb);
 }
 
 
@@ -53,8 +59,28 @@ Widget::~Widget() {
 	delete text;
 	delete scroll_content_sprite;
 	delete scroll_content_tex;
-	delete scroll_track;
-	delete scroll_thumb;
+}
+
+sf::FloatRect Widget::getGlobalBounds() {
+	if (border) {
+		return sf::FloatRect(pos_abs.x, pos_abs.y, size.x, size.y);
+	}
+	else if (background) {
+		sf::FloatRect rect = background->getGlobalBounds();
+
+		rect.left -= bg_offset.x;
+		rect.top -= bg_offset.y;
+		rect.width += bg_offset.x*2;
+		rect.height += bg_offset.y*2;
+
+		return rect;
+	}
+
+	else if (text) {
+		return text->getGlobalBounds();
+	}
+
+	return sf::FloatRect();
 }
 
 void Widget::setPosRel(sf::Vector2i p) {
@@ -88,6 +114,16 @@ void Widget::setSize(sf::Vector2i s) {
 void Widget::addChild(Widget& child) {
 	updateChildPos(child);
 	childs.push_back(child);
+}
+
+void Widget::addScrollThumb(Widget& thumb) {
+	addChild(thumb);
+	scroll_thumb = &childs.back();
+}
+
+void Widget::addScrollTrack(Widget& track) {
+	addChild(track);
+	scroll_track = &childs.back();
 }
 
 void Widget::updateChildPos(Widget& child) {

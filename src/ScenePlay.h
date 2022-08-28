@@ -2,7 +2,6 @@
 #define SCENE_PLAY
 
 #include "Scene.h"
-#include "Interface.h"
 #include "ParticlesEmitter.h"
 #include "Tilemap.h"
 #include "Enums.h"
@@ -25,7 +24,6 @@ protected:
 	MapCollision collision_map;
 
 	Camera cam;
-	Interface interface;
 	Widget* paused_widget = nullptr;
 	int total_kills;
 	KillsMap kills_per_enemy;

@@ -47,6 +47,16 @@ void AppConfig::read(std::string file_name) {
 			file >> game_w;
 			file >> game_h;
 		}
+		else if (word == "EDITOR_RES") {
+			file >> editor_w;
+			file >> editor_h;
+		}
+		else if (word == "GAME_SCALE") {
+			file >> game_scale;
+		}
+		else if (word == "EDITOR_SCALE") {
+			file >> editor_scale;
+		}
 		else if (word == "CAM_SPEED") {
 			file >> cam_speed;
 		}

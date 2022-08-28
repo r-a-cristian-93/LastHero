@@ -26,8 +26,16 @@ void SceneEditor::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::FIRE_SECONDARY);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
+	game->act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Button::Left, Action::LEFT_CLICK);
 
 	interface.add(game->assets.getWidget("editor_menu_bar"));
+
+	Widget& side_bar = game->assets.getWidget("editor_side_bar");
+	side_bar.addChild(game->assets.getWidget("tag_terrain"));
+	side_bar.addChild(game->assets.getWidget("tag_environment"));
+	side_bar.addChild(game->assets.getWidget("tag_creatures"));
+	side_bar.addChild(game->assets.getWidget("entity_scroll"));
+
 	interface.add(game->assets.getWidget("editor_side_bar"));
 
 
@@ -127,4 +135,74 @@ void SceneEditor::update() {
 
 	frame_current++;
 	sFade();
+}
+
+
+void SceneEditor::doAction(const Action& a) {
+	if (*a.type == Action::TYPE_START && getCurrentFade() != FADE::OUT) {
+		if (*a.code == Action::GAME_PAUSE) {
+			paused = !paused;
+			if (paused) {
+				game->snd_mgr.pauseBgMusic();
+				game->snd_mgr.playSound("menu_pause");
+				interface.add(*paused_widget);
+			}
+			else {
+				game->snd_mgr.playSound("menu_unpause");
+				game->snd_mgr.playBgMusic();
+				interface.getWidgets().pop_back();
+			}
+		}
+		else if (!paused) {
+			switch (*a.code) {
+				case Action::MOVE_UP:
+					player->get<CInput>()->up = true;
+				break;
+				case Action::MOVE_LEFT:
+					player->get<CInput>()->left = true;
+				break;
+				case Action::MOVE_DOWN:
+					player->get<CInput>()->down = true;
+				break;
+				case Action::MOVE_RIGHT:
+					player->get<CInput>()->right = true;
+				break;
+				case Action::CHANGE_SCENE_MENU:
+					setFade(FADE::OUT, GAME_SCENE::MENU);
+				break;
+				case Action::SPAWN_ENTITY:
+					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
+				break;
+				case Action::SPAWN_PLAYER:
+					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
+					ent_mgr.update();
+					player = ent_mgr.getEntities(TAG::PLAYER)[0];
+				break;
+				case Action::SPAWN_BASE:
+					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
+					ent_mgr.update();
+					base = ent_mgr.getEntities(TAG::BASE)[0];
+				default:
+				break;
+			}
+		}
+	}
+	if (*a.type == Action::TYPE_END) {
+		switch (*a.code) {
+			case Action::MOVE_UP:
+				player->get<CInput>()->up = false;
+			break;
+			case Action::MOVE_LEFT:
+				player->get<CInput>()->left = false;
+			break;
+			case Action::MOVE_DOWN:
+				player->get<CInput>()->down = false;
+			break;
+			case Action::MOVE_RIGHT:
+				player->get<CInput>()->right = false;
+			break;
+			default:
+			break;
+		}
+	}
 }
