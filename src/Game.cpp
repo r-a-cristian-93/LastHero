@@ -25,20 +25,14 @@ Game::Game()
 void Game::init() {
 	PROFILE_FUNCTION();
 
-	// load default settings
-	app_conf.read("game.cfg");
-
-	// load user settings
-	app_conf.read("user.cfg");
-
 	//load texture after creating the window causes sementation fault;
-	screen_tex.create(app_conf.game_w, app_conf.game_h);
-	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf.game_w, app_conf.game_h});
+	screen_tex.create(app_conf->game_w, app_conf->game_h);
+	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf->game_w, app_conf->game_h});
 
-	applySettings(app_conf);
+	applySettings(*app_conf);
 
 	act_mgr = ActionManager();
-	snd_mgr = SoundManager(&assets, &app_conf);
+	snd_mgr = SoundManager(&assets);
 
 	setScene(GAME_SCENE::MENU);
 
@@ -46,19 +40,19 @@ void Game::init() {
 }
 
 void Game::fit(sf::Sprite& sprite) {
-	float scale = static_cast<float>(app_conf.modes[app_conf.current_mode_id].height) / app_conf.game_h;
-	scale *= app_conf.game_scale;
+	float scale = static_cast<float>(app_conf->modes[app_conf->current_mode_id].height) / app_conf->game_h;
+	scale *= app_conf->game_scale;
 	sprite.setScale(scale,scale);
 
-	float offset_x = (app_conf.modes[app_conf.current_mode_id].width - sprite.getGlobalBounds().width)/2;
-	float offset_y = (app_conf.modes[app_conf.current_mode_id].height - sprite.getGlobalBounds().height)/2;
+	float offset_x = (app_conf->modes[app_conf->current_mode_id].width - sprite.getGlobalBounds().width)/2;
+	float offset_y = (app_conf->modes[app_conf->current_mode_id].height - sprite.getGlobalBounds().height)/2;
 
 	sprite.setPosition(offset_x, offset_y);
 }
 
 void Game::run() {
 	sf::Event event;
-	sf::FloatRect lim(0,0,app_conf.modes[app_conf.current_mode_id].width, app_conf.modes[app_conf.current_mode_id].height);
+	sf::FloatRect lim(0,0,app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height);
 
 	while(running) {
 		PROFILE_SCOPE("MAIN_GAME_LOOP");
@@ -229,30 +223,30 @@ size_t Game::stagesCount() {
 }
 
 void Game::applySettings(AppConfig& conf) {
-	app_conf = conf;
+	*app_conf = conf;
 
 	fit(screen_sprite);
-	window.create(app_conf.modes[app_conf.current_mode_id], app_conf.window_name, app_conf.window_style);
-	window.setFramerateLimit(app_conf.max_fps);
+	window.create(app_conf->modes[app_conf->current_mode_id], app_conf->window_name, app_conf->window_style);
+	window.setFramerateLimit(app_conf->max_fps);
 	window.setKeyRepeatEnabled(false);
 	window.setMouseCursorVisible(false);
 }
 
 void Game::setStyleEditor() {
-	screen_tex.create(app_conf.modes[app_conf.current_mode_id].width, app_conf.modes[app_conf.current_mode_id].height);
+	screen_tex.create(app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height);
 
-	//screen_sprite.setTextureRect(sf::IntRect(0, 0, app_conf.modes[app_conf.current_mode_id].width, app_conf.modes[app_conf.current_mode_id].height));
-	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf.modes[app_conf.current_mode_id].width, app_conf.modes[app_conf.current_mode_id].height});
+	//screen_sprite.setTextureRect(sf::IntRect(0, 0, app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height));
+	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height});
 	screen_sprite.setScale(1, 1);
 	screen_sprite.setPosition(0, 0);
 }
 
 void Game::setStyleGame() {
-	screen_tex.create(app_conf.game_w, app_conf.game_h);
-	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf.game_w, app_conf.game_h});
-	screen_sprite.setTextureRect(sf::IntRect(0, 0, app_conf.game_w, app_conf.game_h));
+	screen_tex.create(app_conf->game_w, app_conf->game_h);
+	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf->game_w, app_conf->game_h});
+	screen_sprite.setTextureRect(sf::IntRect(0, 0, app_conf->game_w, app_conf->game_h));
 
-	applySettings(app_conf);
+	applySettings(*app_conf);
 }
 
 Game::~Game() {

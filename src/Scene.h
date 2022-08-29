@@ -1,6 +1,7 @@
 #ifndef SCENE
 #define SCENE
 
+#include "SharedResources.h"
 #include "Game.h"
 #include "EntityManager.h"
 #include "ActionManager.h"

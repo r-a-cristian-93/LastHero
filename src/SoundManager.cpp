@@ -3,13 +3,11 @@
 
 SoundManager::SoundManager()
 	:assets(nullptr)
-	,app_conf(nullptr)
 	,bg_music(nullptr)
 	{}
 
-SoundManager::SoundManager(Assets* _assets, AppConfig* _config)
+SoundManager::SoundManager(Assets* _assets)
 	:assets(_assets)
-	,app_conf(_config)
 	,bg_music(nullptr)
 	{}
 

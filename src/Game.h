@@ -3,6 +3,7 @@
 
 #include <deque>
 
+#include "SharedResources.h"
 #include "Entity.h"
 #include "EntityManager.h"
 #include "ActionManager.h"
@@ -44,7 +45,7 @@ public:
 	sf::RenderTexture screen_tex;
 	sf::Sprite screen_sprite;
 	sf::View view;
-	AppConfig app_conf;
+
 	AppConfig editor_conf;
 	ActionManager act_mgr;
 	SoundManager snd_mgr;

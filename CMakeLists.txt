@@ -8,6 +8,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
 find_package(SFML 2.5 COMPONENTS system window graphics audio REQUIRED)
 
 set(SOURCE_FILES
+	src/SharedResources.cpp
 	src/LastHero.cpp
 	src/CTransform.cpp
 	src/CCollision.cpp

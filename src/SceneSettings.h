@@ -2,6 +2,7 @@
 #define SCENE_SETTINGS
 
 #include "Scene.h"
+#include "SceneSettings.h"
 
 class SceneSettings: public Scene {
 	enum {
@@ -13,7 +14,7 @@ class SceneSettings: public Scene {
 		SELECT_COUNT
 	};
 
-	AppConfig temp_conf = game->app_conf;
+	AppConfig temp_conf = *app_conf;
 	std::string selected_res = "";
 	std::string selected_style = "";
 	std::string selected_music_vol = "";

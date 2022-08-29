@@ -1,4 +1,4 @@
-#include "SceneScore.h"
+#include "SharedResources.h"
 #include <cmath>
 #include "SUpdate.h"
 #include "SDraw.h"
@@ -26,10 +26,10 @@ void SceneScore::init() {
 		}
 
 		sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
-		unsigned int size = static_cast<unsigned int>(game->app_conf.game_h * title_h * 0.5);
+		unsigned int size = static_cast<unsigned int>(app_conf->game_h * title_h * 0.5);
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*(header_h+title_h/2));
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*(header_h+title_h/2));
 
 		title.setText(string, font, size);
 		title.setPosAbs(pos);
@@ -39,8 +39,8 @@ void SceneScore::init() {
 	{
 		Widget& skip = game->assets.getWidget("menu_skip");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.2);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.95);
+		pos.x = static_cast<int>(app_conf->game_w*0.2);
+		pos.y = static_cast<int>(app_conf->game_h*0.95);
 		skip.setPosAbs(pos);
 		interface.add(skip);
 	}
@@ -77,10 +77,10 @@ void SceneScore::init() {
 		for (int c=0; c<cols; c++) {
 			string = "";
 			color = {255, 255, 255};
-			unsigned int size = static_cast<unsigned int>(game->app_conf.game_h*row_h * 0.5);
+			unsigned int size = static_cast<unsigned int>(app_conf->game_h*row_h * 0.5);
 			sf::Vector2i pos;
-			pos.x = static_cast<int>(game->app_conf.game_w * (c*col_w + indent_left + col_w/2));
-			pos.y = static_cast<int>(game->app_conf.game_h * (r*row_h + header_h + title_h + spacer_h + row_h/2));
+			pos.x = static_cast<int>(app_conf->game_w * (c*col_w + indent_left + col_w/2));
+			pos.y = static_cast<int>(app_conf->game_h * (r*row_h + header_h + title_h + spacer_h + row_h/2));
 
 			// table header
 			if (r == 0) {
