@@ -1,6 +1,7 @@
 #include "SceneEditor.h"
 #include "SUpdate.h"
 #include "SDraw.h"
+#include <cmath>
 
 SceneEditor::SceneEditor(Game* g, std::string lp)
 	:ScenePlay(g, GAME_SCENE::EDITOR, lp)
@@ -27,6 +28,8 @@ void SceneEditor::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
 	game->act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Button::Left, Action::LEFT_CLICK);
+
+	gui_view.reset(sf::FloatRect(0, 0, game->app_conf.modes[game->app_conf.current_mode_id].width, game->app_conf.modes[game->app_conf.current_mode_id].height));
 
 	interface.add(game->assets.getWidget("editor_menu_bar"));
 
@@ -100,7 +103,7 @@ void SceneEditor::update() {
 		sCollisionCheck();
 		sCollisionSolve();
 		sStateFacing();
-		//sInterface();
+		sInterface();
 		sAnimation();
 		sGameState();
 	}
@@ -205,4 +208,31 @@ void SceneEditor::doAction(const Action& a) {
 			break;
 		}
 	}
+}
+
+void SceneEditor::sView() {
+	//update camera position
+	cam.target = player->get<CTransform>()->pos;
+	float square_delta = squareDistance(cam.pos, cam.target);
+
+	if (square_delta > game->app_conf.cam_treshold) {
+		cam.pos += ((cam.target - cam.pos) / game->app_conf.cam_speed);
+	}
+
+	//update view position
+	int w = game->app_conf.modes[game->app_conf.current_mode_id].width;
+	int h = game->app_conf.modes[game->app_conf.current_mode_id].height;
+	sf::FloatRect world = level.map_ground.getBounds();
+	sf::FloatRect rect(cam.pos.x-w/2, cam.pos.y-h/2, w, h);
+
+	//fix weird lines between map tiles when moving
+	rect.left = round(rect.left);
+	rect.top = round(rect.top);
+
+	if (rect.left < 0) rect.left = 0;
+	if (rect.top < 0) rect.top = 0;
+	if (rect.left + rect.width > world.width) rect.left = world.width - w;
+	if (rect.top + rect.height > world.height) rect.top = world.height - h;
+
+	game->view.reset(rect);
 }

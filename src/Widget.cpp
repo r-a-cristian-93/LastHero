@@ -21,6 +21,7 @@ Widget::Widget()
 	,scroll_pos()
 	,state(State::DEFAULT)
 	,on_click(0)
+	,state_colors({})
 	{}
 
 Widget::Widget(const Widget& w)
@@ -44,6 +45,7 @@ Widget::Widget(const Widget& w)
 	,scroll_pos(w.scroll_pos)
 	,state(w.state)
 	,on_click(w.on_click)
+	,state_colors(w.state_colors)
 {
 	if (w.background) setBackground(*w.background, w.bg_offset);
 	if (w.border) setBorder(*w.border);
@@ -238,6 +240,8 @@ void Widget::setTextColor(sf::Color color) {
 // BOX and TEXT
 
 void Widget::update() {
+	if (on_click) setColor(state_colors[state]);
+
 	if (text) {
 		updateText();
 		updateOrigin();

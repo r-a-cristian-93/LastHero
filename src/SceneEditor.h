@@ -4,6 +4,7 @@
 #include "ScenePlay.h"
 
 class SceneEditor: public ScenePlay {
+protected:
 	enum {
 		SELECT_NEW = 0,
 		SELECT_LOAD,
@@ -18,6 +19,7 @@ class SceneEditor: public ScenePlay {
 	sf::Color mod_dark = {100, 100, 100};
 
 	void init();
+	void sView();
 
 public:
 	void update() override;

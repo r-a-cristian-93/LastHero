@@ -123,19 +123,6 @@ void Game::sUserInput() {
 void Game::handleUIEvent(sf::Event& event, WidgetVec& widgets) {
 	sf::Vector2i m_pos(sf::Mouse::getPosition(window));
 
-	float scale = static_cast<float>(app_conf.modes[app_conf.current_mode_id].height) / app_conf.game_h;
-	scale *= app_conf.game_scale;
-
-	float offset_x = (app_conf.modes[app_conf.current_mode_id].width - screen_sprite.getGlobalBounds().width)/2;
-	float offset_y = (app_conf.modes[app_conf.current_mode_id].height - screen_sprite.getGlobalBounds().height)/2;
-
-	m_pos.x -= offset_x;
-	m_pos.y -= offset_y;
-
-	m_pos.x/= scale;
-	m_pos.y/= scale;
-
-
 	for (Widget& w: widgets) {
 		if (w.on_click) {
 			sf::IntRect rect (w.getGlobalBounds());
@@ -146,6 +133,7 @@ void Game::handleUIEvent(sf::Event& event, WidgetVec& widgets) {
 
 			if (rect.contains(m_pos)) {
 				std::cout << "WIDGET HIT\n";
+				std::cout << "STATE " << w.state << std::endl;
 			}
 		}
 		handleUIEvent(event, w.getChilds());
@@ -160,6 +148,10 @@ void Game::sChangeScene() {
 }
 
 void Game::setScene(size_t id) {
+	if (current_scene) {
+		if (current_scene->scene_type == GAME_SCENE::EDITOR) setStyleGame();
+	}
+
 	delete current_scene;
 	act_mgr = ActionManager();
 
@@ -248,9 +240,19 @@ void Game::applySettings(AppConfig& conf) {
 
 void Game::setStyleEditor() {
 	screen_tex.create(app_conf.modes[app_conf.current_mode_id].width, app_conf.modes[app_conf.current_mode_id].height);
+
+	//screen_sprite.setTextureRect(sf::IntRect(0, 0, app_conf.modes[app_conf.current_mode_id].width, app_conf.modes[app_conf.current_mode_id].height));
+	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf.modes[app_conf.current_mode_id].width, app_conf.modes[app_conf.current_mode_id].height});
 	screen_sprite.setScale(1, 1);
 	screen_sprite.setPosition(0, 0);
-	screen_sprite.setTextureRect(sf::IntRect(0, 0, app_conf.modes[app_conf.current_mode_id].width, app_conf.modes[app_conf.current_mode_id].height));
+}
+
+void Game::setStyleGame() {
+	screen_tex.create(app_conf.game_w, app_conf.game_h);
+	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf.game_w, app_conf.game_h});
+	screen_sprite.setTextureRect(sf::IntRect(0, 0, app_conf.game_w, app_conf.game_h));
+
+	applySettings(app_conf);
 }
 
 Game::~Game() {

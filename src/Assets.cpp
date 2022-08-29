@@ -814,10 +814,11 @@ void Assets::loadWidget() {
 	std::string text = "TEXT";
 	WidgetFx fx;
 
-	ScrollType scroll;
+	Widget::ScrollType scroll;
 	std::string scroll_track("");
 	std::string scroll_thumb("");
 	size_t on_click(0);
+	sf::Color state_colors[Widget::State::COUNT];
 
 	while (file >> word) {
 		if (word == "_END") break;
@@ -842,8 +843,8 @@ void Assets::loadWidget() {
 		}
 		else if (word == "scroll") {
 			file >> word;
-			if (word == "vertical") scroll = ScrollType::VERTICAL;
-			else if (word == "horizontal") scroll == ScrollType::HORIZONTAL;
+			if (word == "vertical") scroll = Widget::ScrollType::VERTICAL;
+			else if (word == "horizontal") scroll == Widget::ScrollType::HORIZONTAL;
 		}
 		else if (word == "scroll_thumb") file >> scroll_thumb;
 		else if (word == "scroll_track") file >> scroll_track;
@@ -852,6 +853,16 @@ void Assets::loadWidget() {
 			if (word == "set_content_terrain") on_click = Action::SET_CONTENT_TERRAIN;
 			else if (word == "set_content_environment") on_click = Action::SET_CONTENT_ENVIRONMENT;
 			else if (word == "set_content_creatures") on_click = Action::SET_CONTENT_CREATURES;
+		}
+		else if (word == "state_color") {
+			int r(0), g(0), b(0), a(0);
+			file >> word >> r >> g >> b >> a;
+
+			if (word == "default") state_colors[Widget::State::DEFAULT] = sf::Color(r,g,b,a);
+			if (word == "hover") state_colors[Widget::State::HOVER] = sf::Color(r,g,b,a);
+			if (word == "focus") state_colors[Widget::State::FOCUS] = sf::Color(r,g,b,a);
+			if (word == "active") state_colors[Widget::State::ACTIVE] = sf::Color(r,g,b,a);
+			if (word == "disabled") state_colors[Widget::State::DISABLED] = sf::Color(r,g,b,a);
 		}
 		else if (word == "pos_rel") file >> pos_rel.x >> pos_rel.y;
 		else if (word == "pos_abs") file >> pos_abs.x >> pos_abs.y;
@@ -936,6 +947,9 @@ void Assets::loadWidget() {
 		widget.setPosAbs(pos_abs);
 
 		if (on_click) widget.on_click = on_click;
+		for (int i=0; i<Widget::State::COUNT; i++) {
+			widget.state_colors[i] = state_colors[i];
+		}
 
 		if (!scroll_thumb.empty()) {
 			if (widgets.find(scroll_thumb) != widgets.end()) {

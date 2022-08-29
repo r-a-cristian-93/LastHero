@@ -61,6 +61,7 @@ public:
 	void setNextScene(size_t id);
 	void fit(sf::Sprite& sprite);
 	void setStyleEditor();
+	void setStyleGame();
 
 	void applySettings(AppConfig& conf);
 

@@ -29,23 +29,24 @@ struct WidgetFx {
 	int data[DataIndex::COUNT] = {0};
 };
 
-enum class ScrollType: size_t {
-	NONE = 0,
-	HORIZONTAL,
-	VERTICAL,
-};
-
-enum class State: size_t {
-	NONE = 0,
-	DEFAULT,
-	HOVER,
-	FOCUS,
-	ACTIVE,
-	DISABLED,
-};
 
 class Widget {
-public://protected:
+public:
+	enum class ScrollType: size_t {
+		NONE = 0,
+		HORIZONTAL,
+		VERTICAL,
+	};
+
+	enum State: size_t {
+		DEFAULT = 0,
+		HOVER,
+		FOCUS,
+		ACTIVE,
+		DISABLED,
+		COUNT,
+	};
+
 	std::vector<Widget> childs;
 
 	sf::Vector2i pos_rel;
@@ -56,6 +57,7 @@ public://protected:
 	WidgetFx* current_fx;
 	size_t on_click;
 	State state;
+	sf::Color state_colors[State::COUNT];
 
 	void updateChildPos(Widget& child);
 
