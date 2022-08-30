@@ -4,7 +4,7 @@
 #include "SDraw.h"
 
 SceneMainMenu::SceneMainMenu(Game* g)
-	:Scene(g, GAME_SCENE::MENU)
+	:Scene(GAME_SCENE::MENU)
 	,background(nullptr)
 {
 	init();
@@ -71,7 +71,6 @@ void SceneMainMenu::update() {
 	SDraw::drawInterface(&*screen_tex, interface.getWidgets());
 
 	frame_current++;
-	sFade();
 }
 
 void SceneMainMenu::doAction(const Action& a) {

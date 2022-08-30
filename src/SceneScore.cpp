@@ -5,7 +5,8 @@
 #include "SceneScore.h"
 
 SceneScore::SceneScore(Game* g)
-	:Scene(g, GAME_SCENE::SCORE)
+	:Scene(GAME_SCENE::SCORE)
+	,game(g)
 {
 	init();
 }
@@ -170,7 +171,6 @@ void SceneScore::update() {
 	SDraw::drawInterface(&*screen_tex, interface.getWidgets());
 
 	frame_current++;
-	sFade();
 }
 
 void SceneScore::copyCells(WidgetVec& src, WidgetVec& dst, sf::IntRect rect) {

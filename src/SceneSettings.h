@@ -5,6 +5,8 @@
 #include "SceneSettings.h"
 
 class SceneSettings: public Scene {
+	Game* game;
+
 	enum {
 		SELECT_RESOLUTION = 0,
 		SELECT_FULLSCREEN,

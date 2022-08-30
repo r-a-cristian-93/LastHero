@@ -4,7 +4,8 @@
 #include "SceneSettings.h"
 
 SceneSettings::SceneSettings(Game* g)
-	:Scene(g, GAME_SCENE::SETTINGS)
+	:Scene(GAME_SCENE::SETTINGS)
+	,game(g)
 {
 	init();
 }
@@ -212,7 +213,6 @@ void SceneSettings::update() {
 	SDraw::drawInterface(&*screen_tex, interface.getWidgets());
 
 	frame_current++;
-	sFade();
 }
 
 void SceneSettings::doAction(const Action& a) {

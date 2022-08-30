@@ -5,7 +5,8 @@
 #include "SharedResources.h"
 
 ScenePlay::ScenePlay(Game* g, std::string lp)
-	:Scene(g, GAME_SCENE::PLAY)
+	:Scene(GAME_SCENE::PLAY)
+	,game(g)
 	,level_path(lp)
 	,total_kills(0)
 	,game_state(GAME_PLAY)
@@ -15,7 +16,8 @@ ScenePlay::ScenePlay(Game* g, std::string lp)
 }
 
 ScenePlay::ScenePlay(Game* g, size_t t, std::string lp)
-	:Scene(g, t)
+	:Scene(t)
+	,game(g)
 	,level_path(lp)
 	,total_kills(0)
 	,game_state(GAME_PLAY)
@@ -245,7 +247,6 @@ void ScenePlay::update() {
 	}
 
 	frame_current++;
-	sFade();
 }
 
 void ScenePlay::spawnEnemy() {

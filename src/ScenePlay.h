@@ -10,6 +10,8 @@
 
 class ScenePlay: public Scene {
 protected:
+	Game* game;
+
 	enum {
 		GAME_INTRO,
 		GAME_PLAY,

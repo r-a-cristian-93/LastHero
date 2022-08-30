@@ -2,9 +2,8 @@
 
 Scene::Scene() {}
 
-Scene::Scene(Game* g, SceneType type)
-	:game(g)
-	,scene_type(type)
+Scene::Scene(SceneType type)
+	:scene_type(type)
 	,frame_current(0)
 	,paused(false)
 	,has_ended(false)
@@ -23,44 +22,6 @@ void Scene::init() {
 
 	if (scene_type == GAME_SCENE::MENU && !snd_mgr->bgPlaying())
 		snd_mgr->playBgMusic("intro");
-}
-
-void Scene::sFade() {
-	switch (fade) {
-		case FADE::IN: {
-			current_fade_frames[fade]++;
-			unsigned char c = current_fade_frames[fade] * (255/fade_frames[fade]);
-			screen_sprite->setColor({c, c, c});
-
-			if (current_fade_frames[fade] >= fade_frames[fade]) {
-				screen_sprite->setColor({255, 255, 255});
-				fade = FADE::NONE;
-			}
-
-		}
-		break;
-		case FADE::OUT: {
-			if (current_fade_frames[fade] > 0) current_fade_frames[fade]--;
-			unsigned char c = current_fade_frames[fade] * (255/fade_frames[fade]);
-			screen_sprite->setColor({c, c, c});
-
-			if (current_fade_frames[fade] == 0) {
-				fade = FADE::NONE;
-				screen_sprite->setColor({0, 0, 0});
-				game->setNextScene(next_scene);
-			}
-
-			if (music_fade_out && next_scene != GAME_SCENE::SETTINGS) {
-				float v = 0;
-
-				if (current_fade_frames[fade] > 0) {
-					v = current_fade_frames[fade] * (app_conf->music_volume/fade_frames[fade]);
-				}
-				snd_mgr->setBgMusicVolume(v);
-			}
-		}
-		break;
-	}
 }
 
 void Scene::setFade(FadeType _fade) {

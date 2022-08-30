@@ -29,6 +29,7 @@ private:
 
 	void init();
 
+	void sSceneFade();
 	void sUserInput();
 	void sChangeScene();
 

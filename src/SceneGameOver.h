@@ -4,6 +4,8 @@
 #include "Scene.h"
 
 class SceneGameOver: public Scene {
+	Game* game;
+
 	enum {
 		SELECT_PLAY,
 		SELECT_EXIT,

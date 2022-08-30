@@ -4,7 +4,8 @@
 #include "SDraw.h"
 
 SceneGameOver::SceneGameOver(Game* g)
-	:Scene(g, GAME_SCENE::OVER)
+	:Scene(GAME_SCENE::OVER)
+	,game(g)
 {
 	init();
 }
@@ -60,7 +61,6 @@ void SceneGameOver::update() {
 	}
 
 	frame_current++;
-	sFade();
 }
 
 void SceneGameOver::doAction(const Action& a) {

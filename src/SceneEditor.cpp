@@ -137,7 +137,6 @@ void SceneEditor::update() {
 	}
 
 	frame_current++;
-	sFade();
 }
 
 
