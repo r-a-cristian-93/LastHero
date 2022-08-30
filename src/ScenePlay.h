@@ -7,6 +7,7 @@
 #include "Enums.h"
 #include "MapCollision.h"
 #include "Level.h"
+#include "Game.h"
 
 class ScenePlay: public Scene {
 protected:

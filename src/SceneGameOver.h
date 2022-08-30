@@ -2,6 +2,7 @@
 #define SCENE_GAME_OVER
 
 #include "Scene.h"
+#include "Game.h"
 
 class SceneGameOver: public Scene {
 	Game* game;

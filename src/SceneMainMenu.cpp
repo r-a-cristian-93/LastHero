@@ -3,7 +3,7 @@
 #include "SUpdate.h"
 #include "SDraw.h"
 
-SceneMainMenu::SceneMainMenu(Game* g)
+SceneMainMenu::SceneMainMenu()
 	:Scene(GAME_SCENE::MENU)
 	,background(nullptr)
 {

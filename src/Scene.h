@@ -1,14 +1,9 @@
 #ifndef SCENE
 #define SCENE
 
-#include "SharedResources.h"
-#include "Game.h"
 #include "EntityManager.h"
-#include "ActionManager.h"
 #include "Action.h"
 #include "Interface.h"
-
-class Game;
 
 typedef size_t FadeType;
 typedef size_t SceneType;

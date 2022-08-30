@@ -1,4 +1,6 @@
 #include "Scene.h"
+#include "SharedResources.h"
+#include "ActionManager.h"
 
 Scene::Scene() {}
 

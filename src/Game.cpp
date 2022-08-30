@@ -151,7 +151,7 @@ void Game::setScene(size_t id) {
 
 	switch (id) {
 		case GAME_SCENE::MENU:
-			current_scene = new SceneMainMenu(this);
+			current_scene = new SceneMainMenu();
 		break;
 		case GAME_SCENE::SETTINGS:
 			current_scene = new SceneSettings(this);

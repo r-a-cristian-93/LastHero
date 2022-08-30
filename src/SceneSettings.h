@@ -3,6 +3,7 @@
 
 #include "Scene.h"
 #include "SceneSettings.h"
+#include "Game.h"
 
 class SceneSettings: public Scene {
 	Game* game;

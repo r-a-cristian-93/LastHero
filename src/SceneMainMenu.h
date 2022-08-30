@@ -2,6 +2,7 @@
 #define SCENE_MAIN_MENU
 
 #include "Scene.h"
+#include "Game.h"
 
 class SceneMainMenu: public Scene {
 	enum {
@@ -26,7 +27,6 @@ public:
 	void doAction(const Action& a) override;
 
 	SceneMainMenu();
-	SceneMainMenu(Game* g);
 	~SceneMainMenu();
 };
 
