@@ -41,8 +41,6 @@ public:
 	KillsMap new_kills_per_enemy;
 
 	bool running;
-	sf::Sprite screen_sprite;
-	sf::View view;
 
 	void addKills(std::map<size_t, size_t> kills_per_enemy);
 	bool stageNext();

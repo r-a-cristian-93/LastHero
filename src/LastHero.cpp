@@ -18,6 +18,11 @@ int main() {
 
 	screen_tex = new sf::RenderTexture();
 
+	screen_sprite = new sf::Sprite();
+	screen_sprite->setTexture(screen_tex->getTexture());
+
+	game_view = new sf::View();
+
 	Game game;
 
 	game.run();

@@ -241,7 +241,7 @@ void ScenePlay::update() {
 		PROFILE_SCOPE("sDrawInterface");
 		screen_tex->setView(gui_view);
 		SDraw::drawInterface(&*screen_tex, interface.getWidgets());
-		screen_tex->setView(game->view);
+		screen_tex->setView(*game_view);
 	}
 
 	frame_current++;
@@ -1287,7 +1287,7 @@ void ScenePlay::sView() {
 	if (rect.left + rect.width > world.width) rect.left = world.width - w;
 	if (rect.top + rect.height > world.height) rect.top = world.height - h;
 
-	game->view.reset(rect);
+	game_view->reset(rect);
 }
 
 void ScenePlay::sGameState() {

@@ -17,7 +17,7 @@ extern SoundManager* snd_mgr;
 extern sf::RenderWindow* window;
 extern sf::RenderTexture* screen_tex;
 extern sf::Sprite* screen_sprite;
-extern sf::View* view;
+extern sf::View* game_view;
 
 
 #endif

@@ -30,10 +30,10 @@ void Scene::sFade() {
 		case FADE::IN: {
 			current_fade_frames[fade]++;
 			unsigned char c = current_fade_frames[fade] * (255/fade_frames[fade]);
-			game->screen_sprite.setColor({c, c, c});
+			screen_sprite->setColor({c, c, c});
 
 			if (current_fade_frames[fade] >= fade_frames[fade]) {
-				game->screen_sprite.setColor({255, 255, 255});
+				screen_sprite->setColor({255, 255, 255});
 				fade = FADE::NONE;
 			}
 
@@ -42,11 +42,11 @@ void Scene::sFade() {
 		case FADE::OUT: {
 			if (current_fade_frames[fade] > 0) current_fade_frames[fade]--;
 			unsigned char c = current_fade_frames[fade] * (255/fade_frames[fade]);
-			game->screen_sprite.setColor({c, c, c});
+			screen_sprite->setColor({c, c, c});
 
 			if (current_fade_frames[fade] == 0) {
 				fade = FADE::NONE;
-				game->screen_sprite.setColor({0, 0, 0});
+				screen_sprite->setColor({0, 0, 0});
 				game->setNextScene(next_scene);
 			}
 

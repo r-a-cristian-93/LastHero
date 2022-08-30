@@ -27,7 +27,7 @@ void Game::init() {
 
 	//load texture after creating the window causes sementation fault;
 	screen_tex->create(app_conf->game_w, app_conf->game_h);
-	screen_sprite = sf::Sprite(screen_tex->getTexture(), {0, 0, app_conf->game_w, app_conf->game_h});
+	screen_sprite->setTextureRect({0, 0, app_conf->game_w, app_conf->game_h});
 
 	applySettings(*app_conf);
 
@@ -63,7 +63,7 @@ void Game::run() {
 
 			window->clear(sf::Color(255, 0, 0));
 			//window->draw(screen_sprite, &assets->getShader("crt-mattias"));
-			window->draw(screen_sprite);
+			window->draw(*screen_sprite);
 			window->display();
 
 			sUserInput();
@@ -222,7 +222,7 @@ size_t Game::stagesCount() {
 void Game::applySettings(AppConfig& conf) {
 	*app_conf = conf;
 
-	fit(screen_sprite);
+	fit(*screen_sprite);
 	window->create(app_conf->modes[app_conf->current_mode_id], app_conf->window_name, app_conf->window_style);
 	window->setFramerateLimit(app_conf->max_fps);
 	window->setKeyRepeatEnabled(false);
@@ -231,15 +231,15 @@ void Game::applySettings(AppConfig& conf) {
 
 void Game::setStyleEditor() {
 	screen_tex->create(app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height);
-	screen_sprite = sf::Sprite(screen_tex->getTexture(), {0, 0, app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height});
-	screen_sprite.setScale(1, 1);
-	screen_sprite.setPosition(0, 0);
+	screen_sprite->setTextureRect({0, 0, app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height});
+	screen_sprite->setScale(1, 1);
+	screen_sprite->setPosition(0, 0);
 }
 
 void Game::setStyleGame() {
 	screen_tex->create(app_conf->game_w, app_conf->game_h);
-	screen_sprite = sf::Sprite(screen_tex->getTexture(), {0, 0, app_conf->game_w, app_conf->game_h});
-	screen_sprite.setTextureRect(sf::IntRect(0, 0, app_conf->game_w, app_conf->game_h));
+	screen_sprite->setTextureRect({0, 0, app_conf->game_w, app_conf->game_h});
+	screen_sprite->setTextureRect(sf::IntRect(0, 0, app_conf->game_w, app_conf->game_h));
 
 	applySettings(*app_conf);
 }
