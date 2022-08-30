@@ -1,7 +1,6 @@
 #ifndef SOUND_MANAGER
 #define SOUND_MANAGER
 
-#include "SharedResources.h"
 #include "Common.h"
 #include "Assets.h"
 #include "AppConfig.h"

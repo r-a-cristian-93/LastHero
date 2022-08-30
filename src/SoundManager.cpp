@@ -1,4 +1,5 @@
 #include "SoundManager.h"
+#include "SharedResources.h"
 #include <iostream>
 
 SoundManager::SoundManager()
