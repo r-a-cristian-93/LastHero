@@ -31,7 +31,6 @@ void Game::init() {
 
 	applySettings(*app_conf);
 
-	act_mgr = ActionManager();
 	snd_mgr = SoundManager(&assets);
 
 	setScene(GAME_SCENE::MENU);
@@ -86,7 +85,7 @@ void Game::sUserInput() {
 			running = false;
 		}
 		else if (event.type == sf::Event::KeyPressed) {
-			action_code = act_mgr.getCode(ActionManager::DEV_KEYBOARD, event.key.code);
+			action_code = act_mgr->getCode(ActionManager::DEV_KEYBOARD, event.key.code);
 
 			if (action_code) {
 				Action action(action_code, Action::TYPE_START);
@@ -94,7 +93,7 @@ void Game::sUserInput() {
 			}
 		}
 		else if (event.type == sf::Event::KeyReleased) {
-			action_code = act_mgr.getCode(ActionManager::DEV_KEYBOARD, event.key.code);
+			action_code = act_mgr->getCode(ActionManager::DEV_KEYBOARD, event.key.code);
 
 			if (action_code) {
 				Action action(action_code, Action::TYPE_END);
@@ -104,7 +103,7 @@ void Game::sUserInput() {
 		else if (event.type == sf::Event::MouseButtonPressed) {
 			handleUIEvent(event, current_scene->interface.getWidgets());
 
-			action_code = act_mgr.getCode(ActionManager::DEV_MOUSE, event.mouseButton.button);
+			action_code = act_mgr->getCode(ActionManager::DEV_MOUSE, event.mouseButton.button);
 
 			if (action_code != 0) {
 				Action action(action_code, Action::TYPE_START, sf::Mouse::getPosition());
@@ -147,7 +146,7 @@ void Game::setScene(size_t id) {
 	}
 
 	delete current_scene;
-	act_mgr = ActionManager();
+	act_mgr->reset();
 
 	switch (id) {
 		case GAME_SCENE::MENU:

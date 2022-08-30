@@ -24,6 +24,7 @@ public:
 
 	void registerAction(int device, int key, int code);
 	int getCode(int device, int key);
+	void reset();
 };
 
 #endif

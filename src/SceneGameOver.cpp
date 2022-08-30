@@ -11,7 +11,7 @@ SceneGameOver::SceneGameOver(Game* g)
 SceneGameOver::~SceneGameOver() {}
 
 void SceneGameOver::init() {
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SKIP);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SKIP);
 
 	{
 		Widget msg = Widget();
