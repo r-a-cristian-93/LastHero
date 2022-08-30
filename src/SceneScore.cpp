@@ -2,6 +2,7 @@
 #include <cmath>
 #include "SUpdate.h"
 #include "SDraw.h"
+#include "SceneScore.h"
 
 SceneScore::SceneScore(Game* g)
 	:Scene(g, GAME_SCENE::SCORE)

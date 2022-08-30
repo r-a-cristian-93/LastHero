@@ -1,6 +1,7 @@
 #include <cmath>
 #include "SUpdate.h"
 #include "SDraw.h"
+#include "SceneSettings.h"
 
 SceneSettings::SceneSettings(Game* g)
 	:Scene(g, GAME_SCENE::SETTINGS)

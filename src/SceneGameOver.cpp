@@ -31,8 +31,8 @@ void SceneGameOver::init() {
 
 		sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.5);
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*0.5);
 
 		msg.setText(string, font, 40);
 		msg.setColor(color);
@@ -43,8 +43,8 @@ void SceneGameOver::init() {
 	{
 		Widget& skip = game->assets.getWidget("menu_skip");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.2);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.95);
+		pos.x = static_cast<int>(app_conf->game_w*0.2);
+		pos.y = static_cast<int>(app_conf->game_h*0.95);
 		skip.setPosAbs(pos);
 		interface.add(skip);
 	}

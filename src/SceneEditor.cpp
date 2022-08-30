@@ -29,7 +29,7 @@ void SceneEditor::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
 	game->act_mgr.registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Button::Left, Action::LEFT_CLICK);
 
-	gui_view.reset(sf::FloatRect(0, 0, game->app_conf.modes[game->app_conf.current_mode_id].width, game->app_conf.modes[game->app_conf.current_mode_id].height));
+	gui_view.reset(sf::FloatRect(0, 0, app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height));
 
 	interface.add(game->assets.getWidget("editor_menu_bar"));
 
@@ -215,13 +215,13 @@ void SceneEditor::sView() {
 	cam.target = player->get<CTransform>()->pos;
 	float square_delta = squareDistance(cam.pos, cam.target);
 
-	if (square_delta > game->app_conf.cam_treshold) {
-		cam.pos += ((cam.target - cam.pos) / game->app_conf.cam_speed);
+	if (square_delta > app_conf->cam_treshold) {
+		cam.pos += ((cam.target - cam.pos) / app_conf->cam_speed);
 	}
 
 	//update view position
-	int w = game->app_conf.modes[game->app_conf.current_mode_id].width;
-	int h = game->app_conf.modes[game->app_conf.current_mode_id].height;
+	int w = app_conf->modes[app_conf->current_mode_id].width;
+	int h = app_conf->modes[app_conf->current_mode_id].height;
 	sf::FloatRect world = level.map_ground.getBounds();
 	sf::FloatRect rect(cam.pos.x-w/2, cam.pos.y-h/2, w, h);
 

@@ -6,6 +6,8 @@
 #include "ActionManager.h"
 #include "SoundManager.h"
 
+class SoundManager;
+
 extern AppConfig* app_conf;
 extern Assets* assets;
 extern ActionManager* act_mgr;

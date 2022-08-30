@@ -38,7 +38,7 @@ void ScenePlay::init() {
 	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
 
 	load_level(level_path);
-	collision_map.setMap(level.map_size, level.tile_size, game->app_conf.colmap_res, game->app_conf.colmap_update);
+	collision_map.setMap(level.map_size, level.tile_size, app_conf->colmap_res, app_conf->colmap_update);
 
 	// setup interface
 	interface.add(game->assets.getWidget("play_ui"));
@@ -55,8 +55,8 @@ void ScenePlay::init() {
 
 	paused_widget = &game->assets.getWidget("menu_paused");
 	sf::Vector2i pos;
-	pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-	pos.y = static_cast<int>(game->app_conf.game_h*0.5);
+	pos.x = static_cast<int>(app_conf->game_w*0.5);
+	pos.y = static_cast<int>(app_conf->game_h*0.5);
 	paused_widget->setPosAbs(pos);
 
 	// run this block to display level;
@@ -90,7 +90,7 @@ void ScenePlay::sPathFind() {
 }
 
 void ScenePlay::drawCollisionLayer() {
-	sf::CircleShape circle(level.tile_size.x/(game->app_conf.colmap_res*2));
+	sf::CircleShape circle(level.tile_size.x/(app_conf->colmap_res*2));
 
 	//DRAW BLOCKING
 	if (!collision_map.colmap.empty()) {
@@ -98,7 +98,7 @@ void ScenePlay::drawCollisionLayer() {
 
 		for (int y = 0; y < collision_map.map_size.x; y++) {
 			for (int x = 0; x < collision_map.map_size.x; x++) {
-				circle.setPosition(sf::Vector2f(x*level.tile_size.x/game->app_conf.colmap_res,y*level.tile_size.y/game->app_conf.colmap_res));
+				circle.setPosition(sf::Vector2f(x*level.tile_size.x/app_conf->colmap_res,y*level.tile_size.y/app_conf->colmap_res));
 
 				if (collision_map.colmap[x][y]) {
 					game->screen_tex.draw(circle);
@@ -262,8 +262,8 @@ void ScenePlay::spawnEnemy() {
 	int radius = 50;
 
 	while (!position_is_valid) {
-		pos.x = rand() % static_cast<int>(game->app_conf.modes[game->app_conf.current_mode_id].width - radius*2) + radius;
-		pos.y = rand() % static_cast<int>(game->app_conf.modes[game->app_conf.current_mode_id].height - radius*2) + radius;
+		pos.x = rand() % static_cast<int>(app_conf->modes[app_conf->current_mode_id].width - radius*2) + radius;
+		pos.y = rand() % static_cast<int>(app_conf->modes[app_conf->current_mode_id].height - radius*2) + radius;
 
 		float square_min_dist = (player_radius*10 + radius) * (player_radius*10 + radius);
 		float square_current_dist = squareDistance(pos, player->get<CTransform>()->pos);
@@ -990,7 +990,7 @@ std::shared_ptr<Entity> ScenePlay::findTarget(const std::shared_ptr<Entity>& mis
 	}
 
 	std::shared_ptr<Entity> target;
-	float prev_dist(game->app_conf.modes[game->app_conf.current_mode_id].width*game->app_conf.modes[game->app_conf.current_mode_id].width);
+	float prev_dist(app_conf->modes[app_conf->current_mode_id].width*app_conf->modes[app_conf->current_mode_id].width);
 	float dist;
 
 	for (std::shared_ptr<Entity>& enemy : reachable) {
@@ -1267,13 +1267,13 @@ void ScenePlay::sView() {
 	cam.target = player->get<CTransform>()->pos;
 	float square_delta = squareDistance(cam.pos, cam.target);
 
-	if (square_delta > game->app_conf.cam_treshold) {
-		cam.pos += ((cam.target - cam.pos) / game->app_conf.cam_speed);
+	if (square_delta > app_conf->cam_treshold) {
+		cam.pos += ((cam.target - cam.pos) / app_conf->cam_speed);
 	}
 
 	//update view position
-	int w = game->app_conf.game_w;
-	int h = game->app_conf.game_h;
+	int w = app_conf->game_w;
+	int h = app_conf->game_h;
 	sf::FloatRect world = level.map_ground.getBounds();
 	sf::FloatRect rect(cam.pos.x-w/2, cam.pos.y-h/2, w, h);
 

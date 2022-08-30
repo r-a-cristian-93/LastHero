@@ -26,16 +26,16 @@ void SceneMainMenu::init() {
 	// set and scale background
 	background = &game->assets.getSprite("main_bg");
 	sf::FloatRect b = background->getLocalBounds();
-	float scale_x = game->app_conf.game_w / b.width;
-	float scale_y = game->app_conf.game_h / b.height;
+	float scale_x = app_conf->game_w / b.width;
+	float scale_y = app_conf->game_h / b.height;
 	background->setScale(scale_x, scale_y);
 
 	// set main menu buttons
 	{
 		Widget& play = game->assets.getWidget("button_play");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.7);
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*0.7);
 		play.setColor(mod_highlight);
 		play.setPosAbs(pos);
 		interface.add(play);
@@ -44,8 +44,8 @@ void SceneMainMenu::init() {
 	{
 		Widget& settings = game->assets.getWidget("button_settings");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.77);
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*0.77);
 		settings.setColor(mod_dark);
 		settings.setPosAbs(pos);
 		interface.add(settings);
@@ -54,8 +54,8 @@ void SceneMainMenu::init() {
 	{
 		Widget& exit = game->assets.getWidget("button_exit");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.84);
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*0.84);
 		exit.setColor(mod_dark);
 		exit.setPosAbs(pos);
 		interface.add(exit);

@@ -46,7 +46,6 @@ public:
 	sf::Sprite screen_sprite;
 	sf::View view;
 
-	AppConfig editor_conf;
 	ActionManager act_mgr;
 	SoundManager snd_mgr;
 	Assets assets;
