@@ -3,6 +3,7 @@
 
 int main() {
 	app_conf = new AppConfig();
+	cfg_mgr = new ConfigManager();
 	act_mgr = new ActionManager();
 	assets = new Assets();
 	snd_mgr = new SoundManager();
@@ -20,6 +21,7 @@ int main() {
 	game.run();
 
 	delete app_conf;
+	delete cfg_mgr;
 	delete act_mgr;
 	delete snd_mgr;
 	delete window;

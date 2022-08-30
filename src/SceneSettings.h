@@ -2,12 +2,8 @@
 #define SCENE_SETTINGS
 
 #include "Scene.h"
-#include "SceneSettings.h"
-#include "Game.h"
 
 class SceneSettings: public Scene {
-	Game* game;
-
 	enum {
 		SELECT_RESOLUTION = 0,
 		SELECT_FULLSCREEN,
@@ -42,7 +38,6 @@ public:
 	void doAction(const Action& a) override;
 
 	SceneSettings();
-	SceneSettings(Game* g);
 	~SceneSettings();
 };
 

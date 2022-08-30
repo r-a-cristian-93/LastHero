@@ -1,11 +1,9 @@
 #include <cmath>
-#include "SUpdate.h"
 #include "SDraw.h"
 #include "SceneSettings.h"
 
-SceneSettings::SceneSettings(Game* g)
+SceneSettings::SceneSettings()
 	:Scene(GAME_SCENE::SETTINGS)
-	,game(g)
 {
 	init();
 }
@@ -226,7 +224,8 @@ void SceneSettings::doAction(const Action& a) {
 					}
 					else if (selection == SELECT_RESOLUTION || selection == SELECT_FULLSCREEN) {
 						if (app_conf->window_style != temp_conf.window_style || app_conf->current_mode_id != temp_conf.current_mode_id) {
-							game->applySettings(temp_conf);
+							cfg_mgr->applySettings(temp_conf);
+
 							temp_conf.write("user.cfg");
 						}
 					}

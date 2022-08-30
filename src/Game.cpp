@@ -29,22 +29,11 @@ void Game::init() {
 	screen_tex->create(app_conf->game_w, app_conf->game_h);
 	screen_sprite->setTextureRect({0, 0, app_conf->game_w, app_conf->game_h});
 
-	applySettings(*app_conf);
+	cfg_mgr->applySettings(*app_conf);
 
 	setScene(GAME_SCENE::MENU);
 
 	running = true;
-}
-
-void Game::fit(sf::Sprite& sprite) {
-	float scale = static_cast<float>(app_conf->modes[app_conf->current_mode_id].height) / app_conf->game_h;
-	scale *= app_conf->game_scale;
-	sprite.setScale(scale,scale);
-
-	float offset_x = (app_conf->modes[app_conf->current_mode_id].width - sprite.getGlobalBounds().width)/2;
-	float offset_y = (app_conf->modes[app_conf->current_mode_id].height - sprite.getGlobalBounds().height)/2;
-
-	sprite.setPosition(offset_x, offset_y);
 }
 
 void Game::run() {
@@ -154,7 +143,7 @@ void Game::setScene(size_t id) {
 			current_scene = new SceneMainMenu();
 		break;
 		case GAME_SCENE::SETTINGS:
-			current_scene = new SceneSettings(this);
+			current_scene = new SceneSettings();
 		break;
 		case GAME_SCENE::PLAY:
 			current_scene = new ScenePlay(this, assets->getStages()[next_stage]);
@@ -267,16 +256,6 @@ size_t Game::stagesCount() {
 	return assets->getStages().size();
 }
 
-void Game::applySettings(AppConfig& conf) {
-	*app_conf = conf;
-
-	fit(*screen_sprite);
-	window->create(app_conf->modes[app_conf->current_mode_id], app_conf->window_name, app_conf->window_style);
-	window->setFramerateLimit(app_conf->max_fps);
-	window->setKeyRepeatEnabled(false);
-	window->setMouseCursorVisible(false);
-}
-
 void Game::setStyleEditor() {
 	screen_tex->create(app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height);
 	screen_sprite->setTextureRect({0, 0, app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height});
@@ -289,7 +268,7 @@ void Game::setStyleGame() {
 	screen_sprite->setTextureRect({0, 0, app_conf->game_w, app_conf->game_h});
 	screen_sprite->setTextureRect(sf::IntRect(0, 0, app_conf->game_w, app_conf->game_h));
 
-	applySettings(*app_conf);
+	cfg_mgr->applySettings(*app_conf);
 }
 
 Game::~Game() {
