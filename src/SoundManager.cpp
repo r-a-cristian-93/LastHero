@@ -2,13 +2,7 @@
 #include <iostream>
 
 SoundManager::SoundManager()
-	:assets(nullptr)
-	,bg_music(nullptr)
-	{}
-
-SoundManager::SoundManager(Assets* _assets)
-	:assets(_assets)
-	,bg_music(nullptr)
+	:bg_music(nullptr)
 	{}
 
 bool SoundManager::isPlaying(size_t id) {
@@ -30,8 +24,6 @@ void SoundManager::playSoundUnique(size_t id) {
 		playSound(id);
 	}
 }
-
-
 
 void SoundManager::playSound(size_t id) {
 	if (!id) return;

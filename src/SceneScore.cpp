@@ -26,7 +26,7 @@ void SceneScore::init() {
 			string = "STAGE " + std::to_string(game->stagePrev() + 1);
 		}
 
-		sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
+		sf::Font& font = assets->getFont(Assets::FONT_PIXEL);
 		unsigned int size = static_cast<unsigned int>(app_conf->game_h * title_h * 0.5);
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.5);
@@ -38,7 +38,7 @@ void SceneScore::init() {
 	}
 
 	{
-		Widget& skip = game->assets.getWidget("menu_skip");
+		Widget& skip = assets->getWidget("menu_skip");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.2);
 		pos.y = static_cast<int>(app_conf->game_h*0.95);
@@ -55,7 +55,7 @@ void SceneScore::init() {
 		total_kills += it_k->second;
 
 		// calculate total_score
-		size_t points = it_k->second * game->assets.getScorePoints(it_k->first);
+		size_t points = it_k->second * assets->getScorePoints(it_k->first);
 		total_score += points;
 
 		// count rows
@@ -70,7 +70,7 @@ void SceneScore::init() {
 	col_w = (1 - indent_left - indent_right) / cols;
 
 	std::string string = "";
-	sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
+	sf::Font& font = assets->getFont(Assets::FONT_PIXEL);
 	sf::Color color({255,255,255});
 
 	it_k = kills.cbegin();
@@ -111,17 +111,17 @@ void SceneScore::init() {
 				if (c == 2)
 					string = std::to_string(it_k->second);
 				if (c == 3) {
-					size_t points = it_k->second * game->assets.getScorePoints(it_k->first);
+					size_t points = it_k->second * assets->getScorePoints(it_k->first);
 					string = std::to_string(points);
 				}
 			}
 
 			if (c==0 && r > 0 && r < rows-2) {
 				Widget box;
-				sf::Sprite& icon = game->assets.getIconSmall(it_k->first);
+				sf::Sprite& icon = assets->getIconSmall(it_k->first);
 				sf::FloatRect rect = icon.getLocalBounds();
 				sf::Vector2i offset = {static_cast<int>(-rect.width/2), static_cast<int>(-rect.height/2)};
-				box.setBackground(game->assets.getIconSmall(it_k->first), offset);
+				box.setBackground(assets->getIconSmall(it_k->first), offset);
 				box.setPosAbs(pos);
 				all_table_widgets.push_back(box);
 			}

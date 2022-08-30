@@ -5,6 +5,7 @@
 #include "Tilemap.h"
 #include "Action.h"
 #include "Assets.h"
+#include "SharedResources.h"
 
 class Level {
 public:
@@ -16,7 +17,7 @@ public:
 	std::vector<Action> actions;
 
 	Level();
-	Level(std::string path, Assets& assets);
+	Level(std::string path);
 };
 
 

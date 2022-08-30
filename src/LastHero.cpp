@@ -10,6 +10,7 @@ int main() {
 
 	act_mgr = new ActionManager();
 
+	assets = new Assets();
 
 	Game game;
 
@@ -17,6 +18,7 @@ int main() {
 
 	delete app_conf;
 	delete act_mgr;
+	delete assets;
 
 	return 0;
 }

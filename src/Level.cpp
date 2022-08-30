@@ -3,7 +3,7 @@
 Level::Level()
 {}
 
-Level::Level(std::string _path, Assets& assets) {
+Level::Level(std::string _path) {
 	path = _path;
 	std::cout << "Loading level: " << path << std::endl;
 
@@ -69,7 +69,7 @@ Level::Level(std::string _path, Assets& assets) {
 					}
 
 					file >> word;
-					enemy_name = assets.getRecipeNameID(word);
+					enemy_name = assets->getRecipeNameID(word);
 				}
 				else if (word == "pos") file >> pos_x >> pos_y;
 				else if (word == "state") {
@@ -103,7 +103,7 @@ Level::Level(std::string _path, Assets& assets) {
 		}
 	}
 
-	map_ground.setTexture(assets.getTexture(texture_name));
+	map_ground.setTexture(assets->getTexture(texture_name));
 	map_ground.loadLevel(tile_size, level_layer, map_size);
 	delete[] level_layer;
 }

@@ -23,7 +23,7 @@ void SceneSettings::init() {
 	// set menu buttons
 
 	{
-		Widget& key_res = game->assets.getWidget("key_res");
+		Widget& key_res = assets->getWidget("key_res");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.2);
 		pos.y = static_cast<int>(app_conf->game_h*0.3);
@@ -32,7 +32,7 @@ void SceneSettings::init() {
 		interface.add(key_res);
 	}
 	{
-		Widget& val_res = game->assets.getWidget("val_res");
+		Widget& val_res = assets->getWidget("val_res");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.7);
 		pos.y = static_cast<int>(app_conf->game_h*0.3);
@@ -41,7 +41,7 @@ void SceneSettings::init() {
 		interface.add(val_res);
 	}
 	{
-		Widget& arrow_left = game->assets.getWidget("arrow_left");
+		Widget& arrow_left = assets->getWidget("arrow_left");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.5);
 		pos.y = static_cast<int>(app_conf->game_h*0.3);
@@ -50,7 +50,7 @@ void SceneSettings::init() {
 		interface.add(arrow_left);
 	}
 	{
-		Widget& arrow_right = game->assets.getWidget("arrow_right");
+		Widget& arrow_right = assets->getWidget("arrow_right");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.9);
 		pos.y = static_cast<int>(app_conf->game_h*0.3);
@@ -59,7 +59,7 @@ void SceneSettings::init() {
 		interface.add(arrow_right);
 	}
 	{
-		Widget& key_fullscreen = game->assets.getWidget("key_fullscreen");
+		Widget& key_fullscreen = assets->getWidget("key_fullscreen");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.2);
 		pos.y = static_cast<int>(app_conf->game_h*0.4);
@@ -68,7 +68,7 @@ void SceneSettings::init() {
 		interface.add(key_fullscreen);
 	}
 	{
-		Widget& val_fullscreen = game->assets.getWidget("val_fullscreen");
+		Widget& val_fullscreen = assets->getWidget("val_fullscreen");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.7);
 		pos.y = static_cast<int>(app_conf->game_h*0.4);
@@ -77,7 +77,7 @@ void SceneSettings::init() {
 		interface.add(val_fullscreen);
 	}
 	{
-		Widget& arrow_left = game->assets.getWidget("arrow_left");
+		Widget& arrow_left = assets->getWidget("arrow_left");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.5);
 		pos.y = static_cast<int>(app_conf->game_h*0.4);
@@ -86,7 +86,7 @@ void SceneSettings::init() {
 		interface.add(arrow_left);
 	}
 	{
-		Widget& arrow_right = game->assets.getWidget("arrow_right");
+		Widget& arrow_right = assets->getWidget("arrow_right");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.9);
 		pos.y = static_cast<int>(app_conf->game_h*0.4);
@@ -95,7 +95,7 @@ void SceneSettings::init() {
 		interface.add(arrow_right);
 	}
 	{
-		Widget& key_music_vol = game->assets.getWidget("key_music_vol");
+		Widget& key_music_vol = assets->getWidget("key_music_vol");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.2);
 		pos.y = static_cast<int>(app_conf->game_h*0.5);
@@ -104,7 +104,7 @@ void SceneSettings::init() {
 		interface.add(key_music_vol);
 	}
 	{
-		Widget& val_music_vol = game->assets.getWidget("val_music_vol");
+		Widget& val_music_vol = assets->getWidget("val_music_vol");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.7);
 		pos.y = static_cast<int>(app_conf->game_h*0.5);
@@ -113,7 +113,7 @@ void SceneSettings::init() {
 		interface.add(val_music_vol);
 	}
 	{
-		Widget& arrow_left = game->assets.getWidget("arrow_left");
+		Widget& arrow_left = assets->getWidget("arrow_left");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.5);
 		pos.y = static_cast<int>(app_conf->game_h*0.5);
@@ -122,7 +122,7 @@ void SceneSettings::init() {
 		interface.add(arrow_left);
 	}
 	{
-		Widget& arrow_right = game->assets.getWidget("arrow_right");
+		Widget& arrow_right = assets->getWidget("arrow_right");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.9);
 		pos.y = static_cast<int>(app_conf->game_h*0.5);
@@ -131,7 +131,7 @@ void SceneSettings::init() {
 		interface.add(arrow_right);
 	}
 	{
-		Widget& key_sfx_vol = game->assets.getWidget("key_sfx_vol");
+		Widget& key_sfx_vol = assets->getWidget("key_sfx_vol");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.2);
 		pos.y = static_cast<int>(app_conf->game_h*0.6);
@@ -140,7 +140,7 @@ void SceneSettings::init() {
 		interface.add(key_sfx_vol);
 	}
 	{
-		Widget& val_sfx_vol = game->assets.getWidget("val_sfx_vol");
+		Widget& val_sfx_vol = assets->getWidget("val_sfx_vol");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.7);
 		pos.y = static_cast<int>(app_conf->game_h*0.6);
@@ -149,7 +149,7 @@ void SceneSettings::init() {
 		interface.add(val_sfx_vol);
 	}
 	{
-		Widget& arrow_left = game->assets.getWidget("arrow_left");
+		Widget& arrow_left = assets->getWidget("arrow_left");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.5);
 		pos.y = static_cast<int>(app_conf->game_h*0.6);
@@ -158,7 +158,7 @@ void SceneSettings::init() {
 		interface.add(arrow_left);
 	}
 	{
-		Widget& arrow_right = game->assets.getWidget("arrow_right");
+		Widget& arrow_right = assets->getWidget("arrow_right");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.9);
 		pos.y = static_cast<int>(app_conf->game_h*0.6);
@@ -167,7 +167,7 @@ void SceneSettings::init() {
 		interface.add(arrow_right);
 	}
 	{
-		Widget& button_back = game->assets.getWidget("button_back");
+		Widget& button_back = assets->getWidget("button_back");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.5);
 		pos.y = static_cast<int>(app_conf->game_h*0.85);
@@ -176,7 +176,7 @@ void SceneSettings::init() {
 		interface.add(button_back);
 	}
 	{
-		Widget& settings_title = game->assets.getWidget("settings_title");
+		Widget& settings_title = assets->getWidget("settings_title");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.5);
 		pos.y = static_cast<int>(app_conf->game_h*0.1);

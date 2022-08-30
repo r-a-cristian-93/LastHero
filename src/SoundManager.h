@@ -10,7 +10,6 @@
 
 class SoundManager {
 private:
-	Assets* assets;
 	std::vector<sf::Sound> channels;
 	sf::Music* bg_music;
 
@@ -28,7 +27,6 @@ public:
 	bool isPlaying(size_t id);
 
 	SoundManager();
-	SoundManager(Assets* assets);
 };
 
 #endif

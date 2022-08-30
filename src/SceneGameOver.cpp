@@ -29,7 +29,7 @@ void SceneGameOver::init() {
 			game->snd_mgr.playBgMusic("game-lose");
 		}
 
-		sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
+		sf::Font& font = assets->getFont(Assets::FONT_PIXEL);
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.5);
 		pos.y = static_cast<int>(app_conf->game_h*0.5);
@@ -41,7 +41,7 @@ void SceneGameOver::init() {
 	}
 
 	{
-		Widget& skip = game->assets.getWidget("menu_skip");
+		Widget& skip = assets->getWidget("menu_skip");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.2);
 		pos.y = static_cast<int>(app_conf->game_h*0.95);

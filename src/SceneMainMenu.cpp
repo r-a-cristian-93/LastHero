@@ -24,7 +24,7 @@ void SceneMainMenu::init() {
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Tilde, Action::CHANGE_SCENE_EDITOR);
 
 	// set and scale background
-	background = &game->assets.getSprite("main_bg");
+	background = &assets->getSprite("main_bg");
 	sf::FloatRect b = background->getLocalBounds();
 	float scale_x = app_conf->game_w / b.width;
 	float scale_y = app_conf->game_h / b.height;
@@ -32,7 +32,7 @@ void SceneMainMenu::init() {
 
 	// set main menu buttons
 	{
-		Widget& play = game->assets.getWidget("button_play");
+		Widget& play = assets->getWidget("button_play");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.5);
 		pos.y = static_cast<int>(app_conf->game_h*0.7);
@@ -42,7 +42,7 @@ void SceneMainMenu::init() {
 	}
 
 	{
-		Widget& settings = game->assets.getWidget("button_settings");
+		Widget& settings = assets->getWidget("button_settings");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.5);
 		pos.y = static_cast<int>(app_conf->game_h*0.77);
@@ -52,7 +52,7 @@ void SceneMainMenu::init() {
 	}
 
 	{
-		Widget& exit = game->assets.getWidget("button_exit");
+		Widget& exit = assets->getWidget("button_exit");
 		sf::Vector2i pos;
 		pos.x = static_cast<int>(app_conf->game_w*0.5);
 		pos.y = static_cast<int>(app_conf->game_h*0.84);

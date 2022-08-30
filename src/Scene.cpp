@@ -15,7 +15,6 @@ Scene::Scene(Game* g, SceneType type)
 }
 
 void Scene::init() {
-	ent_mgr = EntityManager(game->assets);
 	fade_frames = app_conf->scene_fade_frames;
 
 	setFade(FADE::IN);

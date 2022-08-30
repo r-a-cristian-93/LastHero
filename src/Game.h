@@ -47,7 +47,6 @@ public:
 	sf::View view;
 
 	SoundManager snd_mgr;
-	Assets assets;
 
 	void addKills(std::map<size_t, size_t> kills_per_enemy);
 	bool stageNext();

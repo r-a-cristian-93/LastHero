@@ -31,8 +31,6 @@ void Game::init() {
 
 	applySettings(*app_conf);
 
-	snd_mgr = SoundManager(&assets);
-
 	setScene(GAME_SCENE::MENU);
 
 	running = true;
@@ -64,7 +62,7 @@ void Game::run() {
 			screen_tex.display();
 
 			window.clear(sf::Color(255, 0, 0));
-			//window.draw(screen_sprite, &assets.getShader("crt-mattias"));
+			//window.draw(screen_sprite, &assets->getShader("crt-mattias"));
 			window.draw(screen_sprite);
 			window.display();
 
@@ -156,14 +154,14 @@ void Game::setScene(size_t id) {
 			current_scene = new SceneSettings(this);
 		break;
 		case GAME_SCENE::PLAY:
-			current_scene = new ScenePlay(this, assets.getStages()[next_stage]);
+			current_scene = new ScenePlay(this, assets->getStages()[next_stage]);
 			if (next_stage == 0) {
 				kills_per_enemy.clear();
 				new_kills_per_enemy.clear();
 			}
 		break;
 		case GAME_SCENE::EDITOR:
-			current_scene = new SceneEditor(this, assets.getStages()[next_stage]);
+			current_scene = new SceneEditor(this, assets->getStages()[next_stage]);
 			setStyleEditor();
 		break;
 		case GAME_SCENE::OVER:
@@ -197,7 +195,7 @@ void Game::addKills(std::map<size_t, size_t> kills) {
 
 bool Game::stageNext() {
 	prev_stage = next_stage;
-	if (next_stage < assets.getStages().size()-1) {
+	if (next_stage < assets->getStages().size()-1) {
 		next_stage++;
 
 		return true;
@@ -218,7 +216,7 @@ size_t Game::stagePrev() {
 }
 
 size_t Game::stagesCount() {
-	return assets.getStages().size();
+	return assets->getStages().size();
 }
 
 void Game::applySettings(AppConfig& conf) {

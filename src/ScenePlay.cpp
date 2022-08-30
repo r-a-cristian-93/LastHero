@@ -2,6 +2,7 @@
 #include <cmath>
 #include "SUpdate.h"
 #include "SDraw.h"
+#include "SharedResources.h"
 
 ScenePlay::ScenePlay(Game* g, std::string lp)
 	:Scene(g, GAME_SCENE::PLAY)
@@ -41,8 +42,8 @@ void ScenePlay::init() {
 	collision_map.setMap(level.map_size, level.tile_size, app_conf->colmap_res, app_conf->colmap_update);
 
 	// setup interface
-	interface.add(game->assets.getWidget("play_ui"));
-	interface.add(game->assets.getWidget("blood_overlay"));
+	interface.add(assets->getWidget("play_ui"));
+	interface.add(assets->getWidget("blood_overlay"));
 
 	int* links[Widget::LINK_COUNT];
 	links[Widget::LINK_PLAYER_HP] = &player->get<CStats>()->effective[CStats::HEALTH];
@@ -53,7 +54,7 @@ void ScenePlay::init() {
 
 	interface.setLinks(links);
 
-	paused_widget = &game->assets.getWidget("menu_paused");
+	paused_widget = &assets->getWidget("menu_paused");
 	sf::Vector2i pos;
 	pos.x = static_cast<int>(app_conf->game_w*0.5);
 	pos.y = static_cast<int>(app_conf->game_h*0.5);
@@ -75,7 +76,7 @@ void ScenePlay::init() {
 }
 
 void ScenePlay::load_level(std::string path) {
-	level = Level(path, game->assets);
+	level = Level(path);
 	game->snd_mgr.playBgMusic(level.bg_music);
 
 	for (Action& a: level.actions) {
@@ -609,7 +610,7 @@ void ScenePlay::sStateFacing() {
 }
 
 void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
-	size_t recipe = game->assets.getRecipeNameID("glowing_bullet_explosion");
+	size_t recipe = assets->getRecipeNameID("glowing_bullet_explosion");
 	std::shared_ptr<Entity> e = ent_mgr.add(TAG::FX, recipe);
 
 	e->add<CTransform>(new CTransform(pos, 0));

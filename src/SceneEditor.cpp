@@ -31,21 +31,21 @@ void SceneEditor::init() {
 
 	gui_view.reset(sf::FloatRect(0, 0, app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height));
 
-	interface.add(game->assets.getWidget("editor_menu_bar"));
+	interface.add(assets->getWidget("editor_menu_bar"));
 
-	Widget& side_bar = game->assets.getWidget("editor_side_bar");
-	side_bar.addChild(game->assets.getWidget("tag_terrain"));
-	side_bar.addChild(game->assets.getWidget("tag_environment"));
-	side_bar.addChild(game->assets.getWidget("tag_creatures"));
-	side_bar.addChild(game->assets.getWidget("entity_scroll"));
+	Widget& side_bar = assets->getWidget("editor_side_bar");
+	side_bar.addChild(assets->getWidget("tag_terrain"));
+	side_bar.addChild(assets->getWidget("tag_environment"));
+	side_bar.addChild(assets->getWidget("tag_creatures"));
+	side_bar.addChild(assets->getWidget("entity_scroll"));
 
-	interface.add(game->assets.getWidget("editor_side_bar"));
+	interface.add(assets->getWidget("editor_side_bar"));
 
 
 	{
 		// SIDEBAR MOCKUP
 
-		const std::map<size_t, Components>& recipes_env = game->assets.getRecipes(TAG::ENVIRONMENT);
+		const std::map<size_t, Components>& recipes_env = assets->getRecipes(TAG::ENVIRONMENT);
 		std::map<size_t, Components>::const_iterator recipe_it;
 		sf::Vector2f max_size(100,100);
 		int k = 1;
