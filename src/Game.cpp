@@ -54,17 +54,17 @@ void Game::run() {
 	while(running) {
 		PROFILE_SCOPE("MAIN_GAME_LOOP");
 
-		if (window.isOpen()) {
+		if (window->isOpen()) {
 			screen_tex.clear();
 
 			if (current_scene) current_scene->update();
 
 			screen_tex.display();
 
-			window.clear(sf::Color(255, 0, 0));
-			//window.draw(screen_sprite, &assets->getShader("crt-mattias"));
-			window.draw(screen_sprite);
-			window.display();
+			window->clear(sf::Color(255, 0, 0));
+			//window->draw(screen_sprite, &assets->getShader("crt-mattias"));
+			window->draw(screen_sprite);
+			window->display();
 
 			sUserInput();
 			sChangeScene();
@@ -78,7 +78,7 @@ void Game::sUserInput() {
 	sf::Event event;
 	int action_code = Action::NONE;
 
-	while (window.pollEvent(event)) {
+	while (window->pollEvent(event)) {
 		if (event.type == sf::Event::Closed) {
 			running = false;
 		}
@@ -112,7 +112,7 @@ void Game::sUserInput() {
 }
 
 void Game::handleUIEvent(sf::Event& event, WidgetVec& widgets) {
-	sf::Vector2i m_pos(sf::Mouse::getPosition(window));
+	sf::Vector2i m_pos(sf::Mouse::getPosition(*window));
 
 	for (Widget& w: widgets) {
 		if (w.on_click) {
@@ -223,10 +223,10 @@ void Game::applySettings(AppConfig& conf) {
 	*app_conf = conf;
 
 	fit(screen_sprite);
-	window.create(app_conf->modes[app_conf->current_mode_id], app_conf->window_name, app_conf->window_style);
-	window.setFramerateLimit(app_conf->max_fps);
-	window.setKeyRepeatEnabled(false);
-	window.setMouseCursorVisible(false);
+	window->create(app_conf->modes[app_conf->current_mode_id], app_conf->window_name, app_conf->window_style);
+	window->setFramerateLimit(app_conf->max_fps);
+	window->setKeyRepeatEnabled(false);
+	window->setMouseCursorVisible(false);
 }
 
 void Game::setStyleEditor() {

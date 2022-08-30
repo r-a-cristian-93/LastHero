@@ -7,13 +7,13 @@ SceneEditor::SceneEditor(Game* g, std::string lp)
 	:ScenePlay(g, GAME_SCENE::EDITOR, lp)
 {
 	game_state = GAME_EDIT;
-	game->window.setMouseCursorVisible(true);
+	window->setMouseCursorVisible(true);
 
 	SceneEditor::init();
 }
 
 SceneEditor::~SceneEditor() {
-	game->window.setMouseCursorVisible(false);
+	window->setMouseCursorVisible(false);
 }
 
 void SceneEditor::init() {

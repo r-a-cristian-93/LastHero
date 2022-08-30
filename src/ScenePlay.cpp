@@ -965,7 +965,7 @@ void ScenePlay::killEntity(std::shared_ptr<Entity>& entity) {
 }
 
 void ScenePlay::spawnMissle() {
-	sf::Vector2f mouse_pos = game->window.mapPixelToCoords(sf::Mouse::getPosition(game->window));
+	sf::Vector2f mouse_pos = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
 
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir = mouse_pos - pos;

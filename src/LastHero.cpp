@@ -14,6 +14,8 @@ int main() {
 
 	snd_mgr = new SoundManager();
 
+	window = new sf::RenderWindow();
+
 	Game game;
 
 	game.run();
