@@ -61,14 +61,14 @@ void SceneMainMenu::init() {
 		interface.add(exit);
 	}
 
-	game->screen_tex.setView(gui_view);
+	screen_tex->setView(gui_view);
 }
 
 void SceneMainMenu::update() {
 	interface.update();
 
-	game->screen_tex.draw(*background);
-	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
+	screen_tex->draw(*background);
+	SDraw::drawInterface(&*screen_tex, interface.getWidgets());
 
 	frame_current++;
 	sFade();

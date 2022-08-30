@@ -89,7 +89,7 @@ void SceneEditor::init() {
 		}
 	}
 
-	game->screen_tex.setView(gui_view);
+	screen_tex->setView(gui_view);
 
 	load_level(level_path);
 }
@@ -109,8 +109,8 @@ void SceneEditor::update() {
 	}
 	sView();
 
-	game->screen_tex.draw(level.map_ground);
-	SDraw::drawEntities(&game->screen_tex, ent_mgr.getEntities());
+	screen_tex->draw(level.map_ground);
+	SDraw::drawEntities(&*screen_tex, ent_mgr.getEntities());
 
 
 #ifdef DEBUG_GRID
@@ -131,9 +131,9 @@ void SceneEditor::update() {
 
 	//change view in order to keep the interface relative to window
 	{
-		game->screen_tex.setView(gui_view);
-		SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
-		game->screen_tex.setView(game->view);
+		screen_tex->setView(gui_view);
+		SDraw::drawInterface(&*screen_tex, interface.getWidgets());
+		screen_tex->setView(game->view);
 	}
 
 	frame_current++;

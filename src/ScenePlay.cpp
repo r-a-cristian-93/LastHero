@@ -102,7 +102,7 @@ void ScenePlay::drawCollisionLayer() {
 				circle.setPosition(sf::Vector2f(x*level.tile_size.x/app_conf->colmap_res,y*level.tile_size.y/app_conf->colmap_res));
 
 				if (collision_map.colmap[x][y]) {
-					game->screen_tex.draw(circle);
+					screen_tex->draw(circle);
 				}
 			}
 		}
@@ -116,7 +116,7 @@ void ScenePlay::drawCollisionLayer() {
 			if (!e->get<CBChase>()->path.empty()) {
 				for (sf::Vector2f p: e->get<CBChase>()->path) {
 					circle.setPosition(sf::Vector2f(p.x, p.y));
-					game->screen_tex.draw(circle);
+					screen_tex->draw(circle);
 				}
 			}
 		}
@@ -135,7 +135,7 @@ void ScenePlay::drawDirectionVectors() {
 					sf::Vertex(e->get<CTransform>()->pos),
 					sf::Vertex(e->get<CTransform>()->pos + dir)
 				};
-				game->screen_tex.draw(line, 2, sf::Lines);
+				screen_tex->draw(line, 2, sf::Lines);
 			}
 		}
 	}
@@ -151,7 +151,7 @@ void ScenePlay::drawGrid() {
 	for (size_t x = 0; x < level.map_size.x; x++) {
 		for (size_t y = 0; y < level.map_size.y; y++) {
 			rect.setPosition(sf::Vector2f(x*level.tile_size.x, y*level.tile_size.y));
-			game->screen_tex.draw(rect);
+			screen_tex->draw(rect);
 		}
 	}
 }
@@ -170,7 +170,7 @@ void ScenePlay::drawEntityPosition() {
 				sf::Vertex(pos + sf::Vector2f(0,d), col)
 			};
 
-			game->screen_tex.draw(crosshair, 4, sf::Lines);
+			screen_tex->draw(crosshair, 4, sf::Lines);
 		}
 	}
 }
@@ -207,12 +207,12 @@ void ScenePlay::update() {
 
 	{
 		PROFILE_SCOPE("sDrawBg");
-		game->screen_tex.draw(level.map_ground);
+		screen_tex->draw(level.map_ground);
 	}
 
 	{
 		PROFILE_SCOPE("sDrawEntities");
-		SDraw::drawEntities(&game->screen_tex, ent_mgr.getEntities());
+		SDraw::drawEntities(&*screen_tex, ent_mgr.getEntities());
 	}
 
 #ifdef DEBUG_GRID
@@ -233,15 +233,15 @@ void ScenePlay::update() {
 
 	if (glitter.m_lifetime >=0) {
 		glitter.update();
-		game->screen_tex.draw(glitter);
+		screen_tex->draw(glitter);
 	}
 
 	//change view in order to keep the interface relative to window
 	{
 		PROFILE_SCOPE("sDrawInterface");
-		game->screen_tex.setView(gui_view);
-		SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
-		game->screen_tex.setView(game->view);
+		screen_tex->setView(gui_view);
+		SDraw::drawInterface(&*screen_tex, interface.getWidgets());
+		screen_tex->setView(game->view);
 	}
 
 	frame_current++;

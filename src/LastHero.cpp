@@ -16,6 +16,8 @@ int main() {
 
 	window = new sf::RenderWindow();
 
+	screen_tex = new sf::RenderTexture();
+
 	Game game;
 
 	game.run();

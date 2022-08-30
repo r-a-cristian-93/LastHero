@@ -138,7 +138,7 @@ void SceneScore::init() {
 		}
 	}
 
-	game->screen_tex.setView(gui_view);
+	screen_tex->setView(gui_view);
 }
 
 void SceneScore::update() {
@@ -166,8 +166,8 @@ void SceneScore::update() {
 		copyCells(all_table_widgets, interface.getWidgets(), {1,rows-1,3,rows-1});
 		if (!skip_key_frames) snd_mgr->playSound("menu_punch");
 	}
-	game->screen_tex.clear(sf::Color(10, 70, 10));
-	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
+	screen_tex->clear(sf::Color(10, 70, 10));
+	SDraw::drawInterface(&*screen_tex, interface.getWidgets());
 
 	frame_current++;
 	sFade();

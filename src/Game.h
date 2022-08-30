@@ -41,7 +41,6 @@ public:
 	KillsMap new_kills_per_enemy;
 
 	bool running;
-	sf::RenderTexture screen_tex;
 	sf::Sprite screen_sprite;
 	sf::View view;
 

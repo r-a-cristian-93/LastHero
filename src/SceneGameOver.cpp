@@ -49,11 +49,11 @@ void SceneGameOver::init() {
 		interface.add(skip);
 	}
 
-	game->screen_tex.setView(gui_view);
+	screen_tex->setView(gui_view);
 }
 
 void SceneGameOver::update() {
-	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
+	SDraw::drawInterface(&*screen_tex, interface.getWidgets());
 
 	if ((frame_current == 240 || skip_key_frames) && getCurrentFade() != FADE::OUT) {
 		setFade(FADE::OUT, GAME_SCENE::SCORE);

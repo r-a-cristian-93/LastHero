@@ -26,8 +26,8 @@ void Game::init() {
 	PROFILE_FUNCTION();
 
 	//load texture after creating the window causes sementation fault;
-	screen_tex.create(app_conf->game_w, app_conf->game_h);
-	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf->game_w, app_conf->game_h});
+	screen_tex->create(app_conf->game_w, app_conf->game_h);
+	screen_sprite = sf::Sprite(screen_tex->getTexture(), {0, 0, app_conf->game_w, app_conf->game_h});
 
 	applySettings(*app_conf);
 
@@ -55,11 +55,11 @@ void Game::run() {
 		PROFILE_SCOPE("MAIN_GAME_LOOP");
 
 		if (window->isOpen()) {
-			screen_tex.clear();
+			screen_tex->clear();
 
 			if (current_scene) current_scene->update();
 
-			screen_tex.display();
+			screen_tex->display();
 
 			window->clear(sf::Color(255, 0, 0));
 			//window->draw(screen_sprite, &assets->getShader("crt-mattias"));
@@ -230,15 +230,15 @@ void Game::applySettings(AppConfig& conf) {
 }
 
 void Game::setStyleEditor() {
-	screen_tex.create(app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height);
-	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height});
+	screen_tex->create(app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height);
+	screen_sprite = sf::Sprite(screen_tex->getTexture(), {0, 0, app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height});
 	screen_sprite.setScale(1, 1);
 	screen_sprite.setPosition(0, 0);
 }
 
 void Game::setStyleGame() {
-	screen_tex.create(app_conf->game_w, app_conf->game_h);
-	screen_sprite = sf::Sprite(screen_tex.getTexture(), {0, 0, app_conf->game_w, app_conf->game_h});
+	screen_tex->create(app_conf->game_w, app_conf->game_h);
+	screen_sprite = sf::Sprite(screen_tex->getTexture(), {0, 0, app_conf->game_w, app_conf->game_h});
 	screen_sprite.setTextureRect(sf::IntRect(0, 0, app_conf->game_w, app_conf->game_h));
 
 	applySettings(*app_conf);

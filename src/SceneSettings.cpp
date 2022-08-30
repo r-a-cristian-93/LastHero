@@ -203,13 +203,13 @@ void SceneSettings::init() {
 
 	interface.setLinks(links);
 
-	game->screen_tex.setView(gui_view);
+	screen_tex->setView(gui_view);
 }
 
 void SceneSettings::update() {
 	interface.update();
 
-	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
+	SDraw::drawInterface(&*screen_tex, interface.getWidgets());
 
 	frame_current++;
 	sFade();
