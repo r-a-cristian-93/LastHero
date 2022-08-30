@@ -31,7 +31,6 @@ set(SOURCE_FILES
 	src/Entity.cpp
 	src/SUpdate.cpp
 	src/SDraw.cpp
-	src/Settings.cpp
 	src/EntityManager.cpp
 	src/Game.cpp
 	src/Action.cpp

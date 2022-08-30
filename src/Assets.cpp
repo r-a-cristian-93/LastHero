@@ -3,7 +3,6 @@
 #include <regex>
 #include "Common.h"
 #include "Assets.h"
-#include "Settings.h"
 #include "Action.h"
 
 Assets::Assets() {
