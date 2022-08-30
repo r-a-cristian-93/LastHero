@@ -5,6 +5,16 @@ SoundManager::SoundManager()
 	:bg_music(nullptr)
 	{}
 
+SoundManager::~SoundManager() {
+	for (int i=0; i<channels.size(); i++) {
+		channels[i].stop();
+	}
+
+	channels.clear();
+
+	if (bg_music) bg_music->stop();
+}
+
 bool SoundManager::isPlaying(size_t id) {
 	const sf::SoundBuffer* sb = &assets->getSoundBuffer(id);
 

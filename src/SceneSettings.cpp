@@ -220,7 +220,7 @@ void SceneSettings::doAction(const Action& a) {
 		switch (*a.code) {
 			case Action::MENU_SELECT:
 				if (getCurrentFade() != FADE::OUT) {
-					game->snd_mgr.playSound("menu_confirm");
+					snd_mgr->playSound("menu_confirm");
 					if (selection == SELECT_BACK) {
 						setFade(FADE::OUT, GAME_SCENE::MENU);
 					}
@@ -252,7 +252,7 @@ void SceneSettings::doAction(const Action& a) {
 			break;
 			case Action::CHANGE_SCENE_MENU:
 				if (getCurrentFade() != FADE::OUT) {
-					game->snd_mgr.playSound("menu_cancel");
+					snd_mgr->playSound("menu_cancel");
 					setFade(FADE::OUT, GAME_SCENE::MENU);
 				}
 			default:
@@ -302,7 +302,7 @@ void SceneSettings::selectHorizontal(size_t action_code) {
 			}
 
 			app_conf->music_volume = temp_conf.music_volume;
-			game->snd_mgr.setBgMusicVolume(temp_conf.music_volume);
+			snd_mgr->setBgMusicVolume(temp_conf.music_volume);
 			selected_music_vol = to_string(temp_conf.music_volume);
 			temp_conf.write("user.cfg");
 		break;
@@ -320,7 +320,7 @@ void SceneSettings::selectHorizontal(size_t action_code) {
 		break;
 	}
 
-	game->snd_mgr.playSound("menu_select");
+	snd_mgr->playSound("menu_select");
 }
 
 void SceneSettings::select(size_t s) {
@@ -349,7 +349,7 @@ void SceneSettings::select(size_t s) {
 		}
 	}
 
-	game->snd_mgr.playSound("menu_select");
+	snd_mgr->playSound("menu_select");
 }
 
 std::string SceneSettings::to_string(sf::VideoMode& mode) {

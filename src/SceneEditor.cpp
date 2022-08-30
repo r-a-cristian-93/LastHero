@@ -146,13 +146,13 @@ void SceneEditor::doAction(const Action& a) {
 		if (*a.code == Action::GAME_PAUSE) {
 			paused = !paused;
 			if (paused) {
-				game->snd_mgr.pauseBgMusic();
-				game->snd_mgr.playSound("menu_pause");
+				snd_mgr->pauseBgMusic();
+				snd_mgr->playSound("menu_pause");
 				interface.add(*paused_widget);
 			}
 			else {
-				game->snd_mgr.playSound("menu_unpause");
-				game->snd_mgr.playBgMusic();
+				snd_mgr->playSound("menu_unpause");
+				snd_mgr->playBgMusic();
 				interface.getWidgets().pop_back();
 			}
 		}

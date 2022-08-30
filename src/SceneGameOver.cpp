@@ -21,12 +21,12 @@ void SceneGameOver::init() {
 		if (game->stagePrev() + 1 == game->stagesCount()) {
 			string = "YOU WIN";
 			color = {135, 155, 70};
-			game->snd_mgr.playBgMusic("game-win");
+			snd_mgr->playBgMusic("game-win");
 		}
 		else {
 			string = "YOU LOSE";
 			color = {220, 50, 50};
-			game->snd_mgr.playBgMusic("game-lose");
+			snd_mgr->playBgMusic("game-lose");
 		}
 
 		sf::Font& font = assets->getFont(Assets::FONT_PIXEL);

@@ -13,7 +13,7 @@ SceneMainMenu::~SceneMainMenu() {}
 
 void SceneMainMenu::init() {
 	music_fade_out = true;
-	//game->snd_mgr.playBgMusic("intro");
+	//snd_mgr->playBgMusic("intro");
 
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
@@ -79,7 +79,7 @@ void SceneMainMenu::doAction(const Action& a) {
 		switch (*a.code) {
 			case Action::MENU_SELECT:
 				if (getCurrentFade() != FADE::OUT) {
-					game->snd_mgr.playSound("menu_confirm");
+					snd_mgr->playSound("menu_confirm");
 					if (selection == SELECT_EXIT) {
 						setFade(FADE::OUT, GAME_SCENE::EXIT);
 					}
@@ -107,7 +107,7 @@ void SceneMainMenu::doAction(const Action& a) {
 				setFade(FADE::OUT, GAME_SCENE::EDITOR);
 			break;
 			case Action::GAME_EXIT:
-				game->snd_mgr.playSound("menu_cancel");
+				snd_mgr->playSound("menu_cancel");
 				setFade(FADE::OUT, GAME_SCENE::EXIT);
 			default:
 			break;
@@ -133,5 +133,5 @@ void SceneMainMenu::select(size_t s) {
 		}
 	}
 
-	game->snd_mgr.playSound("menu_select");
+	snd_mgr->playSound("menu_select");
 }

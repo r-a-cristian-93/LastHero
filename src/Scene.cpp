@@ -21,8 +21,8 @@ void Scene::init() {
 
 	gui_view.reset(sf::FloatRect(0, 0, app_conf->game_w, app_conf->game_h));
 
-	if (scene_type == GAME_SCENE::MENU && !game->snd_mgr.bgPlaying())
-		game->snd_mgr.playBgMusic("intro");
+	if (scene_type == GAME_SCENE::MENU && !snd_mgr->bgPlaying())
+		snd_mgr->playBgMusic("intro");
 }
 
 void Scene::sFade() {
@@ -56,7 +56,7 @@ void Scene::sFade() {
 				if (current_fade_frames[fade] > 0) {
 					v = current_fade_frames[fade] * (app_conf->music_volume/fade_frames[fade]);
 				}
-				game->snd_mgr.setBgMusicVolume(v);
+				snd_mgr->setBgMusicVolume(v);
 			}
 		}
 		break;
@@ -85,6 +85,6 @@ const FadeType Scene::getCurrentFade() {
 }
 
 Scene::~Scene() {
-	if (next_scene != GAME_SCENE::SETTINGS && scene_type != GAME_SCENE::SETTINGS)	game->snd_mgr.stopBgMusic();
+	if (next_scene != GAME_SCENE::SETTINGS && scene_type != GAME_SCENE::SETTINGS)	snd_mgr->stopBgMusic();
 }
 

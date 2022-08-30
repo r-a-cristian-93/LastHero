@@ -27,6 +27,7 @@ public:
 	bool isPlaying(size_t id);
 
 	SoundManager();
+	~SoundManager();
 };
 
 #endif

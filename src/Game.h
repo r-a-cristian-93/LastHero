@@ -46,8 +46,6 @@ public:
 	sf::Sprite screen_sprite;
 	sf::View view;
 
-	SoundManager snd_mgr;
-
 	void addKills(std::map<size_t, size_t> kills_per_enemy);
 	bool stageNext();
 	void stageReset();

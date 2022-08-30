@@ -77,7 +77,7 @@ void ScenePlay::init() {
 
 void ScenePlay::load_level(std::string path) {
 	level = Level(path);
-	game->snd_mgr.playBgMusic(level.bg_music);
+	snd_mgr->playBgMusic(level.bg_music);
 
 	for (Action& a: level.actions) {
 		doAction(a);
@@ -465,9 +465,9 @@ void ScenePlay::sCollisionSolve() {
 
 							if (entity->get<CSfx>()) {
 								if (entity_hp <= 0)
-									game->snd_mgr.playSoundUnique(entity->get<CSfx>()->die);
+									snd_mgr->playSoundUnique(entity->get<CSfx>()->die);
 								else
-									game->snd_mgr.playSoundUnique(entity->get<CSfx>()->hurt);
+									snd_mgr->playSoundUnique(entity->get<CSfx>()->hurt);
 							}
 						}
 					}
@@ -907,7 +907,7 @@ void ScenePlay::sFireWeapon() {
 				if (e->get<CInput>()->fire_primary && comp_w.p_rounds_current) {
 					if (comp_w.p_delay_current == 0) {
 						spawnEntity(comp_w.p_tag, comp_w.primary, e, pos, Entity::STATE_RUN, facing);
-						game->snd_mgr.playSound(comp_w.p_sfx);
+						snd_mgr->playSound(comp_w.p_sfx);
 
 						e->get<CInput>()->fire_primary = false;
 						comp_w.p_rounds_current--;
@@ -921,7 +921,7 @@ void ScenePlay::sFireWeapon() {
 				else if (e->get<CInput>()->fire_secondary && comp_w.s_rounds_current) {
 					if (comp_w.s_delay_current == 0) {
 						spawnEntity(comp_w.s_tag, comp_w.secondary, e, pos, Entity::STATE_RUN, facing);
-						game->snd_mgr.playSound(comp_w.s_sfx);
+						snd_mgr->playSound(comp_w.s_sfx);
 
 						e->get<CInput>()->fire_secondary = false;
 						comp_w.s_rounds_current--;
@@ -1128,13 +1128,13 @@ void ScenePlay::doAction(const Action& a) {
 		if (*a.code == Action::GAME_PAUSE) {
 			paused = !paused;
 			if (paused) {
-				game->snd_mgr.pauseBgMusic();
-				game->snd_mgr.playSound("menu_pause");
+				snd_mgr->pauseBgMusic();
+				snd_mgr->playSound("menu_pause");
 				interface.add(*paused_widget);
 			}
 			else {
-				game->snd_mgr.playSound("menu_unpause");
-				game->snd_mgr.playBgMusic();
+				snd_mgr->playSound("menu_unpause");
+				snd_mgr->playBgMusic();
 				interface.getWidgets().pop_back();
 			}
 		}

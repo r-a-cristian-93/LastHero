@@ -12,6 +12,8 @@ int main() {
 
 	assets = new Assets();
 
+	snd_mgr = new SoundManager();
+
 	Game game;
 
 	game.run();
