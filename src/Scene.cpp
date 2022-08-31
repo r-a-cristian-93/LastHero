@@ -16,6 +16,8 @@ Scene::Scene(SceneType type)
 }
 
 void Scene::init() {
+	act_mgr->reset();
+
 	fade_frames = app_conf->scene_fade_frames;
 
 	setFade(FADE::IN);
