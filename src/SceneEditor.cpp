@@ -3,10 +3,9 @@
 #include "SDraw.h"
 #include <cmath>
 
-SceneEditor::SceneEditor(Game* g, std::string lp)
-	:ScenePlay(g, GAME_SCENE::EDITOR, lp)
+SceneEditor::SceneEditor(std::string lp)
+	:ScenePlay(GAME_SCENE::EDITOR, lp)
 {
-	game_state = GAME_EDIT;
 	window->setMouseCursorVisible(true);
 
 	SceneEditor::init();

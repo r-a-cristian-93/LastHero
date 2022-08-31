@@ -4,9 +4,8 @@
 #include "SDraw.h"
 #include "SceneScore.h"
 
-SceneScore::SceneScore(Game* g)
+SceneScore::SceneScore()
 	:Scene(GAME_SCENE::SCORE)
-	,game(g)
 {
 	init();
 }
@@ -20,11 +19,11 @@ void SceneScore::init() {
 	{
 		Widget title;
 		std::string string = "";
-		if (game->stagePrev() + 1 == game->stagesCount()) {
+		if (game_stats->prev_stage + 1 == game_stats->stagesCount()) {
 			string = "ALL STAGES COMPLETE!";
 		}
 		else {
-			string = "STAGE " + std::to_string(game->stagePrev() + 1);
+			string = "STAGE " + std::to_string(game_stats->prev_stage + 1);
 		}
 
 		sf::Font& font = assets->getFont(Assets::FONT_PIXEL);
@@ -47,8 +46,8 @@ void SceneScore::init() {
 		interface.add(skip);
 	}
 
-	const KillsMap& kills = game->kills_per_enemy;
-	const KillsMap& n_kills = game->new_kills_per_enemy;
+	const KillsMap& kills = game_stats->kills_per_enemy;
+	const KillsMap& n_kills = game_stats->new_kills_per_enemy;
 	KillsMap::const_iterator it_k;
 
 	for (it_k = kills.cbegin(); it_k != kills.cend(); it_k++) {
@@ -149,7 +148,7 @@ void SceneScore::update() {
 	}
 	if (frame_current == key_frames[FRAMES_SCORE::COL_1] || skip_key_frames) {
 		copyCells(all_table_widgets, interface.getWidgets(), {1,0,1,rows-3});
-		if (!game->new_kills_per_enemy.empty() && !skip_key_frames) snd_mgr->playSound("menu_punch");
+		if (!game_stats->new_kills_per_enemy.empty() && !skip_key_frames) snd_mgr->playSound("menu_punch");
 	}
 	if (frame_current == key_frames[FRAMES_SCORE::COL_2] || skip_key_frames) {
 		copyCells(all_table_widgets, interface.getWidgets(), {2,0,2,rows-3});
@@ -198,7 +197,7 @@ void SceneScore::doAction(const Action& a) {
 			break;
 			case Action::MENU_SELECT:
 				if ((frame_current > key_frames[FRAMES_SCORE::CONTINUE] || skip_key_frames) && getCurrentFade()!=FADE::OUT) {
-					if (game->stageCurrent()) {
+					if (game_stats->next_stage) {
 						setFade(FADE::OUT, GAME_SCENE::PLAY);
 					}
 					else {

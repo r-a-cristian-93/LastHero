@@ -15,8 +15,6 @@
 Game::Game()
 	:running(false)
 	,current_scene(nullptr)
-	,next_stage(0)
-	,prev_stage(0)
 	,next_scene(0)
 {
 	init();
@@ -146,21 +144,21 @@ void Game::setScene(size_t id) {
 			current_scene = new SceneSettings();
 		break;
 		case GAME_SCENE::PLAY:
-			current_scene = new ScenePlay(this, assets->getStages()[next_stage]);
-			if (next_stage == 0) {
-				kills_per_enemy.clear();
-				new_kills_per_enemy.clear();
+			current_scene = new ScenePlay(assets->getStages()[game_stats->next_stage]);
+			if (game_stats->next_stage == 0) {
+				game_stats->kills_per_enemy.clear();
+				game_stats->new_kills_per_enemy.clear();
 			}
 		break;
 		case GAME_SCENE::EDITOR:
-			current_scene = new SceneEditor(this, assets->getStages()[next_stage]);
+			current_scene = new SceneEditor(assets->getStages()[game_stats->next_stage]);
 			setStyleEditor();
 		break;
 		case GAME_SCENE::OVER:
-			current_scene = new SceneGameOver(this);
+			current_scene = new SceneGameOver();
 		break;
 		case GAME_SCENE::SCORE:
-			current_scene = new SceneScore(this);
+			current_scene = new SceneScore();
 		break;
 		case GAME_SCENE::EXIT:
 			current_scene = nullptr;
@@ -219,41 +217,6 @@ void Game::sSceneFade() {
 
 void Game::setNextScene(size_t id) {
 	next_scene = id;
-}
-
-void Game::addKills(std::map<size_t, size_t> kills) {
-	new_kills_per_enemy = kills;
-
-	KillsMap::const_iterator it;
-	for (it = kills.cbegin(); it!=kills.cend(); it++) {
-		kills_per_enemy[it->first] += it->second;
-	}
-}
-
-bool Game::stageNext() {
-	prev_stage = next_stage;
-	if (next_stage < assets->getStages().size()-1) {
-		next_stage++;
-
-		return true;
-	}
-	return false;
-}
-
-void Game::stageReset() {
-	next_stage = 0;
-}
-
-size_t Game::stageCurrent() {
-	return next_stage;
-}
-
-size_t Game::stagePrev() {
-	return prev_stage;
-}
-
-size_t Game::stagesCount() {
-	return assets->getStages().size();
 }
 
 void Game::setStyleEditor() {

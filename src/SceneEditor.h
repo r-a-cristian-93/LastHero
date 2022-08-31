@@ -26,7 +26,7 @@ public:
 	void doAction(const Action& a) override;
 
 	SceneEditor();
-	SceneEditor(Game* g, std::string lp);
+	SceneEditor(std::string lp);
 	~SceneEditor();
 };
 

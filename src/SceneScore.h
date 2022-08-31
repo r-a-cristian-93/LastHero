@@ -21,8 +21,6 @@
  */
 
 class SceneScore: public Scene {
-	Game* game;
-
 	enum {
 		FRAME_COL_0 = 60,
 		FRAME_COL_1 = 90,
@@ -67,7 +65,6 @@ public:
 	void doAction(const Action& a) override;
 
 	SceneScore();
-	SceneScore(Game* g);
 	~SceneScore();
 };
 

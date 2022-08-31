@@ -11,15 +11,6 @@
 
 class ScenePlay: public Scene {
 protected:
-	Game* game;
-
-	enum {
-		GAME_INTRO,
-		GAME_PLAY,
-		GAME_OVER,
-		GAME_EDIT
-	};
-
 	ParticlesEmitter glitter;
 
 	std::string level_path;
@@ -30,7 +21,6 @@ protected:
 	Widget* paused_widget = nullptr;
 	int total_kills;
 	KillsMap kills_per_enemy;
-	GameState game_state;
 
 	std::shared_ptr<Entity> player;
 	std::shared_ptr<Entity> base;
@@ -90,8 +80,8 @@ public:
 	void doAction(const Action& a) override;
 
 	ScenePlay();
-	ScenePlay(Game* g, std::string lp);
-	ScenePlay(Game* g, size_t t, std::string lp);
+	ScenePlay(std::string lp);
+	ScenePlay(size_t t, std::string lp);
 	~ScenePlay();
 };
 

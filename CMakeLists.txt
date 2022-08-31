@@ -56,6 +56,7 @@ set(SOURCE_FILES
 	src/MapCollision.cpp
 	src/AppConfig.cpp
 	src/ConfigManager.cpp
+	src/GameStats.cpp
 )
 
 add_executable(LastHero ${SOURCE_FILES})

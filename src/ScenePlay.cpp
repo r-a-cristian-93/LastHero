@@ -4,29 +4,27 @@
 #include "SDraw.h"
 #include "SharedResources.h"
 
-ScenePlay::ScenePlay(Game* g, std::string lp)
+ScenePlay::ScenePlay(std::string lp)
 	:Scene(GAME_SCENE::PLAY)
-	,game(g)
 	,level_path(lp)
 	,total_kills(0)
-	,game_state(GAME_PLAY)
 	,collision_map(ent_mgr)
 {
 	init();
 }
 
-ScenePlay::ScenePlay(Game* g, size_t t, std::string lp)
+ScenePlay::ScenePlay(size_t t, std::string lp)
 	:Scene(t)
-	,game(g)
 	,level_path(lp)
 	,total_kills(0)
-	,game_state(GAME_PLAY)
 	,collision_map(ent_mgr)
 {}
 
 ScenePlay::~ScenePlay() {}
 
 void ScenePlay::init() {
+
+	game_stats->state = GameStats::State::PLAY;
 	PROFILE_FUNCTION();
 
 	music_fade_out = true;
@@ -181,7 +179,7 @@ void ScenePlay::update() {
 	{
 		PROFILE_SCOPE("SCENE_LOGIC");
 
-		if (!paused && game_state == GAME_PLAY && !isFading()) {
+		if (!paused && game_stats->state == GameStats::State::PLAY && !isFading()) {
 			ent_mgr.update();
 
 			//sEnemySpawner();
@@ -1295,20 +1293,20 @@ void ScenePlay::sGameState() {
 	if (!player->alive && player->get<CAnimation>()->active_anim->hasEnded() ||
 		!base->alive && base->get<CAnimation>()->active_anim->hasEnded())
 	{
-		game_state = GAME_OVER;
-		game->addKills(kills_per_enemy);
-		game->stageReset();
+		game_stats->state = GameStats::State::LOSE;
+		game_stats->addKills(kills_per_enemy);
+		game_stats->next_stage = 0;
 		setFade(FADE::OUT, GAME_SCENE::OVER);
 	}
 
 	if (ent_mgr.getEntities(TAG::ENEMY).empty()) {
-		game_state = GAME_OVER;
-		game->addKills(kills_per_enemy);
-		if (game->stageNext()) {
+		game_stats->state = GameStats::State::WIN;
+		game_stats->addKills(kills_per_enemy);
+		if (game_stats->stageNext()) {
 			setFade(FADE::OUT, GAME_SCENE::SCORE);
 		}
 		else {
-			game->stageReset();
+			game_stats->next_stage = 0;
 			setFade(FADE::OUT, GAME_SCENE::OVER);
 		}
 	}

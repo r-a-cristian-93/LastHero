@@ -3,9 +3,8 @@
 #include "SUpdate.h"
 #include "SDraw.h"
 
-SceneGameOver::SceneGameOver(Game* g)
+SceneGameOver::SceneGameOver()
 	:Scene(GAME_SCENE::OVER)
-	,game(g)
 {
 	init();
 }
@@ -19,7 +18,7 @@ void SceneGameOver::init() {
 		std::string string = "";
 		sf::Color color;
 
-		if (game->stagePrev() + 1 == game->stagesCount()) {
+		if (game_stats->prev_stage + 1 == game_stats->stagesCount()) {
 			string = "YOU WIN";
 			color = {135, 155, 70};
 			snd_mgr->playBgMusic("game-win");

@@ -11,6 +11,7 @@ int main() {
 	screen_tex = new sf::RenderTexture();
 	screen_sprite = new sf::Sprite();
 	game_view = new sf::View();
+	game_stats = new GameStats();
 
 	app_conf->read("game.cfg"); 	// load default settings
 	app_conf->read("user.cfg"); 	// load user settings
@@ -28,6 +29,7 @@ int main() {
 	delete screen_tex;
 	delete screen_sprite;
 	delete game_view;
+	delete game_stats;
 	delete assets;
 
 	return 0;
