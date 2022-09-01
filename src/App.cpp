@@ -6,6 +6,7 @@
 App::App()
 	:running(true)
 	,current_scene(nullptr)
+	,render_states(sf::RenderStates::Default)
 	,next_scene(0)
 {}
 
@@ -25,9 +26,7 @@ void App::run() {
 
 			screen_tex->display();
 
-			window->clear(sf::Color(255, 0, 0));
-			//window->draw(screen_sprite, &assets->getShader("crt-mattias"));
-			window->draw(*screen_sprite);
+			window->draw(*screen_sprite, render_states);
 			window->display();
 
 			sUserInput();
