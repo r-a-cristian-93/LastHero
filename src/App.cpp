@@ -150,21 +150,6 @@ void App::setNextScene(size_t id) {
 	next_scene = id;
 }
 
-void App::setStyleEditor() {
-	screen_tex->create(app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height);
-	screen_sprite->setTextureRect({0, 0, app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height});
-	screen_sprite->setScale(1, 1);
-	screen_sprite->setPosition(0, 0);
-}
-
-void App::setStyleGame() {
-	screen_tex->create(app_conf->game_w, app_conf->game_h);
-	screen_sprite->setTextureRect({0, 0, app_conf->game_w, app_conf->game_h});
-	screen_sprite->setTextureRect(sf::IntRect(0, 0, app_conf->game_w, app_conf->game_h));
-
-	cfg_mgr->applySettings(*app_conf);
-}
-
 App::~App() {
 	delete current_scene;
 }

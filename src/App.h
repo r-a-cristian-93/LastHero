@@ -21,10 +21,7 @@ public:
 	bool running;
 
 	void run();
-
 	void setNextScene(size_t id);
-	void setStyleEditor();
-	void setStyleGame();
 
 	App();
 	~App();
