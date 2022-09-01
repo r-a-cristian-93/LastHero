@@ -1,6 +1,4 @@
-#include <fstream>
 #include <iostream>
-#include <cmath>
 
 #include "App.h"
 #include "Profiler.h"

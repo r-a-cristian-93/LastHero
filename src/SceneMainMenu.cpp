@@ -21,7 +21,6 @@ void SceneMainMenu::init() {
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::MENU_SELECT);
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Enter, Action::MENU_SELECT);
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::GAME_EXIT);
-	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Tilde, Action::CHANGE_SCENE_EDITOR);
 
 	// set and scale background
 	background = &assets->getSprite("main_bg");
@@ -101,9 +100,6 @@ void SceneMainMenu::doAction(const Action& a) {
 						select(selection + 1);
 					}
 				}
-			break;
-			case Action::CHANGE_SCENE_EDITOR:
-				setFade(FADE::OUT, GAME_SCENE::EDITOR);
 			break;
 			case Action::GAME_EXIT:
 				snd_mgr->playSound("menu_cancel");

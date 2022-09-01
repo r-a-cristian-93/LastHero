@@ -1,6 +1,4 @@
-#include <fstream>
 #include <iostream>
-#include <cmath>
 
 #include "Game.h"
 #include "ScenePlay.h"
@@ -8,7 +6,6 @@
 #include "SceneGameOver.h"
 #include "SceneScore.h"
 #include "SceneSettings.h"
-#include "SceneEditor.h"
 
 Game::Game()
 {
@@ -23,8 +20,6 @@ void Game::init() {
 	cfg_mgr->applySettings(*app_conf);
 
 	setScene(GAME_SCENE::MENU);
-
-	running = true;
 }
 
 void Game::setScene(size_t id) {
@@ -48,10 +43,6 @@ void Game::setScene(size_t id) {
 				game_stats->kills_per_enemy.clear();
 				game_stats->new_kills_per_enemy.clear();
 			}
-		break;
-		case GAME_SCENE::EDITOR:
-			current_scene = new SceneEditor(assets->getStages()[game_stats->next_stage]);
-			setStyleEditor();
 		break;
 		case GAME_SCENE::OVER:
 			current_scene = new SceneGameOver();
