@@ -16,10 +16,7 @@ public:
 	int max_fps = 60;
 	int game_w = 1024;
 	int game_h = 768;
-	int editor_w = 0;
-	int editor_h = 0;
 	float game_scale = 0.95;
-	float editor_scale = 1.0;
 	float cam_speed = 15;
 	float cam_treshold = 10;
 	int directions = 8;
