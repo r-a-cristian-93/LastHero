@@ -3,22 +3,13 @@
 #include <cmath>
 
 #include "App.h"
-#include "SDraw.h"
-#include "SUpdate.h"
-#include "ScenePlay.h"
-#include "SceneMainMenu.h"
-#include "SceneAppOver.h"
-#include "SceneScore.h"
-#include "SceneSettings.h"
-#include "SceneEditor.h"
+#include "Profiler.h"
 
 App::App()
 	:running(true)
 	,current_scene(nullptr)
 	,next_scene(0)
-{
-	init();
-}
+{}
 
 void App::run() {
 	sf::Event event;

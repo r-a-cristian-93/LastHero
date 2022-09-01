@@ -2,7 +2,6 @@
 #define SCENE
 
 #include "EntityManager.h"
-#include "Action.h"
 #include "Interface.h"
 
 typedef size_t FadeType;

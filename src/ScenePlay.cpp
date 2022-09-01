@@ -3,6 +3,7 @@
 #include "SUpdate.h"
 #include "SDraw.h"
 #include "SharedResources.h"
+#include "Profiler.h"
 
 ScenePlay::ScenePlay(std::string lp)
 	:Scene(GAME_SCENE::PLAY)

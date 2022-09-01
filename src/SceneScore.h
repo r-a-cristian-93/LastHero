@@ -2,7 +2,6 @@
 #define SCENE_GAME_SCORE
 
 #include "Scene.h"
-#include "Game.h"
 
 /*
  * The scoreboard is spaced vertically as follows

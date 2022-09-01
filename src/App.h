@@ -1,23 +1,7 @@
 #ifndef APP
 #define APP
 
-#include <deque>
-
-#include "SharedResources.h"
-#include "Entity.h"
-#include "EntityManager.h"
-#include "ActionManager.h"
-#include "SoundManager.h"
-#include "Common.h"
-#include "Assets.h"
 #include "Scene.h"
-#include "AppConfig.h"
-
-#include "Profiler.h"
-
-class Scene;
-
-typedef std::map<size_t, size_t> KillsMap;
 
 class App {
 protected:

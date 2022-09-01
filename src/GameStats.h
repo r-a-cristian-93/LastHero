@@ -3,6 +3,8 @@
 
 #include "SharedResources.h"
 
+typedef std::map<size_t, size_t> KillsMap;
+
 class GameStats {
 public:
 	enum State {
@@ -11,8 +13,6 @@ public:
 		LOSE,
 		OVER
 	};
-
-	typedef std::map<size_t, size_t> KillsMap;
 
 	size_t next_stage;
 	size_t prev_stage;

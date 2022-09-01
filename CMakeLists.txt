@@ -57,6 +57,7 @@ set(SOURCE_FILES
 	src/AppConfig.cpp
 	src/ConfigManager.cpp
 	src/GameStats.cpp
+	src/App.cpp
 )
 
 add_executable(LastHero ${SOURCE_FILES})
