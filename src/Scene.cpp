@@ -1,10 +1,11 @@
 #include "Scene.h"
+#include "SharedResources.h"
+#include "ActionManager.h"
 
 Scene::Scene() {}
 
-Scene::Scene(Game* g, SceneType type)
-	:game(g)
-	,scene_type(type)
+Scene::Scene(SceneType type)
+	:scene_type(type)
 	,frame_current(0)
 	,paused(false)
 	,has_ended(false)
@@ -15,53 +16,16 @@ Scene::Scene(Game* g, SceneType type)
 }
 
 void Scene::init() {
-	ent_mgr = EntityManager(game->assets);
-	fade_frames = game->app_conf.scene_fade_frames;
+	act_mgr->reset();
+
+	fade_frames = app_conf->scene_fade_frames;
 
 	setFade(FADE::IN);
 
-	gui_view.reset(sf::FloatRect(0, 0, game->app_conf.game_w, game->app_conf.game_h));
+	gui_view.reset(sf::FloatRect(0, 0, app_conf->game_w, app_conf->game_h));
 
-	if (scene_type == GAME_SCENE::MENU && !game->snd_mgr.bgPlaying())
-		game->snd_mgr.playBgMusic("intro");
-}
-
-void Scene::sFade() {
-	switch (fade) {
-		case FADE::IN: {
-			current_fade_frames[fade]++;
-			unsigned char c = current_fade_frames[fade] * (255/fade_frames[fade]);
-			game->screen_sprite.setColor({c, c, c});
-
-			if (current_fade_frames[fade] >= fade_frames[fade]) {
-				game->screen_sprite.setColor({255, 255, 255});
-				fade = FADE::NONE;
-			}
-
-		}
-		break;
-		case FADE::OUT: {
-			if (current_fade_frames[fade] > 0) current_fade_frames[fade]--;
-			unsigned char c = current_fade_frames[fade] * (255/fade_frames[fade]);
-			game->screen_sprite.setColor({c, c, c});
-
-			if (current_fade_frames[fade] == 0) {
-				fade = FADE::NONE;
-				game->screen_sprite.setColor({0, 0, 0});
-				game->setNextScene(next_scene);
-			}
-
-			if (music_fade_out && next_scene != GAME_SCENE::SETTINGS) {
-				float v = 0;
-
-				if (current_fade_frames[fade] > 0) {
-					v = current_fade_frames[fade] * (game->app_conf.music_volume/fade_frames[fade]);
-				}
-				game->snd_mgr.setBgMusicVolume(v);
-			}
-		}
-		break;
-	}
+	if (scene_type == GAME_SCENE::MENU && !snd_mgr->bgPlaying())
+		snd_mgr->playBgMusic("intro");
 }
 
 void Scene::setFade(FadeType _fade) {
@@ -86,6 +50,6 @@ const FadeType Scene::getCurrentFade() {
 }
 
 Scene::~Scene() {
-	if (next_scene != GAME_SCENE::SETTINGS && scene_type != GAME_SCENE::SETTINGS)	game->snd_mgr.stopBgMusic();
+	if (next_scene != GAME_SCENE::SETTINGS && scene_type != GAME_SCENE::SETTINGS)	snd_mgr->stopBgMusic();
 }
 

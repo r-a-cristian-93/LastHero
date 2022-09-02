@@ -38,6 +38,7 @@ namespace GAME_SCENE {
 		MENU,
 		SETTINGS,
 		PLAY,
+		EDITOR,
 		OVER,
 		SCORE,
 		EXIT,

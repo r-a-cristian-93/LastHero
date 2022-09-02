@@ -3,7 +3,7 @@
 #include <regex>
 #include "Common.h"
 #include "Assets.h"
-#include "Settings.h"
+#include "Action.h"
 
 Assets::Assets() {
 	loadSounds();
@@ -12,10 +12,15 @@ Assets::Assets() {
 	loadEntities();
 	loadFonts();
 	loadShaders();
+	loadStages();
 }
 
 Components& Assets::getRecipe(size_t tag, size_t name_id) {
 	return recipe[tag][name_id];
+}
+
+const std::map<size_t, Components>& Assets::getRecipes(size_t tag) {
+	return recipe[tag];
 }
 
 size_t Assets::getScorePoints(size_t name_id) {
@@ -108,6 +113,23 @@ size_t Assets::getSoundBufferNameID(std::string sound_name) {
 	}
 }
 
+std::vector<std::string>& Assets::getStages() {
+	return stages;
+}
+
+void Assets::loadStages() {
+	std::ifstream file("res/stages.cfg");
+	std::string word;
+
+	while(file >> word) {
+		if (word == "STAGE") {
+			file >> word;
+			stages.push_back(word);
+		}
+	}
+
+	file.close();
+}
 
 void Assets::loadSounds() {
 	file.open("res/sounds.cfg");
@@ -791,6 +813,12 @@ void Assets::loadWidget() {
 	std::string text = "TEXT";
 	WidgetFx fx;
 
+	Widget::ScrollType scroll;
+	std::string scroll_track("");
+	std::string scroll_thumb("");
+	size_t on_click(0);
+	sf::Color state_colors[Widget::State::COUNT];
+
 	while (file >> word) {
 		if (word == "_END") break;
 		else if (word == "name") file >> name;
@@ -811,6 +839,29 @@ void Assets::loadWidget() {
 				std::cout << "Invalid link: " << word << std::endl;
 				exit(0);
 			}
+		}
+		else if (word == "scroll") {
+			file >> word;
+			if (word == "vertical") scroll = Widget::ScrollType::VERTICAL;
+			else if (word == "horizontal") scroll == Widget::ScrollType::HORIZONTAL;
+		}
+		else if (word == "scroll_thumb") file >> scroll_thumb;
+		else if (word == "scroll_track") file >> scroll_track;
+		else if (word == "on_click") {
+			file >> word;
+			if (word == "set_content_terrain") on_click = Action::SET_CONTENT_TERRAIN;
+			else if (word == "set_content_environment") on_click = Action::SET_CONTENT_ENVIRONMENT;
+			else if (word == "set_content_creatures") on_click = Action::SET_CONTENT_CREATURES;
+		}
+		else if (word == "state_color") {
+			int r(0), g(0), b(0), a(0);
+			file >> word >> r >> g >> b >> a;
+
+			if (word == "default") state_colors[Widget::State::DEFAULT] = sf::Color(r,g,b,a);
+			if (word == "hover") state_colors[Widget::State::HOVER] = sf::Color(r,g,b,a);
+			if (word == "focus") state_colors[Widget::State::FOCUS] = sf::Color(r,g,b,a);
+			if (word == "active") state_colors[Widget::State::ACTIVE] = sf::Color(r,g,b,a);
+			if (word == "disabled") state_colors[Widget::State::DISABLED] = sf::Color(r,g,b,a);
 		}
 		else if (word == "pos_rel") file >> pos_rel.x >> pos_rel.y;
 		else if (word == "pos_abs") file >> pos_abs.x >> pos_abs.y;
@@ -894,6 +945,31 @@ void Assets::loadWidget() {
 		widget.setPosRel(pos_rel);
 		widget.setPosAbs(pos_abs);
 
+		if (on_click) widget.on_click = on_click;
+		for (int i=0; i<Widget::State::COUNT; i++) {
+			widget.state_colors[i] = state_colors[i];
+		}
+
+		if (!scroll_thumb.empty()) {
+			if (widgets.find(scroll_thumb) != widgets.end()) {
+				widget.addScrollThumb(widgets[scroll_thumb]);
+			}
+			else {
+				std::cout << "Widget \"" << scroll_thumb << "\" does not exist.\n";
+				exit(0);
+			}
+		}
+
+		if (!scroll_track.empty()) {
+			if (widgets.find(scroll_track) != widgets.end()) {
+				widget.addScrollTrack(widgets[scroll_track]);
+			}
+			else {
+				std::cout << "Widget \"" << scroll_track << "\" does not exist.\n";
+				exit(0);
+			}
+		}
+
 		if (childs.size() > 0) {
 			for (size_t i=0; i<childs.size(); i++) {
 				if (widgets.find(childs[i]) != widgets.end()) {
@@ -936,7 +1012,7 @@ void Assets::loadBorderRepeatable(std::string border_name, size_t sprite_name, s
 
 void Assets::loadTexture() {
 	std::string name("");
-	unsigned int w, h;
+	unsigned int w=0, h=0;
 	std::string* path;
 	sf::Color* color(nullptr);
 
@@ -951,9 +1027,9 @@ void Assets::loadTexture() {
 		}
 		else if (word == "size") file >> w >> h;
 		else if (word == "color") {
-			size_t r, g ,b;
-			file >> r >> g >> b;
-			color = new sf::Color(r, g, b);
+			size_t r, g ,b, a;
+			file >> r >> g >> b >> a;
+			color = new sf::Color(r, g, b, a);
 		}
 		else {
 			std::cout << "In file: " << file_path << " unknown key: " << word << std::endl;
@@ -965,7 +1041,6 @@ void Assets::loadTexture() {
 		sf::Texture tex;
 		img.create(w, h, *color);
 		tex.loadFromImage(img);
-		tex.setRepeated(true);
 		textures[name] = tex;
 		delete color;
 	}

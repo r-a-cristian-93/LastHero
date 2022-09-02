@@ -2,7 +2,6 @@
 #define SCENE_SETTINGS
 
 #include "Scene.h"
-#include "Interface.h"
 
 class SceneSettings: public Scene {
 	enum {
@@ -14,13 +13,12 @@ class SceneSettings: public Scene {
 		SELECT_COUNT
 	};
 
-	AppConfig temp_conf = game->app_conf;
+	AppConfig temp_conf = *app_conf;
 	std::string selected_res = "";
 	std::string selected_style = "";
 	std::string selected_music_vol = "";
 	std::string selected_sfx_vol = "";
 
-	Interface interface;
 	int cols = 4;
 	int rows = 4;	// number of settings fields
 
@@ -37,10 +35,9 @@ class SceneSettings: public Scene {
 
 public:
 	void update() override;
-	void doAction(const Action* a) override;
+	void doAction(const Action& a) override;
 
 	SceneSettings();
-	SceneSettings(Game* g);
 	~SceneSettings();
 };
 

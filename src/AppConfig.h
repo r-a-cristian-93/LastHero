@@ -16,6 +16,8 @@ public:
 	int max_fps = 60;
 	int game_w = 1024;
 	int game_h = 768;
+	float game_scale = 0.95;
+	sf::RenderStates render_states = sf::RenderStates::Default;
 	float cam_speed = 15;
 	float cam_treshold = 10;
 	int directions = 8;

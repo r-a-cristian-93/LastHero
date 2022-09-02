@@ -7,8 +7,8 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
 
 find_package(SFML 2.5 COMPONENTS system window graphics audio REQUIRED)
 
-set(SOURCE_FILES
-	src/LastHero.cpp
+set(SOURCE_COMMON
+	src/SharedResources.cpp
 	src/CTransform.cpp
 	src/CCollision.cpp
 	src/CShape.cpp
@@ -30,32 +30,51 @@ set(SOURCE_FILES
 	src/Entity.cpp
 	src/SUpdate.cpp
 	src/SDraw.cpp
-	src/Settings.cpp
 	src/EntityManager.cpp
-	src/Game.cpp
 	src/Action.cpp
 	src/ActionManager.cpp
-	src/ActionStream.cpp
 	src/Assets.cpp
 	src/Animation.cpp
 	src/AnimationSet.cpp
 	src/Scene.cpp
 	src/ScenePlay.cpp
-	src/SceneMainMenu.cpp
-	src/SceneSettings.cpp
-	src/SceneGameOver.cpp
-	src/SceneScore.cpp
 	src/Interface.cpp
 	src/Widget.cpp
 	src/Border.cpp
 	src/Tilemap.cpp
+	src/Level.cpp
 	src/SoundManager.cpp
 	src/AStarContainer.cpp
 	src/AStarNode.cpp
 	src/MapCollision.cpp
 	src/AppConfig.cpp
+	src/ConfigManager.cpp
+	src/GameStats.cpp
+	src/App.cpp
 )
 
-add_executable(LastHero ${SOURCE_FILES})
-target_link_libraries(LastHero sfml-graphics sfml-audio)
+set (SOURCE_GAME
+	src/LastHero.cpp
+	src/Game.cpp
+	src/SceneMainMenu.cpp
+	src/SceneSettings.cpp
+	src/SceneGameOver.cpp
+	src/SceneScore.cpp
+)
+
+set (SOURCE_EDITOR
+	src/LevelEditor.cpp
+	src/Editor.cpp
+	src/SceneEditor.cpp
+)
+
+add_library(common SHARED ${SOURCE_COMMON})
+target_link_libraries(common sfml-graphics sfml-audio)
+
+
+add_executable(LastHero ${SOURCE_GAME})
+add_executable(LevelEditor ${SOURCE_EDITOR})
+target_link_libraries(LevelEditor sfml-graphics sfml-audio common)
+target_link_libraries(LastHero sfml-graphics sfml-audio common)
+
 include_directories(${PROJECT_SOURCE_DIR})

@@ -30,9 +30,23 @@ struct WidgetFx {
 };
 
 
-
 class Widget {
-public://protected:
+public:
+	enum class ScrollType: size_t {
+		NONE = 0,
+		HORIZONTAL,
+		VERTICAL,
+	};
+
+	enum State: size_t {
+		DEFAULT = 0,
+		HOVER,
+		FOCUS,
+		ACTIVE,
+		DISABLED,
+		COUNT,
+	};
+
 	std::vector<Widget> childs;
 
 	sf::Vector2i pos_rel;
@@ -41,6 +55,9 @@ public://protected:
 	std::vector<sf::Drawable*> drawables;
 	std::vector<WidgetFx> fx;
 	WidgetFx* current_fx;
+	size_t on_click;
+	State state;
+	sf::Color state_colors[State::COUNT];
 
 	void updateChildPos(Widget& child);
 
@@ -57,6 +74,16 @@ public://protected:
 	sf::Text* text;
 //text
 
+//scroll
+	ScrollType scroll;
+	Widget* scroll_track;
+	Widget* scroll_thumb;
+	sf::RenderTexture* scroll_content_tex;
+	sf::Sprite* scroll_content_sprite;
+	float scroll_pos; // percentage
+//scroll
+
+
 public:
 	void setPosRel(sf::Vector2i pos);
 	void setPosAbs(sf::Vector2i pos);
@@ -64,10 +91,13 @@ public:
 	void setColor(sf::Color color);
 
 	void addChild(Widget& child);
+	void addScrollThumb(Widget& thumb);
+	void addScrollTrack(Widget& track);
 	std::vector<sf::Drawable*>& getDrawables();
 	std::vector<Widget>& getChilds();
 
 	void update();
+	sf::FloatRect getGlobalBounds();
 
 // box
 	void setBackground(sf::Texture& tex, int offset);
@@ -88,7 +118,7 @@ public:
 		LINK_WINDOW_STYLE,
 		LINK_MUSIC_VOLUME,
 		LINK_SFX_VOLUME,
-		LINK_COUNT
+		LINK_COUNT,
 	};
 
 	void setText(std::string t, sf::Font& font, unsigned int size);

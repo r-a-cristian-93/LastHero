@@ -2,7 +2,6 @@
 #define SCENE_MAIN_MENU
 
 #include "Scene.h"
-#include "Interface.h"
 
 class SceneMainMenu: public Scene {
 	enum {
@@ -13,7 +12,6 @@ class SceneMainMenu: public Scene {
 	};
 
 	sf::Sprite* background;
-	Interface interface;
 
 	sf::Color mod_highlight = {220, 220, 220};
 	sf::Color mod_dark = {100, 100, 100};
@@ -25,10 +23,9 @@ class SceneMainMenu: public Scene {
 
 public:
 	void update() override;
-	void doAction(const Action* a) override;
+	void doAction(const Action& a) override;
 
 	SceneMainMenu();
-	SceneMainMenu(Game* g);
 	~SceneMainMenu();
 };
 

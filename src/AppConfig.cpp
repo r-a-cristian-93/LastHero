@@ -47,6 +47,9 @@ void AppConfig::read(std::string file_name) {
 			file >> game_w;
 			file >> game_h;
 		}
+		else if (word == "GAME_SCALE") {
+			file >> game_scale;
+		}
 		else if (word == "CAM_SPEED") {
 			file >> cam_speed;
 		}

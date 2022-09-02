@@ -2,40 +2,25 @@
 #define SCENE_PLAY
 
 #include "Scene.h"
-#include "Interface.h"
 #include "ParticlesEmitter.h"
 #include "Tilemap.h"
 #include "Enums.h"
 #include "MapCollision.h"
-
-struct Camera {
-	sf::Vector2f pos, target;
-};
-
-typedef size_t GameState;
+#include "Level.h"
+#include "GameStats.h"
 
 class ScenePlay: public Scene {
-	enum {
-		GAME_INTRO,
-		GAME_PLAY,
-		GAME_OVER
-	};
-
+protected:
 	ParticlesEmitter glitter;
 
 	std::string level_path;
-	sf::Vector2u tile_size;
-	sf::Vector2u map_size;
-
-	Tilemap map_ground;
+	Level level;
 	MapCollision collision_map;
 
 	Camera cam;
-	Interface interface;
 	Widget* paused_widget = nullptr;
 	int total_kills;
 	KillsMap kills_per_enemy;
-	GameState game_state;
 
 	std::shared_ptr<Entity> player;
 	std::shared_ptr<Entity> base;
@@ -43,8 +28,6 @@ class ScenePlay: public Scene {
 	void init();
 	void load_level(std::string path);
 
-	void spawnPlayer();
-	void spawnBase();
 	void spawnEnemy();
 	void spawnEntity(size_t tag, size_t recipe_name, sf::Vector2f& pos, size_t state, size_t facing);
 	void spawnEntity(size_t tag, size_t recipe_name, std::shared_ptr<Entity> owner, sf::Vector2f& pos, size_t state, size_t facing);
@@ -94,10 +77,11 @@ class ScenePlay: public Scene {
 
 public:
 	void update() override;
-	void doAction(const Action* a) override;
+	void doAction(const Action& a) override;
 
 	ScenePlay();
-	ScenePlay(Game* g, std::string lp);
+	ScenePlay(std::string lp);
+	ScenePlay(size_t t, std::string lp);
 	~ScenePlay();
 };
 

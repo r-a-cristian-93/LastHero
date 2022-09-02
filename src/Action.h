@@ -29,6 +29,13 @@ public:
 
 		CHANGE_SCENE_MENU,
 		CHANGE_SCENE_PLAY,
+		CHANGE_SCENE_EDITOR,
+
+		LEFT_CLICK,
+
+		SET_CONTENT_TERRAIN,
+		SET_CONTENT_ENVIRONMENT,
+		SET_CONTENT_CREATURES
 	};
 
 	enum {
@@ -43,17 +50,15 @@ public:
 	size_t* state;
 	size_t* facing;
 	sf::Vector2f* pos;
-	sf::Vector2f* dir;
-
 
 	Action();
+	Action(const Action& action);
 	Action(size_t c, size_t t);
 	Action(size_t c, size_t t, sf::Vector2i p);
-	Action(size_t c, size_t t, sf::Vector2f p, sf::Vector2f d);
 	Action(size_t c, size_t t, sf::Vector2f p, size_t s, size_t f);
 	~Action();
 
-	friend std::ostream& operator << (std::ostream& os, const Action* a);
+	friend std::ostream& operator << (std::ostream& os, const Action& a);
 };
 
 #endif

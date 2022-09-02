@@ -1,4 +1,4 @@
-#include "Game.h"
+#include "Editor.h"
 #include "SharedResources.h"
 
 int main() {
@@ -14,12 +14,12 @@ int main() {
 	game_stats = new GameStats();
 
 	app_conf->read("game.cfg"); 	// load default settings
-	app_conf->read("user.cfg"); 	// load user settings
+	app_conf->read("editor.cfg"); 	// load editor settings
 	screen_sprite->setTexture(screen_tex->getTexture());
 
-	Game game;
+	Editor editor;
 
-	game.run();
+	editor.run();
 
 	delete app_conf;
 	delete cfg_mgr;

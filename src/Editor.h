@@ -1,9 +1,9 @@
-#ifndef GAME
-#define GAME
+#ifndef EDITOR_H
+#define EDITOR_H
 
 #include "App.h"
 
-class Game: public App {
+class Editor: public App {
 private:
 
 	void init() override;
@@ -11,8 +11,8 @@ private:
 
 public:
 
-	Game();
-	~Game();
+	Editor();
+	~Editor();
 };
 
 #endif

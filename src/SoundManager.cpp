@@ -1,17 +1,20 @@
 #include "SoundManager.h"
+#include "SharedResources.h"
 #include <iostream>
 
 SoundManager::SoundManager()
-	:assets(nullptr)
-	,app_conf(nullptr)
-	,bg_music(nullptr)
+	:bg_music(nullptr)
 	{}
 
-SoundManager::SoundManager(Assets* _assets, AppConfig* _config)
-	:assets(_assets)
-	,app_conf(_config)
-	,bg_music(nullptr)
-	{}
+SoundManager::~SoundManager() {
+	for (int i=0; i<channels.size(); i++) {
+		channels[i].stop();
+	}
+
+	channels.clear();
+
+	if (bg_music) bg_music->stop();
+}
 
 bool SoundManager::isPlaying(size_t id) {
 	const sf::SoundBuffer* sb = &assets->getSoundBuffer(id);
@@ -32,8 +35,6 @@ void SoundManager::playSoundUnique(size_t id) {
 		playSound(id);
 	}
 }
-
-
 
 void SoundManager::playSound(size_t id) {
 	if (!id) return;

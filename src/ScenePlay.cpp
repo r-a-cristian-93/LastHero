@@ -2,41 +2,49 @@
 #include <cmath>
 #include "SUpdate.h"
 #include "SDraw.h"
+#include "SharedResources.h"
+#include "Profiler.h"
 
-ScenePlay::ScenePlay(Game* g, std::string lp)
-	:Scene(g, GAME_SCENE::PLAY)
+ScenePlay::ScenePlay(std::string lp)
+	:Scene(GAME_SCENE::PLAY)
 	,level_path(lp)
-	,map_size(0,0)
-	,tile_size(0,0)
 	,total_kills(0)
-	,game_state(GAME_PLAY)
 	,collision_map(ent_mgr)
 {
 	init();
 }
 
+ScenePlay::ScenePlay(size_t t, std::string lp)
+	:Scene(t)
+	,level_path(lp)
+	,total_kills(0)
+	,collision_map(ent_mgr)
+{}
+
 ScenePlay::~ScenePlay() {}
 
 void ScenePlay::init() {
+
+	game_stats->state = GameStats::State::PLAY;
 	PROFILE_FUNCTION();
 
 	music_fade_out = true;
 
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::D, Action::MOVE_RIGHT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::FIRE_PRIMARY);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::FIRE_SECONDARY);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::D, Action::MOVE_RIGHT);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::FIRE_PRIMARY);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::FIRE_SECONDARY);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
 
 	load_level(level_path);
-	collision_map.setMap(map_size, tile_size, game->app_conf.colmap_res, game->app_conf.colmap_update);
+	collision_map.setMap(level.map_size, level.tile_size, app_conf->colmap_res, app_conf->colmap_update);
 
 	// setup interface
-	interface.add(game->assets.getWidget("play_ui"));
-	interface.add(game->assets.getWidget("blood_overlay"));
+	interface.add(assets->getWidget("play_ui"));
+	interface.add(assets->getWidget("blood_overlay"));
 
 	int* links[Widget::LINK_COUNT];
 	links[Widget::LINK_PLAYER_HP] = &player->get<CStats>()->effective[CStats::HEALTH];
@@ -47,16 +55,16 @@ void ScenePlay::init() {
 
 	interface.setLinks(links);
 
-	paused_widget = &game->assets.getWidget("menu_paused");
+	paused_widget = &assets->getWidget("menu_paused");
 	sf::Vector2i pos;
-	pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-	pos.y = static_cast<int>(game->app_conf.game_h*0.5);
+	pos.x = static_cast<int>(app_conf->game_w*0.5);
+	pos.y = static_cast<int>(app_conf->game_h*0.5);
 	paused_widget->setPosAbs(pos);
 
 	// run this block to display level;
 	{
 		ent_mgr.update();
-		SUpdate::updatePosition(ent_mgr.getEntities(), map_ground.getBounds());
+		SUpdate::updatePosition(ent_mgr.getEntities(), level.map_ground.getBounds());
 		sCollisionCheck();
 		sCollisionSolve();
 		sStateFacing();
@@ -69,119 +77,13 @@ void ScenePlay::init() {
 }
 
 void ScenePlay::load_level(std::string path) {
-	PROFILE_FUNCTION();
+	level = Level(path);
+	snd_mgr->playBgMusic(level.bg_music);
 
-	std::ifstream file(path);
-	std::string word;
-
-	std::string texture_name = "";
-	int* level_layer;
-
-	int frame, pos_x, pos_y, dir_x, dir_y;
-	size_t enemy_name;
-	size_t tag, code, type, state, facing;
-
-	ActionStream action_stream;
-
-	while (file >> word) {
-		if (word == "_HEADER") {
-			while (file>>word) {
-				if (word == "_END") break;
-				else if (word == "size")	{
-					file >> map_size.x >> map_size.y;
-					level_layer = new int[map_size.x*map_size.y];
-				}
-				else if (word == "tile_size") {
-					file >> tile_size.x >> tile_size.y;
-				}
-				else if (word == "texture") {
-					file >> texture_name;
-				}
-				else if (word == "bg_music") {
-					file >> word;
-					game->snd_mgr.playBgMusic(word);
-				}
-			}
-		}
-		if (word == "_LAYER") {
-			for (int t = 0; t < map_size.x*map_size.y; t++) {
-				file >> level_layer[t];
-			}
-		}
-		if (word == "_ACT") {
-			while (file >> word) {
-				if (word == "_END") break;
-				else if (word == "code") {
-					file >> word;
-					if (word == "spawn") code = Action::SPAWN_ENTITY;
-					else if (word  == "spawn_player") code = Action::SPAWN_PLAYER;
-					else if (word  == "spawn_base") code = Action::SPAWN_BASE;
-				}
-				else if (word == "type") {
-					file >> word;
-					if (word == "start") type = Action::TYPE_START;
-					else if (word == "end") type = Action::TYPE_END;
-				}
-				else if (word == "frame") file >> frame;
-				else if (word == "entity") {
-					file >> word;
-					if (word == "enemy") tag = TAG::ENEMY;
-					else if (word == "player") tag = TAG::PLAYER;
-					else if (word == "base") tag = TAG::BASE;
-					else if (word == "environment") tag = TAG::ENVIRONMENT;
-					else if (word == "powerup") tag = TAG::POWERUP;
-					else {
-						std::cout << "LOAD LEVEL: Tag \"" << word << "\" is not supported\n";
-						exit(0);
-					}
-
-					file >> word;
-					enemy_name = game->assets.getRecipeNameID(word);
-				}
-				else if (word == "pos") file >> pos_x >> pos_y;
-				else if (word == "state") {
-					file >> word;
-					if (word == "idle") state = Entity::STATE_IDLE;
-					else if (word == "run") state = Entity::STATE_RUN;
-					else if (word == "die") state = Entity::STATE_DIE;
-					else if (word == "spawn") state = Entity::STATE_SPAWN;
-				}
-				else if (word == "facing") {
-					file >> word;
-					if (word == "E") facing = Entity::FACING_E;
-					else if (word == "NE") facing = Entity::FACING_NE;
-					else if (word == "N") facing = Entity::FACING_N;
-					else if (word == "NW") facing = Entity::FACING_NW;
-					else if (word == "W") facing = Entity::FACING_W;
-					else if (word == "SW") facing = Entity::FACING_SW;
-					else if (word == "S") facing = Entity::FACING_S;
-					else if (word == "SE") facing = Entity::FACING_SE;
-				}
-			}
-
-			Action* action = new Action(code, type);
-			action->ent_tag = new size_t(tag);
-			action->ent_name = new size_t(enemy_name);
-			action->pos = new sf::Vector2f(pos_x, pos_y);
-			action->state = new size_t(state);
-			action->facing = new size_t(facing);
-
-			action_stream << action;
-		}
+	for (Action& a: level.actions) {
+		doAction(a);
 	}
 
-	map_ground.setTexture(game->assets.getTexture(texture_name));
-	map_ground.loadLevel(tile_size, level_layer, map_size);
-	delete[] level_layer;
-
-	while (!action_stream.empty()) {
-		Action* action;
-		action_stream >> action;
-		doAction(action);
-		delete action;
-	}
-
-	// build collision_map here
 	ent_mgr.update();
 }
 
@@ -190,7 +92,7 @@ void ScenePlay::sPathFind() {
 }
 
 void ScenePlay::drawCollisionLayer() {
-	sf::CircleShape circle(tile_size.x/(game->app_conf.colmap_res*2));
+	sf::CircleShape circle(level.tile_size.x/(app_conf->colmap_res*2));
 
 	//DRAW BLOCKING
 	if (!collision_map.colmap.empty()) {
@@ -198,10 +100,10 @@ void ScenePlay::drawCollisionLayer() {
 
 		for (int y = 0; y < collision_map.map_size.x; y++) {
 			for (int x = 0; x < collision_map.map_size.x; x++) {
-				circle.setPosition(sf::Vector2f(x*tile_size.x/game->app_conf.colmap_res,y*tile_size.y/game->app_conf.colmap_res));
+				circle.setPosition(sf::Vector2f(x*level.tile_size.x/app_conf->colmap_res,y*level.tile_size.y/app_conf->colmap_res));
 
 				if (collision_map.colmap[x][y]) {
-					game->screen_tex.draw(circle);
+					screen_tex->draw(circle);
 				}
 			}
 		}
@@ -215,7 +117,7 @@ void ScenePlay::drawCollisionLayer() {
 			if (!e->get<CBChase>()->path.empty()) {
 				for (sf::Vector2f p: e->get<CBChase>()->path) {
 					circle.setPosition(sf::Vector2f(p.x, p.y));
-					game->screen_tex.draw(circle);
+					screen_tex->draw(circle);
 				}
 			}
 		}
@@ -227,14 +129,14 @@ void ScenePlay::drawDirectionVectors() {
 		if (e->get<CTransform>()) {
 			if (e->get<CTransform>()->max_velocity) {
 				sf::Vector2f dir = dirOf(e->facing);
-				dir.x *= tile_size.x/2;
-				dir.y *= tile_size.x/2;
+				dir.x *= level.tile_size.x/2;
+				dir.y *= level.tile_size.x/2;
 
 				sf::Vertex line[] = {
 					sf::Vertex(e->get<CTransform>()->pos),
 					sf::Vertex(e->get<CTransform>()->pos + dir)
 				};
-				game->screen_tex.draw(line, 2, sf::Lines);
+				screen_tex->draw(line, 2, sf::Lines);
 			}
 		}
 	}
@@ -242,15 +144,15 @@ void ScenePlay::drawDirectionVectors() {
 
 void ScenePlay::drawGrid() {
 	sf::RectangleShape rect;
-	rect.setSize(sf::Vector2f(tile_size));
+	rect.setSize(sf::Vector2f(level.tile_size));
 	rect.setFillColor(sf::Color(0,0,0,0));
 	rect.setOutlineColor(sf::Color(0,0,0,50));
 	rect.setOutlineThickness(-1);
 
-	for (size_t x = 0; x < map_size.x; x++) {
-		for (size_t y = 0; y < map_size.y; y++) {
-			rect.setPosition(sf::Vector2f(x*tile_size.x, y*tile_size.y));
-			game->screen_tex.draw(rect);
+	for (size_t x = 0; x < level.map_size.x; x++) {
+		for (size_t y = 0; y < level.map_size.y; y++) {
+			rect.setPosition(sf::Vector2f(x*level.tile_size.x, y*level.tile_size.y));
+			screen_tex->draw(rect);
 		}
 	}
 }
@@ -269,7 +171,7 @@ void ScenePlay::drawEntityPosition() {
 				sf::Vertex(pos + sf::Vector2f(0,d), col)
 			};
 
-			game->screen_tex.draw(crosshair, 4, sf::Lines);
+			screen_tex->draw(crosshair, 4, sf::Lines);
 		}
 	}
 }
@@ -278,7 +180,7 @@ void ScenePlay::update() {
 	{
 		PROFILE_SCOPE("SCENE_LOGIC");
 
-		if (!paused && game_state == GAME_PLAY && !isFading()) {
+		if (!paused && game_stats->state == GameStats::State::PLAY && !isFading()) {
 			ent_mgr.update();
 
 			//sEnemySpawner();
@@ -289,7 +191,7 @@ void ScenePlay::update() {
 			sPowerup();
 			//sMissleGuidance();
 
-			SUpdate::updatePosition(ent_mgr.getEntities(), map_ground.getBounds());
+			SUpdate::updatePosition(ent_mgr.getEntities(), level.map_ground.getBounds());
 
 			sCollisionCheck();
 			sCollisionSolve();
@@ -306,12 +208,12 @@ void ScenePlay::update() {
 
 	{
 		PROFILE_SCOPE("sDrawBg");
-		game->screen_tex.draw(map_ground);
+		screen_tex->draw(level.map_ground);
 	}
 
 	{
 		PROFILE_SCOPE("sDrawEntities");
-		SDraw::drawEntities(&game->screen_tex, ent_mgr.getEntities());
+		SDraw::drawEntities(&*screen_tex, ent_mgr.getEntities());
 	}
 
 #ifdef DEBUG_GRID
@@ -332,41 +234,18 @@ void ScenePlay::update() {
 
 	if (glitter.m_lifetime >=0) {
 		glitter.update();
-		game->screen_tex.draw(glitter);
+		screen_tex->draw(glitter);
 	}
 
 	//change view in order to keep the interface relative to window
 	{
 		PROFILE_SCOPE("sDrawInterface");
-		game->screen_tex.setView(gui_view);
-		SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
-		game->screen_tex.setView(game->view);
+		screen_tex->setView(gui_view);
+		SDraw::drawInterface(&*screen_tex, interface.getWidgets());
+		screen_tex->setView(*game_view);
 	}
 
 	frame_current++;
-	sFade();
-}
-
-
-void ScenePlay::spawnPlayer() {
-	const sf::Vector2f pos(game->app_conf.modes[game->app_conf.current_mode_id].width/2, game->app_conf.modes[game->app_conf.current_mode_id].height/2);
-
-	player = ent_mgr.add(TAG::PLAYER);
-	player->get<CTransform>()->pos = pos;
-}
-
-void ScenePlay::spawnBase() {
-	const sf::Vector2f pos(game->app_conf.modes[game->app_conf.current_mode_id].width/2 + 200, game->app_conf.modes[game->app_conf.current_mode_id].height/2);
-
-
-	size_t recipe = game->assets.getRecipeNameID("cow");
-	base = ent_mgr.add(TAG::ENEMY, recipe);
-	base->get<CTransform>()->pos = pos;
-	base->get<CTransform>()->dir = {-1, 1};
-	base->state = Entity::STATE_IDLE;
-	base->facing = Entity::FACING_SW;
-	base->get<CTransform>()->prev_dir = {-1, 1};
-	base->get<CAnimation>()->active_anim = &base->get<CAnimation>()->anim_set.animations[base->state][base->facing];
 }
 
 void ScenePlay::spawnEnemy() {
@@ -384,8 +263,8 @@ void ScenePlay::spawnEnemy() {
 	int radius = 50;
 
 	while (!position_is_valid) {
-		pos.x = rand() % static_cast<int>(game->app_conf.modes[game->app_conf.current_mode_id].width - radius*2) + radius;
-		pos.y = rand() % static_cast<int>(game->app_conf.modes[game->app_conf.current_mode_id].height - radius*2) + radius;
+		pos.x = rand() % static_cast<int>(app_conf->modes[app_conf->current_mode_id].width - radius*2) + radius;
+		pos.y = rand() % static_cast<int>(app_conf->modes[app_conf->current_mode_id].height - radius*2) + radius;
 
 		float square_min_dist = (player_radius*10 + radius) * (player_radius*10 + radius);
 		float square_current_dist = squareDistance(pos, player->get<CTransform>()->pos);
@@ -586,9 +465,9 @@ void ScenePlay::sCollisionSolve() {
 
 							if (entity->get<CSfx>()) {
 								if (entity_hp <= 0)
-									game->snd_mgr.playSoundUnique(entity->get<CSfx>()->die);
+									snd_mgr->playSoundUnique(entity->get<CSfx>()->die);
 								else
-									game->snd_mgr.playSoundUnique(entity->get<CSfx>()->hurt);
+									snd_mgr->playSoundUnique(entity->get<CSfx>()->hurt);
 							}
 						}
 					}
@@ -731,7 +610,7 @@ void ScenePlay::sStateFacing() {
 }
 
 void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
-	size_t recipe = game->assets.getRecipeNameID("glowing_bullet_explosion");
+	size_t recipe = assets->getRecipeNameID("glowing_bullet_explosion");
 	std::shared_ptr<Entity> e = ent_mgr.add(TAG::FX, recipe);
 
 	e->add<CTransform>(new CTransform(pos, 0));
@@ -1028,7 +907,7 @@ void ScenePlay::sFireWeapon() {
 				if (e->get<CInput>()->fire_primary && comp_w.p_rounds_current) {
 					if (comp_w.p_delay_current == 0) {
 						spawnEntity(comp_w.p_tag, comp_w.primary, e, pos, Entity::STATE_RUN, facing);
-						game->snd_mgr.playSound(comp_w.p_sfx);
+						snd_mgr->playSound(comp_w.p_sfx);
 
 						e->get<CInput>()->fire_primary = false;
 						comp_w.p_rounds_current--;
@@ -1042,7 +921,7 @@ void ScenePlay::sFireWeapon() {
 				else if (e->get<CInput>()->fire_secondary && comp_w.s_rounds_current) {
 					if (comp_w.s_delay_current == 0) {
 						spawnEntity(comp_w.s_tag, comp_w.secondary, e, pos, Entity::STATE_RUN, facing);
-						game->snd_mgr.playSound(comp_w.s_sfx);
+						snd_mgr->playSound(comp_w.s_sfx);
 
 						e->get<CInput>()->fire_secondary = false;
 						comp_w.s_rounds_current--;
@@ -1086,7 +965,7 @@ void ScenePlay::killEntity(std::shared_ptr<Entity>& entity) {
 }
 
 void ScenePlay::spawnMissle() {
-	sf::Vector2f mouse_pos = game->window.mapPixelToCoords(sf::Mouse::getPosition(game->window));
+	sf::Vector2f mouse_pos = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
 
 	const sf::Vector2f pos(player->get<CTransform>()->pos);
 	const sf::Vector2f dir = mouse_pos - pos;
@@ -1112,7 +991,7 @@ std::shared_ptr<Entity> ScenePlay::findTarget(const std::shared_ptr<Entity>& mis
 	}
 
 	std::shared_ptr<Entity> target;
-	float prev_dist(game->app_conf.modes[game->app_conf.current_mode_id].width*game->app_conf.modes[game->app_conf.current_mode_id].width);
+	float prev_dist(app_conf->modes[app_conf->current_mode_id].width*app_conf->modes[app_conf->current_mode_id].width);
 	float dist;
 
 	for (std::shared_ptr<Entity>& enemy : reachable) {
@@ -1244,23 +1123,23 @@ void ScenePlay::lookAt(CInput& c_input, const sf::Vector2f& a, const sf::Vector2
 	else if (dir.y < 0) c_input.up = true;
 }
 
-void ScenePlay::doAction(const Action* a) {
-	if (*a->type == Action::TYPE_START && getCurrentFade() != FADE::OUT) {
-		if (*a->code == Action::GAME_PAUSE) {
+void ScenePlay::doAction(const Action& a) {
+	if (*a.type == Action::TYPE_START && getCurrentFade() != FADE::OUT) {
+		if (*a.code == Action::GAME_PAUSE) {
 			paused = !paused;
 			if (paused) {
-				game->snd_mgr.pauseBgMusic();
-				game->snd_mgr.playSound("menu_pause");
+				snd_mgr->pauseBgMusic();
+				snd_mgr->playSound("menu_pause");
 				interface.add(*paused_widget);
 			}
 			else {
-				game->snd_mgr.playSound("menu_unpause");
-				game->snd_mgr.playBgMusic();
+				snd_mgr->playSound("menu_unpause");
+				snd_mgr->playBgMusic();
 				interface.getWidgets().pop_back();
 			}
 		}
 		else if (!paused) {
-			switch (*a->code) {
+			switch (*a.code) {
 				case Action::MOVE_UP:
 					player->get<CInput>()->up = true;
 				break;
@@ -1283,26 +1162,24 @@ void ScenePlay::doAction(const Action* a) {
 					setFade(FADE::OUT, GAME_SCENE::MENU);
 				break;
 				case Action::SPAWN_ENTITY:
-					spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
+					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
 				break;
 				case Action::SPAWN_PLAYER:
-					spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
+					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
 					ent_mgr.update();
 					player = ent_mgr.getEntities(TAG::PLAYER)[0];
 				break;
 				case Action::SPAWN_BASE:
-					spawnEntity(*a->ent_tag, *a->ent_name, *a->pos, *a->state, *a->facing);
+					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
 					ent_mgr.update();
 					base = ent_mgr.getEntities(TAG::BASE)[0];
 				default:
 				break;
 			}
 		}
-
-
 	}
-	if (*a->type == Action::TYPE_END) {
-		switch (*a->code) {
+	if (*a.type == Action::TYPE_END) {
+		switch (*a.code) {
 			case Action::MOVE_UP:
 				player->get<CInput>()->up = false;
 			break;
@@ -1391,14 +1268,14 @@ void ScenePlay::sView() {
 	cam.target = player->get<CTransform>()->pos;
 	float square_delta = squareDistance(cam.pos, cam.target);
 
-	if (square_delta > game->app_conf.cam_treshold) {
-		cam.pos += ((cam.target - cam.pos) / game->app_conf.cam_speed);
+	if (square_delta > app_conf->cam_treshold) {
+		cam.pos += ((cam.target - cam.pos) / app_conf->cam_speed);
 	}
 
 	//update view position
-	int w = game->app_conf.game_w;
-	int h = game->app_conf.game_h;
-	sf::FloatRect world = map_ground.getBounds();
+	int w = app_conf->game_w;
+	int h = app_conf->game_h;
+	sf::FloatRect world = level.map_ground.getBounds();
 	sf::FloatRect rect(cam.pos.x-w/2, cam.pos.y-h/2, w, h);
 
 	//fix weird lines between map tiles when moving
@@ -1410,27 +1287,27 @@ void ScenePlay::sView() {
 	if (rect.left + rect.width > world.width) rect.left = world.width - w;
 	if (rect.top + rect.height > world.height) rect.top = world.height - h;
 
-	game->view.reset(rect);
+	game_view->reset(rect);
 }
 
 void ScenePlay::sGameState() {
 	if (!player->alive && player->get<CAnimation>()->active_anim->hasEnded() ||
 		!base->alive && base->get<CAnimation>()->active_anim->hasEnded())
 	{
-		game_state = GAME_OVER;
-		game->addKills(kills_per_enemy);
-		game->stageReset();
+		game_stats->state = GameStats::State::LOSE;
+		game_stats->addKills(kills_per_enemy);
+		game_stats->next_stage = 0;
 		setFade(FADE::OUT, GAME_SCENE::OVER);
 	}
 
 	if (ent_mgr.getEntities(TAG::ENEMY).empty()) {
-		game_state = GAME_OVER;
-		game->addKills(kills_per_enemy);
-		if (game->stageNext()) {
+		game_stats->state = GameStats::State::WIN;
+		game_stats->addKills(kills_per_enemy);
+		if (game_stats->stageNext()) {
 			setFade(FADE::OUT, GAME_SCENE::SCORE);
 		}
 		else {
-			game->stageReset();
+			game_stats->next_stage = 0;
 			setFade(FADE::OUT, GAME_SCENE::OVER);
 		}
 	}

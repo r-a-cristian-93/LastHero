@@ -2,11 +2,8 @@
 #define SCENE_GAME_OVER
 
 #include "Scene.h"
-#include "Interface.h"
 
 class SceneGameOver: public Scene {
-	Interface interface;
-
 	enum {
 		SELECT_PLAY,
 		SELECT_EXIT,
@@ -18,10 +15,9 @@ class SceneGameOver: public Scene {
 
 public:
 	void update() override;
-	void doAction(const Action* a) override;
+	void doAction(const Action& a) override;
 
 	SceneGameOver();
-	SceneGameOver(Game* g);
 	~SceneGameOver();
 };
 

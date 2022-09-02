@@ -1,35 +1,36 @@
-#include "SceneScore.h"
+#include "SharedResources.h"
 #include <cmath>
 #include "SUpdate.h"
 #include "SDraw.h"
+#include "SceneScore.h"
 
-SceneScore::SceneScore(Game* g)
-	:Scene(g, GAME_SCENE::SCORE)
+SceneScore::SceneScore()
+	:Scene(GAME_SCENE::SCORE)
 {
 	init();
 }
 
 void SceneScore::init() {
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::MENU_SELECT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::MENU_SELECT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Enter, Action::MENU_SELECT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SKIP);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::MENU_SELECT);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::MENU_SELECT);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Enter, Action::MENU_SELECT);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SKIP);
 
 	{
 		Widget title;
 		std::string string = "";
-		if (game->stagePrev() + 1 == game->stagesCount()) {
+		if (game_stats->prev_stage + 1 == game_stats->stagesCount()) {
 			string = "ALL STAGES COMPLETE!";
 		}
 		else {
-			string = "STAGE " + std::to_string(game->stagePrev() + 1);
+			string = "STAGE " + std::to_string(game_stats->prev_stage + 1);
 		}
 
-		sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
-		unsigned int size = static_cast<unsigned int>(game->app_conf.game_h * title_h * 0.5);
+		sf::Font& font = assets->getFont(Assets::FONT_PIXEL);
+		unsigned int size = static_cast<unsigned int>(app_conf->game_h * title_h * 0.5);
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*(header_h+title_h/2));
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*(header_h+title_h/2));
 
 		title.setText(string, font, size);
 		title.setPosAbs(pos);
@@ -37,16 +38,16 @@ void SceneScore::init() {
 	}
 
 	{
-		Widget& skip = game->assets.getWidget("menu_skip");
+		Widget& skip = assets->getWidget("menu_skip");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.2);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.95);
+		pos.x = static_cast<int>(app_conf->game_w*0.2);
+		pos.y = static_cast<int>(app_conf->game_h*0.95);
 		skip.setPosAbs(pos);
 		interface.add(skip);
 	}
 
-	const KillsMap& kills = game->kills_per_enemy;
-	const KillsMap& n_kills = game->new_kills_per_enemy;
+	const KillsMap& kills = game_stats->kills_per_enemy;
+	const KillsMap& n_kills = game_stats->new_kills_per_enemy;
 	KillsMap::const_iterator it_k;
 
 	for (it_k = kills.cbegin(); it_k != kills.cend(); it_k++) {
@@ -54,7 +55,7 @@ void SceneScore::init() {
 		total_kills += it_k->second;
 
 		// calculate total_score
-		size_t points = it_k->second * game->assets.getScorePoints(it_k->first);
+		size_t points = it_k->second * assets->getScorePoints(it_k->first);
 		total_score += points;
 
 		// count rows
@@ -69,7 +70,7 @@ void SceneScore::init() {
 	col_w = (1 - indent_left - indent_right) / cols;
 
 	std::string string = "";
-	sf::Font& font = game->assets.getFont(Assets::FONT_PIXEL);
+	sf::Font& font = assets->getFont(Assets::FONT_PIXEL);
 	sf::Color color({255,255,255});
 
 	it_k = kills.cbegin();
@@ -77,10 +78,10 @@ void SceneScore::init() {
 		for (int c=0; c<cols; c++) {
 			string = "";
 			color = {255, 255, 255};
-			unsigned int size = static_cast<unsigned int>(game->app_conf.game_h*row_h * 0.5);
+			unsigned int size = static_cast<unsigned int>(app_conf->game_h*row_h * 0.5);
 			sf::Vector2i pos;
-			pos.x = static_cast<int>(game->app_conf.game_w * (c*col_w + indent_left + col_w/2));
-			pos.y = static_cast<int>(game->app_conf.game_h * (r*row_h + header_h + title_h + spacer_h + row_h/2));
+			pos.x = static_cast<int>(app_conf->game_w * (c*col_w + indent_left + col_w/2));
+			pos.y = static_cast<int>(app_conf->game_h * (r*row_h + header_h + title_h + spacer_h + row_h/2));
 
 			// table header
 			if (r == 0) {
@@ -110,17 +111,17 @@ void SceneScore::init() {
 				if (c == 2)
 					string = std::to_string(it_k->second);
 				if (c == 3) {
-					size_t points = it_k->second * game->assets.getScorePoints(it_k->first);
+					size_t points = it_k->second * assets->getScorePoints(it_k->first);
 					string = std::to_string(points);
 				}
 			}
 
 			if (c==0 && r > 0 && r < rows-2) {
 				Widget box;
-				sf::Sprite& icon = game->assets.getIconSmall(it_k->first);
+				sf::Sprite& icon = assets->getIconSmall(it_k->first);
 				sf::FloatRect rect = icon.getLocalBounds();
 				sf::Vector2i offset = {static_cast<int>(-rect.width/2), static_cast<int>(-rect.height/2)};
-				box.setBackground(game->assets.getIconSmall(it_k->first), offset);
+				box.setBackground(assets->getIconSmall(it_k->first), offset);
 				box.setPosAbs(pos);
 				all_table_widgets.push_back(box);
 			}
@@ -137,39 +138,38 @@ void SceneScore::init() {
 		}
 	}
 
-	game->screen_tex.setView(gui_view);
+	screen_tex->setView(gui_view);
 }
 
 void SceneScore::update() {
 	if (frame_current == key_frames[FRAMES_SCORE::COL_0] || skip_key_frames) {
 		copyCells(all_table_widgets, interface.getWidgets(), {0,0,0,rows-3});
-		if (total_kills && !skip_key_frames) game->snd_mgr.playSound("menu_punch");
+		if (total_kills && !skip_key_frames) snd_mgr->playSound("menu_punch");
 	}
 	if (frame_current == key_frames[FRAMES_SCORE::COL_1] || skip_key_frames) {
 		copyCells(all_table_widgets, interface.getWidgets(), {1,0,1,rows-3});
-		if (!game->new_kills_per_enemy.empty() && !skip_key_frames) game->snd_mgr.playSound("menu_punch");
+		if (!game_stats->new_kills_per_enemy.empty() && !skip_key_frames) snd_mgr->playSound("menu_punch");
 	}
 	if (frame_current == key_frames[FRAMES_SCORE::COL_2] || skip_key_frames) {
 		copyCells(all_table_widgets, interface.getWidgets(), {2,0,2,rows-3});
-		if (total_kills && !skip_key_frames) game->snd_mgr.playSound("menu_punch");
+		if (total_kills && !skip_key_frames) snd_mgr->playSound("menu_punch");
 	}
 	if (frame_current == key_frames[FRAMES_SCORE::COL_3] || skip_key_frames) {
 		copyCells(all_table_widgets, interface.getWidgets(), {3,0,3,rows-3});
-		if (total_kills && !skip_key_frames) game->snd_mgr.playSound("menu_punch");
+		if (total_kills && !skip_key_frames) snd_mgr->playSound("menu_punch");
 	}
 	if (frame_current == key_frames[FRAMES_SCORE::ROW_LINE] || skip_key_frames) {
 		copyCells(all_table_widgets, interface.getWidgets(), {2,rows-2,3,rows-2});
-		if (total_kills && !skip_key_frames) game->snd_mgr.playSound("menu_punch");
+		if (total_kills && !skip_key_frames) snd_mgr->playSound("menu_punch");
 	}
 	if (frame_current == key_frames[FRAMES_SCORE::ROW_TOTAL] || skip_key_frames) {
 		copyCells(all_table_widgets, interface.getWidgets(), {1,rows-1,3,rows-1});
-		if (!skip_key_frames) game->snd_mgr.playSound("menu_punch");
+		if (!skip_key_frames) snd_mgr->playSound("menu_punch");
 	}
-	game->screen_tex.clear(sf::Color(10, 70, 10));
-	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
+	screen_tex->clear(sf::Color(10, 70, 10));
+	SDraw::drawInterface(&*screen_tex, interface.getWidgets());
 
 	frame_current++;
-	sFade();
 }
 
 void SceneScore::copyCells(WidgetVec& src, WidgetVec& dst, sf::IntRect rect) {
@@ -187,17 +187,17 @@ void SceneScore::copyCells(WidgetVec& src, WidgetVec& dst, sf::IntRect rect) {
 	}
 }
 
-void SceneScore::doAction(const Action* a) {
-	if (*a->type == Action::TYPE_START) {
-		switch (*a->code) {
+void SceneScore::doAction(const Action& a) {
+	if (*a.type == Action::TYPE_START) {
+		switch (*a.code) {
 			case Action::MENU_SKIP: {
 				skip_key_frames = true;
-				game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SELECT);
+				act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::MENU_SELECT);
 			}
 			break;
 			case Action::MENU_SELECT:
 				if ((frame_current > key_frames[FRAMES_SCORE::CONTINUE] || skip_key_frames) && getCurrentFade()!=FADE::OUT) {
-					if (game->stageCurrent()) {
+					if (game_stats->next_stage) {
 						setFade(FADE::OUT, GAME_SCENE::PLAY);
 					}
 					else {
@@ -209,8 +209,8 @@ void SceneScore::doAction(const Action* a) {
 			break;
 		}
 	}
-	if (*a->type == Action::TYPE_END) {
-		switch (*a->code) {
+	if (*a.type == Action::TYPE_END) {
+		switch (*a.code) {
 			default:
 			break;
 		}

@@ -3,8 +3,8 @@
 #include "SUpdate.h"
 #include "SDraw.h"
 
-SceneMainMenu::SceneMainMenu(Game* g)
-	:Scene(g, GAME_SCENE::MENU)
+SceneMainMenu::SceneMainMenu()
+	:Scene(GAME_SCENE::MENU)
 	,background(nullptr)
 {
 	init();
@@ -13,72 +13,71 @@ SceneMainMenu::~SceneMainMenu() {}
 
 void SceneMainMenu::init() {
 	music_fade_out = true;
-	//game->snd_mgr.playBgMusic("intro");
+	//snd_mgr->playBgMusic("intro");
 
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::MENU_SELECT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::MENU_SELECT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Enter, Action::MENU_SELECT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::GAME_EXIT);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::MENU_SELECT);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::MENU_SELECT);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Enter, Action::MENU_SELECT);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::GAME_EXIT);
 
 	// set and scale background
-	background = &game->assets.getSprite("main_bg");
+	background = &assets->getSprite("main_bg");
 	sf::FloatRect b = background->getLocalBounds();
-	float scale_x = game->app_conf.game_w / b.width;
-	float scale_y = game->app_conf.game_h / b.height;
+	float scale_x = app_conf->game_w / b.width;
+	float scale_y = app_conf->game_h / b.height;
 	background->setScale(scale_x, scale_y);
 
 	// set main menu buttons
 	{
-		Widget& play = game->assets.getWidget("button_play");
+		Widget& play = assets->getWidget("button_play");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.7);
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*0.7);
 		play.setColor(mod_highlight);
 		play.setPosAbs(pos);
 		interface.add(play);
 	}
 
 	{
-		Widget& settings = game->assets.getWidget("button_settings");
+		Widget& settings = assets->getWidget("button_settings");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.77);
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*0.77);
 		settings.setColor(mod_dark);
 		settings.setPosAbs(pos);
 		interface.add(settings);
 	}
 
 	{
-		Widget& exit = game->assets.getWidget("button_exit");
+		Widget& exit = assets->getWidget("button_exit");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.84);
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*0.84);
 		exit.setColor(mod_dark);
 		exit.setPosAbs(pos);
 		interface.add(exit);
 	}
 
-	game->screen_tex.setView(gui_view);
+	screen_tex->setView(gui_view);
 }
 
 void SceneMainMenu::update() {
 	interface.update();
 
-	game->screen_tex.draw(*background);
-	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
+	screen_tex->draw(*background);
+	SDraw::drawInterface(&*screen_tex, interface.getWidgets());
 
 	frame_current++;
-	sFade();
 }
 
-void SceneMainMenu::doAction(const Action* a) {
-	if (*a->type == Action::TYPE_START) {
-		switch (*a->code) {
+void SceneMainMenu::doAction(const Action& a) {
+	if (*a.type == Action::TYPE_START) {
+		switch (*a.code) {
 			case Action::MENU_SELECT:
 				if (getCurrentFade() != FADE::OUT) {
-					game->snd_mgr.playSound("menu_confirm");
+					snd_mgr->playSound("menu_confirm");
 					if (selection == SELECT_EXIT) {
 						setFade(FADE::OUT, GAME_SCENE::EXIT);
 					}
@@ -103,14 +102,14 @@ void SceneMainMenu::doAction(const Action* a) {
 				}
 			break;
 			case Action::GAME_EXIT:
-				game->snd_mgr.playSound("menu_cancel");
+				snd_mgr->playSound("menu_cancel");
 				setFade(FADE::OUT, GAME_SCENE::EXIT);
 			default:
 			break;
 		}
 	}
-	if (*a->type == Action::TYPE_END) {
-		switch (*a->code) {
+	if (*a.type == Action::TYPE_END) {
+		switch (*a.code) {
 			default:
 			break;
 		}
@@ -129,5 +128,5 @@ void SceneMainMenu::select(size_t s) {
 		}
 	}
 
-	game->snd_mgr.playSound("menu_select");
+	snd_mgr->playSound("menu_select");
 }

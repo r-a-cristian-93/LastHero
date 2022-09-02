@@ -1,185 +1,184 @@
-#include "SceneSettings.h"
 #include <cmath>
-#include "SUpdate.h"
 #include "SDraw.h"
+#include "SceneSettings.h"
 
-SceneSettings::SceneSettings(Game* g)
-	:Scene(g, GAME_SCENE::SETTINGS)
+SceneSettings::SceneSettings()
+	:Scene(GAME_SCENE::SETTINGS)
 {
 	init();
 }
 SceneSettings::~SceneSettings() {}
 
 void SceneSettings::init() {
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::D, Action::MOVE_RIGHT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::MENU_SELECT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::MENU_SELECT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Enter, Action::MENU_SELECT);
-	game->act_mgr.registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::D, Action::MOVE_RIGHT);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::MENU_SELECT);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::MENU_SELECT);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Enter, Action::MENU_SELECT);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
 
 	// set menu buttons
 
 	{
-		Widget& key_res = game->assets.getWidget("key_res");
+		Widget& key_res = assets->getWidget("key_res");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.2);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.3);
+		pos.x = static_cast<int>(app_conf->game_w*0.2);
+		pos.y = static_cast<int>(app_conf->game_h*0.3);
 		key_res.setColor(mod_highlight);
 		key_res.setPosAbs(pos);
 		interface.add(key_res);
 	}
 	{
-		Widget& val_res = game->assets.getWidget("val_res");
+		Widget& val_res = assets->getWidget("val_res");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.7);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.3);
+		pos.x = static_cast<int>(app_conf->game_w*0.7);
+		pos.y = static_cast<int>(app_conf->game_h*0.3);
 		val_res.setColor(mod_highlight);
 		val_res.setPosAbs(pos);
 		interface.add(val_res);
 	}
 	{
-		Widget& arrow_left = game->assets.getWidget("arrow_left");
+		Widget& arrow_left = assets->getWidget("arrow_left");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.3);
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*0.3);
 		arrow_left.setColor(mod_highlight);
 		arrow_left.setPosAbs(pos);
 		interface.add(arrow_left);
 	}
 	{
-		Widget& arrow_right = game->assets.getWidget("arrow_right");
+		Widget& arrow_right = assets->getWidget("arrow_right");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.9);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.3);
+		pos.x = static_cast<int>(app_conf->game_w*0.9);
+		pos.y = static_cast<int>(app_conf->game_h*0.3);
 		arrow_right.setColor(mod_highlight);
 		arrow_right.setPosAbs(pos);
 		interface.add(arrow_right);
 	}
 	{
-		Widget& key_fullscreen = game->assets.getWidget("key_fullscreen");
+		Widget& key_fullscreen = assets->getWidget("key_fullscreen");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.2);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.4);
+		pos.x = static_cast<int>(app_conf->game_w*0.2);
+		pos.y = static_cast<int>(app_conf->game_h*0.4);
 		key_fullscreen.setColor(mod_highlight);
 		key_fullscreen.setPosAbs(pos);
 		interface.add(key_fullscreen);
 	}
 	{
-		Widget& val_fullscreen = game->assets.getWidget("val_fullscreen");
+		Widget& val_fullscreen = assets->getWidget("val_fullscreen");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.7);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.4);
+		pos.x = static_cast<int>(app_conf->game_w*0.7);
+		pos.y = static_cast<int>(app_conf->game_h*0.4);
 		val_fullscreen.setColor(mod_dark);
 		val_fullscreen.setPosAbs(pos);
 		interface.add(val_fullscreen);
 	}
 	{
-		Widget& arrow_left = game->assets.getWidget("arrow_left");
+		Widget& arrow_left = assets->getWidget("arrow_left");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.4);
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*0.4);
 		arrow_left.setColor(mod_dark);
 		arrow_left.setPosAbs(pos);
 		interface.add(arrow_left);
 	}
 	{
-		Widget& arrow_right = game->assets.getWidget("arrow_right");
+		Widget& arrow_right = assets->getWidget("arrow_right");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.9);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.4);
+		pos.x = static_cast<int>(app_conf->game_w*0.9);
+		pos.y = static_cast<int>(app_conf->game_h*0.4);
 		arrow_right.setColor(mod_dark);
 		arrow_right.setPosAbs(pos);
 		interface.add(arrow_right);
 	}
 	{
-		Widget& key_music_vol = game->assets.getWidget("key_music_vol");
+		Widget& key_music_vol = assets->getWidget("key_music_vol");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.2);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.5);
+		pos.x = static_cast<int>(app_conf->game_w*0.2);
+		pos.y = static_cast<int>(app_conf->game_h*0.5);
 		key_music_vol.setColor(mod_highlight);
 		key_music_vol.setPosAbs(pos);
 		interface.add(key_music_vol);
 	}
 	{
-		Widget& val_music_vol = game->assets.getWidget("val_music_vol");
+		Widget& val_music_vol = assets->getWidget("val_music_vol");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.7);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.5);
+		pos.x = static_cast<int>(app_conf->game_w*0.7);
+		pos.y = static_cast<int>(app_conf->game_h*0.5);
 		val_music_vol.setColor(mod_dark);
 		val_music_vol.setPosAbs(pos);
 		interface.add(val_music_vol);
 	}
 	{
-		Widget& arrow_left = game->assets.getWidget("arrow_left");
+		Widget& arrow_left = assets->getWidget("arrow_left");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.5);
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*0.5);
 		arrow_left.setColor(mod_dark);
 		arrow_left.setPosAbs(pos);
 		interface.add(arrow_left);
 	}
 	{
-		Widget& arrow_right = game->assets.getWidget("arrow_right");
+		Widget& arrow_right = assets->getWidget("arrow_right");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.9);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.5);
+		pos.x = static_cast<int>(app_conf->game_w*0.9);
+		pos.y = static_cast<int>(app_conf->game_h*0.5);
 		arrow_right.setColor(mod_dark);
 		arrow_right.setPosAbs(pos);
 		interface.add(arrow_right);
 	}
 	{
-		Widget& key_sfx_vol = game->assets.getWidget("key_sfx_vol");
+		Widget& key_sfx_vol = assets->getWidget("key_sfx_vol");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.2);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.6);
+		pos.x = static_cast<int>(app_conf->game_w*0.2);
+		pos.y = static_cast<int>(app_conf->game_h*0.6);
 		key_sfx_vol.setColor(mod_highlight);
 		key_sfx_vol.setPosAbs(pos);
 		interface.add(key_sfx_vol);
 	}
 	{
-		Widget& val_sfx_vol = game->assets.getWidget("val_sfx_vol");
+		Widget& val_sfx_vol = assets->getWidget("val_sfx_vol");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.7);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.6);
+		pos.x = static_cast<int>(app_conf->game_w*0.7);
+		pos.y = static_cast<int>(app_conf->game_h*0.6);
 		val_sfx_vol.setColor(mod_dark);
 		val_sfx_vol.setPosAbs(pos);
 		interface.add(val_sfx_vol);
 	}
 	{
-		Widget& arrow_left = game->assets.getWidget("arrow_left");
+		Widget& arrow_left = assets->getWidget("arrow_left");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.6);
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*0.6);
 		arrow_left.setColor(mod_dark);
 		arrow_left.setPosAbs(pos);
 		interface.add(arrow_left);
 	}
 	{
-		Widget& arrow_right = game->assets.getWidget("arrow_right");
+		Widget& arrow_right = assets->getWidget("arrow_right");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.9);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.6);
+		pos.x = static_cast<int>(app_conf->game_w*0.9);
+		pos.y = static_cast<int>(app_conf->game_h*0.6);
 		arrow_right.setColor(mod_dark);
 		arrow_right.setPosAbs(pos);
 		interface.add(arrow_right);
 	}
 	{
-		Widget& button_back = game->assets.getWidget("button_back");
+		Widget& button_back = assets->getWidget("button_back");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.85);
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*0.85);
 		button_back.setColor(mod_dark);
 		button_back.setPosAbs(pos);
 		interface.add(button_back);
 	}
 	{
-		Widget& settings_title = game->assets.getWidget("settings_title");
+		Widget& settings_title = assets->getWidget("settings_title");
 		sf::Vector2i pos;
-		pos.x = static_cast<int>(game->app_conf.game_w*0.5);
-		pos.y = static_cast<int>(game->app_conf.game_h*0.1);
+		pos.x = static_cast<int>(app_conf->game_w*0.5);
+		pos.y = static_cast<int>(app_conf->game_h*0.1);
 		settings_title.setColor(mod_highlight);
 		settings_title.setPosAbs(pos);
 		interface.add(settings_title);
@@ -203,30 +202,30 @@ void SceneSettings::init() {
 
 	interface.setLinks(links);
 
-	game->screen_tex.setView(gui_view);
+	screen_tex->setView(gui_view);
 }
 
 void SceneSettings::update() {
 	interface.update();
 
-	SDraw::drawInterface(&game->screen_tex, interface.getWidgets());
+	SDraw::drawInterface(&*screen_tex, interface.getWidgets());
 
 	frame_current++;
-	sFade();
 }
 
-void SceneSettings::doAction(const Action* a) {
-	if (*a->type == Action::TYPE_START) {
-		switch (*a->code) {
+void SceneSettings::doAction(const Action& a) {
+	if (*a.type == Action::TYPE_START) {
+		switch (*a.code) {
 			case Action::MENU_SELECT:
 				if (getCurrentFade() != FADE::OUT) {
-					game->snd_mgr.playSound("menu_confirm");
+					snd_mgr->playSound("menu_confirm");
 					if (selection == SELECT_BACK) {
 						setFade(FADE::OUT, GAME_SCENE::MENU);
 					}
 					else if (selection == SELECT_RESOLUTION || selection == SELECT_FULLSCREEN) {
-						if (game->app_conf.window_style != temp_conf.window_style || game->app_conf.current_mode_id != temp_conf.current_mode_id) {
-							game->applySettings(temp_conf);
+						if (app_conf->window_style != temp_conf.window_style || app_conf->current_mode_id != temp_conf.current_mode_id) {
+							cfg_mgr->applySettings(temp_conf);
+
 							temp_conf.write("user.cfg");
 						}
 					}
@@ -247,20 +246,20 @@ void SceneSettings::doAction(const Action* a) {
 			case Action::MOVE_LEFT:
 			case Action::MOVE_RIGHT:
 				if (getCurrentFade() != FADE::OUT) {
-					selectHorizontal(*a->code);
+					selectHorizontal(*a.code);
 				}
 			break;
 			case Action::CHANGE_SCENE_MENU:
 				if (getCurrentFade() != FADE::OUT) {
-					game->snd_mgr.playSound("menu_cancel");
+					snd_mgr->playSound("menu_cancel");
 					setFade(FADE::OUT, GAME_SCENE::MENU);
 				}
 			default:
 			break;
 		}
 	}
-	if (*a->type == Action::TYPE_END) {
-		switch (*a->code) {
+	if (*a.type == Action::TYPE_END) {
+		switch (*a.code) {
 			default:
 			break;
 		}
@@ -301,8 +300,8 @@ void SceneSettings::selectHorizontal(size_t action_code) {
 				if (temp_conf.music_volume <= 95) temp_conf.music_volume += 5;
 			}
 
-			game->app_conf.music_volume = temp_conf.music_volume;
-			game->snd_mgr.setBgMusicVolume(temp_conf.music_volume);
+			app_conf->music_volume = temp_conf.music_volume;
+			snd_mgr->setBgMusicVolume(temp_conf.music_volume);
 			selected_music_vol = to_string(temp_conf.music_volume);
 			temp_conf.write("user.cfg");
 		break;
@@ -314,13 +313,13 @@ void SceneSettings::selectHorizontal(size_t action_code) {
 				if (temp_conf.sfx_volume <= 95) temp_conf.sfx_volume += 5;
 			}
 
-			game->app_conf.sfx_volume = temp_conf.sfx_volume;
+			app_conf->sfx_volume = temp_conf.sfx_volume;
 			selected_sfx_vol = to_string(temp_conf.sfx_volume);
 			temp_conf.write("user.cfg");
 		break;
 	}
 
-	game->snd_mgr.playSound("menu_select");
+	snd_mgr->playSound("menu_select");
 }
 
 void SceneSettings::select(size_t s) {
@@ -349,7 +348,7 @@ void SceneSettings::select(size_t s) {
 		}
 	}
 
-	game->snd_mgr.playSound("menu_select");
+	snd_mgr->playSound("menu_select");
 }
 
 std::string SceneSettings::to_string(sf::VideoMode& mode) {

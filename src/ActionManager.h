@@ -4,7 +4,6 @@
 #include <map>
 #include <deque>
 #include "Action.h"
-#include "ActionStream.h"
 
 //map<key, action_code>
 typedef std::map<int, int> ActionMap;
@@ -25,6 +24,7 @@ public:
 
 	void registerAction(int device, int key, int code);
 	int getCode(int device, int key);
+	void reset();
 };
 
 #endif
