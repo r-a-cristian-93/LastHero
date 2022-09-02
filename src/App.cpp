@@ -78,17 +78,11 @@ void App::handleUIEvent(sf::Event& event, WidgetVec& widgets) {
 	sf::Vector2i m_pos(sf::Mouse::getPosition(*window));
 
 	for (Widget& w: widgets) {
-		if (w.on_click) {
-			sf::IntRect rect (w.getGlobalBounds());
+		sf::IntRect rect (w.getGlobalBounds());
 
-			std::cout << "Clicked something\n";
-			std::cout << "m_pos " << m_pos.x << " " << m_pos.y << std::endl;
-			std::cout << "rect " << rect.left << " " << rect.top << " " << rect.width << " " << rect.height << std::endl;
-
-			if (rect.contains(m_pos)) {
-				std::cout << "WIDGET HIT\n";
-				std::cout << "STATE " << w.state << std::endl;
-			}
+		if (w.on_click && rect.contains(m_pos)) {
+			Action action(w.on_click, Action::TYPE_START);
+			current_scene->doAction(action);
 		}
 		handleUIEvent(event, w.getChilds());
 	}

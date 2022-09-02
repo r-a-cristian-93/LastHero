@@ -22,10 +22,7 @@ void SceneEditor::init() {
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::A, Action::MOVE_LEFT);
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::S, Action::MOVE_DOWN);
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::D, Action::MOVE_RIGHT);
-	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::N, Action::FIRE_PRIMARY);
-	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::FIRE_SECONDARY);
-	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
-	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::GAME_EXIT);
 	act_mgr->registerAction(ActionManager::DEV_MOUSE, sf::Mouse::Button::Left, Action::LEFT_CLICK);
 
 	gui_view.reset(sf::FloatRect(0, 0, app_conf->modes[app_conf->current_mode_id].width, app_conf->modes[app_conf->current_mode_id].height));
@@ -141,52 +138,43 @@ void SceneEditor::update() {
 
 void SceneEditor::doAction(const Action& a) {
 	if (*a.type == Action::TYPE_START && getCurrentFade() != FADE::OUT) {
-		if (*a.code == Action::GAME_PAUSE) {
-			paused = !paused;
-			if (paused) {
-				snd_mgr->pauseBgMusic();
-				snd_mgr->playSound("menu_pause");
-				interface.add(*paused_widget);
-			}
-			else {
-				snd_mgr->playSound("menu_unpause");
-				snd_mgr->playBgMusic();
-				interface.getWidgets().pop_back();
-			}
+		switch (*a.code) {
+			case Action::MOVE_UP:
+				player->get<CInput>()->up = true;
+			break;
+			case Action::MOVE_LEFT:
+				player->get<CInput>()->left = true;
+			break;
+			case Action::MOVE_DOWN:
+				player->get<CInput>()->down = true;
+			break;
+			case Action::MOVE_RIGHT:
+				player->get<CInput>()->right = true;
+			break;
+			case Action::GAME_EXIT:
+				snd_mgr->playSound("menu_cancel");
+				setFade(FADE::OUT, GAME_SCENE::EXIT);
+			break;
+			case Action::SPAWN_ENTITY:
+				spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
+			break;
+			case Action::SPAWN_PLAYER:
+				spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
+				ent_mgr.update();
+				player = ent_mgr.getEntities(TAG::PLAYER)[0];
+			break;
+			case Action::SPAWN_BASE:
+				spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
+				ent_mgr.update();
+				base = ent_mgr.getEntities(TAG::BASE)[0];
+			break;
+			case Action::SET_CONTENT_TERRAIN:
+				std::cout << "SET TERRAIN ";
+			break;
+			default:
+			break;
 		}
-		else if (!paused) {
-			switch (*a.code) {
-				case Action::MOVE_UP:
-					player->get<CInput>()->up = true;
-				break;
-				case Action::MOVE_LEFT:
-					player->get<CInput>()->left = true;
-				break;
-				case Action::MOVE_DOWN:
-					player->get<CInput>()->down = true;
-				break;
-				case Action::MOVE_RIGHT:
-					player->get<CInput>()->right = true;
-				break;
-				case Action::CHANGE_SCENE_MENU:
-					setFade(FADE::OUT, GAME_SCENE::MENU);
-				break;
-				case Action::SPAWN_ENTITY:
-					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
-				break;
-				case Action::SPAWN_PLAYER:
-					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
-					ent_mgr.update();
-					player = ent_mgr.getEntities(TAG::PLAYER)[0];
-				break;
-				case Action::SPAWN_BASE:
-					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
-					ent_mgr.update();
-					base = ent_mgr.getEntities(TAG::BASE)[0];
-				default:
-				break;
-			}
-		}
+
 	}
 	if (*a.type == Action::TYPE_END) {
 		switch (*a.code) {

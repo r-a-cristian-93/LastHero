@@ -29,6 +29,10 @@ void Editor::setScene(size_t id) {
 		case GAME_SCENE::EDITOR:
 			current_scene = new SceneEditor(assets->getStages()[game_stats->next_stage]);
 		break;
+		case GAME_SCENE::EXIT:
+			current_scene = nullptr;
+			running = false;
+		break;
 		default:
 			std::cout << __FILE__ << ":" << __LINE__ << " ERROR : Scene id " << id << " not handled\n";
 		break;
