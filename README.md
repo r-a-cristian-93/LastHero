@@ -6,17 +6,17 @@ LastHero is a very customizable single-player 2D shooter game that allows users 
 
 The game is still under development and new features will be added:
 - Choose between multiple heroes.
-- More game level and mechanics.
+- More game levels and mechanics.
 - A fully functional level editor.
 
 ## Gameplay
 
-The main goal is to kill all the enemies on the map and at the same time to protect you only resource left after the alien invation, your precious holstein cow.
+The main goal is to kill all the enemies on the map and at the same time to protect your only resource left after the alien invation, your precious holstein cow.
 Throughout the map you can find diverse powerups to help you in your battle with the vicious aliens.
 
 ## How to compile on Windows
 
-Download and install mingw32 SFML and make.
+Download and install mingw32, SFML and make.
 ```
 http://gnuwin32.sourceforge.net/downlinks/make-dep-zip.php
 http://gnuwin32.sourceforge.net/downlinks/make-bin-zip.php
@@ -38,7 +38,7 @@ make
 
 ## Screenshots
 
-<img src="/demo/s01.png" />
 <img src="/demo/s02.png" />
+<img src="/demo/s01.png" />
 <img src="/demo/s03.png" />
 <img src="/demo/s04.png" />
