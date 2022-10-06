@@ -117,6 +117,16 @@ void App::sSceneFade() {
 		case FADE::OUT: {
 			if (current_fade_frames[fade] > 0) current_fade_frames[fade]--;
 			unsigned char c = current_fade_frames[fade] * (255/fade_frames[fade]);
+
+			if (music_fade_out && current_scene->next_scene != GAME_SCENE::SETTINGS) {
+				float v = 0;
+
+				if (current_fade_frames[fade] > 0) {
+					v = current_fade_frames[fade] * (app_conf->music_volume/fade_frames[fade]);
+				}
+				snd_mgr->setBgMusicVolume(v);
+			}
+
 			screen_sprite->setColor({c, c, c});
 
 			if (current_fade_frames[fade] == 0) {
@@ -125,14 +135,7 @@ void App::sSceneFade() {
 				setNextScene(current_scene->next_scene);
 			}
 
-			if (music_fade_out && next_scene != GAME_SCENE::SETTINGS) {
-				float v = 0;
 
-				if (current_fade_frames[fade] > 0) {
-					v = current_fade_frames[fade] * (app_conf->music_volume/fade_frames[fade]);
-				}
-				snd_mgr->setBgMusicVolume(v);
-			}
 		}
 		break;
 	}
