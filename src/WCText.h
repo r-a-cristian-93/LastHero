@@ -16,6 +16,7 @@ public:
 	void setText(std::string text);
 	void setText(sf::Text& text);
 	void setColor(sf::Color color);
+	void setPosition(sf::Vector2i p);
 
 	void setLink(Link* link);
     bool hasLink();

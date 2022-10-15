@@ -13,12 +13,14 @@ WCText::WCText(const WCText& wct)
 void WCText::setText(std::string t, sf::Font& font, unsigned int size) {
     delete m_text;
 	m_text = new sf::Text(t, font, size);
+	updateOrigin();
 }
 
 void WCText::setText(std::string t) {
 	if (m_text != nullptr) {
 		if (m_text->getString() != t) {
 			m_text->setString(t);
+			updateOrigin();
 		}
 	}
 }
@@ -26,10 +28,17 @@ void WCText::setText(std::string t) {
 void WCText::setText(sf::Text& t) {
 	delete m_text;
 	m_text = new sf::Text(t);
+	updateOrigin();
 }
 
 void WCText::setColor(sf::Color color) {
 	if (m_text) m_text->setFillColor(color);
+}
+
+void WCText::setPosition(sf::Vector2i p) {
+	if (m_text != nullptr) {
+		m_text->setPosition(p.x+10, p.y+10);
+	}
 }
 
 void WCText::setLink(Link* _link) {

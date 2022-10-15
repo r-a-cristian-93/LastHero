@@ -1,5 +1,6 @@
 #include "Widget.h"
 #include <iostream>
+#include "SharedResources.h"
 
 Widget::Widget()
 	:pos_rel(0, 0)
@@ -22,6 +23,9 @@ Widget::Widget()
 	,state(State::DEFAULT)
 	,on_click(0)
 	,state_colors({})
+	,m_pos(0,0)
+	,m_anchor(Widget::Anchor::WINDOW)
+	,m_origin(Widget::Origin::TOP_CENTER)
 	{
 		add<WCText>(nullptr);
 	}
@@ -48,6 +52,9 @@ Widget::Widget(const Widget& w)
 	,state(w.state)
 	,on_click(w.on_click)
 	,state_colors(w.state_colors)
+	,m_pos(w.m_pos)
+	,m_anchor(w.m_anchor)
+	,m_origin(w.m_origin)
 {
 	if (w.background) setBackground(*w.background, w.bg_offset);
 	if (w.border) setBorder(*w.border);
@@ -114,6 +121,10 @@ void Widget::setPosAbs(sf::Vector2i p) {
 	if (background) background->setPosition(pos_abs.x + bg_offset.x, pos_abs.y + bg_offset.y);
 	if (border) border->match(sf::IntRect(pos_abs.x, pos_abs.y, size.x, size.y));
 	if (text) text->setPosition(pos_abs.x, pos_abs.y);
+
+	if (get<WCText>() != nullptr) {
+		get<WCText>()->setPosition(pos_abs);
+	}
 }
 
 void Widget::setSize(sf::Vector2i s) {
@@ -192,7 +203,7 @@ void Widget::setBorder(Border& b) {
 void Widget::setText(std::string t, sf::Font& font, unsigned int size) {
 	if (!text) {
 		text = new sf::Text(t, font, size);
-		drawables.push_back(text);
+		//drawables.push_back(text);
 		updateOrigin();
 	}
 }
@@ -208,7 +219,7 @@ void Widget::setText(sf::Text& t) {
 	delete text;
 
 	text = new sf::Text(t);
-	drawables.push_back(text);
+	//drawables.push_back(text);
 	updateOrigin();
 }
 

@@ -60,6 +60,28 @@ public:
 		return std::get<C*>(components);
 	}
 
+	enum class Origin: unsigned char {
+		TOP_LEFT = 0,
+		TOP_CENTER,
+		TOP_RIGHT,
+		MIDDLE_LEFT,
+		MIDDLE_CENTER,
+		MIDDLE_RIGHT,
+		BOTTOM_LEFT,
+		BOTTOM_CENTER,
+		BOTTOM_RIGHT,
+	};
+
+	enum class Anchor: unsigned char {
+		WINDOW = 0,
+		PARENT,
+	};
+
+	// float values in interval [0, 1].
+	sf::Vector2f m_pos;
+	Widget::Anchor m_anchor;
+	Widget::Origin m_origin;
+
 	std::vector<Widget> childs;
 
 	sf::Vector2i pos_rel;

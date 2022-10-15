@@ -13,7 +13,7 @@ Game::Game()
 }
 
 void Game::init() {
-	render_states = sf::RenderStates(&assets->getShader("crt-mattias"));
+	//render_states = sf::RenderStates(&assets->getShader("crt-mattias"));
 
 	//load texture after creating the window causes sementation fault;
 	screen_tex->create(app_conf->game_w, app_conf->game_h);
