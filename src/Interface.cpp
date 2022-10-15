@@ -31,6 +31,12 @@ void Interface::setLinks(WidgetVec& widgets, int* links[Widget::LINK_COUNT]) {
 		if (w.text && w.link != Widget::LINK_NONE)
 			w.linkToInt(*links[w.link]);
 
+		if (w.get<WCText>() != nullptr) {
+			if (w.get<WCText>()->hasLink()) {
+				w.get<WCText>()->getLink().setData(&*links[w.link]);
+			}
+		}
+
 		if (!w.childs.empty()) setLinks(w.childs, links);
 	}
 }

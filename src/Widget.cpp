@@ -22,7 +22,9 @@ Widget::Widget()
 	,state(State::DEFAULT)
 	,on_click(0)
 	,state_colors({})
-	{}
+	{
+		add<WCText>(nullptr);
+	}
 
 Widget::Widget(const Widget& w)
 	:pos_rel(w.pos_rel)
@@ -52,6 +54,10 @@ Widget::Widget(const Widget& w)
 	if (w.text) setText(*w.text);
 	if (w.scroll_track) addScrollTrack(*w.scroll_track);
 	if (w.scroll_thumb) addScrollThumb(*w.scroll_thumb);
+
+	if (w.get<WCText>()) {
+		add<WCText>(new WCText(*w.get<WCText>()));
+	}
 }
 
 
@@ -61,6 +67,7 @@ Widget::~Widget() {
 	delete text;
 	delete scroll_content_sprite;
 	delete scroll_content_tex;
+	if (get<WCText>()) delete get<WCText>();
 }
 
 sf::FloatRect Widget::getGlobalBounds() {
@@ -245,6 +252,10 @@ void Widget::update() {
 	if (text) {
 		updateText();
 		updateOrigin();
+	}
+
+	if (get<WCText>() != nullptr) {
+		get<WCText>()->update();
 	}
 
 	if (current_fx) {

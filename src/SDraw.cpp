@@ -37,6 +37,10 @@ void SDraw::drawWidget(sf::RenderTarget* w, Widget& widget) {
 		w->draw(*d);
 	}
 
+	if (widget.get<WCText>() != nullptr) {
+		w->draw(*widget.get<WCText>());
+	}
+
 	if (!widget.getChilds().empty()) {
 		for (Widget& child:widget.getChilds()) {
 			drawWidget(w, child);

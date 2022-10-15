@@ -1,4 +1,6 @@
 #include "Level.h"
+#include "SharedResources.h"
+
 
 Level::Level()
 {}

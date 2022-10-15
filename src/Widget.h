@@ -4,6 +4,7 @@
 #include "SFML/Graphics.hpp"
 #include "Border.h"
 #include "CommonBehaviour.h"
+#include "WCText.h"
 
 struct WidgetFx {
 	//fx type
@@ -46,6 +47,18 @@ public:
 		DISABLED,
 		COUNT,
 	};
+
+	std::tuple<WCText*> components;
+
+	template<class C>
+	void add(C* c) {
+		std::get<C*>(components) = c;
+	}
+
+	template<class C>
+	C* get() const {
+		return std::get<C*>(components);
+	}
 
 	std::vector<Widget> childs;
 

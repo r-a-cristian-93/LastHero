@@ -936,6 +936,19 @@ void Assets::loadWidget() {
 			widget.setText(text, fonts[font_id], font_size);
 			widget.setTextColor(text_color);
 			widget.link = link;
+
+			// link in WCText
+			switch(link) {
+				case Widget::LINK_PLAYER_HP:
+				{
+					WCText* wct= new WCText();
+					wct->setText("", fonts[font_id], font_size);
+					wct->setLink(new LinkInt(Link::Target::PLAYER_HP));
+
+					widget.add<WCText>(wct);
+				}
+				break;
+			}
 		}
 		else {
 			std::cout << "Invalid widget type \"" << type << "\".\n";
