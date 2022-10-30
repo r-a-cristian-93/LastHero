@@ -12,3 +12,4 @@ replay.txt
 art_src/
 results.json
 valgrind/
+.vscode/
