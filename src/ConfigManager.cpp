@@ -1,6 +1,6 @@
 #include "ConfigManager.h"
 #include "SharedResources.h"
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 void ConfigManager::applySettings(AppConfig& conf) {
 	*app_conf = conf;
