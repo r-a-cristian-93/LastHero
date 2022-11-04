@@ -31,7 +31,10 @@ struct WidgetFx {
 };
 
 
-class Widget {
+class Widget: public sf::Drawable, public sf::Transformable {
+private:
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
 public:
 	enum class ScrollType: size_t {
 		NONE = 0,
@@ -60,29 +63,11 @@ public:
 		return std::get<C*>(components);
 	}
 
-	enum class Origin: unsigned char {
-		TOP_LEFT = 0,
-		TOP_CENTER,
-		TOP_RIGHT,
-		MIDDLE_LEFT,
-		MIDDLE_CENTER,
-		MIDDLE_RIGHT,
-		BOTTOM_LEFT,
-		BOTTOM_CENTER,
-		BOTTOM_RIGHT,
-	};
-
-	enum class Anchor: unsigned char {
-		WINDOW = 0,
-		PARENT,
-	};
-
-	// float values in interval [0, 1].
-	sf::Vector2f m_pos;
-	Widget::Anchor m_anchor;
-	Widget::Origin m_origin;
-
 	std::vector<Widget> childs;
+
+	// position relative to parent, values [0, 1].
+	// a parent can be another Widget or the application window.
+	sf::Vector2f pos;
 
 	sf::Vector2i pos_rel;
 	sf::Vector2i pos_abs;
@@ -102,13 +87,6 @@ public:
 	Border* border;
 //box
 
-//text
-	size_t link;
-	const int* link_int;
-	const std::string* link_str;
-	sf::Text* text;
-//text
-
 //scroll
 	ScrollType scroll;
 	Widget* scroll_track;
@@ -120,6 +98,8 @@ public:
 
 
 public:
+	void setOrigin(sf::Vector2f origin);
+	void setPosition(sf::Vector2f pos);
 	void setPosRel(sf::Vector2i pos);
 	void setPosAbs(sf::Vector2i pos);
 	void setSize(sf::Vector2i s);
@@ -160,8 +140,6 @@ public:
 	void setText(std::string t);
 	void setText(sf::Text& t);
 	void setTextColor(sf::Color color);
-	void linkToInt(int& value);
-	void linkToStr(std::string& value);
 	void updateText();
 	void updateOrigin();
 //text

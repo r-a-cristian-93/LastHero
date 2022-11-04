@@ -808,7 +808,6 @@ void Assets::loadWidget() {
 	sf::Vector2i spr_offset;
 	int tex_offset(0), w(0), h(0), font_size(0);
 	size_t font_id(NONE), link(0);
-	Link::Target link_target(Link::Target::NONE);
 	std::vector<std::string> childs;
 	sf::Color text_color(255, 255, 255);
 	std::string text = "TEXT";
@@ -827,42 +826,15 @@ void Assets::loadWidget() {
 		else if (word == "size") file >> size.x >> size.y;
 		else if (word == "link") {
 			file >> word;
-			if (word == "player_health") {
-				link = Widget::LINK_PLAYER_HP;
-				link_target = Link::Target::PLAYER_HP;
-			}
-			else if (word == "base_health") {
-				link = Widget::LINK_BASE_HP;
-				link_target = Link::Target::BASE_HP;
-			}
-			else if (word == "total_kills") {
-				link = Widget::LINK_TOTAL_KILLS;
-				link_target = Link::Target::TOTAL_KILLS;
-			}
-			else if (word == "secondary_rounds") {
-				link = Widget::LINK_SECONDARY_ROUNDS;
-				link_target = Link::Target::SECONDARY_ROUNDS;
-			}
-			else if (word == "secondary_rounds_current") {
-				 link = Widget::LINK_SECONDARY_ROUNDS_CURRENT;
-				 link_target = Link::Target::SECONDARY_ROUNDS_CURRENT;
-			}
-			else if (word == "window_res") {
-				 link = Widget::LINK_WINDOW_RESOLUTION;
-				 link_target = Link::Target::WINDOW_RESOLUTION;
-			}
-			else if (word == "window_style") {
-				link = Widget::LINK_WINDOW_STYLE;
-				link_target = Link::Target::WINDOW_STYLE;
-			}
-			else if (word == "music_vol") {
-				link = Widget::LINK_MUSIC_VOLUME;
-				link_target = Link::Target::MUSIC_VOLUME;
-			}
-			else if (word == "sfx_vol") {
-				link = Widget::LINK_SFX_VOLUME;
-				link_target = Link::Target::SFX_VOLUME;
-			}
+			if (word == "player_health") link = Widget::LINK_PLAYER_HP;
+			else if (word == "base_health") link = Widget::LINK_BASE_HP;
+			else if (word == "total_kills") link = Widget::LINK_TOTAL_KILLS;
+			else if (word == "secondary_rounds") link = Widget::LINK_SECONDARY_ROUNDS;
+			else if (word == "secondary_rounds_current") link = Widget::LINK_SECONDARY_ROUNDS_CURRENT;
+			else if (word == "window_res") link = Widget::LINK_WINDOW_RESOLUTION;
+			else if (word == "window_style") link = Widget::LINK_WINDOW_STYLE;
+			else if (word == "music_vol") link = Widget::LINK_MUSIC_VOLUME;
+			else if (word == "sfx_vol") link = Widget::LINK_SFX_VOLUME;
 			else {
 				std::cout << "Invalid link: " << word << std::endl;
 				exit(0);
@@ -960,38 +932,42 @@ void Assets::loadWidget() {
 			if (fx.type) widget.fx.push_back(fx);
 		}
 		else if (type == "text") {
-			widget.setSize(size);
-			widget.setText(text, fonts[font_id], font_size);
-			widget.setTextColor(text_color);
-			widget.link = link;
+			WCText* wct= new WCText();
+			wct->setText(text, fonts[font_id], font_size);
+			wct->setColor(text_color);
 
-			if (link_target != Link::Target::NONE) {
-				switch(link_target) {
-					case Link::Target::PLAYER_HP:
-					case Link::Target::BASE_HP:
-					case Link::Target::TOTAL_KILLS:
-					case Link::Target::SECONDARY_ROUNDS:
-					case Link::Target::SECONDARY_ROUNDS_CURRENT:
-					case Link::Target::MUSIC_VOLUME:
-					case Link::Target::SFX_VOLUME:
-					{
-						WCText* wct= new WCText();
-						wct->setText("", fonts[font_id], font_size);
-						wct->setLink(new LinkInt(link_target));
-						widget.add<WCText>(wct);
-					}
-					break;
-					case Link::Target::WINDOW_RESOLUTION:
-					case Link::Target::WINDOW_STYLE:
-					{
-						WCText* wct= new WCText();
-						wct->setText("", fonts[font_id], font_size);
-						wct->setLink(new LinkInt(link_target));
-						widget.add<WCText>(wct);
-					}
-					break;
-				}
+			// link in WCText
+			switch(link) {
+				case Widget::LINK_PLAYER_HP:
+					wct->setLink(new LinkInt(Link::Target::PLAYER_HP));
+				break;
+				case Widget::LINK_BASE_HP:
+					wct->setLink(new LinkInt(Link::Target::BASE_HP));
+				break;
+				case Widget::LINK_TOTAL_KILLS:
+					wct->setLink(new LinkInt(Link::Target::TOTAL_KILLS));
+				break;
+				case Widget::LINK_SECONDARY_ROUNDS:
+					wct->setLink(new LinkInt(Link::Target::SECONDARY_ROUNDS));
+				break;
+				case Widget::LINK_SECONDARY_ROUNDS_CURRENT:
+					wct->setLink(new LinkInt(Link::Target::SECONDARY_ROUNDS_CURRENT));
+				break;
+				case Widget::LINK_WINDOW_RESOLUTION:
+					wct->setLink(new LinkString(Link::Target::WINDOW_RESOLUTION));
+				break;
+				case Widget::LINK_WINDOW_STYLE:
+					wct->setLink(new LinkString(Link::Target::WINDOW_STYLE));
+				break;
+				case Widget::LINK_MUSIC_VOLUME:
+					wct->setLink(new LinkString(Link::Target::MUSIC_VOLUME));
+				break;
+				case Widget::LINK_SFX_VOLUME:
+					wct->setLink(new LinkString(Link::Target::PLAYER_HP));
+				break;
 			}
+
+			widget.add<WCText>(wct);
 		}
 		else {
 			std::cout << "Invalid widget type \"" << type << "\".\n";

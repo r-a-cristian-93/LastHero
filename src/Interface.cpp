@@ -28,12 +28,9 @@ void Interface::setLinks(std::string* links[Widget::LINK_COUNT]) {
 
 void Interface::setLinks(WidgetVec& widgets, int* links[Widget::LINK_COUNT]) {
 	for (Widget& w : widgets) {
-		if (w.text && w.link != Widget::LINK_NONE)
-			w.linkToInt(*links[w.link]);
-
 		if (w.get<WCText>() != nullptr) {
 			if (w.get<WCText>()->hasLink()) {
-				w.get<WCText>()->getLink().setData(&*links[w.link]);
+				w.get<WCText>()->getLink().setData(&*links[static_cast<unsigned int> (w.get<WCText>()->getLink().getTarget())]);
 			}
 		}
 
@@ -43,8 +40,11 @@ void Interface::setLinks(WidgetVec& widgets, int* links[Widget::LINK_COUNT]) {
 
 void Interface::setLinks(WidgetVec& widgets, std::string* links[Widget::LINK_COUNT]) {
 	for (Widget& w : widgets) {
-		if (w.text && w.link != Widget::LINK_NONE)
-			w.linkToStr(*links[w.link]);
+		if (w.get<WCText>() != nullptr) {
+			if (w.get<WCText>()->hasLink()) {
+				w.get<WCText>()->getLink().setData(&*links[static_cast<unsigned int> (w.get<WCText>()->getLink().getTarget())]);
+			}
+		}
 
 		if (!w.childs.empty()) setLinks(w.childs, links);
 	}

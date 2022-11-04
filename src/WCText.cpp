@@ -1,44 +1,48 @@
 #include "WCText.h"
+#include <iostream>
 
-WCText::WCText()
-    :m_text(nullptr)
+WCText::WCText():
+	m_link(nullptr)
     {}
-WCText::WCText(const WCText& wct)
-	:m_text(new sf::Text(*wct.m_text))
 
-	{
-		m_link = wct.m_link->clone();
+WCText::WCText(const WCText& wct):
+	m_link(nullptr)
+{
+	std::cout << "COPY WCT\n";
+
+	this->setFont(*wct.getFont());
+	this->setCharacterSize(wct.getCharacterSize());
+	this->setString(wct.getString());
+	this->setPosition(wct.getPosition());
+
+	if (wct.m_link != nullptr) {
+		setLink(wct.m_link->clone());
 	}
+}
 
 void WCText::setText(std::string t, sf::Font& font, unsigned int size) {
-    delete m_text;
-	m_text = new sf::Text(t, font, size);
-	updateOrigin();
+	this->setFont(font);
+	this->setCharacterSize(size);
+	this->setString(t);
 }
 
 void WCText::setText(std::string t) {
-	if (m_text != nullptr) {
-		if (m_text->getString() != t) {
-			m_text->setString(t);
-			updateOrigin();
-		}
+	if (this->getString() != t) {
+		this->setString(t);
 	}
 }
 
 void WCText::setText(sf::Text& t) {
-	delete m_text;
-	m_text = new sf::Text(t);
-	updateOrigin();
+	this->setFont(*t.getFont());
+	this->setCharacterSize(t.getCharacterSize());
+
+	if (this->getString() != t.getString()) {
+		this->setString(t.getString());
+	}
 }
 
 void WCText::setColor(sf::Color color) {
-	if (m_text) m_text->setFillColor(color);
-}
-
-void WCText::setPosition(sf::Vector2i p) {
-	if (m_text != nullptr) {
-		m_text->setPosition(p.x+10, p.y+10);
-	}
+	this->setFillColor(color);
 }
 
 void WCText::setLink(Link* _link) {
@@ -59,8 +63,8 @@ Link& WCText::getLink() {
 }
 
 void WCText::updateOrigin() {
-	sf::FloatRect b = m_text->getLocalBounds();
-	m_text->setOrigin(b.left + b.width/2, b.top + b.height/2);
+	sf::FloatRect b = this->getLocalBounds();
+	this->setOrigin(b.left + b.width/2, b.top + b.height/2);
 }
 
 void WCText::update() {
@@ -69,12 +73,6 @@ void WCText::update() {
 	}
 }
 
-void WCText::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-	states.transform *= getTransform();
-	target.draw(*m_text, states);
-}
-
 WCText::~WCText() {
-	delete m_text;
 	delete m_link;
 }

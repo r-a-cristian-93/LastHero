@@ -1,6 +1,5 @@
 #include "Widget.h"
 #include <iostream>
-#include "SharedResources.h"
 
 Widget::Widget()
 	:pos_rel(0, 0)
@@ -9,10 +8,6 @@ Widget::Widget()
 	,background(nullptr)
 	,bg_offset(0,0)
 	,border(nullptr)
-	,text(nullptr)
-	,link_int(nullptr)
-	,link_str(nullptr)
-	,link(0)
 	,current_fx(nullptr)
 	,scroll(ScrollType::NONE)
 	,scroll_track(nullptr)
@@ -23,9 +18,6 @@ Widget::Widget()
 	,state(State::DEFAULT)
 	,on_click(0)
 	,state_colors({})
-	,m_pos(0,0)
-	,m_anchor(Widget::Anchor::WINDOW)
-	,m_origin(Widget::Origin::TOP_CENTER)
 	{
 		add<WCText>(nullptr);
 	}
@@ -36,10 +28,6 @@ Widget::Widget(const Widget& w)
 	,size(w.size)
 	,background(nullptr)
 	,border(nullptr)
-	,text(nullptr)
-	,link_int(w.link_int)
-	,link_str(w.link_str)
-	,link(w.link)
 	,childs(w.childs)
 	,fx(w.fx)
 	,current_fx(nullptr)
@@ -52,13 +40,9 @@ Widget::Widget(const Widget& w)
 	,state(w.state)
 	,on_click(w.on_click)
 	,state_colors(w.state_colors)
-	,m_pos(w.m_pos)
-	,m_anchor(w.m_anchor)
-	,m_origin(w.m_origin)
 {
 	if (w.background) setBackground(*w.background, w.bg_offset);
 	if (w.border) setBorder(*w.border);
-	if (w.text) setText(*w.text);
 	if (w.scroll_track) addScrollTrack(*w.scroll_track);
 	if (w.scroll_thumb) addScrollThumb(*w.scroll_thumb);
 
@@ -71,7 +55,6 @@ Widget::Widget(const Widget& w)
 Widget::~Widget() {
 	delete background;
 	delete border;
-	delete text;
 	delete scroll_content_sprite;
 	delete scroll_content_tex;
 	if (get<WCText>()) delete get<WCText>();
@@ -91,9 +74,8 @@ sf::FloatRect Widget::getGlobalBounds() {
 
 		return rect;
 	}
-
-	else if (text) {
-		return text->getGlobalBounds();
+	else if (get<WCText>() != nullptr) {
+		return get<WCText>()->getGlobalBounds();
 	}
 
 	return sf::FloatRect();
@@ -120,10 +102,9 @@ void Widget::setPosAbs(sf::Vector2i p) {
 
 	if (background) background->setPosition(pos_abs.x + bg_offset.x, pos_abs.y + bg_offset.y);
 	if (border) border->match(sf::IntRect(pos_abs.x, pos_abs.y, size.x, size.y));
-	if (text) text->setPosition(pos_abs.x, pos_abs.y);
 
 	if (get<WCText>() != nullptr) {
-		get<WCText>()->setPosition(pos_abs);
+		get<WCText>()->setPosition(pos_abs.x, pos_abs.y);
 	}
 }
 
@@ -199,59 +180,32 @@ void Widget::setBorder(Border& b) {
 
 
 // TEXT
-
-void Widget::setText(std::string t, sf::Font& font, unsigned int size) {
-	if (!text) {
-		text = new sf::Text(t, font, size);
-		//drawables.push_back(text);
-		updateOrigin();
-	}
-}
-
-void Widget::setText(std::string t) {
-	if (text) {
-		text->setString(t);
-		updateOrigin();
-	}
-}
-
-void Widget::setText(sf::Text& t) {
-	delete text;
-
-	text = new sf::Text(t);
-	//drawables.push_back(text);
-	updateOrigin();
-}
-
-void Widget::linkToInt(int& value) {
-	link_int = & value;
-}
-
-void Widget::linkToStr(std::string& value) {
-	link_str = &value;
-}
-
 void Widget::updateText() {
-	if (link_int)  {
-		setText(std::to_string(*link_int));
-	}
-	else if (link_str) {
-		setText(*link_str);
-	}
-
 	updateOrigin();
 }
 
 void Widget::updateOrigin() {
-	sf::FloatRect b = text->getLocalBounds();
-	text->setOrigin(b.left + b.width/2, b.top + b.height/2);
+	if (get<WCText>() !=nullptr) {
+		sf::FloatRect b = get<WCText>()->getLocalBounds();
+		get<WCText>()->setOrigin(b.left + b.width/2, b.top + b.height/2);
+	}
 }
 
-void Widget::setTextColor(sf::Color color) {
-	if (text) text->setFillColor(color);
+void Widget::setText(std::string t, sf::Font& font, unsigned int size) {
+	if (get<WCText>() != nullptr) {
+		get<WCText>()->setString(t);
+		get<WCText>()->setFont(font);
+		get<WCText>()->setCharacterSize(size);
+	}
+	else {
+		WCText* wct = new WCText();
+		wct->setString(t);
+		wct->setFont(font);
+		wct->setCharacterSize(size);
+
+		add<WCText>(wct);
+	}
 }
-
-
 
 
 
@@ -260,13 +214,9 @@ void Widget::setTextColor(sf::Color color) {
 void Widget::update() {
 	if (on_click) setColor(state_colors[state]);
 
-	if (text) {
-		updateText();
-		updateOrigin();
-	}
-
 	if (get<WCText>() != nullptr) {
 		get<WCText>()->update();
+		updateOrigin();
 	}
 
 	if (current_fx) {
@@ -311,6 +261,11 @@ void Widget::update() {
 }
 
 void Widget::setColor(sf::Color color) {
-	if (text) text->setFillColor(color);
 	if (background) background->setColor(color);
+}
+
+void Widget::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+	if (get<WCText>() != nullptr) {
+		target.draw(*get<WCText>(), states);
+	}
 }

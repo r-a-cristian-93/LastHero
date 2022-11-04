@@ -18,6 +18,7 @@ public:
 
     virtual Link* clone() const = 0;
     void setData(const void* data);
+    Link::Target& getTarget();
     virtual std::string getString() = 0;
 
 protected:

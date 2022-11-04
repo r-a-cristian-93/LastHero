@@ -46,13 +46,12 @@ void ScenePlay::init() {
 	interface.add(assets->getWidget("play_ui"));
 	interface.add(assets->getWidget("blood_overlay"));
 
-	int* links[Widget::LINK_COUNT];
-	links[Widget::LINK_PLAYER_HP] = &player->get<CStats>()->effective[CStats::HEALTH];
-	links[Widget::LINK_BASE_HP] = &base->get<CStats>()->effective[CStats::HEALTH];
-	links[Widget::LINK_TOTAL_KILLS] = &total_kills;
-	links[Widget::LINK_SECONDARY_ROUNDS] = &player->get<CWeapon>()->s_rounds;
-	links[Widget::LINK_SECONDARY_ROUNDS_CURRENT] = &player->get<CWeapon>()->s_rounds_current;
-
+	int* links[static_cast<int>(Link::Target::COUNT)];
+	links[static_cast<int>(Link::Target::PLAYER_HP)] = &player->get<CStats>()->effective[CStats::HEALTH];
+	links[static_cast<int>(Link::Target::BASE_HP)] = &base->get<CStats>()->effective[CStats::HEALTH];
+	links[static_cast<int>(Link::Target::TOTAL_KILLS)] = &total_kills;
+	links[static_cast<int>(Link::Target::SECONDARY_ROUNDS)] = &player->get<CWeapon>()->s_rounds;
+	links[static_cast<int>(Link::Target::SECONDARY_ROUNDS_CURRENT)] = &player->get<CWeapon>()->s_rounds_current;
 	interface.setLinks(links);
 
 	paused_widget = &assets->getWidget("menu_paused");

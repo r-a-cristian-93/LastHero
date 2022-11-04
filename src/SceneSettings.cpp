@@ -194,12 +194,11 @@ void SceneSettings::init() {
 	selected_sfx_vol = to_string(temp_conf.sfx_volume);
 	selected_music_vol = to_string(temp_conf.music_volume);
 
-	std::string* links[Widget::LINK_COUNT];
-	links[Widget::LINK_WINDOW_RESOLUTION] = &selected_res;
-	links[Widget::LINK_WINDOW_STYLE] = &selected_style;
-	links[Widget::LINK_MUSIC_VOLUME] = &selected_music_vol;
-	links[Widget::LINK_SFX_VOLUME] = &selected_sfx_vol;
-
+	std::string* links[static_cast<int>(Link::Target::COUNT)];
+	links[static_cast<int>(Link::Target::WINDOW_RESOLUTION)] = &selected_res;
+	links[static_cast<int>(Link::Target::WINDOW_STYLE)] = &selected_style;
+	links[static_cast<int>(Link::Target::MUSIC_VOLUME)] = &selected_music_vol;
+	links[static_cast<int>(Link::Target::SFX_VOLUME)] = &selected_sfx_vol;
 	interface.setLinks(links);
 
 	screen_tex->setView(gui_view);
