@@ -12,7 +12,6 @@ public:
 	void setText(std::string text, sf::Font& font, unsigned int size);
 	void setText(std::string text);
 	void setText(sf::Text& text);
-	void setColor(sf::Color color);
 
 	void setLink(Link* link);
     bool hasLink();

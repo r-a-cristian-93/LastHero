@@ -5,14 +5,10 @@ WCText::WCText():
 	m_link(nullptr)
     {}
 
-WCText::WCText(const WCText& wct):
-	m_link(nullptr)
+WCText::WCText(const WCText& wct)
+	:m_link(nullptr)
+	,sf::Text(wct)
 {
-	this->setFont(*wct.getFont());
-	this->setCharacterSize(wct.getCharacterSize());
-	this->setString(wct.getString());
-	this->setPosition(wct.getPosition());
-
 	if (wct.m_link != nullptr) {
 		setLink(wct.m_link->clone());
 	}
@@ -37,10 +33,6 @@ void WCText::setText(sf::Text& t) {
 	if (this->getString() != t.getString()) {
 		this->setString(t.getString());
 	}
-}
-
-void WCText::setColor(sf::Color color) {
-	this->setFillColor(color);
 }
 
 void WCText::setLink(Link* _link) {
