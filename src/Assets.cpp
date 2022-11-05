@@ -807,7 +807,8 @@ void Assets::loadWidget() {
 	sf::Vector2i size, pos_rel, pos_abs;
 	sf::Vector2i spr_offset;
 	int tex_offset(0), w(0), h(0), font_size(0);
-	size_t font_id(NONE), link(0);
+	size_t font_id(NONE);
+	Link::Target link_target(Link::Target::NONE);
 	std::vector<std::string> childs;
 	sf::Color text_color(255, 255, 255);
 	std::string text = "TEXT";
@@ -826,15 +827,15 @@ void Assets::loadWidget() {
 		else if (word == "size") file >> size.x >> size.y;
 		else if (word == "link") {
 			file >> word;
-			if (word == "player_health") link = Widget::LINK_PLAYER_HP;
-			else if (word == "base_health") link = Widget::LINK_BASE_HP;
-			else if (word == "total_kills") link = Widget::LINK_TOTAL_KILLS;
-			else if (word == "secondary_rounds") link = Widget::LINK_SECONDARY_ROUNDS;
-			else if (word == "secondary_rounds_current") link = Widget::LINK_SECONDARY_ROUNDS_CURRENT;
-			else if (word == "window_res") link = Widget::LINK_WINDOW_RESOLUTION;
-			else if (word == "window_style") link = Widget::LINK_WINDOW_STYLE;
-			else if (word == "music_vol") link = Widget::LINK_MUSIC_VOLUME;
-			else if (word == "sfx_vol") link = Widget::LINK_SFX_VOLUME;
+			if (word == "player_health") link_target = Link::Target::PLAYER_HP;
+			else if (word == "base_health") link_target = Link::Target::BASE_HP;
+			else if (word == "total_kills") link_target = Link::Target::TOTAL_KILLS;
+			else if (word == "secondary_rounds") link_target = Link::Target::SECONDARY_ROUNDS;
+			else if (word == "secondary_rounds_current") link_target = Link::Target::SECONDARY_ROUNDS_CURRENT;
+			else if (word == "window_res") link_target = Link::Target::WINDOW_RESOLUTION;
+			else if (word == "window_style") link_target = Link::Target::WINDOW_STYLE;
+			else if (word == "music_vol") link_target = Link::Target::MUSIC_VOLUME;
+			else if (word == "sfx_vol") link_target = Link::Target::SFX_VOLUME;
 			else {
 				std::cout << "Invalid link: " << word << std::endl;
 				exit(0);
@@ -937,34 +938,8 @@ void Assets::loadWidget() {
 			wct->setColor(text_color);
 
 			// link in WCText
-			switch(link) {
-				case Widget::LINK_PLAYER_HP:
-					wct->setLink(new Link(Link::Target::PLAYER_HP));
-				break;
-				case Widget::LINK_BASE_HP:
-					wct->setLink(new Link(Link::Target::BASE_HP));
-				break;
-				case Widget::LINK_TOTAL_KILLS:
-					wct->setLink(new Link(Link::Target::TOTAL_KILLS));
-				break;
-				case Widget::LINK_SECONDARY_ROUNDS:
-					wct->setLink(new Link(Link::Target::SECONDARY_ROUNDS));
-				break;
-				case Widget::LINK_SECONDARY_ROUNDS_CURRENT:
-					wct->setLink(new Link(Link::Target::SECONDARY_ROUNDS_CURRENT));
-				break;
-				case Widget::LINK_WINDOW_RESOLUTION:
-					wct->setLink(new Link(Link::Target::WINDOW_RESOLUTION));
-				break;
-				case Widget::LINK_WINDOW_STYLE:
-					wct->setLink(new Link(Link::Target::WINDOW_STYLE));
-				break;
-				case Widget::LINK_MUSIC_VOLUME:
-					wct->setLink(new Link(Link::Target::MUSIC_VOLUME));
-				break;
-				case Widget::LINK_SFX_VOLUME:
-					wct->setLink(new Link(Link::Target::SFX_VOLUME));
-				break;
+			if (link_target != Link::Target::NONE) {
+				wct->setLink(new Link(link_target));
 			}
 
 			widget.add<WCText>(wct);

@@ -262,6 +262,9 @@ void Widget::update() {
 
 void Widget::setColor(sf::Color color) {
 	if (background) background->setColor(color);
+	if (get<WCText>() != nullptr) {
+		get<WCText>()->setColor(color);
+	}
 }
 
 void Widget::draw(sf::RenderTarget& target, sf::RenderStates states) const {

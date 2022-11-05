@@ -122,20 +122,6 @@ public:
 // box
 
 //text
-	enum {
-		LINK_NONE,
-		LINK_PLAYER_HP,
-		LINK_BASE_HP,
-		LINK_TOTAL_KILLS,
-		LINK_SECONDARY_ROUNDS,
-		LINK_SECONDARY_ROUNDS_CURRENT,
-		LINK_WINDOW_RESOLUTION,
-		LINK_WINDOW_STYLE,
-		LINK_MUSIC_VOLUME,
-		LINK_SFX_VOLUME,
-		LINK_COUNT,
-	};
-
 	void setText(std::string t, sf::Font& font, unsigned int size);
 	void setText(std::string t);
 	void setText(sf::Text& t);
