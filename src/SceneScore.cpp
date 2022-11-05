@@ -131,7 +131,6 @@ void SceneScore::init() {
 				cell.setColor(color);
 				cell.setPosAbs(pos);
 				all_table_widgets.push_back(cell);
-				std::cout << "ADDED SCORE TEXT " << string << std::endl;
 			}
 		}
 		if (r > 0 && r < rows-3) {
@@ -178,10 +177,7 @@ void SceneScore::copyCells(WidgetVec& src, WidgetVec& dst, sf::IntRect rect) {
 	for (int r=0; r<rows; r++) {
 		for (int c=0; c<cols; c++) {
 			if (r >= rect.top && r <= rect.height && c >= rect.left && c <= rect.width) {
-				if (!src[k].drawables.empty())
-					dst.push_back(src[k]);
-
-				src[k].drawables.clear();
+				dst.push_back(src[k]);
 			}
 			k++;
 		}

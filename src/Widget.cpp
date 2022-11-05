@@ -180,10 +180,6 @@ void Widget::setBorder(Border& b) {
 
 
 // TEXT
-void Widget::updateText() {
-	updateOrigin();
-}
-
 void Widget::updateOrigin() {
 	if (get<WCText>() !=nullptr) {
 		sf::FloatRect b = get<WCText>()->getLocalBounds();
@@ -205,6 +201,8 @@ void Widget::setText(std::string t, sf::Font& font, unsigned int size) {
 
 		add<WCText>(wct);
 	}
+
+	updateOrigin();
 }
 
 

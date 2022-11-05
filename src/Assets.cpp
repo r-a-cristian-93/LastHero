@@ -935,7 +935,7 @@ void Assets::loadWidget() {
 		else if (type == "text") {
 			WCText* wct= new WCText();
 			wct->setText(text, fonts[font_id], font_size);
-			wct->setColor(text_color);
+			wct->setFillColor(text_color);
 
 			// link in WCText
 			if (link_target != Link::Target::NONE) {

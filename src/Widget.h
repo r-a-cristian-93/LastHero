@@ -126,7 +126,6 @@ public:
 	void setText(std::string t);
 	void setText(sf::Text& t);
 	void setTextColor(sf::Color color);
-	void updateText();
 	void updateOrigin();
 //text
 
