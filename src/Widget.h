@@ -5,6 +5,7 @@
 #include "Border.h"
 #include "CommonBehaviour.h"
 #include "WCText.h"
+#include "WCBox.h"
 
 struct WidgetFx {
 	//fx type
@@ -51,7 +52,7 @@ public:
 		COUNT,
 	};
 
-	std::tuple<WCText*> components;
+	std::tuple<WCText*, WCBox*> components;
 
 	template<class C>
 	void add(C* c) {
@@ -82,7 +83,6 @@ public:
 	void updateChildPos(Widget& child);
 
 //box
-	sf::Sprite* background;
 	sf::Vector2i bg_offset;
 	Border* border;
 //box

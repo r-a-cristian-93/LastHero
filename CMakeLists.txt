@@ -53,6 +53,7 @@ set(SOURCE_COMMON
 	src/App.cpp
 	src/Link.cpp
 	src/WCText.cpp
+	src/WCBox.cpp
 )
 
 set (SOURCE_GAME

@@ -5,8 +5,6 @@ Widget::Widget()
 	:pos_rel(0, 0)
 	,pos_abs(0, 0)
 	,size(0, 0)
-	,background(nullptr)
-	,bg_offset(0,0)
 	,border(nullptr)
 	,current_fx(nullptr)
 	,scroll(ScrollType::NONE)
@@ -26,7 +24,6 @@ Widget::Widget(const Widget& w)
 	:pos_rel(w.pos_rel)
 	,pos_abs(w.pos_abs)
 	,size(w.size)
-	,background(nullptr)
 	,border(nullptr)
 	,childs(w.childs)
 	,fx(w.fx)
@@ -41,7 +38,6 @@ Widget::Widget(const Widget& w)
 	,on_click(w.on_click)
 	,state_colors(w.state_colors)
 {
-	if (w.background) setBackground(*w.background, w.bg_offset);
 	if (w.border) setBorder(*w.border);
 	if (w.scroll_track) addScrollTrack(*w.scroll_track);
 	if (w.scroll_thumb) addScrollThumb(*w.scroll_thumb);
@@ -49,30 +45,23 @@ Widget::Widget(const Widget& w)
 	if (w.get<WCText>()) {
 		add<WCText>(new WCText(*w.get<WCText>()));
 	}
+	if (w.get<WCBox>()) {
+		add<WCBox>(new WCBox(*w.get<WCBox>()));
+	}
 }
 
 
 Widget::~Widget() {
-	delete background;
 	delete border;
 	delete scroll_content_sprite;
 	delete scroll_content_tex;
 	if (get<WCText>()) delete get<WCText>();
+	if (get<WCBox>()) delete get<WCBox>();
 }
 
 sf::FloatRect Widget::getGlobalBounds() {
 	if (border) {
 		return sf::FloatRect(pos_abs.x, pos_abs.y, size.x, size.y);
-	}
-	else if (background) {
-		sf::FloatRect rect = background->getGlobalBounds();
-
-		rect.left -= bg_offset.x;
-		rect.top -= bg_offset.y;
-		rect.width += bg_offset.x*2;
-		rect.height += bg_offset.y*2;
-
-		return rect;
 	}
 	else if (get<WCText>() != nullptr) {
 		return get<WCText>()->getGlobalBounds();
@@ -100,8 +89,12 @@ void Widget::setPosAbs(sf::Vector2i p) {
 		}
 	}
 
-	if (background) background->setPosition(pos_abs.x + bg_offset.x, pos_abs.y + bg_offset.y);
+
 	if (border) border->match(sf::IntRect(pos_abs.x, pos_abs.y, size.x, size.y));
+
+	if (get<WCBox>() != nullptr) {
+		get<WCBox>()->setPosition(pos_abs.x + bg_offset.x, pos_abs.y + bg_offset.y);
+	}
 
 	if (get<WCText>() != nullptr) {
 		get<WCText>()->setPosition(pos_abs.x, pos_abs.y);
@@ -110,6 +103,10 @@ void Widget::setPosAbs(sf::Vector2i p) {
 
 void Widget::setSize(sf::Vector2i s) {
 	size = s;
+
+	if (get<WCBox>() != nullptr) {
+		get<WCBox>()->setSize(s);
+	}
 }
 
 void Widget::addChild(Widget& child) {
@@ -142,25 +139,30 @@ std::vector<Widget>& Widget::getChilds() {
 // BOX
 
 void Widget::setBackground(sf::Texture& tex, int offset) {
-	if (!background) {
-		bg_offset = {offset, offset};
-		background = new sf::Sprite(tex, sf::IntRect(0, 0, size.x-offset*2, size.y-offset*2));
-		background->setPosition(pos_abs.x+bg_offset.x, pos_abs.y+bg_offset.y);
-		drawables.push_back(background);
+	bg_offset = {offset, offset};
+
+	if (get<WCBox>() == nullptr) {
+		add<WCBox>(new WCBox());
+		get<WCBox>()->setBackground(tex, offset);
+		get<WCBox>()->setPosition(pos_abs.x+bg_offset.x, pos_abs.y+bg_offset.y);
+		get<WCBox>()->setSize(size);
 	}
 }
 
 void Widget::setBackground(sf::Sprite& sprite, sf::Vector2i offset) {
-	if (!background) {
-		bg_offset = offset;
-		background = new sf::Sprite(sprite);
-		background->setPosition(pos_abs.x+bg_offset.x, pos_abs.y+bg_offset.y);
-		drawables.push_back(background);
+	bg_offset = offset;
+
+	if(get<WCBox>() == nullptr) {
+		add<WCBox>(new WCBox());
+		get<WCBox>()->setBackground(sprite, offset);
+		get<WCBox>()->setPosition(pos_abs.x+bg_offset.x, pos_abs.y+bg_offset.y);
 	}
 }
 
 void Widget::setBackgroundColor(sf::Color color) {
-	if (background) background->setColor(color);
+	if (get<WCBox>() != nullptr) {
+		get<WCBox>()->setBackgroundColor(color);
+	}
 }
 
 void Widget::setBorder(Border& b) {
@@ -229,7 +231,8 @@ void Widget::update() {
 		current_frame++;
 
 		if (fx.type = WidgetFx::Type::FADE_IN_OUT) {
-			sf::Color color = background->getColor();
+			//sf::Color color = background->getColor();
+			sf::Color color;
 			float alpha = 0;
 
 			if (current_frame <= frames_in) {
@@ -247,7 +250,7 @@ void Widget::update() {
 				color.a = opacity_low;
 			}
 
-			background->setColor(color);
+			//background->setColor(color);
 		}
 	}
 
@@ -259,7 +262,9 @@ void Widget::update() {
 }
 
 void Widget::setColor(sf::Color color) {
-	if (background) background->setColor(color);
+	if (get<WCBox>() != nullptr) {
+		get<WCBox>()->setBackgroundColor(color);
+	}
 	if (get<WCText>() != nullptr) {
 		get<WCText>()->setFillColor(color);
 	}
@@ -268,7 +273,8 @@ void Widget::setColor(sf::Color color) {
 void Widget::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	if (get<WCText>() != nullptr) {
 		target.draw(*get<WCText>(), states);
-		std::string s = get<WCText>()->getString();
-		std::cout <<  "draw text widget " << s << std::endl;
+	}
+	if (get<WCBox>() != nullptr) {
+		target.draw(*get<WCBox>(), states);
 	}
 }
