@@ -23,7 +23,9 @@ WCBox::~WCBox() {
 }
 
 void WCBox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    target.draw(*background);
+    if (background != nullptr) {
+        target.draw(*background);
+    }
 }
 
 void WCBox::setBackground(sf::Texture& tex, int offset) {

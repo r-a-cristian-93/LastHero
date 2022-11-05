@@ -172,7 +172,7 @@ void Widget::setBorder(Border& b) {
 		border->match(sf::IntRect(pos_abs.x, pos_abs.y, size.x, size.y));
 
 		for (sf::Sprite* sprite:border->getSprites()) {
-			drawables.push_back(sprite);
+			//drawables.push_back(sprite);
 		}
 	}
 }
@@ -191,16 +191,11 @@ void Widget::updateOrigin() {
 
 void Widget::setText(std::string t, sf::Font& font, unsigned int size) {
 	if (get<WCText>() != nullptr) {
-		get<WCText>()->setString(t);
-		get<WCText>()->setFont(font);
-		get<WCText>()->setCharacterSize(size);
+		get<WCText>()->setText(t, font, size);
 	}
 	else {
 		WCText* wct = new WCText();
-		wct->setString(t);
-		wct->setFont(font);
-		wct->setCharacterSize(size);
-
+		wct->setText(t, font, size);
 		add<WCText>(wct);
 	}
 

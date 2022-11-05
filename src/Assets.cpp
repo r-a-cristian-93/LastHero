@@ -926,11 +926,16 @@ void Assets::loadWidget() {
 		Widget& widget = widgets[name];
 
 		if (type == "box") {
-			widget.setSize(size);
-			if (!bg_sprite.empty()) widget.setBackground(sprites[bg_sprite], spr_offset);
-			if (!bg_tex.empty()) widget.setBackground(textures[bg_tex], tex_offset);
+			WCBox* wcb = new WCBox();
+			wcb->setSize(size);
+
+			if (!bg_sprite.empty()) wcb->setBackground(sprites[bg_sprite], spr_offset);
+			else if (!bg_tex.empty()) wcb->setBackground(textures[bg_tex], tex_offset);
+
 			if (!border.empty()) widget.setBorder(borders[border]);
 			if (fx.type) widget.fx.push_back(fx);
+
+			widget.add<WCBox>(wcb);
 		}
 		else if (type == "text") {
 			WCText* wct= new WCText();
