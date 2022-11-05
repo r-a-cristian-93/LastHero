@@ -1,4 +1,5 @@
 #include <string>
+#include <variant>
 
 class Link {
 public:
@@ -16,32 +17,15 @@ public:
 		COUNT,
 	};
 
-    virtual Link* clone() const = 0;
-    void setData(const void* data);
-    Link::Target& getTarget();
-    virtual std::string getString() = 0;
+    Link::Target m_target;
+    std::variant<int*, std::string*> m_data;
 
-protected:
-     Link::Target m_target;
-     const void* m_data;
-
-     Link(Link::Target target);
-};
-
-class LinkInt: public Link {
-public:
-    LinkInt(Link::Target target);
-    LinkInt(const LinkInt& link);
-
+    Link(Link::Target target);
+    Link(Link::Target target, int* data);
+    Link(Link::Target target, std::string* data);
+    Link(const Link& link);
     Link* clone() const;
-    std::string getString();
+
+    std::string getAsString();
 };
 
-class LinkString: public Link {
-public:
-    LinkString(Link::Target target);
-    LinkString(const LinkString& link);
-
-    Link* clone() const;
-    std::string getString();
-};

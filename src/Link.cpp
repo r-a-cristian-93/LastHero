@@ -2,65 +2,38 @@
 
 Link::Link(Link::Target target)
     :m_target(target)
-    ,m_data(nullptr)
     {}
 
-void Link::setData(const void* data) {
-    m_data = data;
-}
-
-Link::Target& Link::getTarget() {
-    return m_target;
-}
-
-
-
-
-LinkInt::LinkInt(Link::Target target)
-    :Link(target)
+Link::Link(Link::Target target, int* data)
+    :m_target(target)
+    ,m_data(data)
     {}
 
-LinkInt::LinkInt(const LinkInt& link)
-    :Link(link.m_target)
-{
+Link::Link(Link::Target target, std::string* data)
+    :m_target(target)
+    ,m_data(data)
+    {}
+
+Link::Link(const Link& link) {
     m_data = link.m_data;
-}
+    m_target = link.m_target;
+};
 
-Link* LinkInt::clone() const {
-    return new LinkInt(*this);
-}
+Link* Link::clone() const {
+    return new Link(*this);
+};
 
-std::string LinkInt::getString () {
-    if (m_data != nullptr) {
-        return  std::to_string(*(static_cast<const int*>(m_data)));
+std::string Link::getAsString() {
+    std::string** data_string = std::get_if<std::string*>(&m_data);
+    int** data_int = std::get_if<int*>(&m_data);
+
+    if (data_string != nullptr) {
+        return **data_string;
+    }
+    else if (data_int != nullptr) {
+        return std::to_string(**data_int);
     }
     else {
         return "";
     }
-}
-
-
-
-
-LinkString::LinkString(Link::Target target)
-    :Link(target)
-    {}
-
-LinkString::LinkString(const LinkString& link)
-    :Link(link.m_target)
-{
-    m_data = link.m_data;
-}
-
-Link* LinkString::clone() const {
-    return new LinkString(*this);
-}
-
-std::string LinkString::getString () {
-    if (m_data != nullptr) {
-        return *(static_cast<const std::string*>(m_data));
-    }
-    else {
-        return "";
-    }
-}
+};

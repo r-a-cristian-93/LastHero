@@ -939,31 +939,31 @@ void Assets::loadWidget() {
 			// link in WCText
 			switch(link) {
 				case Widget::LINK_PLAYER_HP:
-					wct->setLink(new LinkInt(Link::Target::PLAYER_HP));
+					wct->setLink(new Link(Link::Target::PLAYER_HP));
 				break;
 				case Widget::LINK_BASE_HP:
-					wct->setLink(new LinkInt(Link::Target::BASE_HP));
+					wct->setLink(new Link(Link::Target::BASE_HP));
 				break;
 				case Widget::LINK_TOTAL_KILLS:
-					wct->setLink(new LinkInt(Link::Target::TOTAL_KILLS));
+					wct->setLink(new Link(Link::Target::TOTAL_KILLS));
 				break;
 				case Widget::LINK_SECONDARY_ROUNDS:
-					wct->setLink(new LinkInt(Link::Target::SECONDARY_ROUNDS));
+					wct->setLink(new Link(Link::Target::SECONDARY_ROUNDS));
 				break;
 				case Widget::LINK_SECONDARY_ROUNDS_CURRENT:
-					wct->setLink(new LinkInt(Link::Target::SECONDARY_ROUNDS_CURRENT));
+					wct->setLink(new Link(Link::Target::SECONDARY_ROUNDS_CURRENT));
 				break;
 				case Widget::LINK_WINDOW_RESOLUTION:
-					wct->setLink(new LinkString(Link::Target::WINDOW_RESOLUTION));
+					wct->setLink(new Link(Link::Target::WINDOW_RESOLUTION));
 				break;
 				case Widget::LINK_WINDOW_STYLE:
-					wct->setLink(new LinkString(Link::Target::WINDOW_STYLE));
+					wct->setLink(new Link(Link::Target::WINDOW_STYLE));
 				break;
 				case Widget::LINK_MUSIC_VOLUME:
-					wct->setLink(new LinkString(Link::Target::MUSIC_VOLUME));
+					wct->setLink(new Link(Link::Target::MUSIC_VOLUME));
 				break;
 				case Widget::LINK_SFX_VOLUME:
-					wct->setLink(new LinkString(Link::Target::PLAYER_HP));
+					wct->setLink(new Link(Link::Target::SFX_VOLUME));
 				break;
 			}
 

@@ -62,6 +62,8 @@
         "thread": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp",
-        "optional": "cpp"
-    }
+        "optional": "cpp",
+        "variant": "cpp"
+    },
+    "cmake.configureOnOpen": true
 }

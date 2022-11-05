@@ -267,5 +267,7 @@ void Widget::setColor(sf::Color color) {
 void Widget::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	if (get<WCText>() != nullptr) {
 		target.draw(*get<WCText>(), states);
+		std::string s = get<WCText>()->getString();
+		std::cout <<  "draw text widget " << s << std::endl;
 	}
 }

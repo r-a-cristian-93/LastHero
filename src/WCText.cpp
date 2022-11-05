@@ -8,8 +8,6 @@ WCText::WCText():
 WCText::WCText(const WCText& wct):
 	m_link(nullptr)
 {
-	std::cout << "COPY WCT\n";
-
 	this->setFont(*wct.getFont());
 	this->setCharacterSize(wct.getCharacterSize());
 	this->setString(wct.getString());
@@ -69,7 +67,7 @@ void WCText::updateOrigin() {
 
 void WCText::update() {
 	if (m_link != nullptr) {
-		this->setText(m_link->getString());
+		this->setText(m_link->getAsString());
 	}
 }
 

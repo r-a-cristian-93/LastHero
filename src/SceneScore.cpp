@@ -131,6 +131,7 @@ void SceneScore::init() {
 				cell.setColor(color);
 				cell.setPosAbs(pos);
 				all_table_widgets.push_back(cell);
+				std::cout << "ADDED SCORE TEXT " << string << std::endl;
 			}
 		}
 		if (r > 0 && r < rows-3) {

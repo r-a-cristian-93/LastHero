@@ -18,31 +18,15 @@ void Interface::update() {
 	}
 }
 
-void Interface::setLinks(int* links[Widget::LINK_COUNT]) {
+void Interface::setLinks(std::variant<int*, std::string*>* links) {
 	setLinks(widgets, links);
 }
 
-void Interface::setLinks(std::string* links[Widget::LINK_COUNT]) {
-	setLinks(widgets, links);
-}
-
-void Interface::setLinks(WidgetVec& widgets, int* links[Widget::LINK_COUNT]) {
+void Interface::setLinks(WidgetVec& widgets, std::variant<int*, std::string*>* links) {
 	for (Widget& w : widgets) {
 		if (w.get<WCText>() != nullptr) {
 			if (w.get<WCText>()->hasLink()) {
-				w.get<WCText>()->getLink().setData(&*links[static_cast<unsigned int> (w.get<WCText>()->getLink().getTarget())]);
-			}
-		}
-
-		if (!w.childs.empty()) setLinks(w.childs, links);
-	}
-}
-
-void Interface::setLinks(WidgetVec& widgets, std::string* links[Widget::LINK_COUNT]) {
-	for (Widget& w : widgets) {
-		if (w.get<WCText>() != nullptr) {
-			if (w.get<WCText>()->hasLink()) {
-				w.get<WCText>()->getLink().setData(&*links[static_cast<unsigned int> (w.get<WCText>()->getLink().getTarget())]);
+				w.get<WCText>()->getLink().m_data = links[static_cast<unsigned int> (w.get<WCText>()->getLink().m_target)];
 			}
 		}
 
