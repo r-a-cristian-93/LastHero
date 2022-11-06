@@ -2,7 +2,7 @@
 #define	WIDGET
 
 #include "SFML/Graphics.hpp"
-#include "Border.h"
+#include "Box.h"
 #include "CommonBehaviour.h"
 #include "WCText.h"
 #include "WCBox.h"
@@ -84,7 +84,7 @@ public:
 
 //box
 	sf::Vector2i bg_offset;
-	Border* border;
+	Box* box;
 //box
 
 //scroll
@@ -117,7 +117,7 @@ public:
 // box
 	void setBackground(sf::Texture& tex, int offset);
 	void setBackground(sf::Sprite& sprite, sf::Vector2i offset);
-	void setBorder(Border& b);
+	void setBorder(Box& b);
 	void setBackgroundColor(sf::Color color);
 // box
 

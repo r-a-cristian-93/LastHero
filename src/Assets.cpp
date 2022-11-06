@@ -52,8 +52,8 @@ sf::Font& Assets::getFont(size_t name) {
 	return fonts[name];
 }
 
-Border& Assets::getBorder(std::string name) {
-	return borders[name];
+Box& Assets::getBox(std::string name) {
+	return boxes[name];
 }
 
 sf::Texture& Assets::getTexture(std::string name) {
@@ -735,8 +735,8 @@ void Assets::loadGUI() {
 		if (word == "_TEXTURE") {
 			loadTexture();
 		}
-		else if (word == "_BORDERS") {
-			loadBorders();
+		else if (word == "_BOX") {
+			loadBoxes();
 		}
 		else if (word == "_SPRITE") {
 			loadSprite();
@@ -746,9 +746,9 @@ void Assets::loadGUI() {
 	file.close();
 }
 
-void Assets::loadBorders() {
+void Assets::loadBoxes() {
 	std::string texture_name;
-	std::string border_name;
+	std::string box_name;
 
 	while (file >> word) {
 		if (word == "_END") break;
@@ -756,31 +756,36 @@ void Assets::loadBorders() {
 			file >> texture_name;
 		}
 		else if (word == "name") {
-			file >> border_name;
+			file >> box_name;
 		}
 		else if (word == "top_left") {
-			borders[border_name].setSprite(Border::TOP_LEFT, sf::Sprite(textures[texture_name], loadRect(file)));
+			boxes[box_name].setSprite(Box::TOP_LEFT, sf::Sprite(textures[texture_name], loadRect(file)));
 		}
 		else if (word == "top_center") {
-			loadBorderRepeatable(border_name, Border::TOP_CENTER, texture_name);
+			loadBoxRepeatable(box_name, Box::TOP_CENTER, texture_name);
 		}
 		else if (word == "top_right") {
-			borders[border_name].setSprite(Border::TOP_RIGHT, sf::Sprite(textures[texture_name], loadRect(file)));
+			boxes[box_name].setSprite(Box::TOP_RIGHT, sf::Sprite(textures[texture_name], loadRect(file)));
 		}
 		else if (word == "bottom_left") {
-			borders[border_name].setSprite(Border::BOTTOM_LEFT, sf::Sprite(textures[texture_name], loadRect(file)));
+			boxes[box_name].setSprite(Box::BOTTOM_LEFT, sf::Sprite(textures[texture_name], loadRect(file)));
 		}
 		else if (word == "bottom_center") {
-			loadBorderRepeatable(border_name, Border::BOTTOM_CENTER, texture_name);
+			loadBoxRepeatable(box_name, Box::BOTTOM_CENTER, texture_name);
 		}
 		else if (word == "bottom_right") {
-			borders[border_name].setSprite(Border::BOTTOM_RIGHT, sf::Sprite(textures[texture_name], loadRect(file)));
+			boxes[box_name].setSprite(Box::BOTTOM_RIGHT, sf::Sprite(textures[texture_name], loadRect(file)));
 		}
 		else if (word == "middle_left") {
-			loadBorderRepeatable(border_name, Border::MIDDLE_LEFT, texture_name);
+			loadBoxRepeatable(box_name, Box::MIDDLE_LEFT, texture_name);
 		}
 		else if (word == "middle_right") {
-			loadBorderRepeatable(border_name, Border::MIDDLE_RIGHT, texture_name);
+			std::cout << "load " << word << std::endl;
+			loadBoxRepeatable(box_name, Box::MIDDLE_RIGHT, texture_name);
+		}
+		else if (word == "middle_center") {
+			std::cout << "load " << word << std::endl;
+			loadBoxRepeatable(box_name, Box::MIDDLE_CENTER, texture_name);
 		}
 		else {
 			std::cout << "In file: " << file_path << " unknown key: " << word << std::endl;
@@ -803,7 +808,7 @@ void Assets::loadWidgets() {
 }
 
 void Assets::loadWidget() {
-	std::string name(""), type(""), bg_sprite(""), bg_tex(""), bg_tex_hover(""), border(""), border_hover("");
+	std::string name(""), type(""), bg_sprite(""), bg_tex(""), bg_tex_hover(""), box_style(""), border_hover("");
 	sf::Vector2i size, pos_rel, pos_abs;
 	sf::Vector2i spr_offset;
 	int tex_offset(0), w(0), h(0), font_size(0);
@@ -869,7 +874,7 @@ void Assets::loadWidget() {
 		else if (word == "bg_sprite") file >> bg_sprite >> spr_offset.x >> spr_offset.y;
 		else if (word == "bg_tex") file >> bg_tex >> tex_offset;
 		else if (word == "bg_tex_hover") file >> bg_tex_hover >> tex_offset;
-		else if (word == "border") file >> border;
+		else if (word == "box_style") file >> box_style;
 		else if (word == "border_hover") file >> border_hover;
 		else if (word == "text") {
 			file >> text;
@@ -931,8 +936,8 @@ void Assets::loadWidget() {
 
 			if (!bg_sprite.empty()) wcb->setBackground(sprites[bg_sprite], spr_offset);
 			else if (!bg_tex.empty()) wcb->setBackground(textures[bg_tex], tex_offset);
-
-			if (!border.empty()) widget.setBorder(borders[border]);
+			
+			if (!box_style.empty()) widget.setBorder(boxes[box_style]);
 			if (fx.type) widget.fx.push_back(fx);
 
 			widget.add<WCBox>(wcb);
@@ -1015,11 +1020,11 @@ sf::Texture Assets::makeRepeatable(const sf::Texture& original, sf::IntRect& rec
 	return tex;
 }
 
-void Assets::loadBorderRepeatable(std::string border_name, size_t sprite_name, std::string texture_name) {
+void Assets::loadBoxRepeatable(std::string box_name, size_t sprite_name, std::string texture_name) {
 	sf::IntRect rect = loadRect(file);
 	sf::Texture tex = makeRepeatable(textures[texture_name], rect);
-	borders[border_name].setTexture(sprite_name, tex);
-	borders[border_name].setSprite(sprite_name, sf::Sprite(borders[border_name].getTexture(sprite_name), rect));
+	boxes[box_name].setTexture(sprite_name, tex);
+	boxes[box_name].setSprite(sprite_name, sf::Sprite(boxes[box_name].getTexture(sprite_name), rect));
 }
 
 void Assets::loadTexture() {
