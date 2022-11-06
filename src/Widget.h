@@ -82,10 +82,6 @@ public:
 
 	void updateChildPos(Widget& child);
 
-//box
-	sf::Vector2i bg_offset;
-//box
-
 //scroll
 	ScrollType scroll;
 	Widget* scroll_track;
