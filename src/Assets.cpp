@@ -52,7 +52,7 @@ sf::Font& Assets::getFont(size_t name) {
 	return fonts[name];
 }
 
-Border& Assets::getBorder(std::string name) {
+Box& Assets::getBorder(std::string name) {
 	return borders[name];
 }
 
@@ -759,28 +759,31 @@ void Assets::loadBorders() {
 			file >> border_name;
 		}
 		else if (word == "top_left") {
-			borders[border_name].setSprite(Border::TOP_LEFT, sf::Sprite(textures[texture_name], loadRect(file)));
+			borders[border_name].setSprite(Box::TOP_LEFT, sf::Sprite(textures[texture_name], loadRect(file)));
 		}
 		else if (word == "top_center") {
-			loadBorderRepeatable(border_name, Border::TOP_CENTER, texture_name);
+			loadBorderRepeatable(border_name, Box::TOP_CENTER, texture_name);
 		}
 		else if (word == "top_right") {
-			borders[border_name].setSprite(Border::TOP_RIGHT, sf::Sprite(textures[texture_name], loadRect(file)));
+			borders[border_name].setSprite(Box::TOP_RIGHT, sf::Sprite(textures[texture_name], loadRect(file)));
 		}
 		else if (word == "bottom_left") {
-			borders[border_name].setSprite(Border::BOTTOM_LEFT, sf::Sprite(textures[texture_name], loadRect(file)));
+			borders[border_name].setSprite(Box::BOTTOM_LEFT, sf::Sprite(textures[texture_name], loadRect(file)));
 		}
 		else if (word == "bottom_center") {
-			loadBorderRepeatable(border_name, Border::BOTTOM_CENTER, texture_name);
+			loadBorderRepeatable(border_name, Box::BOTTOM_CENTER, texture_name);
 		}
 		else if (word == "bottom_right") {
-			borders[border_name].setSprite(Border::BOTTOM_RIGHT, sf::Sprite(textures[texture_name], loadRect(file)));
+			borders[border_name].setSprite(Box::BOTTOM_RIGHT, sf::Sprite(textures[texture_name], loadRect(file)));
 		}
 		else if (word == "middle_left") {
-			loadBorderRepeatable(border_name, Border::MIDDLE_LEFT, texture_name);
+			loadBorderRepeatable(border_name, Box::MIDDLE_LEFT, texture_name);
 		}
 		else if (word == "middle_right") {
-			loadBorderRepeatable(border_name, Border::MIDDLE_RIGHT, texture_name);
+			loadBorderRepeatable(border_name, Box::MIDDLE_RIGHT, texture_name);
+		}
+		else if (word == "middle_center") {
+			loadBorderRepeatable(border_name, Box::MIDDLE_CENTER, texture_name);
 		}
 		else {
 			std::cout << "In file: " << file_path << " unknown key: " << word << std::endl;

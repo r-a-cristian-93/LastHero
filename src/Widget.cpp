@@ -164,9 +164,9 @@ void Widget::setBackgroundColor(sf::Color color) {
 	if (background) background->setColor(color);
 }
 
-void Widget::setBorder(Border& b) {
+void Widget::setBorder(Box& b) {
 	if (!border) {
-		border = new Border(b);
+		border = new Box(b);
 
 		border->match(sf::IntRect(pos_abs.x, pos_abs.y, size.x, size.y));
 

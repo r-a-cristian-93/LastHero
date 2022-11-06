@@ -2,7 +2,7 @@
 #define	WIDGET
 
 #include "SFML/Graphics.hpp"
-#include "Border.h"
+#include "Box.h"
 #include "CommonBehaviour.h"
 
 struct WidgetFx {
@@ -64,7 +64,7 @@ public:
 //box
 	sf::Sprite* background;
 	sf::Vector2i bg_offset;
-	Border* border;
+	Box* border;
 //box
 
 //text
@@ -102,7 +102,7 @@ public:
 // box
 	void setBackground(sf::Texture& tex, int offset);
 	void setBackground(sf::Sprite& sprite, sf::Vector2i offset);
-	void setBorder(Border& b);
+	void setBorder(Box& b);
 	void setBackgroundColor(sf::Color color);
 // box
 

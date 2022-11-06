@@ -40,7 +40,7 @@ set(SOURCE_COMMON
 	src/ScenePlay.cpp
 	src/Interface.cpp
 	src/Widget.cpp
-	src/Border.cpp
+	src/Box.cpp
 	src/Tilemap.cpp
 	src/Level.cpp
 	src/SoundManager.cpp
