@@ -780,11 +780,9 @@ void Assets::loadBoxes() {
 			loadBoxRepeatable(box_name, Box::MIDDLE_LEFT, texture_name);
 		}
 		else if (word == "middle_right") {
-			std::cout << "load " << word << std::endl;
 			loadBoxRepeatable(box_name, Box::MIDDLE_RIGHT, texture_name);
 		}
 		else if (word == "middle_center") {
-			std::cout << "load " << word << std::endl;
 			loadBoxRepeatable(box_name, Box::MIDDLE_CENTER, texture_name);
 		}
 		else {
