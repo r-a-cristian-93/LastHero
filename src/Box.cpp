@@ -32,13 +32,16 @@ void Box::match(const sf::IntRect& rect) {
 	bottom_right.setPosition(rect.left + rect.width - bottom_right.getTextureRect().width, rect.top + rect.height - bottom_right.getTextureRect().height);
 	middle_left.setPosition(rect.left, rect.top + top_left.getTextureRect().height);
 	middle_right.setPosition(rect.left + rect.width - middle_right.getTextureRect().width, rect.top + top_right.getTextureRect().height);
-	middle_center.setPosition(rect.left + middle_left.getTextureRect().width, rect.top + middle_left.getTextureRect().height);
 
 	top_center.setTextureRect(sf::IntRect(0,0, rect.width - top_left.getTextureRect().width - top_right.getTextureRect().width, top_center.getTextureRect().height));
 	bottom_center.setTextureRect(sf::IntRect(0,0, rect.width - bottom_left.getTextureRect().width - bottom_right.getTextureRect().width, bottom_center.getTextureRect().height));
 	middle_left.setTextureRect(sf::IntRect(0,0, middle_left.getTextureRect().width, rect.height - top_left.getTextureRect().height - bottom_left.getTextureRect().height));
 	middle_right.setTextureRect(sf::IntRect(0,0, middle_right.getTextureRect().width, rect.height - top_right.getTextureRect().height - bottom_right.getTextureRect().height));
-	middle_center.setTextureRect(sf::IntRect(0,0, rect.width - middle_left.getTextureRect().width - middle_right.getTextureRect().width, rect.height - top_center.getTextureRect().height - bottom_center.getTextureRect().height));
+
+	middle_center.setPosition(rect.left + top_left.getTextureRect().width, rect.top + top_left.getTextureRect().height);
+	middle_center.setTextureRect(sf::IntRect(0,0, top_center.getTextureRect().width, middle_left.getTextureRect().height));
+
+	//middle_center.setTextureRect(sf::IntRect(0,0, 100, 100));
 }
 
 std::vector<sf::Sprite*> Box::getSprites() {
