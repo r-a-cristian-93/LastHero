@@ -4,22 +4,22 @@
 WCBox::WCBox()
     :background(nullptr)
 	,bg_offset(0,0)
-	,border(nullptr)
+	,box(nullptr)
     {}
 
 WCBox::WCBox(const WCBox& wcb)
     :sf::Transformable(wcb)
     ,background(nullptr)
     ,bg_offset(0,0)
-    ,border(nullptr)
+    ,box(nullptr)
 {
     if (wcb.background) setBackground(*wcb.background, wcb.bg_offset);
-	if (wcb.border) setBorder(*wcb.border);
+	if (wcb.box) setBorder(*wcb.box);
 }
 
 WCBox::~WCBox() {
     if (background) delete background;
-    if (border) delete border;
+    if (box) delete box;
 }
 
 void WCBox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -59,13 +59,13 @@ void WCBox::setPosition(float x, float y) {
     }
 }
 
-void WCBox::setBorder(Border& b) {
-	if (!border) {
-		border = new Border(b);
+void WCBox::setBorder(Box& b) {
+	if (!box) {
+		box = new Box(b);
 
-		border->match(sf::IntRect(this->getPosition().x, this->getPosition().y, size.x, size.y));
+		box->match(sf::IntRect(this->getPosition().x, this->getPosition().y, size.x, size.y));
 
-		for (sf::Sprite* sprite:border->getSprites()) {
+		for (sf::Sprite* sprite:box->getSprites()) {
 			//drawables.push_back(sprite);
 		}
 	}

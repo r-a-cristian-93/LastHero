@@ -6,6 +6,7 @@
 #include "CommonBehaviour.h"
 #include "WCText.h"
 #include "WCBox.h"
+#include "WCImage.h"
 
 struct WidgetFx {
 	//fx type
@@ -52,7 +53,10 @@ public:
 		COUNT,
 	};
 
-	std::tuple<WCText*, WCBox*> components;
+	sf::Vector2f m_origin;		// origin relative to content, values [0 ... 1].
+	sf::Vector2f m_position;	// position relative to parent, values [0 ... 1]. A parent can be another Widget or the application window.
+
+	std::tuple<WCText*, WCBox*, WCImage*> components;
 
 	template<class C>
 	void add(C* c) {
@@ -65,10 +69,6 @@ public:
 	}
 
 	std::vector<Widget> childs;
-
-	// position relative to parent, values [0, 1].
-	// a parent can be another Widget or the application window.
-	sf::Vector2f pos;
 
 	sf::Vector2i pos_rel;
 	sf::Vector2i pos_abs;
@@ -112,7 +112,10 @@ public:
 	std::vector<Widget>& getChilds();
 
 	void update();
+	void update(sf::Vector2f parent_size, sf::Vector2f parent_pos);			//should be private
+	void updatePosition(sf::Vector2f parent_size, sf::Vector2f parent_pos);
 	sf::FloatRect getGlobalBounds();
+	sf::FloatRect getLocalBounds();
 
 // box
 	void setBackground(sf::Texture& tex, int offset);

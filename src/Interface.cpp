@@ -1,4 +1,5 @@
 #include "Interface.h"
+#include "SharedResources.h"
 #include <iostream>
 
 Interface::Interface() {
@@ -13,6 +14,10 @@ WidgetVec& Interface::getWidgets() {
 }
 
 void Interface::update() {
+	for (Widget& w : widgets) {
+		w.update({app_conf->game_w, app_conf->game_h}, {0,0});
+	}
+
 	for (Widget& w : widgets) {
 		w.update();
 	}

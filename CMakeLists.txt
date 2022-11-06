@@ -54,6 +54,7 @@ set(SOURCE_COMMON
 	src/Link.cpp
 	src/WCText.cpp
 	src/WCBox.cpp
+	src/WCImage.cpp
 )
 
 set (SOURCE_GAME

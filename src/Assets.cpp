@@ -808,9 +808,10 @@ void Assets::loadWidgets() {
 }
 
 void Assets::loadWidget() {
-	std::string name(""), type(""), bg_sprite(""), bg_tex(""), bg_tex_hover(""), box_style(""), border_hover("");
+	std::string name(""), type(""), image(""), bg_tex(""), bg_tex_hover(""), box_style(""), border_hover("");
 	sf::Vector2i size, pos_rel, pos_abs;
 	sf::Vector2i spr_offset;
+	sf::Vector2f origin, position;
 	int tex_offset(0), w(0), h(0), font_size(0);
 	size_t font_id(NONE);
 	Link::Target link_target(Link::Target::NONE);
@@ -871,7 +872,9 @@ void Assets::loadWidget() {
 		}
 		else if (word == "pos_rel") file >> pos_rel.x >> pos_rel.y;
 		else if (word == "pos_abs") file >> pos_abs.x >> pos_abs.y;
-		else if (word == "bg_sprite") file >> bg_sprite >> spr_offset.x >> spr_offset.y;
+		else if (word == "origin") file >> origin.x >> origin.y;
+		else if (word == "position") file >> position.x >> position.y;
+		else if (word == "image") file >> image;
 		else if (word == "bg_tex") file >> bg_tex >> tex_offset;
 		else if (word == "bg_tex_hover") file >> bg_tex_hover >> tex_offset;
 		else if (word == "box_style") file >> box_style;
@@ -930,13 +933,18 @@ void Assets::loadWidget() {
 	if (!name.empty() && !type.empty()) {
 		Widget& widget = widgets[name];
 
-		if (type == "box") {
+		widget.m_origin = origin;
+		widget.m_position = position;
+
+		if (type == "image" && !image.empty()) {
+			WCImage* wci = new WCImage();
+			wci->setImage(sprites[image]);
+			widget.add<WCImage>(wci);
+		}
+		else if (type == "box") {
 			WCBox* wcb = new WCBox();
 			wcb->setSize(size);
 
-			if (!bg_sprite.empty()) wcb->setBackground(sprites[bg_sprite], spr_offset);
-			else if (!bg_tex.empty()) wcb->setBackground(textures[bg_tex], tex_offset);
-			
 			if (!box_style.empty()) widget.setBorder(boxes[box_style]);
 			if (fx.type) widget.fx.push_back(fx);
 

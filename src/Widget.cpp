@@ -23,6 +23,8 @@ Widget::Widget()
 Widget::Widget(const Widget& w)
 	:pos_rel(w.pos_rel)
 	,pos_abs(w.pos_abs)
+	,m_origin(w.m_origin)
+	,m_position(w.m_position)
 	,size(w.size)
 	,box(nullptr)
 	,childs(w.childs)
@@ -42,6 +44,9 @@ Widget::Widget(const Widget& w)
 	if (w.scroll_track) addScrollTrack(*w.scroll_track);
 	if (w.scroll_thumb) addScrollThumb(*w.scroll_thumb);
 
+	if (w.get<WCImage>()) {
+		add<WCImage>(new WCImage(*w.get<WCImage>()));
+	}
 	if (w.get<WCText>()) {
 		add<WCText>(new WCText(*w.get<WCText>()));
 	}
@@ -68,6 +73,15 @@ sf::FloatRect Widget::getGlobalBounds() {
 	}
 
 	return sf::FloatRect();
+}
+
+sf::FloatRect Widget::getLocalBounds() {
+	if (get<WCImage>() != nullptr) {
+		return get<WCImage>()->getLocalBounds();
+	}
+	else {
+		return {0.0f, 0.0f, 0.0f, 0.0f};
+	}
 }
 
 void Widget::setPosRel(sf::Vector2i p) {
@@ -206,6 +220,27 @@ void Widget::setText(std::string t, sf::Font& font, unsigned int size) {
 
 // BOX and TEXT
 
+
+void Widget::update(sf::Vector2f parent_size, sf::Vector2f parent_pos) {
+	if (get<WCImage>() != nullptr) {
+		WCImage& wci = *get<WCImage>();
+		sf::FloatRect bounds = wci.getLocalBounds();
+		wci.setOrigin(bounds.width * m_origin.x, bounds.height * m_origin.y);
+		wci.setPosition(parent_pos.x + parent_size.x * m_position.x, parent_pos.y + parent_size.y * m_position.y);
+	}
+}
+
+void Widget::updatePosition(sf::Vector2f parent_size, sf::Vector2f parent_pos) {
+	update (parent_size, parent_pos);
+
+	for (Widget& w : getChilds()) {
+		sf::FloatRect bounds = getLocalBounds();
+		w.updatePosition({bounds.width, bounds.height}, m_position);
+	}
+}
+
+
+
 void Widget::update() {
 	if (on_click) setColor(state_colors[state]);
 
@@ -266,10 +301,13 @@ void Widget::setColor(sf::Color color) {
 }
 
 void Widget::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+	if (get<WCImage>() != nullptr) {
+		target.draw(*get<WCImage>(), states);
+	}
 	if (get<WCText>() != nullptr) {
 		target.draw(*get<WCText>(), states);
 	}
 	if (get<WCBox>() != nullptr) {
-		target.draw(*get<WCBox>(), states);
+		//target.draw(*get<WCBox>(), states);
 	}
 }
