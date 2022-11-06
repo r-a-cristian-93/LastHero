@@ -121,7 +121,7 @@ void SceneScore::init() {
 				sf::Sprite& icon = assets->getIconSmall(it_k->first);
 				sf::FloatRect rect = icon.getLocalBounds();
 				sf::Vector2i offset = {static_cast<int>(-rect.width/2), static_cast<int>(-rect.height/2)};
-				box.setBackground(assets->getIconSmall(it_k->first), offset);
+				//box.setBackground(assets->getIconSmall(it_k->first), offset);
 				box.setPosAbs(pos);
 				all_table_widgets.push_back(box);
 			}

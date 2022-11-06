@@ -57,3 +57,10 @@ std::vector<sf::Sprite*> Box::getSprites() {
 	sprites.push_back(&middle_center);
 	return sprites;
 }
+
+sf::Vector2f Box::getSize() {
+	return {
+		top_left.getLocalBounds().width + top_center.getLocalBounds().width + top_right.getLocalBounds().width,
+		top_left.getLocalBounds().height + middle_left.getLocalBounds().height + bottom_left.getLocalBounds().height
+	};
+}

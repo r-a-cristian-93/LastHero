@@ -76,7 +76,7 @@ void SceneEditor::init() {
 
 				Widget widget;
 				widget.setSize(final_size);
-				widget.setBackground(sprite, {0, 0});
+				//widget.setBackground(sprite, {0, 0});
 				widget.setPosAbs({85 - final_size.x / 2, 50 + k*100 - final_size.y / 2});
 
 				interface.add(widget);

@@ -1,20 +1,17 @@
 {
     "configurations": [
         {
-            "name": "Win32",
+            "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:\\mingw32\\include"
+                "/usr/lib/gcc/x86_64-linux-gnu/11/include",
+                "/usr/include/x86_64-linux-gnu/c++/11"
             ],
-            "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
-            ],
-            "compilerPath": "C:\\mingw32\\bin\\gcc.exe",
-            "cStandard": "gnu17",
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "intelliSenseMode": "linux-gcc-x86",
             "cppStandard": "gnu++17",
-            "intelliSenseMode": "windows-gcc-x86"
+            "cStandard": "gnu17"
         }
     ],
     "version": 4

@@ -79,9 +79,24 @@ sf::FloatRect Widget::getLocalBounds() {
 	if (get<WCImage>() != nullptr) {
 		return get<WCImage>()->getLocalBounds();
 	}
+	else if (get<WCBox>() != nullptr) {
+		//return get<WCBox>()->getLocalBounds();
+	}
 	else {
 		return {0.0f, 0.0f, 0.0f, 0.0f};
 	}
+}
+
+sf::Vector2f Widget::getSize() {
+	if (get<WCImage>() != nullptr) {
+		return get<WCImage>()->getSize();
+	}
+	if (get<WCBox>() != nullptr) {
+		return get<WCBox>()->getSize();
+	}
+	else {
+		return {0.0f, 0.0f};
+	}	
 }
 
 void Widget::setPosRel(sf::Vector2i p) {
@@ -151,34 +166,6 @@ std::vector<Widget>& Widget::getChilds() {
 }
 
 // BOX
-
-void Widget::setBackground(sf::Texture& tex, int offset) {
-	bg_offset = {offset, offset};
-
-	if (get<WCBox>() == nullptr) {
-		add<WCBox>(new WCBox());
-		get<WCBox>()->setBackground(tex, offset);
-		get<WCBox>()->setPosition(pos_abs.x+bg_offset.x, pos_abs.y+bg_offset.y);
-		get<WCBox>()->setSize(size);
-	}
-}
-
-void Widget::setBackground(sf::Sprite& sprite, sf::Vector2i offset) {
-	bg_offset = offset;
-
-	if(get<WCBox>() == nullptr) {
-		add<WCBox>(new WCBox());
-		get<WCBox>()->setBackground(sprite, offset);
-		get<WCBox>()->setPosition(pos_abs.x+bg_offset.x, pos_abs.y+bg_offset.y);
-	}
-}
-
-void Widget::setBackgroundColor(sf::Color color) {
-	if (get<WCBox>() != nullptr) {
-		get<WCBox>()->setBackgroundColor(color);
-	}
-}
-
 void Widget::setBorder(Box& b) {
 	if (!box) {
 		box = new Box(b);
@@ -228,14 +215,18 @@ void Widget::update(sf::Vector2f parent_size, sf::Vector2f parent_pos) {
 		wci.setOrigin(bounds.width * m_origin.x, bounds.height * m_origin.y);
 		wci.setPosition(parent_pos.x + parent_size.x * m_position.x, parent_pos.y + parent_size.y * m_position.y);
 	}
+
+	for (Widget& w : getChilds()) {		
+		w.update(getSize(), getPosition());
+	}
 }
 
-void Widget::updatePosition(sf::Vector2f parent_size, sf::Vector2f parent_pos) {
-	update (parent_size, parent_pos);
-
-	for (Widget& w : getChilds()) {
-		sf::FloatRect bounds = getLocalBounds();
-		w.updatePosition({bounds.width, bounds.height}, m_position);
+sf::Vector2f Widget::getPosition() {
+	if (get<WCImage>() != nullptr) {
+		return get<WCImage>()->getPosition();
+	}
+	else {
+		return {0.0f, 0.0f};
 	}
 }
 
@@ -293,7 +284,7 @@ void Widget::update() {
 
 void Widget::setColor(sf::Color color) {
 	if (get<WCBox>() != nullptr) {
-		get<WCBox>()->setBackgroundColor(color);
+		//get<WCBox>()->setBackgroundColor(color);
 	}
 	if (get<WCText>() != nullptr) {
 		get<WCText>()->setFillColor(color);
@@ -308,6 +299,6 @@ void Widget::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 		target.draw(*get<WCText>(), states);
 	}
 	if (get<WCBox>() != nullptr) {
-		//target.draw(*get<WCBox>(), states);
+		target.draw(*get<WCBox>(), states);
 	}
 }

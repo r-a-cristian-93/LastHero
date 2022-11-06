@@ -39,11 +39,31 @@ void WCImage::setPosition(float x, float y) {
     }
 }
 
+sf::Vector2f WCImage::getPosition() {
+	if (image != nullptr) {
+		return image->getPosition();
+	}
+	else {
+		return {0.0f, 0.0f};
+	}
+	
+}
+
 sf::FloatRect WCImage::getLocalBounds() {
 	if (image != nullptr) {
 		return image->getLocalBounds();
 	}
 	else {
 		return {0.0f,0.0f,0.0f,0.0f};
+	}
+}
+
+sf::Vector2f WCImage::getSize() {
+	if (image != nullptr) {
+		sf::FloatRect bounds = image->getLocalBounds();
+		return {bounds.width, bounds.height};
+	}
+	else {
+		return {0.0f,0.0f};
 	}
 }

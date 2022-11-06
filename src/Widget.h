@@ -113,15 +113,14 @@ public:
 
 	void update();
 	void update(sf::Vector2f parent_size, sf::Vector2f parent_pos);			//should be private
-	void updatePosition(sf::Vector2f parent_size, sf::Vector2f parent_pos);
+
 	sf::FloatRect getGlobalBounds();
 	sf::FloatRect getLocalBounds();
+	sf::Vector2f getPosition();
+	sf::Vector2f getSize();
 
 // box
-	void setBackground(sf::Texture& tex, int offset);
-	void setBackground(sf::Sprite& sprite, sf::Vector2i offset);
 	void setBorder(Box& b);
-	void setBackgroundColor(sf::Color color);
 // box
 
 //text

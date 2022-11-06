@@ -14,6 +14,8 @@ public:
     void setPosition(float x, float y);
     void setOrigin(float x, float y);
     sf::FloatRect getLocalBounds();
+    sf::Vector2f getPosition();
+    sf::Vector2f getSize();
 
     WCImage();
     WCImage(const WCImage& wcb);

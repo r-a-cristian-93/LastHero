@@ -36,6 +36,7 @@ public:
 	std::vector<sf::Sprite*> getSprites();
 	sf::Sprite& getSprite(size_t name);
 	sf::Texture& getTexture(size_t name);
+	sf::Vector2f getSize();
 
 	void match(const sf::IntRect& rect);
 
