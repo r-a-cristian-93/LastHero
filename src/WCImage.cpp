@@ -7,6 +7,7 @@ WCImage::WCImage()
 
 WCImage::WCImage(const WCImage& wcb)
     :image(nullptr)
+	,size(wcb.size)
 {
     if (wcb.image) setImage(*wcb.image);
 }
@@ -24,6 +25,9 @@ void WCImage::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 void WCImage::setImage(sf::Sprite& sprite) {
 	if (image == nullptr) {
 		image = new sf::Sprite(sprite);
+		sf::FloatRect bounds = image->getLocalBounds();
+		size.x = bounds.width;
+		size.y = bounds.height;		
 	}
 }
 
@@ -58,12 +62,6 @@ sf::FloatRect WCImage::getLocalBounds() {
 	}
 }
 
-sf::Vector2f WCImage::getSize() {
-	if (image != nullptr) {
-		sf::FloatRect bounds = image->getLocalBounds();
-		return {bounds.width, bounds.height};
-	}
-	else {
-		return {0.0f,0.0f};
-	}
+sf::Vector2i WCImage::getSize() {
+	return size;
 }

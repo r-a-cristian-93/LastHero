@@ -944,8 +944,8 @@ void Assets::loadWidget() {
 		else if (type == "box") {
 			WCBox* wcb = new WCBox();
 			wcb->setSize(size);
-
-			if (!box_style.empty()) widget.setBorder(boxes[box_style]);
+			
+			if (!box_style.empty()) wcb->setBorder(boxes[box_style]);
 			if (fx.type) widget.fx.push_back(fx);
 
 			widget.add<WCBox>(wcb);

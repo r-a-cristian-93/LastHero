@@ -84,7 +84,6 @@ public:
 
 //box
 	sf::Vector2i bg_offset;
-	Box* box;
 //box
 
 //scroll
@@ -117,11 +116,8 @@ public:
 	sf::FloatRect getGlobalBounds();
 	sf::FloatRect getLocalBounds();
 	sf::Vector2f getPosition();
-	sf::Vector2f getSize();
+	sf::Vector2i getSize();
 
-// box
-	void setBorder(Box& b);
-// box
 
 //text
 	void setText(std::string t, sf::Font& font, unsigned int size);

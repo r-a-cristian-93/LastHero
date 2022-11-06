@@ -6,6 +6,7 @@
 class WCImage:public sf::Drawable {
 private:
     sf::Sprite* image;
+    sf::Vector2i size;
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
@@ -15,7 +16,7 @@ public:
     void setOrigin(float x, float y);
     sf::FloatRect getLocalBounds();
     sf::Vector2f getPosition();
-    sf::Vector2f getSize();
+    sf::Vector2i getSize();
 
     WCImage();
     WCImage(const WCImage& wcb);

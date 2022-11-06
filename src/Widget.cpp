@@ -5,7 +5,6 @@ Widget::Widget()
 	:pos_rel(0, 0)
 	,pos_abs(0, 0)
 	,size(0, 0)
-	,box(nullptr)
 	,current_fx(nullptr)
 	,scroll(ScrollType::NONE)
 	,scroll_track(nullptr)
@@ -26,7 +25,6 @@ Widget::Widget(const Widget& w)
 	,m_origin(w.m_origin)
 	,m_position(w.m_position)
 	,size(w.size)
-	,box(nullptr)
 	,childs(w.childs)
 	,fx(w.fx)
 	,current_fx(nullptr)
@@ -40,7 +38,6 @@ Widget::Widget(const Widget& w)
 	,on_click(w.on_click)
 	,state_colors(w.state_colors)
 {
-	if (w.box) setBorder(*w.box);
 	if (w.scroll_track) addScrollTrack(*w.scroll_track);
 	if (w.scroll_thumb) addScrollThumb(*w.scroll_thumb);
 
@@ -57,19 +54,19 @@ Widget::Widget(const Widget& w)
 
 
 Widget::~Widget() {
-	delete box;
 	delete scroll_content_sprite;
 	delete scroll_content_tex;
 	if (get<WCText>()) delete get<WCText>();
 	if (get<WCBox>()) delete get<WCBox>();
+	if (get<WCImage>()) delete get<WCImage>();
 }
 
 sf::FloatRect Widget::getGlobalBounds() {
-	if (box) {
-		return sf::FloatRect(pos_abs.x, pos_abs.y, size.x, size.y);
-	}
-	else if (get<WCText>() != nullptr) {
+	if (get<WCText>() != nullptr) {
 		return get<WCText>()->getGlobalBounds();
+	}
+	else if (get<WCBox>() != nullptr) {
+		return get<WCBox>()->getGlobalBounds();
 	}
 
 	return sf::FloatRect();
@@ -87,7 +84,7 @@ sf::FloatRect Widget::getLocalBounds() {
 	}
 }
 
-sf::Vector2f Widget::getSize() {
+sf::Vector2i Widget::getSize() {
 	if (get<WCImage>() != nullptr) {
 		return get<WCImage>()->getSize();
 	}
@@ -95,7 +92,7 @@ sf::Vector2f Widget::getSize() {
 		return get<WCBox>()->getSize();
 	}
 	else {
-		return {0.0f, 0.0f};
+		return {0, 0};
 	}	
 }
 
@@ -118,15 +115,15 @@ void Widget::setPosAbs(sf::Vector2i p) {
 		}
 	}
 
-
-	if (box) box->match(sf::IntRect(pos_abs.x, pos_abs.y, size.x, size.y));
-
-	if (get<WCBox>() != nullptr) {
-		get<WCBox>()->setPosition(pos_abs.x + bg_offset.x, pos_abs.y + bg_offset.y);
+	if (get<WCBox>() != nullptr) {		
+		get<WCBox>()->setPosition(pos_abs.x, pos_abs.y);
 	}
 
 	if (get<WCText>() != nullptr) {
 		get<WCText>()->setPosition(pos_abs.x, pos_abs.y);
+	}
+	if (get<WCImage>() != nullptr) {
+		get<WCImage>()->setPosition(pos_abs.x, pos_abs.y);
 	}
 }
 
@@ -166,17 +163,7 @@ std::vector<Widget>& Widget::getChilds() {
 }
 
 // BOX
-void Widget::setBorder(Box& b) {
-	if (!box) {
-		box = new Box(b);
 
-		box->match(sf::IntRect(pos_abs.x, pos_abs.y, size.x, size.y));
-
-		for (sf::Sprite* sprite:box->getSprites()) {
-			drawables.push_back(sprite);
-		}
-	}
-}
 
 
 
@@ -217,7 +204,7 @@ void Widget::update(sf::Vector2f parent_size, sf::Vector2f parent_pos) {
 	}
 
 	for (Widget& w : getChilds()) {		
-		w.update(getSize(), getPosition());
+		w.update(sf::Vector2f(getSize()), getPosition());
 	}
 }
 

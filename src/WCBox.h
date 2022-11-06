@@ -15,7 +15,8 @@ public:
     void setBorder(Box& b);
     void setSize(sf::Vector2i s);
     void setPosition(float x, float y);
-    sf::Vector2f getSize();
+    sf::Vector2i getSize();
+    sf::FloatRect getGlobalBounds();
 
 
     WCBox();

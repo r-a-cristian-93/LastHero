@@ -40,8 +40,6 @@ void Box::match(const sf::IntRect& rect) {
 
 	middle_center.setPosition(rect.left + top_left.getTextureRect().width, rect.top + top_left.getTextureRect().height);
 	middle_center.setTextureRect(sf::IntRect(0,0, top_center.getTextureRect().width, middle_left.getTextureRect().height));
-
-	//middle_center.setTextureRect(sf::IntRect(0,0, 100, 100));
 }
 
 std::vector<sf::Sprite*> Box::getSprites() {

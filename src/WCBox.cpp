@@ -8,6 +8,7 @@ WCBox::WCBox()
 WCBox::WCBox(const WCBox& wcb)
     :sf::Transformable(wcb)
     ,box(nullptr)
+	,size(wcb.size)
 {
 	if (wcb.box) setBorder(*wcb.box);
 }
@@ -40,15 +41,14 @@ void WCBox::setBorder(Box& b) {
 	}
 }
 
-sf::Vector2f WCBox::getSize() {
-	if (box!= nullptr) {
-		return box->getSize();
-	}
-	else {
-		return {0.0f,0.0f};
-	}
+sf::Vector2i WCBox::getSize() {
+	return size;
 }
 
 void WCBox::setSize(sf::Vector2i s) {
 	size = s;
+}
+
+sf::FloatRect WCBox::getGlobalBounds() {
+	return {0, 0, size.x, size.y};
 }
