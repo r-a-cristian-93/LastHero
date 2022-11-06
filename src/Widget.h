@@ -64,7 +64,7 @@ public:
 //box
 	sf::Sprite* background;
 	sf::Vector2i bg_offset;
-	Box* border;
+	Box* box;
 //box
 
 //text

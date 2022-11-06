@@ -71,7 +71,7 @@ private:
 	std::map<size_t, sf::Font> fonts;
 	std::map<std::string, sf::Texture> textures;
 	std::map<std::string, sf::Sprite> sprites;
-	std::map<std::string, Box> borders;
+	std::map<std::string, Box> boxes;
 	std::map<std::string, sf::Shader> shaders;
 	std::map<std::string, Widget> widgets;
 	std::map<std::string, sf::Music> bg_music;
@@ -90,11 +90,11 @@ private:
 	void loadEntity();
 	void loadTexture();
 	void loadSprite();
-	void loadBorders();
+	void loadBoxes();
 	void loadWidget();
 	void loadSong();
 	void loadSound();
-	void loadBorderRepeatable(std::string border_name, size_t sprite_name, std::string texture_name);
+	void loadBoxRepeatable(std::string box_name, size_t sprite_name, std::string texture_name);
 	void loadAnimationSet(std::string path, AnimationSet& animation_set);
 	void loadAnimation(AnimationSet& anim_set);
 	sf::IntRect loadRect(std::ifstream& f);
@@ -120,7 +120,7 @@ public:
 	const std::map<size_t, Components>& getRecipes(size_t tag);
 	size_t getScorePoints(size_t name_id);
 	sf::Font& getFont(size_t name);
-	Box& getBorder(std::string name);
+	Box& getBox(std::string name);
 	sf::Texture& getTexture(std::string name);
 	sf::Sprite& getSprite(std::string name);
 	sf::Sprite& getIconSmall(size_t name_id);

@@ -7,7 +7,7 @@ Widget::Widget()
 	,size(0, 0)
 	,background(nullptr)
 	,bg_offset(0,0)
-	,border(nullptr)
+	,box(nullptr)
 	,text(nullptr)
 	,link_int(nullptr)
 	,link_str(nullptr)
@@ -29,7 +29,7 @@ Widget::Widget(const Widget& w)
 	,pos_abs(w.pos_abs)
 	,size(w.size)
 	,background(nullptr)
-	,border(nullptr)
+	,box(nullptr)
 	,text(nullptr)
 	,link_int(w.link_int)
 	,link_str(w.link_str)
@@ -48,7 +48,7 @@ Widget::Widget(const Widget& w)
 	,state_colors(w.state_colors)
 {
 	if (w.background) setBackground(*w.background, w.bg_offset);
-	if (w.border) setBorder(*w.border);
+	if (w.box) setBorder(*w.box);
 	if (w.text) setText(*w.text);
 	if (w.scroll_track) addScrollTrack(*w.scroll_track);
 	if (w.scroll_thumb) addScrollThumb(*w.scroll_thumb);
@@ -57,14 +57,14 @@ Widget::Widget(const Widget& w)
 
 Widget::~Widget() {
 	delete background;
-	delete border;
+	delete box;
 	delete text;
 	delete scroll_content_sprite;
 	delete scroll_content_tex;
 }
 
 sf::FloatRect Widget::getGlobalBounds() {
-	if (border) {
+	if (box) {
 		return sf::FloatRect(pos_abs.x, pos_abs.y, size.x, size.y);
 	}
 	else if (background) {
@@ -105,7 +105,7 @@ void Widget::setPosAbs(sf::Vector2i p) {
 	}
 
 	if (background) background->setPosition(pos_abs.x + bg_offset.x, pos_abs.y + bg_offset.y);
-	if (border) border->match(sf::IntRect(pos_abs.x, pos_abs.y, size.x, size.y));
+	if (box) box->match(sf::IntRect(pos_abs.x, pos_abs.y, size.x, size.y));
 	if (text) text->setPosition(pos_abs.x, pos_abs.y);
 }
 
@@ -165,12 +165,12 @@ void Widget::setBackgroundColor(sf::Color color) {
 }
 
 void Widget::setBorder(Box& b) {
-	if (!border) {
-		border = new Box(b);
+	if (!box) {
+		box = new Box(b);
 
-		border->match(sf::IntRect(pos_abs.x, pos_abs.y, size.x, size.y));
+		box->match(sf::IntRect(pos_abs.x, pos_abs.y, size.x, size.y));
 
-		for (sf::Sprite* sprite:border->getSprites()) {
+		for (sf::Sprite* sprite:box->getSprites()) {
 			drawables.push_back(sprite);
 		}
 	}
