@@ -933,6 +933,7 @@ void Assets::loadWidget() {
 		if (type == "image" && !image.empty()) {
 			WCImage* wci = new WCImage();
 			wci->setImage(sprites[image]);
+
 			widget.add<WCImage>(wci);
 		}
 		else if (type == "box") {
@@ -940,7 +941,6 @@ void Assets::loadWidget() {
 			wcb->setSize(size);
 
 			if (!box_style.empty()) wcb->setStyle(boxes[box_style]);
-			if (fx.type) widget.fx.push_back(fx);
 
 			widget.add<WCBox>(wcb);
 		}
@@ -963,6 +963,8 @@ void Assets::loadWidget() {
 
 		widget.setPosRel(pos_rel);
 		widget.setPosAbs(pos_abs);
+
+		if (fx.type) widget.fx.push_back(fx);
 
 		if (on_click) widget.on_click = on_click;
 		for (int i=0; i<Widget::State::COUNT; i++) {

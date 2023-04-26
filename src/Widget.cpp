@@ -234,27 +234,28 @@ void Widget::update() {
 
 		current_frame++;
 
-		if (fx.type = WidgetFx::Type::FADE_IN_OUT) {
-			//sf::Color color = background->getColor();
-			sf::Color color;
-			float alpha = 0;
+		if (get<WCImage>()) {
+			if (fx.type = WidgetFx::Type::FADE_IN_OUT) {
+				sf::Color color = get<WCImage>()->getColor();
+				float alpha = 0;
 
-			if (current_frame <= frames_in) {
-				alpha =  (static_cast<float>(opacity_hi)/frames_in) * current_frame;
-				color.a = static_cast<int>(alpha);
-			}
-			else {
-				alpha = static_cast<float>(opacity_hi-opacity_low)/frames_out * ( frames_out - (current_frame - frames_in) );
-				color.a = static_cast<int>(alpha);
-			}
+				if (current_frame <= frames_in) {
+					alpha =  (static_cast<float>(opacity_hi)/frames_in) * current_frame;
+					color.a = static_cast<int>(alpha);
+				}
+				else {
+					alpha = static_cast<float>(opacity_hi-opacity_low)/frames_out * ( frames_out - (current_frame - frames_in) );
+					color.a = static_cast<int>(alpha);
+				}
 
-			if (current_frame > frames_in + frames_out) {
-				current_frame = 0;
-				current_fx = nullptr;
-				color.a = opacity_low;
-			}
+				if (current_frame > frames_in + frames_out) {
+					current_frame = 0;
+					current_fx = nullptr;
+					color.a = opacity_low;
+				}
 
-			//background->setColor(color);
+				get<WCImage>()->setColor(color);
+			}
 		}
 	}
 

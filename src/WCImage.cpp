@@ -27,7 +27,7 @@ void WCImage::setImage(sf::Sprite& sprite) {
 		image = new sf::Sprite(sprite);
 		sf::FloatRect bounds = image->getLocalBounds();
 		size.x = bounds.width;
-		size.y = bounds.height;		
+		size.y = bounds.height;
 	}
 }
 
@@ -43,6 +43,12 @@ void WCImage::setPosition(float x, float y) {
     }
 }
 
+void WCImage::setColor(sf::Color& color) {
+	if (image != nullptr) {
+		image->setColor(color);
+	}
+}
+
 sf::Vector2f WCImage::getPosition() {
 	if (image != nullptr) {
 		return image->getPosition();
@@ -50,7 +56,7 @@ sf::Vector2f WCImage::getPosition() {
 	else {
 		return {0.0f, 0.0f};
 	}
-	
+
 }
 
 sf::FloatRect WCImage::getLocalBounds() {
@@ -64,4 +70,13 @@ sf::FloatRect WCImage::getLocalBounds() {
 
 sf::Vector2i WCImage::getSize() {
 	return size;
+}
+
+sf::Color WCImage::getColor() {
+	if (image != nullptr) {
+		return image->getColor();
+	}
+	else {
+		return {};
+	}
 }
