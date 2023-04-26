@@ -92,6 +92,7 @@ private:
 	void loadSprite();
 	void loadBoxes();
 	void loadWidget();
+	void loadShader();
 	void loadSong();
 	void loadSound();
 	void loadBoxRepeatable(std::string box_name, size_t sprite_name, std::string texture_name);

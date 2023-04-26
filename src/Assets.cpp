@@ -1113,20 +1113,32 @@ void Assets::loadSprite() {
 }
 
 void Assets::loadShaders() {
-	shaders["desaturate"].loadFromFile("res/shaders/desaturate.frag", sf::Shader::Fragment);
-	shaders["rainbow"].loadFromFile("res/shaders/rainbow.frag", sf::Shader::Fragment);
-	shaders["blur"].loadFromFile("res/shaders/blur.frag", sf::Shader::Fragment);
-	shaders["predator"].loadFromFile("res/shaders/predator.frag", sf::Shader::Fragment);
-	shaders["sobel"].loadFromFile("res/shaders/sobel.frag", sf::Shader::Fragment);
-	shaders["pixelizer"].loadFromFile("res/shaders/pixelizer.frag", sf::Shader::Fragment);
-	shaders["dream_vision"].loadFromFile("res/shaders/dream_vision.frag", sf::Shader::Fragment);
-	shaders["bloom"].loadFromFile("res/shaders/bloom.frag", sf::Shader::Fragment);
-	shaders["crt-vga"].loadFromFile("res/shaders/crt-vga.vert", "res/shaders/crt-vga.frag");
-	shaders["crt-geom"].loadFromFile("res/shaders/crt-geom.vert", "res/shaders/crt-geom.frag");
-	shaders["crt-mattias"].loadFromFile("res/shaders/crt-mattias.vert", "res/shaders/crt-mattias.frag");
-	shaders["crt-easy"].loadFromFile("res/shaders/crt-easy.vert", "res/shaders/crt-easy.frag");
-	shaders["crt-fake"].loadFromFile("res/shaders/crt-fake.vert", "res/shaders/crt-fake.frag");
-	shaders["crt-drigax"].loadFromFile("res/shaders/crt-drigax.vert", "res/shaders/crt-drigax.frag");
+	file.open("res/shaders.cfg");
+
+	while (file >> word) {
+		if (word == "_SHADER") loadShader();
+	}
+
+	file.close();
+}
+
+void Assets::loadShader() {
+	std::string name("");
+	std::string path_vert("");
+	std::string path_frag("");
+
+	while (file >> word) {
+		if (word == "_END") break;
+		else if (word == "name") file >> name;
+		else if (word == "path_vert") file >> path_vert;
+		else if (word == "path_frag") file >> path_frag;
+		else {
+			std::cout << "Invalid keyword: " << word << " in res/shaders.cfg.\n";
+			exit(0);
+		}
+	}
+
+	shaders[name].loadFromFile(path_vert, path_frag);
 }
 
 sf::Shader& Assets::getShader(std::string name) {
