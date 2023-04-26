@@ -12,7 +12,7 @@ private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 public:
-    void setBorder(Box& b);
+    void setStyle(Box& b);
     void setSize(sf::Vector2i s);
     void setPosition(float x, float y);
     sf::Vector2i getSize();

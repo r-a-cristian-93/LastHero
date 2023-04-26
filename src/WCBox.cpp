@@ -10,7 +10,7 @@ WCBox::WCBox(const WCBox& wcb)
     ,box(nullptr)
 	,size(wcb.size)
 {
-	if (wcb.box) setBorder(*wcb.box);
+	if (wcb.box) setStyle(*wcb.box);
 }
 
 WCBox::~WCBox() {
@@ -29,11 +29,11 @@ void WCBox::setPosition(float x, float y) {
     sf::Transformable::setPosition(x,y);
 
     if (box != nullptr) {
-		
+
 	}
 }
 
-void WCBox::setBorder(Box& b) {
+void WCBox::setStyle(Box& b) {
 	if (!box) {
 		box = new Box(b);
 
