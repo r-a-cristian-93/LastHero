@@ -37,6 +37,8 @@ void SDraw::drawWidget(sf::RenderTarget* w, Widget& widget) {
 		w->draw(*d);
 	}
 
+	w->draw(widget);
+
 	if (!widget.getChilds().empty()) {
 		for (Widget& child:widget.getChilds()) {
 			drawWidget(w, child);

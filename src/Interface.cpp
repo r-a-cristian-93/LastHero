@@ -1,4 +1,5 @@
 #include "Interface.h"
+#include "SharedResources.h"
 #include <iostream>
 
 Interface::Interface() {
@@ -14,31 +15,25 @@ WidgetVec& Interface::getWidgets() {
 
 void Interface::update() {
 	for (Widget& w : widgets) {
+		w.update({app_conf->game_w, app_conf->game_h}, {0,0});
+	}
+
+	for (Widget& w : widgets) {
 		w.update();
 	}
 }
 
-void Interface::setLinks(int* links[Widget::LINK_COUNT]) {
+void Interface::setLinks(std::variant<int*, std::string*>* links) {
 	setLinks(widgets, links);
 }
 
-void Interface::setLinks(std::string* links[Widget::LINK_COUNT]) {
-	setLinks(widgets, links);
-}
-
-void Interface::setLinks(WidgetVec& widgets, int* links[Widget::LINK_COUNT]) {
+void Interface::setLinks(WidgetVec& widgets, std::variant<int*, std::string*>* links) {
 	for (Widget& w : widgets) {
-		if (w.text && w.link != Widget::LINK_NONE)
-			w.linkToInt(*links[w.link]);
-
-		if (!w.childs.empty()) setLinks(w.childs, links);
-	}
-}
-
-void Interface::setLinks(WidgetVec& widgets, std::string* links[Widget::LINK_COUNT]) {
-	for (Widget& w : widgets) {
-		if (w.text && w.link != Widget::LINK_NONE)
-			w.linkToStr(*links[w.link]);
+		if (w.get<WCText>() != nullptr) {
+			if (w.get<WCText>()->hasLink()) {
+				w.get<WCText>()->getLink().m_data = links[static_cast<unsigned int> (w.get<WCText>()->getLink().m_target)];
+			}
+		}
 
 		if (!w.childs.empty()) setLinks(w.childs, links);
 	}

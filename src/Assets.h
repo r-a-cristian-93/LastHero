@@ -5,7 +5,7 @@
 #include "Common.h"
 #include "Enums.h"
 #include "Entity.h"
-#include "Border.h"
+#include "Box.h"
 #include "Interface.h"
 
 struct EntityDataset {
@@ -66,14 +66,14 @@ private:
 	std::map<size_t, std::map<size_t, Components>> recipe;
 	std::map<size_t, Components*> all_recipes;
 	std::map<std::string, size_t> recipe_name_id = {{"", NONE}};
-	std::map<size_t, sf::Sprite*> icon_small;
 
 	std::map<size_t, sf::Font> fonts;
 	std::map<std::string, sf::Texture> textures;
 	std::map<std::string, sf::Sprite> sprites;
-	std::map<std::string, Border> borders;
+	std::map<std::string, Box> boxes;
 	std::map<std::string, sf::Shader> shaders;
 	std::map<std::string, Widget> widgets;
+	std::map<size_t, Widget> entities_icons;
 	std::map<std::string, sf::Music> bg_music;
 
 	std::map<size_t, sf::SoundBuffer> sound_buffers;
@@ -90,11 +90,11 @@ private:
 	void loadEntity();
 	void loadTexture();
 	void loadSprite();
-	void loadBorders();
+	void loadBoxes();
 	void loadWidget();
 	void loadSong();
 	void loadSound();
-	void loadBorderRepeatable(std::string border_name, size_t sprite_name, std::string texture_name);
+	void loadBoxRepeatable(std::string box_name, size_t sprite_name, std::string texture_name);
 	void loadAnimationSet(std::string path, AnimationSet& animation_set);
 	void loadAnimation(AnimationSet& anim_set);
 	sf::IntRect loadRect(std::ifstream& f);
@@ -120,11 +120,11 @@ public:
 	const std::map<size_t, Components>& getRecipes(size_t tag);
 	size_t getScorePoints(size_t name_id);
 	sf::Font& getFont(size_t name);
-	Border& getBorder(std::string name);
+	Box& getBox(std::string name);
 	sf::Texture& getTexture(std::string name);
 	sf::Sprite& getSprite(std::string name);
-	sf::Sprite& getIconSmall(size_t name_id);
 	sf::Shader& getShader(std::string name);
+	Widget& getEntityIcon(size_t name_id);
 	Widget& getWidget(std::string name);
 	sf::Music& getSound(std::string name);
 	sf::SoundBuffer& getSoundBuffer(size_t id);

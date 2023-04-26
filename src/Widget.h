@@ -2,8 +2,11 @@
 #define	WIDGET
 
 #include "SFML/Graphics.hpp"
-#include "Border.h"
+#include "Box.h"
 #include "CommonBehaviour.h"
+#include "WCText.h"
+#include "WCBox.h"
+#include "WCImage.h"
 
 struct WidgetFx {
 	//fx type
@@ -30,7 +33,10 @@ struct WidgetFx {
 };
 
 
-class Widget {
+class Widget: public sf::Drawable, public sf::Transformable {
+private:
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
 public:
 	enum class ScrollType: size_t {
 		NONE = 0,
@@ -47,6 +53,18 @@ public:
 		COUNT,
 	};
 
+	std::tuple<WCText*, WCBox*, WCImage*> components;
+
+	template<class C>
+	void add(C* c) {
+		std::get<C*>(components) = c;
+	}
+
+	template<class C>
+	C* get() const {
+		return std::get<C*>(components);
+	}
+
 	std::vector<Widget> childs;
 
 	sf::Vector2i pos_rel;
@@ -60,19 +78,6 @@ public:
 	sf::Color state_colors[State::COUNT];
 
 	void updateChildPos(Widget& child);
-
-//box
-	sf::Sprite* background;
-	sf::Vector2i bg_offset;
-	Border* border;
-//box
-
-//text
-	size_t link;
-	const int* link_int;
-	const std::string* link_str;
-	sf::Text* text;
-//text
 
 //scroll
 	ScrollType scroll;
@@ -97,37 +102,19 @@ public:
 	std::vector<Widget>& getChilds();
 
 	void update();
-	sf::FloatRect getGlobalBounds();
+	void update(sf::Vector2f parent_size, sf::Vector2f parent_pos);			//should be private
 
-// box
-	void setBackground(sf::Texture& tex, int offset);
-	void setBackground(sf::Sprite& sprite, sf::Vector2i offset);
-	void setBorder(Border& b);
-	void setBackgroundColor(sf::Color color);
-// box
+	sf::FloatRect getGlobalBounds();
+	sf::FloatRect getLocalBounds();
+	sf::Vector2f getPosition();
+	sf::Vector2i getSize();
+
 
 //text
-	enum {
-		LINK_NONE,
-		LINK_PLAYER_HP,
-		LINK_BASE_HP,
-		LINK_TOTAL_KILLS,
-		LINK_SECONDARY_ROUNDS,
-		LINK_SECONDARY_ROUNDS_CURRENT,
-		LINK_WINDOW_RESOLUTION,
-		LINK_WINDOW_STYLE,
-		LINK_MUSIC_VOLUME,
-		LINK_SFX_VOLUME,
-		LINK_COUNT,
-	};
-
 	void setText(std::string t, sf::Font& font, unsigned int size);
 	void setText(std::string t);
 	void setText(sf::Text& t);
 	void setTextColor(sf::Color color);
-	void linkToInt(int& value);
-	void linkToStr(std::string& value);
-	void updateText();
 	void updateOrigin();
 //text
 

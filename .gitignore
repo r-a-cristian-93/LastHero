@@ -3,10 +3,11 @@ CMakeFiles/
 Makefile
 LastHero
 LastHero.exe
-LevelEditr
+LevelEditor
 LevelEditor.exe
 libcommon.dll
 libcommon.dll.a
+libcommon.so
 cmake_install.cmake
 replay.txt
 art_src/
