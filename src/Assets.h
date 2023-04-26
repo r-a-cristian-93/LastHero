@@ -66,7 +66,6 @@ private:
 	std::map<size_t, std::map<size_t, Components>> recipe;
 	std::map<size_t, Components*> all_recipes;
 	std::map<std::string, size_t> recipe_name_id = {{"", NONE}};
-	std::map<size_t, sf::Sprite*> icon_small;
 
 	std::map<size_t, sf::Font> fonts;
 	std::map<std::string, sf::Texture> textures;
@@ -74,6 +73,7 @@ private:
 	std::map<std::string, Box> boxes;
 	std::map<std::string, sf::Shader> shaders;
 	std::map<std::string, Widget> widgets;
+	std::map<size_t, Widget> entities_icons;
 	std::map<std::string, sf::Music> bg_music;
 
 	std::map<size_t, sf::SoundBuffer> sound_buffers;
@@ -123,8 +123,8 @@ public:
 	Box& getBox(std::string name);
 	sf::Texture& getTexture(std::string name);
 	sf::Sprite& getSprite(std::string name);
-	sf::Sprite& getIconSmall(size_t name_id);
 	sf::Shader& getShader(std::string name);
+	Widget& getEntityIcon(size_t name_id);
 	Widget& getWidget(std::string name);
 	sf::Music& getSound(std::string name);
 	sf::SoundBuffer& getSoundBuffer(size_t id);

@@ -64,12 +64,10 @@ sf::Sprite& Assets::getSprite(std::string name) {
 	return sprites[name];
 }
 
-sf::Sprite& Assets::getIconSmall(size_t name_id) {
-	if (icon_small.count(name_id)) {
-		return *icon_small[name_id];
-	}
+Widget& Assets::getEntityIcon(size_t name_id) {
+	if (entities_icons.count(name_id)) return entities_icons.at(name_id);
 
-	std::cout << "Entity with name_id \"" << name_id << "\" might not have a small icon.\n";
+	std::cout << "Entity icon widget for entity" << name_id << " could not be found.\n";
 	exit(0);
 }
 
@@ -564,7 +562,11 @@ void Assets::loadEntity() {
 
 			// add icon
 			if (!data_ent.icon.empty()) {
-				icon_small[data_ent.name_id] = &getSprite(data_ent.icon);
+				Widget& widget = entities_icons[data_ent.name_id];
+				WCImage* wci = new WCImage();
+				wci->setImage(getSprite(data_ent.icon));
+
+				widget.add<WCImage>(wci);
 			}
 
 			// add a reference of the recipe for ease of access;

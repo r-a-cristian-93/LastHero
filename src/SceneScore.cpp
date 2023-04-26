@@ -117,13 +117,20 @@ void SceneScore::init() {
 			}
 
 			if (c==0 && r > 0 && r < rows-2) {
-				Widget box;
-				sf::Sprite& icon = assets->getIconSmall(it_k->first);
-				sf::FloatRect rect = icon.getLocalBounds();
-				sf::Vector2i offset = {static_cast<int>(-rect.width/2), static_cast<int>(-rect.height/2)};
-				//box.setBackground(assets->getIconSmall(it_k->first), offset);
-				box.setPosAbs(pos);
-				all_table_widgets.push_back(box);
+				Widget& widget = assets->getEntityIcon(it_k->first);
+
+				if (widget.get<WCImage>()) {
+					sf::FloatRect rect = widget.get<WCImage>()->getLocalBounds();
+					std::cout << rect.width << " " << rect.height<< std::endl;
+					sf::Vector2f offset;
+
+					if (rect.width) offset.x = -rect.width/2;
+					if (rect.height) offset.y = -rect.height/2;
+
+					widget.get<WCImage>()->setPosition(pos.x + offset.x, pos.y + offset.y);
+				}
+
+				all_table_widgets.push_back(widget);
 			}
 			else {
 				Widget cell;
