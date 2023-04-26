@@ -90,8 +90,6 @@ public:
 
 
 public:
-	void setOrigin(sf::Vector2f origin);
-	void setPosition(sf::Vector2f pos);
 	void setPosRel(sf::Vector2i pos);
 	void setPosAbs(sf::Vector2i pos);
 	void setSize(sf::Vector2i s);
