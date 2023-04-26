@@ -121,7 +121,6 @@ void SceneScore::init() {
 
 				if (widget.get<WCImage>()) {
 					sf::FloatRect rect = widget.get<WCImage>()->getLocalBounds();
-					std::cout << rect.width << " " << rect.height<< std::endl;
 					sf::Vector2f offset;
 
 					if (rect.width) offset.x = -rect.width/2;
