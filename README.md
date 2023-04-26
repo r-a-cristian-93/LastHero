@@ -16,12 +16,13 @@ Throughout the map you can find diverse powerups to help you in your battle with
 
 ## How to compile on Windows
 
-Download and install mingw32, SFML and make.
+Download and install mingw32, SFML, make, and cmake
 ```
-http://gnuwin32.sourceforge.net/downlinks/make-dep-zip.php
-http://gnuwin32.sourceforge.net/downlinks/make-bin-zip.php
 https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/7.3.0/threads-posix/dwarf/i686-7.3.0-release-posix-dwarf-rt_v5-rev0.7z/download
 https://www.sfml-dev.org/files/SFML-2.5.1-windows-gcc-7.3.0-mingw-32-bit.zip
+http://gnuwin32.sourceforge.net/downlinks/make-dep-zip.php
+http://gnuwin32.sourceforge.net/downlinks/make-bin-zip.php
+https://github.com/Kitware/CMake/releases/download/v3.16.3/cmake-3.16.3-win32-x86.zip
 ```
 
 Download the source code of the game.
