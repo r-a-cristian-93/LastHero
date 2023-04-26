@@ -13,3 +13,4 @@ art_src/
 results.json
 valgrind/
 .vscode/
+build
