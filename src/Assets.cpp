@@ -334,6 +334,10 @@ void Assets::loadEntity() {
 				file >> word;
 				data_ent.sfx_die = getSoundBufferNameID(word);
 			}
+			else if (word == "spawn") {
+				file >> word;
+				data_ent.sfx_spawn = getSoundBufferNameID(word);
+			}
 			else {
 				std::cout << "Sfx tag " << word << " is not supported.\n";
 				exit(0);
@@ -536,8 +540,8 @@ void Assets::loadEntity() {
 			}
 
 			// add sfx
-			if (data_ent.sfx_hurt || data_ent.sfx_die) {
-				recipe[data_ent.tag][data_ent.name_id].add<CSfx>(new CSfx(data_ent.sfx_hurt, data_ent.sfx_die));
+			if (data_ent.sfx_hurt || data_ent.sfx_die || data_ent.sfx_spawn) {
+				recipe[data_ent.tag][data_ent.name_id].add<CSfx>(new CSfx(data_ent.sfx_hurt, data_ent.sfx_die, data_ent.sfx_spawn));
 			}
 
 			// add CBFire

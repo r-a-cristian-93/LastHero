@@ -47,6 +47,7 @@ struct EntityDataset {
 	std::vector<Fx> c_fx;
 	size_t sfx_hurt = 0;
 	size_t sfx_die = 0;
+	size_t sfx_spawn = 0;
 	CBPowerup cb_powerup;
 
 

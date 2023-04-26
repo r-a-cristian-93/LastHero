@@ -306,6 +306,12 @@ void ScenePlay::spawnEntity(size_t tag, size_t recipe_name, std::shared_ptr<Enti
 		if (e->get<CBPatrol>()) {
 			e->get<CBPatrol>()->base_pos = pos;
 		}
+
+		if (e->get<CSfx>()) {
+			if (e->get<CSfx>()->spawn) {
+				snd_mgr->playSoundUnique(e->get<CSfx>()->spawn);
+			}
+		}
 	}
 }
 
@@ -463,10 +469,16 @@ void ScenePlay::sCollisionSolve() {
 							}
 
 							if (entity->get<CSfx>()) {
-								if (entity_hp <= 0)
-									snd_mgr->playSoundUnique(entity->get<CSfx>()->die);
-								else
-									snd_mgr->playSoundUnique(entity->get<CSfx>()->hurt);
+								if (entity_hp <= 0) {
+									if (entity->get<CSfx>()->die) {
+										snd_mgr->playSoundUnique(entity->get<CSfx>()->die);
+									}
+								}
+								else {
+									if (entity->get<CSfx>()->hurt) {
+										snd_mgr->playSoundUnique(entity->get<CSfx>()->hurt);
+									}
+								}
 							}
 						}
 					}
