@@ -809,7 +809,6 @@ void Assets::loadWidget() {
 	std::string name(""), type(""), image(""), bg_tex(""), bg_tex_hover(""), box_style(""), border_hover("");
 	sf::Vector2i size, pos_rel, pos_abs;
 	sf::Vector2i spr_offset;
-	sf::Vector2f origin, position;
 	int tex_offset(0), w(0), h(0), font_size(0);
 	size_t font_id(NONE);
 	Link::Target link_target(Link::Target::NONE);
@@ -870,8 +869,6 @@ void Assets::loadWidget() {
 		}
 		else if (word == "pos_rel") file >> pos_rel.x >> pos_rel.y;
 		else if (word == "pos_abs") file >> pos_abs.x >> pos_abs.y;
-		else if (word == "origin") file >> origin.x >> origin.y;
-		else if (word == "position") file >> position.x >> position.y;
 		else if (word == "image") file >> image;
 		else if (word == "bg_tex") file >> bg_tex >> tex_offset;
 		else if (word == "bg_tex_hover") file >> bg_tex_hover >> tex_offset;
@@ -930,9 +927,6 @@ void Assets::loadWidget() {
 
 	if (!name.empty() && !type.empty()) {
 		Widget& widget = widgets[name];
-
-		widget.m_origin = origin;
-		widget.m_position = position;
 
 		if (type == "image" && !image.empty()) {
 			WCImage* wci = new WCImage();

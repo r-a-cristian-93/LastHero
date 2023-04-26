@@ -22,8 +22,6 @@ Widget::Widget()
 Widget::Widget(const Widget& w)
 	:pos_rel(w.pos_rel)
 	,pos_abs(w.pos_abs)
-	,m_origin(w.m_origin)
-	,m_position(w.m_position)
 	,size(w.size)
 	,childs(w.childs)
 	,fx(w.fx)
@@ -36,7 +34,7 @@ Widget::Widget(const Widget& w)
 	,scroll_pos(w.scroll_pos)
 	,state(w.state)
 	,on_click(w.on_click)
-	,state_colors(w.state_colors)
+	,state_colors()
 {
 	if (w.scroll_track) addScrollTrack(*w.scroll_track);
 	if (w.scroll_thumb) addScrollThumb(*w.scroll_thumb);
@@ -93,7 +91,7 @@ sf::Vector2i Widget::getSize() {
 	}
 	else {
 		return {0, 0};
-	}	
+	}
 }
 
 void Widget::setPosRel(sf::Vector2i p) {
@@ -115,7 +113,7 @@ void Widget::setPosAbs(sf::Vector2i p) {
 		}
 	}
 
-	if (get<WCBox>() != nullptr) {		
+	if (get<WCBox>() != nullptr) {
 		get<WCBox>()->setPosition(pos_abs.x, pos_abs.y);
 	}
 
@@ -199,11 +197,9 @@ void Widget::update(sf::Vector2f parent_size, sf::Vector2f parent_pos) {
 	if (get<WCImage>() != nullptr) {
 		WCImage& wci = *get<WCImage>();
 		sf::FloatRect bounds = wci.getLocalBounds();
-		wci.setOrigin(bounds.width * m_origin.x, bounds.height * m_origin.y);
-		wci.setPosition(parent_pos.x + parent_size.x * m_position.x, parent_pos.y + parent_size.y * m_position.y);
 	}
 
-	for (Widget& w : getChilds()) {		
+	for (Widget& w : getChilds()) {
 		w.update(sf::Vector2f(getSize()), getPosition());
 	}
 }

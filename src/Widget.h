@@ -53,9 +53,6 @@ public:
 		COUNT,
 	};
 
-	sf::Vector2f m_origin;		// origin relative to content, values [0 ... 1].
-	sf::Vector2f m_position;	// position relative to parent, values [0 ... 1]. A parent can be another Widget or the application window.
-
 	std::tuple<WCText*, WCBox*, WCImage*> components;
 
 	template<class C>
