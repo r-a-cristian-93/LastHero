@@ -20,10 +20,6 @@ Link::Link(const Link& link) {
     m_target = link.m_target;
 };
 
-Link* Link::clone() const {
-    return new Link(*this);
-};
-
 std::string Link::getAsString() {
 	if (std::holds_alternative<std::string*>(m_data)) {
 		return *(std::get<std::string*>(m_data));

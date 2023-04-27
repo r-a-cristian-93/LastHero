@@ -24,7 +24,6 @@ public:
     Link(Link::Target target, int* data);
     Link(Link::Target target, std::string* data);
     Link(const Link& link);
-    Link* clone() const;
 
     std::string getAsString();
 };

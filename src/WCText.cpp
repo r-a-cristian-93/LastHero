@@ -10,7 +10,7 @@ WCText::WCText(const WCText& wct)
 	,sf::Text(wct)
 {
 	if (wct.m_link != nullptr) {
-		setLink(wct.m_link->clone());
+		setLink(new Link(*wct.m_link));
 	}
 }
 
