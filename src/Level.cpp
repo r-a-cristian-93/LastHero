@@ -65,6 +65,7 @@ Level::Level(std::string _path) {
 					else if (word == "base") tag = TAG::BASE;
 					else if (word == "environment") tag = TAG::ENVIRONMENT;
 					else if (word == "powerup") tag = TAG::POWERUP;
+					else if (word == "fx") tag = TAG::FX;
 					else {
 						std::cout << "LOAD LEVEL: Tag \"" << word << "\" is not supported\n";
 						exit(0);
