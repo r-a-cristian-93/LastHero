@@ -66,19 +66,11 @@ set (SOURCE_GAME
 	src/SceneScore.cpp
 )
 
-set (SOURCE_EDITOR
-	src/LevelEditor.cpp
-	src/Editor.cpp
-	src/SceneEditor.cpp
-)
-
 add_library(common SHARED ${SOURCE_COMMON})
 target_link_libraries(common sfml-graphics sfml-audio)
 
 
 add_executable(LastHero ${SOURCE_GAME})
-add_executable(LevelEditor ${SOURCE_EDITOR})
-target_link_libraries(LevelEditor sfml-graphics sfml-audio common)
 target_link_libraries(LastHero sfml-graphics sfml-audio common)
 
 include_directories(${PROJECT_SOURCE_DIR})
