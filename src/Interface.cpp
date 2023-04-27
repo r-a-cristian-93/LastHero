@@ -23,11 +23,11 @@ void Interface::update() {
 	}
 }
 
-void Interface::setLinks(std::variant<int*, std::string*>* links) {
+void Interface::setLinks(std::variant<std::monostate, int*, std::string*>* links) {
 	setLinks(widgets, links);
 }
 
-void Interface::setLinks(WidgetVec& widgets, std::variant<int*, std::string*>* links) {
+void Interface::setLinks(WidgetVec& widgets, std::variant<std::monostate, int*, std::string*>* links) {
 	for (Widget& w : widgets) {
 		if (w.get<WCText>() != nullptr) {
 			if (w.get<WCText>()->hasLink()) {

@@ -18,7 +18,7 @@ public:
 	};
 
     Link::Target m_target;
-    std::variant<int*, std::string*> m_data;
+    std::variant<std::monostate, int*, std::string*> m_data;
 
     Link(Link::Target target);
     Link(Link::Target target, int* data);

@@ -194,7 +194,7 @@ void SceneSettings::init() {
 	selected_sfx_vol = to_string(temp_conf.sfx_volume);
 	selected_music_vol = to_string(temp_conf.music_volume);
 
-	std::variant<int*, std::string*> links[static_cast<int>(Link::Target::COUNT)];
+	std::variant<std::monostate, int*, std::string*> links[static_cast<int>(Link::Target::COUNT)];
 	links[static_cast<int>(Link::Target::WINDOW_RESOLUTION)] = &selected_res;
 	links[static_cast<int>(Link::Target::WINDOW_STYLE)] = &selected_style;
 	links[static_cast<int>(Link::Target::MUSIC_VOLUME)] = &selected_music_vol;

@@ -46,7 +46,7 @@ void ScenePlay::init() {
 	interface.add(assets->getWidget("play_ui"));
 	interface.add(assets->getWidget("blood_overlay"));
 
-	std::variant<int*, std::string*> links[static_cast<int>(Link::Target::COUNT)];
+	std::variant<std::monostate, int*, std::string*> links[static_cast<int>(Link::Target::COUNT)];
 	links[static_cast<int>(Link::Target::PLAYER_HP)] = &player->get<CStats>()->effective[CStats::HEALTH];
 	links[static_cast<int>(Link::Target::BASE_HP)] = &base->get<CStats>()->effective[CStats::HEALTH];
 	links[static_cast<int>(Link::Target::TOTAL_KILLS)] = &total_kills;

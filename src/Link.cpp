@@ -2,6 +2,7 @@
 
 Link::Link(Link::Target target)
     :m_target(target)
+	,m_data(std::monostate())
     {}
 
 Link::Link(Link::Target target, int* data)
@@ -24,16 +25,13 @@ Link* Link::clone() const {
 };
 
 std::string Link::getAsString() {
-    std::string** data_string = std::get_if<std::string*>(&m_data);
-    int** data_int = std::get_if<int*>(&m_data);
-
-    if (data_string != nullptr) {
-        return **data_string;
-    }
-    else if (data_int != nullptr) {
-        return std::to_string(**data_int);
-    }
-    else {
-        return "";
-    }
+	if (std::holds_alternative<std::string*>(m_data)) {
+		return *(std::get<std::string*>(m_data));
+	}
+	else if (std::holds_alternative<int*>(m_data)) {
+		return std::to_string(*(std::get<int*>(m_data)));
+	}
+	else {
+		return "";
+	}
 };
