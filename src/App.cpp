@@ -17,6 +17,8 @@ void App::run() {
 		PROFILE_SCOPE("MAIN_GAME_LOOP");
 
 		if (window->isOpen()) {
+			sUserInput();
+
 			screen_tex->clear();
 
 			if (current_scene) {
@@ -29,7 +31,6 @@ void App::run() {
 			window->draw(*screen_sprite, render_states);
 			window->display();
 
-			sUserInput();
 			sChangeScene();
 		}
 	}

@@ -40,10 +40,8 @@ protected:
 	void sFireWeapon();
 	void sMissleGuidance();
 	void sWidgetFx();
-	void sInterface();
 	void sGameState();
 	void sPlayFx();
-	void sPathFind();
 	void sPowerup();
 
 	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);

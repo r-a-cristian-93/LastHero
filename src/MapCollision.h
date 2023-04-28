@@ -118,7 +118,7 @@ public:
 		return hero ? COLLIDE_HERO : COLLIDE_NORMAL;
 	}
 
-	void updateColmap();
+	void update();
 
 	CollisionLayer colmap;			// numbers of occupants
 	CollisionLayer colmap_r;		// radius of hitbox

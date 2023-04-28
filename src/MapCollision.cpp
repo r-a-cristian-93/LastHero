@@ -72,7 +72,7 @@ int sgn(float f) {
 	else			return 0;
 }
 
-void MapCollision::updateColmap() {
+void MapCollision::update() {
 	update_frame--;
 	if (update_frame) {
 		return;

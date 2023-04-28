@@ -67,10 +67,12 @@ void ScenePlay::init() {
 		sCollisionSolve();
 		sStateFacing();
 		sFireWeapon();
-		sInterface();
 		sAnimation();
+
 		// focus camera on player
 		play_data.cam.pos = play_data.player->get<CTransform>()->pos;
+
+		interface.update();
 	}
 }
 
@@ -83,10 +85,6 @@ void ScenePlay::load_level(std::string path) {
 	}
 
 	play_data.ent_mgr.update();
-}
-
-void ScenePlay::sPathFind() {
-	play_data.collision_map.updateColmap();
 }
 
 void ScenePlay::drawCollisionLayer() {
@@ -179,25 +177,51 @@ void ScenePlay::update() {
 		PROFILE_SCOPE("SCENE_LOGIC");
 
 		if (!paused && game_stats->state == GameStats::State::PLAY && !isFading()) {
+			// commands from player: App::sUserInput(), calls doAction()
+
+			// commands from AI
+			sAI();
+
+			// remove dead entities, add new spawn entities
 			play_data.ent_mgr.update();
 
-			//sEnemySpawner();
-			sLifespan();
-			sPathFind();
-			sAI();
-			sPowerup();
-			//sMissleGuidance();
+			// update collision map
+			play_data.collision_map.update();
 
+			// move entities
 			sEntityPosition();
 
+			// create inter-entities collisions
 			sCollisionCheck();
+
+			// evaluate inter-entities collisions
 			sCollisionSolve();
+
+			// applies powerups
+			sPowerup();
+
+			// set widget fx based on game state
 			sWidgetFx();
+
+			// set entity state and facing
 			sStateFacing();
+
+			// handle weapon firing and spawns projectiles
 			sFireWeapon();
-			sInterface();
+
+			// updated the interface (text, fx)
+			interface.update();
+
+			// check if entities ran out of time and kill them
+			sLifespan();
+
+			// handle entity animation (set, advance)
 			sAnimation();
+
+			// spawn fx
 			sPlayFx();
+
+			// check level end conditions and set next scene
 			sGameState();
 		}
 		sView();
@@ -811,6 +835,10 @@ void ScenePlay::handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, boo
 			e->get<CBFire>()->target = e->get<CBChase>()->target;
 		}
 	}
+
+	if (e->get<CBFire>()->target) {
+		e->facing = facingOf(e->get<CBFire>()->target->get<CTransform>()->pos - e->get<CTransform>()->pos);
+	}
 }
 
 void ScenePlay::sFireWeapon() {
@@ -818,12 +846,6 @@ void ScenePlay::sFireWeapon() {
 		if (e->get<CWeapon>() && e->alive) {
 			CWeapon& comp_w = *e->get<CWeapon>();
 			size_t facing(e->facing);
-
-			if (e->get<CBFire>()) {
-				if (e->get<CBFire>()->target) {
-					facing = facingOf(e->get<CBFire>()->target->get<CTransform>()->pos - e->get<CTransform>()->pos);
-				}
-			}
 
 			sf::Vector2f pos(e->get<CTransform>()->pos + e->get<CWeapon>()->projectile_spawn[facing]);
 
@@ -1127,10 +1149,6 @@ void ScenePlay::handleWidgetFx(Widget& w) {
 			handleWidgetFx(child);
 		}
 	}
-}
-
-void ScenePlay::sInterface() {
-	interface.update();
 }
 
 void ScenePlay::sGameState() {
