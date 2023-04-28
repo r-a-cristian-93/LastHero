@@ -16,6 +16,7 @@ ScenePlay::ScenePlay(size_t t, std::string level_path)
 	,sView(play_data)
 	,sStateFacing(play_data)
 	,sEntityPosition(play_data)
+	,sLifespan(play_data)
 {}
 
 ScenePlay::~ScenePlay() {}
@@ -868,29 +869,6 @@ void ScenePlay::sFireWeapon() {
 					}
 				}
 			}
-		}
-	}
-}
-
-void ScenePlay::sLifespan() {
-	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities(TAG::PROJECTILE)) {
-		checkLifespan(e);
-	}
-
-	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities(TAG::FX)) {
-		checkLifespan(e);
-	}
-}
-
-void ScenePlay::checkLifespan(std::shared_ptr<Entity>& e) {
-	if (e->get<CLifespan>()) {
-		const int lifespan = e->get<CLifespan>()->lifespan;
-		int& remaining = e->get<CLifespan>()->remaining;
-
-		remaining--;
-
-		if (remaining <= 0) {
-			e->alive = false;
 		}
 	}
 }
