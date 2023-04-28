@@ -37,7 +37,6 @@ public:
 	bool isFading();
 	const FadeType getCurrentFade();
 
-	Scene();
 	Scene(SceneType scene_type);
 	virtual ~Scene();
 

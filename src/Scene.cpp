@@ -2,10 +2,6 @@
 #include "SharedResources.h"
 #include "ActionManager.h"
 
-Scene::Scene()
-	:Scene(GAME_SCENE::NONE)
-{}
-
 Scene::Scene(SceneType type)
 	:sDrawInterface(interface)
 	,scene_type(type)
