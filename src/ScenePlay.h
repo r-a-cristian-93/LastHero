@@ -7,22 +7,11 @@
 #include "MapCollision.h"
 #include "Level.h"
 #include "GameStats.h"
+#include "ScenePlayData.h"
 
 class ScenePlay: public Scene {
 protected:
-	EntityManager ent_mgr;
-
-	std::string level_path;
-	Level level;
-	MapCollision collision_map;
-
-	Camera cam;
-	Widget* paused_widget = nullptr;
-	int total_kills;
-	KillsMap kills_per_enemy;
-
-	std::shared_ptr<Entity> player;
-	std::shared_ptr<Entity> base;
+	ScenePlayData play_data;
 
 	void init();
 	void load_level(std::string path);

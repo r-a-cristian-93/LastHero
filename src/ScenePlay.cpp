@@ -5,20 +5,16 @@
 #include "SharedResources.h"
 #include "Profiler.h"
 
-ScenePlay::ScenePlay(std::string lp)
+ScenePlay::ScenePlay(std::string level_path)
 	:Scene(GAME_SCENE::PLAY)
-	,level_path(lp)
-	,total_kills(0)
-	,collision_map(ent_mgr)
+	,play_data(level_path)
 {
 	init();
 }
 
-ScenePlay::ScenePlay(size_t t, std::string lp)
+ScenePlay::ScenePlay(size_t t, std::string level_path)
 	:Scene(t)
-	,level_path(lp)
-	,total_kills(0)
-	,collision_map(ent_mgr)
+	,play_data(level_path)
 {}
 
 ScenePlay::~ScenePlay() {}
@@ -39,31 +35,31 @@ void ScenePlay::init() {
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
 
-	load_level(level_path);
-	collision_map.setMap(level.map_size, level.tile_size, app_conf->colmap_res, app_conf->colmap_update);
+	load_level(play_data.level_path);
+	play_data.collision_map.setMap(play_data.level.map_size, play_data.level.tile_size, app_conf->colmap_res, app_conf->colmap_update);
 
 	// setup interface
 	interface.add(assets->getWidget("play_ui"));
 	interface.add(assets->getWidget("blood_overlay"));
 
 	std::variant<std::monostate, int*, std::string*> links[static_cast<int>(Link::Target::COUNT)];
-	links[static_cast<int>(Link::Target::PLAYER_HP)] = &player->get<CStats>()->effective[CStats::HEALTH];
-	links[static_cast<int>(Link::Target::BASE_HP)] = &base->get<CStats>()->effective[CStats::HEALTH];
-	links[static_cast<int>(Link::Target::TOTAL_KILLS)] = &total_kills;
-	links[static_cast<int>(Link::Target::SECONDARY_ROUNDS)] = &player->get<CWeapon>()->s_rounds;
-	links[static_cast<int>(Link::Target::SECONDARY_ROUNDS_CURRENT)] = &player->get<CWeapon>()->s_rounds_current;
+	links[static_cast<int>(Link::Target::PLAYER_HP)] = &play_data.player->get<CStats>()->effective[CStats::HEALTH];
+	links[static_cast<int>(Link::Target::BASE_HP)] = &play_data.base->get<CStats>()->effective[CStats::HEALTH];
+	links[static_cast<int>(Link::Target::TOTAL_KILLS)] = &play_data.total_kills;
+	links[static_cast<int>(Link::Target::SECONDARY_ROUNDS)] = &play_data.player->get<CWeapon>()->s_rounds;
+	links[static_cast<int>(Link::Target::SECONDARY_ROUNDS_CURRENT)] = &play_data.player->get<CWeapon>()->s_rounds_current;
 	interface.setLinks(links);
 
-	paused_widget = &assets->getWidget("menu_paused");
+	play_data.paused_widget = &assets->getWidget("menu_paused");
 	sf::Vector2i pos;
 	pos.x = static_cast<int>(app_conf->game_w*0.5);
 	pos.y = static_cast<int>(app_conf->game_h*0.5);
-	paused_widget->setPosAbs(pos);
+	play_data.paused_widget->setPosAbs(pos);
 
 	// run this block to display level;
 	{
-		ent_mgr.update();
-		SUpdate::updatePosition(ent_mgr.getEntities(), level.map_ground.getBounds());
+		play_data.ent_mgr.update();
+		SUpdate::updatePosition(play_data.ent_mgr.getEntities(), play_data.level.map_ground.getBounds());
 		sCollisionCheck();
 		sCollisionSolve();
 		sStateFacing();
@@ -71,37 +67,37 @@ void ScenePlay::init() {
 		sInterface();
 		sAnimation();
 		// focus camera on player
-		cam.pos = player->get<CTransform>()->pos;
+		play_data.cam.pos = play_data.player->get<CTransform>()->pos;
 	}
 }
 
 void ScenePlay::load_level(std::string path) {
-	level = Level(path);
-	snd_mgr->playBgMusic(level.bg_music);
+	play_data.level = Level(path);
+	snd_mgr->playBgMusic(play_data.level.bg_music);
 
-	for (Action& a: level.actions) {
+	for (Action& a: play_data.level.actions) {
 		doAction(a);
 	}
 
-	ent_mgr.update();
+	play_data.ent_mgr.update();
 }
 
 void ScenePlay::sPathFind() {
-	collision_map.updateColmap();
+	play_data.collision_map.updateColmap();
 }
 
 void ScenePlay::drawCollisionLayer() {
-	sf::CircleShape circle(level.tile_size.x/(app_conf->colmap_res*2));
+	sf::CircleShape circle(play_data.level.tile_size.x/(app_conf->colmap_res*2));
 
 	//DRAW BLOCKING
-	if (!collision_map.colmap.empty()) {
+	if (!play_data.collision_map.colmap.empty()) {
 		circle.setFillColor(sf::Color(255, 0, 0, 50));
 
-		for (int y = 0; y < collision_map.map_size.x; y++) {
-			for (int x = 0; x < collision_map.map_size.x; x++) {
-				circle.setPosition(sf::Vector2f(x*level.tile_size.x/app_conf->colmap_res,y*level.tile_size.y/app_conf->colmap_res));
+		for (int y = 0; y < play_data.collision_map.map_size.x; y++) {
+			for (int x = 0; x < play_data.collision_map.map_size.x; x++) {
+				circle.setPosition(sf::Vector2f(x*play_data.level.tile_size.x/app_conf->colmap_res,y*play_data.level.tile_size.y/app_conf->colmap_res));
 
-				if (collision_map.colmap[x][y]) {
+				if (play_data.collision_map.colmap[x][y]) {
 					screen_tex->draw(circle);
 				}
 			}
@@ -111,7 +107,7 @@ void ScenePlay::drawCollisionLayer() {
 	//DRAW PATHS
 	circle.setFillColor(sf::Color(0, 255, 255, 80));
 
-	for (std::shared_ptr<Entity>& e: ent_mgr.getEntities()) {
+	for (std::shared_ptr<Entity>& e: play_data.ent_mgr.getEntities()) {
 		if (e->get<CBChase>()) {
 			if (!e->get<CBChase>()->path.empty()) {
 				for (sf::Vector2f p: e->get<CBChase>()->path) {
@@ -124,12 +120,12 @@ void ScenePlay::drawCollisionLayer() {
 }
 
 void ScenePlay::drawDirectionVectors() {
-	for (std::shared_ptr<Entity>& e: ent_mgr.getEntities()) {
+	for (std::shared_ptr<Entity>& e: play_data.ent_mgr.getEntities()) {
 		if (e->get<CTransform>()) {
 			if (e->get<CTransform>()->max_velocity) {
 				sf::Vector2f dir = dirOf(e->facing);
-				dir.x *= level.tile_size.x/2;
-				dir.y *= level.tile_size.x/2;
+				dir.x *= play_data.level.tile_size.x/2;
+				dir.y *= play_data.level.tile_size.x/2;
 
 				sf::Vertex line[] = {
 					sf::Vertex(e->get<CTransform>()->pos),
@@ -143,14 +139,14 @@ void ScenePlay::drawDirectionVectors() {
 
 void ScenePlay::drawGrid() {
 	sf::RectangleShape rect;
-	rect.setSize(sf::Vector2f(level.tile_size));
+	rect.setSize(sf::Vector2f(play_data.level.tile_size));
 	rect.setFillColor(sf::Color(0,0,0,0));
 	rect.setOutlineColor(sf::Color(0,0,0,50));
 	rect.setOutlineThickness(-1);
 
-	for (size_t x = 0; x < level.map_size.x; x++) {
-		for (size_t y = 0; y < level.map_size.y; y++) {
-			rect.setPosition(sf::Vector2f(x*level.tile_size.x, y*level.tile_size.y));
+	for (size_t x = 0; x < play_data.level.map_size.x; x++) {
+		for (size_t y = 0; y < play_data.level.map_size.y; y++) {
+			rect.setPosition(sf::Vector2f(x*play_data.level.tile_size.x, y*play_data.level.tile_size.y));
 			screen_tex->draw(rect);
 		}
 	}
@@ -158,7 +154,7 @@ void ScenePlay::drawGrid() {
 
 void ScenePlay::drawEntityPosition() {
 	sf::Color col(255,0,0);
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
+	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities()) {
 		if (e->get<CTransform>()) {
 			sf::Vector2f pos = e->get<CTransform>()->pos;
 			float d = 10;
@@ -180,7 +176,7 @@ void ScenePlay::update() {
 		PROFILE_SCOPE("SCENE_LOGIC");
 
 		if (!paused && game_stats->state == GameStats::State::PLAY && !isFading()) {
-			ent_mgr.update();
+			play_data.ent_mgr.update();
 
 			//sEnemySpawner();
 			sLevelUp();
@@ -190,7 +186,7 @@ void ScenePlay::update() {
 			sPowerup();
 			//sMissleGuidance();
 
-			SUpdate::updatePosition(ent_mgr.getEntities(), level.map_ground.getBounds());
+			SUpdate::updatePosition(play_data.ent_mgr.getEntities(),play_data.level.map_ground.getBounds());
 
 			sCollisionCheck();
 			sCollisionSolve();
@@ -207,12 +203,12 @@ void ScenePlay::update() {
 
 	{
 		PROFILE_SCOPE("sDrawBg");
-		screen_tex->draw(level.map_ground);
+		screen_tex->draw(play_data.level.map_ground);
 	}
 
 	{
 		PROFILE_SCOPE("sDrawEntities");
-		SDraw::drawEntities(&*screen_tex, ent_mgr.getEntities());
+		SDraw::drawEntities(&*screen_tex, play_data.ent_mgr.getEntities());
 	}
 
 #ifdef DEBUG_GRID
@@ -252,7 +248,7 @@ void ScenePlay::spawnEnemy() {
 	// deprecated
 	int player_radius = 50;
 
-	std::shared_ptr<Entity> e = ent_mgr.add(TAG::ENEMY);
+	std::shared_ptr<Entity> e = play_data.ent_mgr.add(TAG::ENEMY);
 	// deprecated
 	int radius = 50;
 
@@ -261,7 +257,7 @@ void ScenePlay::spawnEnemy() {
 		pos.y = rand() % static_cast<int>(app_conf->modes[app_conf->current_mode_id].height - radius*2) + radius;
 
 		float square_min_dist = (player_radius*10 + radius) * (player_radius*10 + radius);
-		float square_current_dist = squareDistance(pos, player->get<CTransform>()->pos);
+		float square_current_dist = squareDistance(pos, play_data.player->get<CTransform>()->pos);
 
 		if (square_current_dist > square_min_dist) {
 			position_is_valid = true;
@@ -285,7 +281,7 @@ void ScenePlay::spawnEntity(size_t tag, size_t recipe_name, std::shared_ptr<Enti
 
 	sf::Vector2f dir = dirOf(facing);
 
-	std::shared_ptr<Entity> e = ent_mgr.add(tag, recipe_name);
+	std::shared_ptr<Entity> e = play_data.ent_mgr.add(tag, recipe_name);
 
 	if (e) {
 		if (state == Entity::STATE_SPAWN) e->blocked = true;
@@ -375,7 +371,7 @@ bool ScenePlay::checkCollision(const std::shared_ptr<Entity>& a, const std::shar
 void ScenePlay::sCollisionCheck() {
 	PROFILE_FUNCTION();
 
-	EntityVec& entities = ent_mgr.getEntities();
+	EntityVec& entities = play_data.ent_mgr.getEntities();
 
 	// clear colliders
 	for (size_t i=0; i<entities.size(); i++) {
@@ -396,7 +392,7 @@ void ScenePlay::sCollisionCheck() {
 void ScenePlay::sCollisionSolve() {
 	PROFILE_FUNCTION();
 
-	for (std::shared_ptr<Entity>& entity : ent_mgr.getEntities()) {
+	for (std::shared_ptr<Entity>& entity : play_data.ent_mgr.getEntities()) {
 
 		// if it's not a projectile and has CCollision
 		if (entity->tag != TAG::PROJECTILE &&
@@ -456,9 +452,9 @@ void ScenePlay::sCollisionSolve() {
 								entity->alive = false;
 
 								if (colliders[i]->owner) {
-									if (colliders[i]->owner == player && entity->tag == TAG::ENEMY) {
-										kills_per_enemy[entity->name]++;
-										total_kills++;
+									if (colliders[i]->owner == play_data.player && entity->tag == TAG::ENEMY) {
+										play_data.kills_per_enemy[entity->name]++;
+										play_data.total_kills++;
 									}
 								}
 							}
@@ -532,7 +528,7 @@ void ScenePlay::sCollisionSolve() {
 }
 
 void ScenePlay::sPlayFx() {
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(TAG::PROJECTILE)) {
+	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities(TAG::PROJECTILE)) {
 		 if (e->get<CAnimation>() && e->get<CFx>()) {
 			 for (Fx fx : e->get<CFx>()->fx) {
 				 switch (fx.trigger) {
@@ -549,7 +545,7 @@ void ScenePlay::sPlayFx() {
 
 
 void ScenePlay::sStateFacing() {
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
+	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities()) {
 
 		// update facing direction;
 		if (!e->blocked) {
@@ -617,7 +613,7 @@ void ScenePlay::sStateFacing() {
 
 void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
 	size_t recipe = assets->getRecipeNameID("glowing_bullet_explosion");
-	std::shared_ptr<Entity> e = ent_mgr.add(TAG::FX, recipe);
+	std::shared_ptr<Entity> e = play_data.ent_mgr.add(TAG::FX, recipe);
 
 	e->add<CTransform>(new CTransform(pos, 0));
 
@@ -626,7 +622,7 @@ void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
 }
 
 void ScenePlay::sAI() {
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
+	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities()) {
 		bool has_target = false;
 
 		if (e->get<CBChase>()) {
@@ -648,7 +644,7 @@ void ScenePlay::sAI() {
 				sf::Vector2f end = t->get<CTransform>()->pos;
 
 				std::vector<sf::Vector2f>& path = e->get<CBChase>()->path;
-				bool has_path = collision_map.computePath(start, end, path, MapCollision::MOVE_NORMAL, 0);
+				bool has_path = play_data.collision_map.computePath(start, end, path, MapCollision::MOVE_NORMAL, 0);
 
 				// move twards target if it's not too close;
 				size_t range = 0;
@@ -748,14 +744,14 @@ void ScenePlay::sAI() {
 }
 
 void ScenePlay::sPowerup() {
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(TAG::POWERUP)) {
+	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities(TAG::POWERUP)) {
 		if (e->get<CBPowerup>()) {
 			CBPowerup& cb_powerup = *e->get<CBPowerup>();
 			bool cond_met = false;
 
 			switch (cb_powerup.cond.trigger) {
 				case TR::PLAYER_NEARBY:
-					if (checkCollision(e, player)) {
+					if (checkCollision(e, play_data.player)) {
 						cond_met = true;
 					}
 				break;
@@ -765,8 +761,8 @@ void ScenePlay::sPowerup() {
 				switch (cb_powerup.powerup) {
 					case CBPowerup::PLAYER_HP:
 					{
-						const int& initial_hp = player->get<CStats>()->initial[CStats::HEALTH];
-						int& effective_hp = player->get<CStats>()->effective[CStats::HEALTH];
+						const int& initial_hp = play_data.player->get<CStats>()->initial[CStats::HEALTH];
+						int& effective_hp = play_data.player->get<CStats>()->effective[CStats::HEALTH];
 						int hp_value = cb_powerup.percent * initial_hp / 100;
 
 						effective_hp += hp_value;
@@ -775,8 +771,8 @@ void ScenePlay::sPowerup() {
 					break;
 					case CBPowerup::BASE_HP:
 					{
-						const int& initial_hp = base->get<CStats>()->initial[CStats::HEALTH];
-						int& effective_hp = base->get<CStats>()->effective[CStats::HEALTH];
+						const int& initial_hp = play_data.base->get<CStats>()->initial[CStats::HEALTH];
+						int& effective_hp = play_data.base->get<CStats>()->effective[CStats::HEALTH];
 						int hp_value = cb_powerup.percent * initial_hp / 100;
 
 						effective_hp += hp_value;
@@ -784,8 +780,8 @@ void ScenePlay::sPowerup() {
 					}
 					break;
 					case CBPowerup::WEAPON_ROUNDS:
-						const int& s_rounds = player->get<CWeapon>()->s_rounds;
-						int& s_rounds_current = player->get<CWeapon>()->s_rounds_current;
+						const int& s_rounds = play_data.player->get<CWeapon>()->s_rounds;
+						int& s_rounds_current = play_data.player->get<CWeapon>()->s_rounds_current;
 						int rounds = cb_powerup.percent * s_rounds / 100;
 
 						s_rounds_current += rounds;
@@ -804,12 +800,12 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 	switch (bc.trigger) {
 		case TR::PLAYER_NEARBY:
 		{
-			if (checkCollision(e, player, bc.data_start)) {
-				e->get<CBChase>()->target = player;
+			if (checkCollision(e, play_data.player, bc.data_start)) {
+				e->get<CBChase>()->target = play_data.player;
 			}
 			// lose agro if target got too far
-			else if (!checkCollision(e, player, bc.data_stop)) {
-				if (e->get<CBChase>()->target = player) {
+			else if (!checkCollision(e, play_data.player, bc.data_stop)) {
+				if (e->get<CBChase>()->target = play_data.player) {
 					e->get<CBChase>()->target = nullptr;
 					e->get<CBChase>()->path.clear();
 				}
@@ -817,32 +813,32 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 		}
 		break;
 		case TR::BASE_NEARBY:
-			if (checkCollision(e, base, bc.data_start)) {
-				e->get<CBChase>()->target = base;
+			if (checkCollision(e, play_data.base, bc.data_start)) {
+				e->get<CBChase>()->target = play_data.base;
 			}
 			// lose agro if target got too far
-			else if (!checkCollision(e, base, bc.data_stop)) {
-				if (e->get<CBChase>()->target == base) {
+			else if (!checkCollision(e, play_data.base, bc.data_stop)) {
+				if (e->get<CBChase>()->target == play_data.base) {
 					e->get<CBChase>()->target = nullptr;
 					e->get<CBChase>()->path.clear();
 				}
 			}
 		break;
 		case TR::BASE_NOT_PROTECTED:
-			if (!checkCollision(player, base, bc.data_start)) {
-				e->get<CBChase>()->target = base;
+			if (!checkCollision(play_data.player, play_data.base, bc.data_start)) {
+				e->get<CBChase>()->target = play_data.base;
 			}
 			// lose agro if target got too far
-			else if (checkCollision(player, base, bc.data_stop)) {
-				if (e->get<CBChase>()->target == base) {
+			else if (checkCollision(play_data.player, play_data.base, bc.data_stop)) {
+				if (e->get<CBChase>()->target == play_data.base) {
 					e->get<CBChase>()->target = nullptr;
 					e->get<CBChase>()->path.clear();
 				}
 			}
 		break;
 		case TR::BASE_LOW_HP:
-			if (base->get<CStats>()->effective[CStats::HEALTH] < base->get<CStats>()->initial[CStats::HEALTH] * bc.data_start / 100) {
-				e->get<CBChase>()->target = base;
+			if (play_data.base->get<CStats>()->effective[CStats::HEALTH] < play_data.base->get<CStats>()->initial[CStats::HEALTH] * bc.data_start / 100) {
+				e->get<CBChase>()->target = play_data.base;
 			}
 		break;
 	}
@@ -863,15 +859,15 @@ void ScenePlay::handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, boo
 			else fire_weapon = false;
 		break;
 		case TR::PLAYER_NEARBY:
-			if (checkCollision(e, player, bc.data_start)) {
+			if (checkCollision(e, play_data.player, bc.data_start)) {
 				fire_weapon = true;
-				e->get<CBFire>()->target = player;
+				e->get<CBFire>()->target = play_data.player;
 			}
 		break;
 		case TR::BASE_NEARBY:
-			if (checkCollision(e, base, bc.data_start)) {
+			if (checkCollision(e, play_data.base, bc.data_start)) {
 				fire_weapon = true;
-				e->get<CBFire>()->target = base;
+				e->get<CBFire>()->target = play_data.base;
 			}
 		break;
 	}
@@ -884,7 +880,7 @@ void ScenePlay::handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, boo
 }
 
 void ScenePlay::sFireWeapon() {
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
+	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities()) {
 		if (e->get<CWeapon>() && e->alive) {
 			CWeapon& comp_w = *e->get<CWeapon>();
 			size_t facing(e->facing);
@@ -944,11 +940,11 @@ void ScenePlay::sFireWeapon() {
 }
 
 void ScenePlay::sLifespan() {
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(TAG::PROJECTILE)) {
+	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities(TAG::PROJECTILE)) {
 		checkLifespan(e);
 	}
 
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities(TAG::FX)) {
+	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities(TAG::FX)) {
 		checkLifespan(e);
 	}
 }
@@ -973,10 +969,10 @@ void ScenePlay::killEntity(std::shared_ptr<Entity>& entity) {
 void ScenePlay::spawnMissle() {
 	sf::Vector2f mouse_pos = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
 
-	const sf::Vector2f pos(player->get<CTransform>()->pos);
+	const sf::Vector2f pos(play_data.player->get<CTransform>()->pos);
 	const sf::Vector2f dir = mouse_pos - pos;
 
-	std::shared_ptr<Entity> missle = ent_mgr.add(TAG::MISSLE);
+	std::shared_ptr<Entity> missle = play_data.ent_mgr.add(TAG::MISSLE);
 
 	missle->get<CTransform>()->pos = pos;
 	missle->get<CTransform>()->dir = dir;
@@ -988,7 +984,7 @@ std::shared_ptr<Entity> ScenePlay::findTarget(const std::shared_ptr<Entity>& mis
 	sf::Vector2f dir_missle(missle->get<CTransform>()->dir);
 	sf::Vector2f dir_enemy;
 
-	for (std::shared_ptr<Entity>& enemy : ent_mgr.getEntities(TAG::ENEMY)) {
+	for (std::shared_ptr<Entity>& enemy : play_data.ent_mgr.getEntities(TAG::ENEMY)) {
 		dir_enemy = enemy->get<CTransform>()->pos - missle->get<CTransform>()->pos;
 
 		if (angle(dir_missle, dir_enemy) < 30) {
@@ -1017,7 +1013,7 @@ std::shared_ptr<Entity> ScenePlay::findTarget(const std::shared_ptr<Entity>& mis
 }
 
 void ScenePlay::sMissleGuidance() {
-	for (std::shared_ptr<Entity>& missle : ent_mgr.getEntities(TAG::MISSLE)) {
+	for (std::shared_ptr<Entity>& missle : play_data.ent_mgr.getEntities(TAG::MISSLE)) {
 
 		std::shared_ptr<Entity> new_target = findTarget(missle);
 		std::shared_ptr<Entity> prev_target = nullptr;
@@ -1136,7 +1132,7 @@ void ScenePlay::doAction(const Action& a) {
 			if (paused) {
 				snd_mgr->pauseBgMusic();
 				snd_mgr->playSound("menu_pause");
-				interface.add(*paused_widget);
+				interface.add(*play_data.paused_widget);
 			}
 			else {
 				snd_mgr->playSound("menu_unpause");
@@ -1147,22 +1143,22 @@ void ScenePlay::doAction(const Action& a) {
 		else if (!paused) {
 			switch (*a.code) {
 				case Action::MOVE_UP:
-					player->get<CInput>()->up = true;
+					play_data.player->get<CInput>()->up = true;
 				break;
 				case Action::MOVE_LEFT:
-					player->get<CInput>()->left = true;
+					play_data.player->get<CInput>()->left = true;
 				break;
 				case Action::MOVE_DOWN:
-					player->get<CInput>()->down = true;
+					play_data.player->get<CInput>()->down = true;
 				break;
 				case Action::MOVE_RIGHT:
-					player->get<CInput>()->right = true;
+					play_data.player->get<CInput>()->right = true;
 				break;
 				case Action::FIRE_PRIMARY:
-					player->get<CInput>()->fire_primary = true;
+					play_data.player->get<CInput>()->fire_primary = true;
 				break;
 				case Action::FIRE_SECONDARY:
-					player->get<CInput>()->fire_secondary = true;
+					play_data.player->get<CInput>()->fire_secondary = true;
 				break;
 				case Action::CHANGE_SCENE_MENU:
 					setFade(FADE::OUT, GAME_SCENE::MENU);
@@ -1172,13 +1168,13 @@ void ScenePlay::doAction(const Action& a) {
 				break;
 				case Action::SPAWN_PLAYER:
 					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
-					ent_mgr.update();
-					player = ent_mgr.getEntities(TAG::PLAYER)[0];
+					play_data.ent_mgr.update();
+					play_data.player = play_data.ent_mgr.getEntities(TAG::PLAYER)[0];
 				break;
 				case Action::SPAWN_BASE:
 					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
-					ent_mgr.update();
-					base = ent_mgr.getEntities(TAG::BASE)[0];
+					play_data.ent_mgr.update();
+					play_data.base = play_data.ent_mgr.getEntities(TAG::BASE)[0];
 				default:
 				break;
 			}
@@ -1187,16 +1183,16 @@ void ScenePlay::doAction(const Action& a) {
 	if (*a.type == Action::TYPE_END) {
 		switch (*a.code) {
 			case Action::MOVE_UP:
-				player->get<CInput>()->up = false;
+				play_data.player->get<CInput>()->up = false;
 			break;
 			case Action::MOVE_LEFT:
-				player->get<CInput>()->left = false;
+				play_data.player->get<CInput>()->left = false;
 			break;
 			case Action::MOVE_DOWN:
-				player->get<CInput>()->down = false;
+				play_data.player->get<CInput>()->down = false;
 			break;
 			case Action::MOVE_RIGHT:
-				player->get<CInput>()->right = false;
+				play_data.player->get<CInput>()->right = false;
 			break;
 			default:
 			break;
@@ -1218,7 +1214,7 @@ void ScenePlay::sWidgetFx() {
 
 void ScenePlay::handleWidgetFx(Widget& w) {
 	for (WidgetFx& wfx: w.fx) {
-		if (wfx.cond.trigger == TR::PLAYER_HURT && player->hit) {
+		if (wfx.cond.trigger == TR::PLAYER_HURT && play_data.player->hit) {
 			w.current_fx = &wfx;
 		}
 	}
@@ -1236,7 +1232,7 @@ void ScenePlay::sInterface() {
 }
 
 void ScenePlay::sAnimation() {
-	for (std::shared_ptr<Entity>& e : ent_mgr.getEntities()) {
+	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities()) {
 		if (e->get<CAnimation>() && e->facing != 0) {
 
 			const size_t state = e->state;
@@ -1271,18 +1267,18 @@ void ScenePlay::sAnimation() {
 
 void ScenePlay::sView() {
 	//update camera position
-	cam.target = player->get<CTransform>()->pos;
-	float square_delta = squareDistance(cam.pos, cam.target);
+	play_data.cam.target = play_data.player->get<CTransform>()->pos;
+	float square_delta = squareDistance(play_data.cam.pos, play_data.cam.target);
 
 	if (square_delta > app_conf->cam_treshold) {
-		cam.pos += ((cam.target - cam.pos) / app_conf->cam_speed);
+		play_data.cam.pos += ((play_data.cam.target - play_data.cam.pos) / app_conf->cam_speed);
 	}
 
 	//update view position
 	int w = app_conf->game_w;
 	int h = app_conf->game_h;
-	sf::FloatRect world = level.map_ground.getBounds();
-	sf::FloatRect rect(cam.pos.x-w/2, cam.pos.y-h/2, w, h);
+	sf::FloatRect world = play_data.level.map_ground.getBounds();
+	sf::FloatRect rect(play_data.cam.pos.x-w/2, play_data.cam.pos.y-h/2, w, h);
 
 	//fix weird lines between map tiles when moving
 	rect.left = round(rect.left);
@@ -1297,18 +1293,18 @@ void ScenePlay::sView() {
 }
 
 void ScenePlay::sGameState() {
-	if (!player->alive && player->get<CAnimation>()->active_anim->hasEnded() ||
-		!base->alive && base->get<CAnimation>()->active_anim->hasEnded())
+	if (!play_data.player->alive && play_data.player->get<CAnimation>()->active_anim->hasEnded() ||
+		!play_data.base->alive && play_data.base->get<CAnimation>()->active_anim->hasEnded())
 	{
 		game_stats->state = GameStats::State::LOSE;
-		game_stats->addKills(kills_per_enemy);
+		game_stats->addKills(play_data.kills_per_enemy);
 		game_stats->next_stage = 0;
 		setFade(FADE::OUT, GAME_SCENE::OVER);
 	}
 
-	if (ent_mgr.getEntities(TAG::ENEMY).empty()) {
+	if (play_data.ent_mgr.getEntities(TAG::ENEMY).empty()) {
 		game_stats->state = GameStats::State::WIN;
-		game_stats->addKills(kills_per_enemy);
+		game_stats->addKills(play_data.kills_per_enemy);
 		if (game_stats->stageNext()) {
 			setFade(FADE::OUT, GAME_SCENE::SCORE);
 		}
@@ -1319,7 +1315,7 @@ void ScenePlay::sGameState() {
 	}
 #ifdef DEBUG_ENEMIES_LEFT
 	else {
-		std::cout << "enemies left: " << ent_mgr.getEntities(TAG::ENEMY).size() << std::endl;
+		std::cout << "enemies left: " << play_data.ent_mgr.getEntities(TAG::ENEMY).size() << std::endl;
 	}
 #endif
 }
