@@ -9,11 +9,13 @@
 #include "GameStats.h"
 #include "ScenePlayData.h"
 #include "SystemView.h"
+#include "SystemStateFacing.h"
 
 class ScenePlay: public Scene {
 protected:
 	ScenePlayData play_data;
 	SystemView sView;
+	SystemStateFacing sStateFacing;
 
 	void init();
 	void load_level(std::string path);
@@ -30,7 +32,6 @@ protected:
 	void sCollisionSolve();
 	void sAI();
 	void sFireWeapon();
-	void sStateFacing();
 	void sLifespan();
 	void sMissleGuidance();
 	void sPlayback();

@@ -1,4 +1,4 @@
-#ifndef SYSMTE_H
+#ifndef SYSTEM_H
 #define SYSTEM_H
 
 #include "ScenePlayData.h"
