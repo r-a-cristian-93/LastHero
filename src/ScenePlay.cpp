@@ -181,7 +181,6 @@ void ScenePlay::update() {
 			play_data.ent_mgr.update();
 
 			//sEnemySpawner();
-			sLevelUp();
 			sLifespan();
 			sPathFind();
 			sAI();
@@ -873,10 +872,6 @@ void ScenePlay::sFireWeapon() {
 	}
 }
 
-void ScenePlay::killEntity(std::shared_ptr<Entity>& entity) {
-
-}
-
 void ScenePlay::spawnMissle() {
 	sf::Vector2f mouse_pos = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
 
@@ -1109,10 +1104,6 @@ void ScenePlay::doAction(const Action& a) {
 			break;
 		}
 	}
-}
-
-void ScenePlay::sLevelUp() {
-
 }
 
 void ScenePlay::sWidgetFx() {

@@ -30,7 +30,6 @@ protected:
 	void spawnEntity(size_t tag, size_t recipe_name, std::shared_ptr<Entity> owner, sf::Vector2f& pos, size_t state, size_t facing);
 	void spawnMissle();
 	void spawnExplosion(sf::Vector2f& pos);
-	void killEntity(std::shared_ptr<Entity>& entity);
 
 	void sEnemySpawner();
 	void sCollisionCheck();
@@ -38,8 +37,6 @@ protected:
 	void sAI();
 	void sFireWeapon();
 	void sMissleGuidance();
-	void sPlayback();
-	void sLevelUp();
 	void sWidgetFx();
 	void sInterface();
 	void sAnimation();
@@ -48,7 +45,6 @@ protected:
 	void sPathFind();
 	void sPowerup();
 
-	void checkLifespan(std::shared_ptr<Entity>& e);
 	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);
 
 	float angle(const sf::Vector2f a, const sf::Vector2f b);
@@ -73,7 +69,6 @@ public:
 	void update() override;
 	void doAction(const Action& a) override;
 
-	ScenePlay();
 	ScenePlay(std::string lp);
 	ScenePlay(size_t t, std::string lp);
 	~ScenePlay();
