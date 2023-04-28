@@ -5,13 +5,14 @@
 #include "System.h"
 
 class SystemEntityPosition: public System {
+private:
+	const sf::FloatRect& limits = play_data.level.map_ground.getBounds();
+	const EntityVec& entities = play_data.ent_mgr.getEntities();
+
 public:
 	using System::System;
 
 	void operator() () {
-		const sf::FloatRect& limits = play_data.level.map_ground.getBounds();
-		const EntityVec& entities = play_data.ent_mgr.getEntities();
-
 		for(const std::shared_ptr<Entity>& e:entities) {
 			if (e->get<CTransform>() && e->alive && !e->blocked) {
 				sf::Vector2f& prev_dir = e->get<CTransform>()->prev_dir;
