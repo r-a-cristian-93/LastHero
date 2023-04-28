@@ -10,6 +10,8 @@
 
 class ScenePlay: public Scene {
 protected:
+	EntityManager ent_mgr;
+
 	std::string level_path;
 	Level level;
 	MapCollision collision_map;

@@ -9,8 +9,6 @@ typedef size_t SceneType;
 
 class Scene {
 protected:
-	EntityManager ent_mgr;
-
 	int frame_current;
 	bool paused, has_ended;
 	bool skip_key_frames = false;
