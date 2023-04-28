@@ -18,7 +18,7 @@ protected:
 	void init();
 
 public:
-	SceneType scene_type = GAME_SCENE::NONE;
+	SceneType scene_type;
 	Interface interface;
 	sf::View gui_view;
 

@@ -17,7 +17,7 @@ ScenePlay::ScenePlay(size_t t, std::string level_path)
 	,sEntityPosition(play_data)
 	,sLifespan(play_data)
 	,sAnimation(play_data)
-	,sDrawEntities(play_data, &*screen_tex)
+	,sDrawEntities(play_data)
 {}
 
 ScenePlay::~ScenePlay() {}

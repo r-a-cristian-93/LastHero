@@ -3,16 +3,15 @@
 
 #include "System.h"
 #include "Interface.h"
+#include "SharedResources.h"
 
 class SystemDrawInterface: public System {
 private:
 	Interface& interface;
-	sf::RenderTarget* screen_tex;
 
 public:
-	SystemDrawInterface(Interface& _interface, sf::RenderTarget* _screen_tex)
+	SystemDrawInterface(Interface& _interface)
 		:interface(_interface)
-		,screen_tex(_screen_tex)
 	{}
 
 	void operator() () {

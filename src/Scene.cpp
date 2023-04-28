@@ -3,11 +3,11 @@
 #include "ActionManager.h"
 
 Scene::Scene()
-	:sDrawInterface(interface, &*screen_tex)
+	:Scene(GAME_SCENE::NONE)
 {}
 
 Scene::Scene(SceneType type)
-	:sDrawInterface(interface, &*screen_tex)
+	:sDrawInterface(interface)
 	,scene_type(type)
 	,frame_current(0)
 	,paused(false)
