@@ -8,10 +8,12 @@
 #include "Level.h"
 #include "GameStats.h"
 #include "ScenePlayData.h"
+#include "SystemView.h"
 
 class ScenePlay: public Scene {
 protected:
 	ScenePlayData play_data;
+	SystemView sView;
 
 	void init();
 	void load_level(std::string path);
@@ -36,7 +38,6 @@ protected:
 	void sWidgetFx();
 	void sInterface();
 	void sAnimation();
-	void sView();
 	void sGameState();
 	void sPlayFx();
 	void sPathFind();
