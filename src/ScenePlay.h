@@ -2,7 +2,6 @@
 #define SCENE_PLAY
 
 #include "Scene.h"
-#include "ParticlesEmitter.h"
 #include "Tilemap.h"
 #include "Enums.h"
 #include "MapCollision.h"
@@ -11,8 +10,6 @@
 
 class ScenePlay: public Scene {
 protected:
-	ParticlesEmitter glitter;
-
 	std::string level_path;
 	Level level;
 	MapCollision collision_map;

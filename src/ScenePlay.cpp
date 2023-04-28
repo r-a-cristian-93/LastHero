@@ -231,11 +231,6 @@ void ScenePlay::update() {
 	drawEntityPosition();
 #endif
 
-	if (glitter.m_lifetime >=0) {
-		glitter.update();
-		screen_tex->draw(glitter);
-	}
-
 	//change view in order to keep the interface relative to window
 	{
 		PROFILE_SCOPE("sDrawInterface");
