@@ -12,6 +12,7 @@
 #include "SystemStateFacing.h"
 #include "SystemEntityPosition.h"
 #include "SystemLifespan.h"
+#include "SystemAnimation.h"
 
 
 class ScenePlay: public Scene {
@@ -21,6 +22,7 @@ protected:
 	SystemStateFacing sStateFacing;
 	SystemEntityPosition sEntityPosition;
 	SystemLifespan sLifespan;
+	SystemAnimation sAnimation;
 
 	void init();
 	void load_level(std::string path);
@@ -39,7 +41,6 @@ protected:
 	void sMissleGuidance();
 	void sWidgetFx();
 	void sInterface();
-	void sAnimation();
 	void sGameState();
 	void sPlayFx();
 	void sPathFind();
