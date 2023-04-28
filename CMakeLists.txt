@@ -28,7 +28,6 @@ set(SOURCE_COMMON
 	src/CBPatrol.cpp
 	src/CBPowerup.cpp
 	src/Entity.cpp
-	src/SUpdate.cpp
 	src/SDraw.cpp
 	src/EntityManager.cpp
 	src/Action.cpp

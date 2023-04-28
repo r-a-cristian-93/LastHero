@@ -1,6 +1,5 @@
 #include "SceneMainMenu.h"
 #include <cmath>
-#include "SUpdate.h"
 #include "SDraw.h"
 
 SceneMainMenu::SceneMainMenu()

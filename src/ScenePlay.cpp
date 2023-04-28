@@ -1,6 +1,5 @@
 #include "ScenePlay.h"
 #include <cmath>
-#include "SUpdate.h"
 #include "SDraw.h"
 #include "SharedResources.h"
 #include "Profiler.h"
@@ -16,6 +15,7 @@ ScenePlay::ScenePlay(size_t t, std::string level_path)
 	,play_data(level_path)
 	,sView(play_data)
 	,sStateFacing(play_data)
+	,sEntityPosition(play_data)
 {}
 
 ScenePlay::~ScenePlay() {}
@@ -60,7 +60,7 @@ void ScenePlay::init() {
 	// run this block to display level;
 	{
 		play_data.ent_mgr.update();
-		SUpdate::updatePosition(play_data.ent_mgr.getEntities(), play_data.level.map_ground.getBounds());
+		sEntityPosition();
 		sCollisionCheck();
 		sCollisionSolve();
 		sStateFacing();
@@ -187,7 +187,7 @@ void ScenePlay::update() {
 			sPowerup();
 			//sMissleGuidance();
 
-			SUpdate::updatePosition(play_data.ent_mgr.getEntities(),play_data.level.map_ground.getBounds());
+			sEntityPosition();
 
 			sCollisionCheck();
 			sCollisionSolve();

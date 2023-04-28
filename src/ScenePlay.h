@@ -10,12 +10,15 @@
 #include "ScenePlayData.h"
 #include "SystemView.h"
 #include "SystemStateFacing.h"
+#include "SystemEntityPosition.h"
+
 
 class ScenePlay: public Scene {
 protected:
 	ScenePlayData play_data;
 	SystemView sView;
 	SystemStateFacing sStateFacing;
+	SystemEntityPosition sEntityPosition;
 
 	void init();
 	void load_level(std::string path);

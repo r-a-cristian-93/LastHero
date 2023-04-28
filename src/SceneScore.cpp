@@ -1,6 +1,5 @@
 #include "SharedResources.h"
 #include <cmath>
-#include "SUpdate.h"
 #include "SDraw.h"
 #include "SceneScore.h"
 

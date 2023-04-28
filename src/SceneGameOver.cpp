@@ -1,6 +1,5 @@
 #include "SceneGameOver.h"
 #include <cmath>
-#include "SUpdate.h"
 #include "SDraw.h"
 
 SceneGameOver::SceneGameOver()
