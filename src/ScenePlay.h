@@ -13,6 +13,7 @@
 #include "SystemEntityPosition.h"
 #include "SystemLifespan.h"
 #include "SystemAnimation.h"
+#include "SystemDrawEntities.h"
 
 
 class ScenePlay: public Scene {
@@ -23,6 +24,7 @@ protected:
 	SystemEntityPosition sEntityPosition;
 	SystemLifespan sLifespan;
 	SystemAnimation sAnimation;
+	SystemDrawEntities sDrawEntities;
 
 	void init();
 	void load_level(std::string path);

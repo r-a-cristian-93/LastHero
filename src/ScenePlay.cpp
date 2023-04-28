@@ -18,6 +18,7 @@ ScenePlay::ScenePlay(size_t t, std::string level_path)
 	,sEntityPosition(play_data)
 	,sLifespan(play_data)
 	,sAnimation(play_data)
+	,sDrawEntities(play_data, &*screen_tex)
 {}
 
 ScenePlay::~ScenePlay() {}
@@ -234,7 +235,7 @@ void ScenePlay::update() {
 
 	{
 		PROFILE_SCOPE("sDrawEntities");
-		SDraw::drawEntities(&*screen_tex, play_data.ent_mgr.getEntities());
+		sDrawEntities();
 	}
 
 #ifdef DEBUG_GRID
