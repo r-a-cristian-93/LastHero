@@ -80,7 +80,7 @@ public:
 										dir.y *= -1.0f;
 										vel.y *= -1.0f;
 
-										if (e->tag == TAG::MISSLE) {
+										if (e->tag == TAG::PROJECTILE) {
 											e->alive = false;
 										}
 									}
