@@ -3,12 +3,14 @@
 
 #include "EntityManager.h"
 #include "Interface.h"
+#include "SystemDrawInterface.h"
 
 typedef size_t FadeType;
 typedef size_t SceneType;
 
 class Scene {
 protected:
+	SystemDrawInterface sDrawInterface;
 	int frame_current;
 	bool paused, has_ended;
 	bool skip_key_frames = false;

@@ -1,6 +1,5 @@
 #include "ScenePlay.h"
 #include <cmath>
-#include "SDraw.h"
 #include "SharedResources.h"
 #include "Profiler.h"
 
@@ -258,7 +257,7 @@ void ScenePlay::update() {
 	{
 		PROFILE_SCOPE("sDrawInterface");
 		screen_tex->setView(gui_view);
-		SDraw::drawInterface(&*screen_tex, interface.getWidgets());
+		sDrawInterface();
 		screen_tex->setView(*game_view);
 	}
 

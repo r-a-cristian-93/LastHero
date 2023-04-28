@@ -1,6 +1,5 @@
 #include "SceneGameOver.h"
 #include <cmath>
-#include "SDraw.h"
 
 SceneGameOver::SceneGameOver()
 	:Scene(GAME_SCENE::OVER)
@@ -52,7 +51,7 @@ void SceneGameOver::init() {
 }
 
 void SceneGameOver::update() {
-	SDraw::drawInterface(&*screen_tex, interface.getWidgets());
+	sDrawInterface();
 
 	if ((frame_current == 240 || skip_key_frames) && getCurrentFade() != FADE::OUT) {
 		setFade(FADE::OUT, GAME_SCENE::SCORE);

@@ -1,6 +1,5 @@
 #include "SceneMainMenu.h"
 #include <cmath>
-#include "SDraw.h"
 
 SceneMainMenu::SceneMainMenu()
 	:Scene(GAME_SCENE::MENU)
@@ -66,7 +65,7 @@ void SceneMainMenu::update() {
 	interface.update();
 
 	screen_tex->draw(*background);
-	SDraw::drawInterface(&*screen_tex, interface.getWidgets());
+	sDrawInterface();
 
 	frame_current++;
 }

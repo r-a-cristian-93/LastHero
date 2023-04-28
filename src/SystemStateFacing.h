@@ -2,10 +2,14 @@
 #define SYSTEM_STATE_FACING_H
 
 #include "System.h"
+#include "ScenePlayData.h"
 
 class SystemStateFacing: public System {
+private:
+	ScenePlayData& play_data;
+
 public:
-	using System::System;
+	SystemStateFacing(ScenePlayData& _play_data): play_data(_play_data) {}
 
 	void operator() () {
 		for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities()) {

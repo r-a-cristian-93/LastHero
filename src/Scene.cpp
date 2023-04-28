@@ -2,10 +2,13 @@
 #include "SharedResources.h"
 #include "ActionManager.h"
 
-Scene::Scene() {}
+Scene::Scene()
+	:sDrawInterface(interface, &*screen_tex)
+{}
 
 Scene::Scene(SceneType type)
-	:scene_type(type)
+	:sDrawInterface(interface, &*screen_tex)
+	,scene_type(type)
 	,frame_current(0)
 	,paused(false)
 	,has_ended(false)

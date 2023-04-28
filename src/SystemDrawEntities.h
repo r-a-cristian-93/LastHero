@@ -3,15 +3,17 @@
 
 #include <algorithm>
 #include "System.h"
+#include "ScenePlayData.h"
 
 class SystemDrawEntities: public System {
 private:
+	ScenePlayData& play_data;
 	EntityVec& entities = play_data.ent_mgr.getEntities();
 	sf::RenderTarget* screen_tex;
 
 public:
 	SystemDrawEntities(ScenePlayData& _play_data, sf::RenderTarget* _screen_tex)
-		:System(_play_data)
+		:play_data(_play_data)
 		,screen_tex(_screen_tex)
 	{}
 

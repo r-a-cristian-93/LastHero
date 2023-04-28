@@ -1,6 +1,5 @@
 #include "SharedResources.h"
 #include <cmath>
-#include "SDraw.h"
 #include "SceneScore.h"
 
 SceneScore::SceneScore()
@@ -172,7 +171,7 @@ void SceneScore::update() {
 		if (!skip_key_frames) snd_mgr->playSound("menu_punch");
 	}
 	screen_tex->clear(sf::Color(10, 70, 10));
-	SDraw::drawInterface(&*screen_tex, interface.getWidgets());
+	sDrawInterface();
 
 	frame_current++;
 }

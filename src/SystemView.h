@@ -3,14 +3,17 @@
 
 #include <math.h>
 #include "System.h"
+#include "ScenePlayData.h"
 
 float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {
 	return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
 }
 
 class SystemView: public System {
+private:
+	ScenePlayData& play_data;
 public:
-	using System::System;
+	SystemView(ScenePlayData& _play_data): play_data(_play_data) {}
 
 	void operator() () {
 	//update camera position

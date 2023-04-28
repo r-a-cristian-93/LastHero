@@ -1,5 +1,4 @@
 #include <cmath>
-#include "SDraw.h"
 #include "SceneSettings.h"
 
 SceneSettings::SceneSettings()
@@ -207,7 +206,7 @@ void SceneSettings::init() {
 void SceneSettings::update() {
 	interface.update();
 
-	SDraw::drawInterface(&*screen_tex, interface.getWidgets());
+	sDrawInterface();
 
 	frame_current++;
 }

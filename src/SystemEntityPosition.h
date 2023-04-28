@@ -1,16 +1,18 @@
-#ifndef S_UPDATE
-#define S_UPDATE
+#ifndef SYSTEM_ENTITY_POSITION
+#define SYSTEM_ENTITY_POSITION
 
 #include <cmath>
 #include "System.h"
+#include "ScenePlayData.h"
 
 class SystemEntityPosition: public System {
 private:
+	ScenePlayData& play_data;
 	const sf::FloatRect& limits = play_data.level.map_ground.getBounds();
 	const EntityVec& entities = play_data.ent_mgr.getEntities();
 
 public:
-	using System::System;
+	SystemEntityPosition(ScenePlayData& _play_data): play_data(_play_data) {}
 
 	void operator() () {
 		for(const std::shared_ptr<Entity>& e:entities) {

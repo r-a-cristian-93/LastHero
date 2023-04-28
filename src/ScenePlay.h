@@ -15,7 +15,6 @@
 #include "SystemAnimation.h"
 #include "SystemDrawEntities.h"
 
-
 class ScenePlay: public Scene {
 protected:
 	ScenePlayData play_data;
