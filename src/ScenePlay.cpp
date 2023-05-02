@@ -294,43 +294,6 @@ void ScenePlay::spawnEnemy() {
 	e->get<CStats>()->level = rand() % 10;
 }
 
-void ScenePlay::spawnEntity(size_t tag, size_t recipe_name, sf::Vector2f& pos, size_t state, size_t facing) {
-	spawnEntity(tag, recipe_name, nullptr, pos, state, facing);
-}
-
-void ScenePlay::spawnEntity(size_t tag, size_t recipe_name, std::shared_ptr<Entity> owner, sf::Vector2f& pos, size_t state, size_t facing) {
-
-#ifdef DEBUG_SPAWN_ENTITY
-	std::cout << "spawnEntity()  tag: " << tag << " name_id: " << recipe_name << " state: " << state << " facing: " << facing << std::endl;
-#endif
-
-	sf::Vector2f dir = dirOf(facing);
-
-	std::shared_ptr<Entity> e = play_data.ent_mgr.add(tag, recipe_name);
-
-	if (e) {
-		if (state == Entity::STATE_SPAWN) e->blocked = true;
-		e->owner = owner;
-		e->state = state;
-		e->facing = facing;
-
-		e->get<CTransform>()->pos = pos;
-		e->get<CTransform>()->dir = dir;
-		e->get<CTransform>()->prev_dir = dir;
-		e->get<CAnimation>()->active_anim = &e->get<CAnimation>()->anim_set.animations[state][facing];
-
-		if (e->get<CBPatrol>()) {
-			e->get<CBPatrol>()->base_pos = pos;
-		}
-
-		if (e->get<CSfx>()) {
-			if (e->get<CSfx>()->spawn) {
-				snd_mgr->playSoundUnique(e->get<CSfx>()->spawn);
-			}
-		}
-	}
-}
-
 void ScenePlay::sEnemySpawner() {
 	if (frame_current % 100 == 0) {
 		spawnEnemy();
@@ -344,7 +307,7 @@ void ScenePlay::sPlayFx() {
 				 switch (fx.trigger) {
 					case TR::DIE:
 						if (!e->alive && e->get<CAnimation>()->active_anim->hasEnded()) {
-							spawnEntity(fx.tag, fx.id, e->get<CTransform>()->pos, Entity::STATE_DIE, Entity::FACING_E);
+							play_data.ent_mgr.spawnEntity(fx.tag, fx.id, e->get<CTransform>()->pos, Entity::STATE_DIE, Entity::FACING_E);
 						}
 					break;
 				 }
@@ -585,7 +548,7 @@ void ScenePlay::sFireWeapon() {
 			if (comp_w.p_cooldown_current == 0 && comp_w.s_cooldown_current == 0) {
 				if (e->get<CInput>()->fire_primary && comp_w.p_rounds_current) {
 					if (comp_w.p_delay_current == 0) {
-						spawnEntity(comp_w.p_tag, comp_w.primary, e, pos, Entity::STATE_RUN, facing);
+						play_data.ent_mgr.spawnEntity(comp_w.p_tag, comp_w.primary, e, pos, Entity::STATE_RUN, facing);
 						snd_mgr->playSound(comp_w.p_sfx);
 
 						e->get<CInput>()->fire_primary = false;
@@ -599,7 +562,7 @@ void ScenePlay::sFireWeapon() {
 				}
 				else if (e->get<CInput>()->fire_secondary && comp_w.s_rounds_current) {
 					if (comp_w.s_delay_current == 0) {
-						spawnEntity(comp_w.s_tag, comp_w.secondary, e, pos, Entity::STATE_RUN, facing);
+						play_data.ent_mgr.spawnEntity(comp_w.s_tag, comp_w.secondary, e, pos, Entity::STATE_RUN, facing);
 						snd_mgr->playSound(comp_w.s_sfx);
 
 						e->get<CInput>()->fire_secondary = false;
@@ -814,15 +777,15 @@ void ScenePlay::doAction(const Action& a) {
 					setFade(FADE::OUT, GAME_SCENE::MENU);
 				break;
 				case Action::SPAWN_ENTITY:
-					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
+					play_data.ent_mgr.spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
 				break;
 				case Action::SPAWN_PLAYER:
-					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
+					play_data.ent_mgr.spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
 					play_data.ent_mgr.update();
 					play_data.player = play_data.ent_mgr.getEntities(TAG::PLAYER)[0];
 				break;
 				case Action::SPAWN_BASE:
-					spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
+					play_data.ent_mgr.spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
 					play_data.ent_mgr.update();
 					play_data.base = play_data.ent_mgr.getEntities(TAG::BASE)[0];
 				default:
