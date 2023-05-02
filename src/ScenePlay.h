@@ -19,6 +19,7 @@
 #include "SystemSpawnFx.h"
 #include "SystemWidgetFx.h"
 #include "SystemFireWeapon.h"
+#include "SystemAI.h"
 
 class ScenePlay: public Scene {
 protected:
@@ -34,22 +35,15 @@ protected:
 	SystemSpawnFx sSpawnFx;
 	SystemWidgetFx sWidgetFx;
 	SystemFireWeapon sFireWeapon;
+	SystemAI sAI;
 
 	void init();
 	void load_level(std::string path);
 
-	void sAI();
 	void sGameState();
 
-	float angle(const sf::Vector2f a, const sf::Vector2f b);
-	float angle(sf::Vector2f v);
-	size_t facingOf(sf::Vector2f v);
 	sf::Vector2f dirOf(size_t facing);
-	void lookAt(CInput& c_input, const sf::Vector2f& a, const sf::Vector2f& b);
 	float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b);
-
-	void handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, bool& fire_weapon);
-	void handleChase(std::shared_ptr<Entity>& e, const BCondition& bc);
 
 	void drawCollisionLayer();
 	void drawDirectionVectors();
