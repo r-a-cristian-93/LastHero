@@ -18,6 +18,7 @@
 #include "SystemCollision.h"
 #include "SystemSpawnFx.h"
 #include "SystemWidgetFx.h"
+#include "SystemFireWeapon.h"
 
 class ScenePlay: public Scene {
 protected:
@@ -32,12 +33,12 @@ protected:
 	SystemCollision sCollision;
 	SystemSpawnFx sSpawnFx;
 	SystemWidgetFx sWidgetFx;
+	SystemFireWeapon sFireWeapon;
 
 	void init();
 	void load_level(std::string path);
 
 	void sAI();
-	void sFireWeapon();
 	void sGameState();
 
 	float angle(const sf::Vector2f a, const sf::Vector2f b);
