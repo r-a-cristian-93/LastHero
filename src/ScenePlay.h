@@ -2,11 +2,6 @@
 #define SCENE_PLAY
 
 #include "Scene.h"
-#include "Tilemap.h"
-#include "Enums.h"
-#include "MapCollision.h"
-#include "Level.h"
-#include "GameStats.h"
 #include "ScenePlayData.h"
 #include "SystemView.h"
 #include "SystemStateFacing.h"

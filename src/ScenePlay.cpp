@@ -1,8 +1,6 @@
 #include "ScenePlay.h"
-#include <cmath>
 #include "SharedResources.h"
 #include "Profiler.h"
-#include "CheckCollision.h"
 
 ScenePlay::ScenePlay(std::string level_path)
 	:ScenePlay(GAME_SCENE::PLAY, level_path)
