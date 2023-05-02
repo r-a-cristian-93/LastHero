@@ -22,6 +22,7 @@ ScenePlay::ScenePlay(size_t t, std::string level_path)
 	,sPowerup(play_data)
 	,sCollision(play_data)
 	,sSpawnFx(play_data)
+	,sWidgetFx(interface, play_data)
 {}
 
 ScenePlay::~ScenePlay() {}
@@ -744,28 +745,6 @@ void ScenePlay::doAction(const Action& a) {
 			break;
 			default:
 			break;
-		}
-	}
-}
-
-void ScenePlay::sWidgetFx() {
-	WidgetVec& widgets = interface.getWidgets();
-
-	for (Widget& w: widgets) {
-		handleWidgetFx(w);
-	}
-}
-
-void ScenePlay::handleWidgetFx(Widget& w) {
-	for (WidgetFx& wfx: w.fx) {
-		if (wfx.cond.trigger == TR::PLAYER_HURT && play_data.player->hit) {
-			w.current_fx = &wfx;
-		}
-	}
-
-	if (!w.childs.empty()) {
-		for (Widget& child: w.getChilds()) {
-			handleWidgetFx(child);
 		}
 	}
 }
