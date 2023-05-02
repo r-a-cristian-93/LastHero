@@ -38,10 +38,7 @@ protected:
 
 	void sAI();
 	void sFireWeapon();
-	void sMissleGuidance();
 	void sGameState();
-
-	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);
 
 	float angle(const sf::Vector2f a, const sf::Vector2f b);
 	float angle(sf::Vector2f v);
@@ -52,7 +49,6 @@ protected:
 
 	void handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, bool& fire_weapon);
 	void handleChase(std::shared_ptr<Entity>& e, const BCondition& bc);
-	void handleWidgetFx(Widget& w);
 
 	void drawCollisionLayer();
 	void drawDirectionVectors();
