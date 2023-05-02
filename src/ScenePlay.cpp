@@ -2,6 +2,7 @@
 #include <cmath>
 #include "SharedResources.h"
 #include "Profiler.h"
+#include "CheckCollision.h"
 
 ScenePlay::ScenePlay(std::string level_path)
 	:ScenePlay(GAME_SCENE::PLAY, level_path)
@@ -18,6 +19,7 @@ ScenePlay::ScenePlay(size_t t, std::string level_path)
 	,sLifespan(play_data)
 	,sAnimation(play_data)
 	,sDrawEntities(play_data)
+	,sPowerup(play_data)
 {}
 
 ScenePlay::~ScenePlay() {}
@@ -338,62 +340,6 @@ void ScenePlay::sEnemySpawner() {
 	}
 }
 
-bool ScenePlay::checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entity>& b) {
-	bool collision = false;
-
-	if (a->get<CCollision>() && b->get<CCollision>()) {
-		if (!a->get<CCollision>()->hitbox.empty() && !b->get<CCollision>()->hitbox.empty()) {
-			for (HitBox& hb_a : a->get<CCollision>()->hitbox) {
-				for (HitBox& hb_b : b->get<CCollision>()->hitbox) {
-					sf::Vector2f pos_a = a->get<CTransform>()->pos + hb_a.offset[a->facing];
-					sf::Vector2f pos_b = b->get<CTransform>()->pos + hb_b.offset[b->facing];
-
-					float square_distance = squareDistance(pos_a, pos_b);
-					int square_radius = (hb_a.radius + hb_b.radius) * (hb_a.radius + hb_b.radius);
-
-					if (square_distance < square_radius) {
-						collision = true;
-
-						a->get<CCollision>()->colliders.push_back(b);
-						a->get<CCollision>()->hitboxes_this.push_back(&hb_a);
-						a->get<CCollision>()->hitboxes_collider.push_back(&hb_b);
-
-						b->get<CCollision>()->colliders.push_back(a);
-						b->get<CCollision>()->hitboxes_this.push_back(&hb_b);
-						b->get<CCollision>()->hitboxes_collider.push_back(&hb_a);
-					}
-				}
-			}
-		}
-	}
-
-	return collision;
-}
-
-bool ScenePlay::checkCollision(const std::shared_ptr<Entity>& a, const std::shared_ptr<Entity>& b, const size_t threshold) {
-	bool collision = false;
-
-	if (a->get<CCollision>() && b->get<CCollision>()) {
-		if (!a->get<CCollision>()->hitbox.empty() && !b->get<CCollision>()->hitbox.empty()) {
-			for (HitBox& hb_a : a->get<CCollision>()->hitbox) {
-				for (HitBox& hb_b : b->get<CCollision>()->hitbox) {
-					sf::Vector2f pos_a = a->get<CTransform>()->pos + hb_a.offset[a->facing];
-					sf::Vector2f pos_b = b->get<CTransform>()->pos + hb_b.offset[b->facing];
-
-					float square_distance = squareDistance(pos_a, pos_b);
-					int square_radius = (hb_a.radius + hb_b.radius + threshold) * (hb_a.radius + hb_b.radius + threshold);
-
-					if (square_distance < square_radius) {
-						collision = true;
-					}
-				}
-			}
-		}
-	}
-
-	return collision;
-}
-
 void ScenePlay::sCollisionCheck() {
 	PROFILE_FUNCTION();
 
@@ -410,7 +356,7 @@ void ScenePlay::sCollisionCheck() {
 
 	for (size_t i=0; i<entities.size(); i++) {
 		for (size_t j=i+1; j<entities.size(); j++) {
-			checkCollision(entities[i], entities[j]);
+			CheckCollision::of(entities[i], entities[j]);
 		}
 	}
 }
@@ -621,7 +567,7 @@ void ScenePlay::sAI() {
 					lookAt(*e->get<CInput>(), e->get<CBChase>()->target->get<CTransform>()->pos, e->get<CTransform>()->pos);
 				}
 
-				if (checkCollision(e, e->get<CBChase>()->target, range*0.2)) {
+				if (CheckCollision::of(e, e->get<CBChase>()->target, range*0.2)) {
 					e->get<CInput>()->right = false;
 					e->get<CInput>()->left = false;
 					e->get<CInput>()->up = false;
@@ -701,68 +647,15 @@ void ScenePlay::sAI() {
 	}
 }
 
-void ScenePlay::sPowerup() {
-	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities(TAG::POWERUP)) {
-		if (e->get<CBPowerup>()) {
-			CBPowerup& cb_powerup = *e->get<CBPowerup>();
-			bool cond_met = false;
-
-			switch (cb_powerup.cond.trigger) {
-				case TR::PLAYER_NEARBY:
-					if (checkCollision(e, play_data.player)) {
-						cond_met = true;
-					}
-				break;
-			}
-
-			if (cond_met) {
-				switch (cb_powerup.powerup) {
-					case CBPowerup::PLAYER_HP:
-					{
-						const int& initial_hp = play_data.player->get<CStats>()->initial[CStats::HEALTH];
-						int& effective_hp = play_data.player->get<CStats>()->effective[CStats::HEALTH];
-						int hp_value = cb_powerup.percent * initial_hp / 100;
-
-						effective_hp += hp_value;
-						if (effective_hp > initial_hp) effective_hp = initial_hp;
-					}
-					break;
-					case CBPowerup::BASE_HP:
-					{
-						const int& initial_hp = play_data.base->get<CStats>()->initial[CStats::HEALTH];
-						int& effective_hp = play_data.base->get<CStats>()->effective[CStats::HEALTH];
-						int hp_value = cb_powerup.percent * initial_hp / 100;
-
-						effective_hp += hp_value;
-						if (effective_hp > initial_hp) effective_hp = initial_hp;
-					}
-					break;
-					case CBPowerup::WEAPON_ROUNDS:
-						const int& s_rounds = play_data.player->get<CWeapon>()->s_rounds;
-						int& s_rounds_current = play_data.player->get<CWeapon>()->s_rounds_current;
-						int rounds = cb_powerup.percent * s_rounds / 100;
-
-						s_rounds_current += rounds;
-						if (s_rounds_current > s_rounds) s_rounds_current = s_rounds;
-					break;
-				}
-
-				cb_powerup.percent = 0;
-				e->alive = false;
-			}
-		}
-	}
-}
-
 void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 	switch (bc.trigger) {
 		case TR::PLAYER_NEARBY:
 		{
-			if (checkCollision(e, play_data.player, bc.data_start)) {
+			if (CheckCollision::of(e, play_data.player, bc.data_start)) {
 				e->get<CBChase>()->target = play_data.player;
 			}
 			// lose agro if target got too far
-			else if (!checkCollision(e, play_data.player, bc.data_stop)) {
+			else if (!CheckCollision::of(e, play_data.player, bc.data_stop)) {
 				if (e->get<CBChase>()->target = play_data.player) {
 					e->get<CBChase>()->target = nullptr;
 					e->get<CBChase>()->path.clear();
@@ -771,11 +664,11 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 		}
 		break;
 		case TR::BASE_NEARBY:
-			if (checkCollision(e, play_data.base, bc.data_start)) {
+			if (CheckCollision::of(e, play_data.base, bc.data_start)) {
 				e->get<CBChase>()->target = play_data.base;
 			}
 			// lose agro if target got too far
-			else if (!checkCollision(e, play_data.base, bc.data_stop)) {
+			else if (!CheckCollision::of(e, play_data.base, bc.data_stop)) {
 				if (e->get<CBChase>()->target == play_data.base) {
 					e->get<CBChase>()->target = nullptr;
 					e->get<CBChase>()->path.clear();
@@ -783,11 +676,11 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 			}
 		break;
 		case TR::BASE_NOT_PROTECTED:
-			if (!checkCollision(play_data.player, play_data.base, bc.data_start)) {
+			if (!CheckCollision::of(play_data.player, play_data.base, bc.data_start)) {
 				e->get<CBChase>()->target = play_data.base;
 			}
 			// lose agro if target got too far
-			else if (checkCollision(play_data.player, play_data.base, bc.data_stop)) {
+			else if (CheckCollision::of(play_data.player, play_data.base, bc.data_stop)) {
 				if (e->get<CBChase>()->target == play_data.base) {
 					e->get<CBChase>()->target = nullptr;
 					e->get<CBChase>()->path.clear();
@@ -804,7 +697,7 @@ void ScenePlay::handleChase(std::shared_ptr<Entity>& e, const BCondition& bc) {
 
 void ScenePlay::handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, bool& fire_weapon) {
 	// MUST CHECK COLLISION BETWEEN PROJECTILE SPAWN POSTION AND TARGET
-	// ADD NEW checkCollision() FUNCTION
+	// ADD NEW CheckCollision::of() FUNCTION
 
 	e->get<CBFire>()->target = nullptr;
 
@@ -817,13 +710,13 @@ void ScenePlay::handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, boo
 			else fire_weapon = false;
 		break;
 		case TR::PLAYER_NEARBY:
-			if (checkCollision(e, play_data.player, bc.data_start)) {
+			if (CheckCollision::of(e, play_data.player, bc.data_start)) {
 				fire_weapon = true;
 				e->get<CBFire>()->target = play_data.player;
 			}
 		break;
 		case TR::BASE_NEARBY:
-			if (checkCollision(e, play_data.base, bc.data_start)) {
+			if (CheckCollision::of(e, play_data.base, bc.data_start)) {
 				fire_weapon = true;
 				e->get<CBFire>()->target = play_data.base;
 			}

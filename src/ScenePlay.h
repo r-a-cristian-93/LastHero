@@ -14,6 +14,7 @@
 #include "SystemLifespan.h"
 #include "SystemAnimation.h"
 #include "SystemDrawEntities.h"
+#include "SystemPowerup.h"
 
 class ScenePlay: public Scene {
 protected:
@@ -24,6 +25,7 @@ protected:
 	SystemLifespan sLifespan;
 	SystemAnimation sAnimation;
 	SystemDrawEntities sDrawEntities;
+	SystemPowerup sPowerup;
 
 	void init();
 	void load_level(std::string path);
@@ -43,7 +45,6 @@ protected:
 	void sWidgetFx();
 	void sGameState();
 	void sPlayFx();
-	void sPowerup();
 
 	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);
 
@@ -53,8 +54,6 @@ protected:
 	sf::Vector2f dirOf(size_t facing);
 	void lookAt(CInput& c_input, const sf::Vector2f& a, const sf::Vector2f& b);
 	float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b);
-	bool checkCollision(std::shared_ptr<Entity>& a, std::shared_ptr<Entity>& b);
-	bool checkCollision(const std::shared_ptr<Entity>& a, const std::shared_ptr<Entity>& b, const size_t threshold);
 
 	void handleFire(std::shared_ptr<Entity>& e, const BCondition& bc, bool& fire_weapon);
 	void handleChase(std::shared_ptr<Entity>& e, const BCondition& bc);
