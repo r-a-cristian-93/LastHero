@@ -15,6 +15,7 @@
 #include "SystemAnimation.h"
 #include "SystemDrawEntities.h"
 #include "SystemPowerup.h"
+#include "SystemCollision.h"
 
 class ScenePlay: public Scene {
 protected:
@@ -26,6 +27,7 @@ protected:
 	SystemAnimation sAnimation;
 	SystemDrawEntities sDrawEntities;
 	SystemPowerup sPowerup;
+	SystemCollision sCollision;
 
 	void init();
 	void load_level(std::string path);
@@ -37,8 +39,6 @@ protected:
 	void spawnExplosion(sf::Vector2f& pos);
 
 	void sEnemySpawner();
-	void sCollisionCheck();
-	void sCollisionSolve();
 	void sAI();
 	void sFireWeapon();
 	void sMissleGuidance();
