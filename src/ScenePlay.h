@@ -32,10 +32,6 @@ protected:
 	void init();
 	void load_level(std::string path);
 
-	void spawnEnemy();
-	void spawnMissle();
-
-	void sEnemySpawner();
 	void sAI();
 	void sFireWeapon();
 	void sMissleGuidance();

@@ -263,43 +263,6 @@ void ScenePlay::update() {
 	frame_current++;
 }
 
-void ScenePlay::spawnEnemy() {
-	sf::Vector2f dir(rand()%2, rand()%2);
-	if (rand()%2 == 0) dir.x *= -1;
-	if (rand()%2 == 0) dir.y *= -1;
-
-	bool position_is_valid = false;
-	sf::Vector2f pos;
-	// deprecated
-	int player_radius = 50;
-
-	std::shared_ptr<Entity> e = play_data.ent_mgr.add(TAG::ENEMY);
-	// deprecated
-	int radius = 50;
-
-	while (!position_is_valid) {
-		pos.x = rand() % static_cast<int>(app_conf->modes[app_conf->current_mode_id].width - radius*2) + radius;
-		pos.y = rand() % static_cast<int>(app_conf->modes[app_conf->current_mode_id].height - radius*2) + radius;
-
-		float square_min_dist = (player_radius*10 + radius) * (player_radius*10 + radius);
-		float square_current_dist = squareDistance(pos, play_data.player->get<CTransform>()->pos);
-
-		if (square_current_dist > square_min_dist) {
-			position_is_valid = true;
-		}
-	}
-
-	e->get<CTransform>()->pos = pos;
-	e->get<CTransform>()->dir = dir;
-	e->get<CStats>()->level = rand() % 10;
-}
-
-void ScenePlay::sEnemySpawner() {
-	if (frame_current % 100 == 0) {
-		spawnEnemy();
-	}
-}
-
 void ScenePlay::sPlayFx() {
 	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities(TAG::PROJECTILE)) {
 		 if (e->get<CAnimation>() && e->get<CFx>()) {
@@ -577,19 +540,6 @@ void ScenePlay::sFireWeapon() {
 			}
 		}
 	}
-}
-
-void ScenePlay::spawnMissle() {
-	sf::Vector2f mouse_pos = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
-
-	const sf::Vector2f pos(play_data.player->get<CTransform>()->pos);
-	const sf::Vector2f dir = mouse_pos - pos;
-
-	std::shared_ptr<Entity> missle = play_data.ent_mgr.add(TAG::MISSLE);
-
-	missle->get<CTransform>()->pos = pos;
-	missle->get<CTransform>()->dir = dir;
-	missle->get<CShape>()->shape.setPosition(pos);
 }
 
 std::shared_ptr<Entity> ScenePlay::findTarget(const std::shared_ptr<Entity>& missle) {
