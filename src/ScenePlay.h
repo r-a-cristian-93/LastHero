@@ -36,7 +36,6 @@ protected:
 	void spawnEntity(size_t tag, size_t recipe_name, sf::Vector2f& pos, size_t state, size_t facing);
 	void spawnEntity(size_t tag, size_t recipe_name, std::shared_ptr<Entity> owner, sf::Vector2f& pos, size_t state, size_t facing);
 	void spawnMissle();
-	void spawnExplosion(sf::Vector2f& pos);
 
 	void sEnemySpawner();
 	void sAI();

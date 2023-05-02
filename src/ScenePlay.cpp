@@ -353,16 +353,6 @@ void ScenePlay::sPlayFx() {
 	}
 }
 
-void ScenePlay::spawnExplosion(sf::Vector2f& pos) {
-	size_t recipe = assets->getRecipeNameID("glowing_bullet_explosion");
-	std::shared_ptr<Entity> e = play_data.ent_mgr.add(TAG::FX, recipe);
-
-	e->add<CTransform>(new CTransform(pos, 0));
-
-	e->state = Entity::STATE_DIE;
-	e->alive = true;
-}
-
 void ScenePlay::sAI() {
 	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities()) {
 		bool has_target = false;

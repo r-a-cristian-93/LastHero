@@ -69,7 +69,6 @@ public:
 						// if the collider[i] is a projectile apply damage and kill colliders[i]
 						if (colliders[i]->tag == TAG::PROJECTILE && colliders[i]->alive) {
 							colliders[i]->alive = false;
-							//spawnExplosion(colliders[i]->get<CTransform>()->pos);
 
 							// hit flag is set only for one frame
 							// it will be unset by sStateFacing
