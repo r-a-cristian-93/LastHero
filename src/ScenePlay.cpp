@@ -21,6 +21,7 @@ ScenePlay::ScenePlay(size_t t, std::string level_path)
 	,sDrawEntities(play_data)
 	,sPowerup(play_data)
 	,sCollision(play_data)
+	,sSpawnFx(play_data)
 {}
 
 ScenePlay::~ScenePlay() {}
@@ -218,7 +219,7 @@ void ScenePlay::update() {
 			sAnimation();
 
 			// spawn fx
-			sPlayFx();
+			sSpawnFx();
 
 			// check level end conditions and set next scene
 			sGameState();
@@ -261,22 +262,6 @@ void ScenePlay::update() {
 	}
 
 	frame_current++;
-}
-
-void ScenePlay::sPlayFx() {
-	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities(TAG::PROJECTILE)) {
-		 if (e->get<CAnimation>() && e->get<CFx>()) {
-			 for (Fx fx : e->get<CFx>()->fx) {
-				 switch (fx.trigger) {
-					case TR::DIE:
-						if (!e->alive && e->get<CAnimation>()->active_anim->hasEnded()) {
-							play_data.ent_mgr.spawnEntity(fx.tag, fx.id, e->get<CTransform>()->pos, Entity::STATE_DIE, Entity::FACING_E);
-						}
-					break;
-				 }
-			 }
-		}
-	}
 }
 
 void ScenePlay::sAI() {

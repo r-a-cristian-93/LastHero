@@ -16,6 +16,7 @@
 #include "SystemDrawEntities.h"
 #include "SystemPowerup.h"
 #include "SystemCollision.h"
+#include "SystemSpawnFx.h"
 
 class ScenePlay: public Scene {
 protected:
@@ -28,6 +29,7 @@ protected:
 	SystemDrawEntities sDrawEntities;
 	SystemPowerup sPowerup;
 	SystemCollision sCollision;
+	SystemSpawnFx sSpawnFx;
 
 	void init();
 	void load_level(std::string path);
@@ -37,7 +39,6 @@ protected:
 	void sMissleGuidance();
 	void sWidgetFx();
 	void sGameState();
-	void sPlayFx();
 
 	std::shared_ptr<Entity> findTarget(const std::shared_ptr<Entity>& missle);
 
