@@ -42,14 +42,6 @@ protected:
 
 	void sGameState();
 
-	sf::Vector2f dirOf(size_t facing);
-	float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b);
-
-	void drawCollisionLayer();
-	void drawDirectionVectors();
-	void drawGrid();
-	void drawEntityPosition();
-
 public:
 	void update() override;
 	void doAction(const Action& a) override;
