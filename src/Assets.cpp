@@ -826,7 +826,7 @@ void Assets::loadWidget() {
 	Widget::ScrollType scroll;
 	std::string scroll_track("");
 	std::string scroll_thumb("");
-	size_t on_click(0);
+	Action::Code on_click(Action::Code::NONE);
 	sf::Color state_colors[Widget::State::COUNT];
 
 	while (file >> word) {

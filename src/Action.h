@@ -8,7 +8,7 @@ class Action {
 
 public:
 	//action codes
-	enum {
+	enum Code {
 		NONE,
 		MOVE_LEFT,
 		MOVE_RIGHT,
@@ -43,7 +43,7 @@ public:
 		TYPE_START
 	};
 
-	size_t* code;
+	Code* code;
 	size_t* type;
 	size_t* ent_tag;
 	size_t* ent_name;
@@ -53,9 +53,9 @@ public:
 
 	Action();
 	Action(const Action& action);
-	Action(size_t c, size_t t);
-	Action(size_t c, size_t t, sf::Vector2i p);
-	Action(size_t c, size_t t, sf::Vector2f p, size_t s, size_t f);
+	Action(Code c, size_t t);
+	Action(Code c, size_t t, sf::Vector2i p);
+	Action(Code c, size_t t, sf::Vector2f p, size_t s, size_t f);
 	~Action();
 
 	friend std::ostream& operator << (std::ostream& os, const Action& a);

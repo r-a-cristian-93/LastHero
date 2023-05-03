@@ -40,7 +40,7 @@ void App::sUserInput() {
 	PROFILE_FUNCTION();
 
 	sf::Event event;
-	int action_code = Action::NONE;
+	Action::Code action_code = Action::NONE;
 
 	while (window->pollEvent(event)) {
 		if (event.type == sf::Event::Closed) {

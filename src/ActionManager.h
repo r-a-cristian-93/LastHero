@@ -6,7 +6,7 @@
 #include "Action.h"
 
 //map<key, action_code>
-typedef std::map<int, int> ActionMap;
+typedef std::map<int, Action::Code> ActionMap;
 //map <device, ActionMap>
 typedef std::map<int, ActionMap> DeviceMap;
 
@@ -22,8 +22,8 @@ public:
 
 	ActionManager();
 
-	void registerAction(int device, int key, int code);
-	int getCode(int device, int key);
+	void registerAction(int device, int key, Action::Code code);
+	Action::Code getCode(int device, int key);
 	void reset();
 };
 

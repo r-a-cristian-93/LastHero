@@ -5,11 +5,11 @@
 ActionManager::ActionManager()
 	{}
 
-void ActionManager::registerAction(int device, int key, int code) {
+void ActionManager::registerAction(int device, int key, Action::Code code) {
 	actions[device][key] = code;
 }
 
-int ActionManager::getCode(int device, int key) {
+Action::Code ActionManager::getCode(int device, int key) {
 	return actions[device][key];
 }
 

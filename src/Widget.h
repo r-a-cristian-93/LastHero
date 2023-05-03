@@ -7,6 +7,7 @@
 #include "WCText.h"
 #include "WCBox.h"
 #include "WCImage.h"
+#include "Action.h"
 
 struct WidgetFx {
 	//fx type
@@ -73,7 +74,7 @@ public:
 	std::vector<sf::Drawable*> drawables;
 	std::vector<WidgetFx> fx;
 	WidgetFx* current_fx;
-	size_t on_click;
+	Action::Code on_click;
 	State state;
 	sf::Color state_colors[State::COUNT];
 

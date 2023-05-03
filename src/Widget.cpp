@@ -13,7 +13,7 @@ Widget::Widget()
 	,scroll_content_sprite(nullptr)
 	,scroll_pos()
 	,state(State::DEFAULT)
-	,on_click(0)
+	,on_click(Action::Code::NONE)
 	,state_colors({})
 	{
 		add<WCText>(nullptr);
