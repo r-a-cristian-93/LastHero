@@ -17,8 +17,9 @@ Level::Level(std::string _path) {
 
 	int frame, pos_x, pos_y, dir_x, dir_y;
 	size_t enemy_name;
-	size_t tag, type, state, facing;
+	size_t tag, state, facing;
 	Action::Code code;
+	Action::Type type;
 
 	while (file >> word) {
 		if (word == "_HEADER") {

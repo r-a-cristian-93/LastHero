@@ -38,13 +38,13 @@ public:
 		SET_CONTENT_CREATURES
 	};
 
-	enum {
+	enum Type {
 		TYPE_END,
 		TYPE_START
 	};
 
 	Code* code;
-	size_t* type;
+	Type* type;
 	size_t* ent_tag;
 	size_t* ent_name;
 	size_t* state;
@@ -53,9 +53,9 @@ public:
 
 	Action();
 	Action(const Action& action);
-	Action(Code c, size_t t);
-	Action(Code c, size_t t, sf::Vector2i p);
-	Action(Code c, size_t t, sf::Vector2f p, size_t s, size_t f);
+	Action(Code c, Type t);
+	Action(Code c, Type t, sf::Vector2i p);
+	Action(Code c, Type t, sf::Vector2f p, size_t s, size_t f);
 	~Action();
 
 	friend std::ostream& operator << (std::ostream& os, const Action& a);
