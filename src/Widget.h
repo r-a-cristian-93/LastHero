@@ -39,12 +39,6 @@ private:
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 public:
-	enum class ScrollType: size_t {
-		NONE = 0,
-		HORIZONTAL,
-		VERTICAL,
-	};
-
 	enum State: size_t {
 		DEFAULT = 0,
 		HOVER,
@@ -80,16 +74,6 @@ public:
 
 	void updateChildPos(Widget& child);
 
-//scroll
-	ScrollType scroll;
-	Widget* scroll_track;
-	Widget* scroll_thumb;
-	sf::RenderTexture* scroll_content_tex;
-	sf::Sprite* scroll_content_sprite;
-	float scroll_pos; // percentage
-//scroll
-
-
 public:
 	void setPosRel(sf::Vector2i pos);
 	void setPosAbs(sf::Vector2i pos);
@@ -97,8 +81,6 @@ public:
 	void setColor(sf::Color color);
 
 	void addChild(Widget& child);
-	void addScrollThumb(Widget& thumb);
-	void addScrollTrack(Widget& track);
 	std::vector<sf::Drawable*>& getDrawables();
 	std::vector<Widget>& getChilds();
 

@@ -823,9 +823,6 @@ void Assets::loadWidget() {
 	std::string text = "TEXT";
 	WidgetFx fx;
 
-	Widget::ScrollType scroll;
-	std::string scroll_track("");
-	std::string scroll_thumb("");
 	Action::Code on_click(Action::Code::NONE);
 	sf::Color state_colors[Widget::State::COUNT];
 
@@ -850,13 +847,6 @@ void Assets::loadWidget() {
 				exit(0);
 			}
 		}
-		else if (word == "scroll") {
-			file >> word;
-			if (word == "vertical") scroll = Widget::ScrollType::VERTICAL;
-			else if (word == "horizontal") scroll == Widget::ScrollType::HORIZONTAL;
-		}
-		else if (word == "scroll_thumb") file >> scroll_thumb;
-		else if (word == "scroll_track") file >> scroll_track;
 		else if (word == "on_click") {
 			file >> word;
 			if (word == "set_content_terrain") on_click = Action::SET_CONTENT_TERRAIN;
@@ -973,26 +963,6 @@ void Assets::loadWidget() {
 		if (on_click) widget.on_click = on_click;
 		for (int i=0; i<Widget::State::COUNT; i++) {
 			widget.state_colors[i] = state_colors[i];
-		}
-
-		if (!scroll_thumb.empty()) {
-			if (widgets.find(scroll_thumb) != widgets.end()) {
-				widget.addScrollThumb(widgets[scroll_thumb]);
-			}
-			else {
-				std::cout << "Widget \"" << scroll_thumb << "\" does not exist.\n";
-				exit(0);
-			}
-		}
-
-		if (!scroll_track.empty()) {
-			if (widgets.find(scroll_track) != widgets.end()) {
-				widget.addScrollTrack(widgets[scroll_track]);
-			}
-			else {
-				std::cout << "Widget \"" << scroll_track << "\" does not exist.\n";
-				exit(0);
-			}
 		}
 
 		if (childs.size() > 0) {

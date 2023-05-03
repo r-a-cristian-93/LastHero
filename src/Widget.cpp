@@ -6,12 +6,6 @@ Widget::Widget()
 	,pos_abs(0, 0)
 	,size(0, 0)
 	,current_fx(nullptr)
-	,scroll(ScrollType::NONE)
-	,scroll_track(nullptr)
-	,scroll_thumb(nullptr)
-	,scroll_content_tex(nullptr)
-	,scroll_content_sprite(nullptr)
-	,scroll_pos()
 	,state(State::DEFAULT)
 	,on_click(Action::Code::NONE)
 	,state_colors({})
@@ -26,19 +20,10 @@ Widget::Widget(const Widget& w)
 	,childs(w.childs)
 	,fx(w.fx)
 	,current_fx(nullptr)
-	,scroll(w.scroll)
-	,scroll_track(nullptr)
-	,scroll_thumb(nullptr)
-	,scroll_content_tex(nullptr)
-	,scroll_content_sprite(nullptr)
-	,scroll_pos(w.scroll_pos)
 	,state(w.state)
 	,on_click(w.on_click)
 	,state_colors()
 {
-	if (w.scroll_track) addScrollTrack(*w.scroll_track);
-	if (w.scroll_thumb) addScrollThumb(*w.scroll_thumb);
-
 	if (w.get<WCImage>()) {
 		add<WCImage>(new WCImage(*w.get<WCImage>()));
 	}
@@ -52,8 +37,6 @@ Widget::Widget(const Widget& w)
 
 
 Widget::~Widget() {
-	delete scroll_content_sprite;
-	delete scroll_content_tex;
 	if (get<WCText>()) delete get<WCText>();
 	if (get<WCBox>()) delete get<WCBox>();
 	if (get<WCImage>()) delete get<WCImage>();
@@ -136,16 +119,6 @@ void Widget::setSize(sf::Vector2i s) {
 void Widget::addChild(Widget& child) {
 	updateChildPos(child);
 	childs.push_back(child);
-}
-
-void Widget::addScrollThumb(Widget& thumb) {
-	addChild(thumb);
-	scroll_thumb = &childs.back();
-}
-
-void Widget::addScrollTrack(Widget& track) {
-	addChild(track);
-	scroll_track = &childs.back();
 }
 
 void Widget::updateChildPos(Widget& child) {
