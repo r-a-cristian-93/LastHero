@@ -20,7 +20,6 @@ extern ConfigManager* cfg_mgr;
 extern sf::RenderWindow* window;
 extern sf::RenderTexture* screen_tex;
 extern sf::Sprite* screen_sprite;
-extern sf::View* game_view;
 
 extern GameStats* game_stats;
 

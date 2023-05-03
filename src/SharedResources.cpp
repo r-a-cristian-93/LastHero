@@ -9,6 +9,5 @@ ConfigManager* cfg_mgr = nullptr;
 sf::RenderWindow* window = nullptr;
 sf::RenderTexture* screen_tex = nullptr;
 sf::Sprite* screen_sprite = nullptr;
-sf::View* game_view = nullptr;
 
 GameStats* game_stats;

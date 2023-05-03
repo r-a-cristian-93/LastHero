@@ -12,8 +12,13 @@ float squareDistance(const sf::Vector2f& a, const sf::Vector2f& b) {
 class SystemView: public System {
 private:
 	ScenePlayData& play_data;
+	sf::View& game_view;
+
 public:
-	SystemView(ScenePlayData& _play_data): play_data(_play_data) {}
+	SystemView(sf::View& _game_view, ScenePlayData& _play_data)
+		:game_view(_game_view)
+		,play_data(_play_data)
+	{}
 
 	void operator() () {
 	//update camera position
@@ -39,7 +44,7 @@ public:
 		if (rect.left + rect.width > world.width) rect.left = world.width - w;
 		if (rect.top + rect.height > world.height) rect.top = world.height - h;
 
-		game_view->reset(rect);
+		game_view.reset(rect);
 	}
 
 };

@@ -18,6 +18,8 @@
 
 class ScenePlay: public Scene {
 protected:
+	sf::View game_view;
+
 	ScenePlayData play_data;
 	SystemView sView;
 	SystemStateFacing sStateFacing;

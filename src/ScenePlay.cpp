@@ -11,7 +11,7 @@ ScenePlay::ScenePlay(std::string level_path)
 ScenePlay::ScenePlay(size_t t, std::string level_path)
 	:Scene(t)
 	,play_data(level_path)
-	,sView(play_data)
+	,sView(game_view, play_data)
 	,sStateFacing(play_data)
 	,sEntityPosition(play_data)
 	,sLifespan(play_data)
@@ -158,7 +158,7 @@ void ScenePlay::update() {
 		PROFILE_SCOPE("sDrawInterface");
 		screen_tex->setView(gui_view);
 		sDrawInterface();
-		screen_tex->setView(*game_view);
+		screen_tex->setView(game_view);
 	}
 
 	frame_current++;
