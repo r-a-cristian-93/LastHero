@@ -65,7 +65,6 @@ public:
 	sf::Vector2i pos_rel;
 	sf::Vector2i pos_abs;
 	sf::Vector2i size;
-	std::vector<sf::Drawable*> drawables;
 	std::vector<WidgetFx> fx;
 	WidgetFx* current_fx;
 	State state;
@@ -80,7 +79,6 @@ public:
 	void setColor(sf::Color color);
 
 	void addChild(Widget& child);
-	std::vector<sf::Drawable*>& getDrawables();
 	std::vector<Widget>& getChilds();
 
 	void update();

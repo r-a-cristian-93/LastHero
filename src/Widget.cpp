@@ -123,10 +123,6 @@ void Widget::updateChildPos(Widget& child) {
 	child.setPosAbs(pos_abs);
 }
 
-std::vector<sf::Drawable*>& Widget::getDrawables() {
-	return drawables;
-}
-
 std::vector<Widget>& Widget::getChilds() {
 	return childs;
 }

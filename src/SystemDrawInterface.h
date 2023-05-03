@@ -22,10 +22,6 @@ public:
 
 private:
 	void drawWidget(Widget& widget) {
-		for (sf::Drawable* d:widget.getDrawables()) {
-			screen_tex->draw(*d);
-		}
-
 		screen_tex->draw(widget);
 
 		if (!widget.getChilds().empty()) {
