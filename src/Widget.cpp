@@ -7,7 +7,6 @@ Widget::Widget()
 	,size(0, 0)
 	,current_fx(nullptr)
 	,state(State::DEFAULT)
-	,on_click(Action::Code::NONE)
 	,state_colors({})
 	{
 		add<WCText>(nullptr);
@@ -21,7 +20,6 @@ Widget::Widget(const Widget& w)
 	,fx(w.fx)
 	,current_fx(nullptr)
 	,state(w.state)
-	,on_click(w.on_click)
 	,state_colors()
 {
 	if (w.get<WCImage>()) {
@@ -189,8 +187,6 @@ sf::Vector2f Widget::getPosition() {
 
 
 void Widget::update() {
-	if (on_click) setColor(state_colors[state]);
-
 	if (get<WCText>() != nullptr) {
 		get<WCText>()->update();
 		updateOrigin();

@@ -823,7 +823,6 @@ void Assets::loadWidget() {
 	std::string text = "TEXT";
 	WidgetFx fx;
 
-	Action::Code on_click(Action::Code::NONE);
 	sf::Color state_colors[Widget::State::COUNT];
 
 	while (file >> word) {
@@ -846,12 +845,6 @@ void Assets::loadWidget() {
 				std::cout << "Invalid link: " << word << std::endl;
 				exit(0);
 			}
-		}
-		else if (word == "on_click") {
-			file >> word;
-			if (word == "set_content_terrain") on_click = Action::SET_CONTENT_TERRAIN;
-			else if (word == "set_content_environment") on_click = Action::SET_CONTENT_ENVIRONMENT;
-			else if (word == "set_content_creatures") on_click = Action::SET_CONTENT_CREATURES;
 		}
 		else if (word == "state_color") {
 			int r(0), g(0), b(0), a(0);
@@ -960,7 +953,6 @@ void Assets::loadWidget() {
 
 		if (fx.type) widget.fx.push_back(fx);
 
-		if (on_click) widget.on_click = on_click;
 		for (int i=0; i<Widget::State::COUNT; i++) {
 			widget.state_colors[i] = state_colors[i];
 		}

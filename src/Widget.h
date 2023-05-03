@@ -68,7 +68,6 @@ public:
 	std::vector<sf::Drawable*> drawables;
 	std::vector<WidgetFx> fx;
 	WidgetFx* current_fx;
-	Action::Code on_click;
 	State state;
 	sf::Color state_colors[State::COUNT];
 

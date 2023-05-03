@@ -81,10 +81,6 @@ void App::handleUIEvent(sf::Event& event, WidgetVec& widgets) {
 	for (Widget& w: widgets) {
 		sf::IntRect rect (w.getGlobalBounds());
 
-		if (w.on_click && rect.contains(m_pos)) {
-			Action action(w.on_click, Action::TYPE_START);
-			current_scene->doAction(action);
-		}
 		handleUIEvent(event, w.getChilds());
 	}
 }
