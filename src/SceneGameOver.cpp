@@ -53,11 +53,12 @@ void SceneGameOver::init() {
 void SceneGameOver::update() {
 	sDrawInterface();
 
-	if ((frame_current == 240 || skip_key_frames) && getCurrentFade() != FADE::OUT) {
+	if (((frame_current >= 240 && !key_frame_rendered) || skip_key_frames) && getCurrentFade() != FADE::OUT) {
+		key_frame_rendered = true;
 		setFade(FADE::OUT, GAME_SCENE::SCORE);
 	}
 
-	frame_current++;
+	frame_current += app_conf->frame_dt * app_conf->game_speed;
 }
 
 void SceneGameOver::doAction(const Action& a) {

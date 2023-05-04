@@ -1,4 +1,5 @@
 #include "Animation.h"
+#include "SharedResources.h"
 #include <iostream>
 
 Animation::Animation()
@@ -26,10 +27,10 @@ Animation::Animation(std::vector<sf::Sprite> _sprites, std::vector<size_t> _fram
 }
 
 void Animation::update() {
-	frames_alive++;
+	frames_alive += app_conf->frame_dt * app_conf->game_speed;
 
 	if (play == PLAY_LOOP) {
-		if (frames_alive > frames_changed + frame_time[active_frame]) {
+		if (frames_alive > frames_changed + (float)frame_time[active_frame]) {
 			active_frame++;
 			frames_changed = frames_alive;
 
@@ -37,7 +38,7 @@ void Animation::update() {
 		}
 	}
 	else if (play == PLAY_ONCE) {
-		if (frames_alive > frames_changed + frame_time[active_frame]) {
+		if (frames_alive > frames_changed + (float)frame_time[active_frame]) {
 			active_frame++;
 			frames_changed = frames_alive;
 

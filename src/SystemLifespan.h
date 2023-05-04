@@ -24,10 +24,10 @@ public:
 private:
 	void checkLifespan(std::shared_ptr<Entity>& e) {
 		if (e->get<CLifespan>()) {
-			const int lifespan = e->get<CLifespan>()->lifespan;
-			int& remaining = e->get<CLifespan>()->remaining;
+			const float lifespan = e->get<CLifespan>()->lifespan;
+			float& remaining = e->get<CLifespan>()->remaining;
 
-			remaining--;
+			remaining -= app_conf->frame_dt * app_conf->game_speed;;
 
 			if (remaining <= 0) {
 				e->alive = false;

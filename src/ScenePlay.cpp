@@ -161,7 +161,7 @@ void ScenePlay::update() {
 		screen_tex->setView(game_view);
 	}
 
-	frame_current++;
+	frame_current += app_conf->frame_dt * app_conf->game_speed;
 }
 
 void ScenePlay::doAction(const Action& a) {

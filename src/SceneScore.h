@@ -29,7 +29,8 @@ class SceneScore: public Scene {
 		FRAME_ROW_TOTAL = 240,
 		FRAME_CONTINUE = 280
 	};
-	const unsigned int* key_frames = app_conf->score_key_frames;
+	const float* key_frames = app_conf->score_key_frames;
+	bool key_frames_rendered[FRAMES_SCORE::COUNT];
 
 	WidgetVec all_table_widgets;
 	WidgetVec table_widgets;

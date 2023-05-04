@@ -11,7 +11,7 @@ typedef size_t SceneType;
 class Scene {
 protected:
 	SystemDrawInterface sDrawInterface;
-	int frame_current;
+	float frame_current;
 	bool paused, has_ended;
 	bool skip_key_frames = false;
 
@@ -23,8 +23,8 @@ public:
 	sf::View gui_view;
 
 	FadeType fade = FADE::NONE;
-	unsigned char current_fade_frames[FADE::COUNT] = {0};
-	const unsigned int* fade_frames = nullptr;
+	float current_fade_frames[FADE::COUNT] = {0};
+	float* fade_frames = nullptr;
 	bool music_fade_in;
 	bool music_fade_out;
 	size_t next_scene = 0;

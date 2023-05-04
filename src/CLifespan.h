@@ -3,12 +3,12 @@
 
 class CLifespan {
 public:
-	int lifespan;
-	int remaining;
-	
+	float lifespan;
+	float remaining;
+
 	CLifespan();
 	CLifespan(const CLifespan& c);
-	CLifespan(int l);
+	CLifespan(float l);
 };
 
 #endif

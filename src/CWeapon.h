@@ -15,18 +15,18 @@ public:
 
 	size_t p_tag;
 	size_t s_tag;
-	size_t p_cooldown;
-	size_t s_cooldown;
-	size_t p_cooldown_current;
-	size_t s_cooldown_current;
+	float p_cooldown;
+	float s_cooldown;
+	float p_cooldown_current;
+	float s_cooldown_current;
 	int p_rounds;
 	int s_rounds;
 	int p_rounds_current;
 	int s_rounds_current;
-	size_t p_delay;
-	size_t s_delay;
-	size_t p_delay_current;
-	size_t s_delay_current;
+	float p_delay;
+	float s_delay;
+	float p_delay_current;
+	float s_delay_current;
 	size_t p_sfx;
 	size_t s_sfx;
 	size_t p_range;

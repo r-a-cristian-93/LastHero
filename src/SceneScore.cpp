@@ -146,34 +146,40 @@ void SceneScore::init() {
 }
 
 void SceneScore::update() {
-	if (frame_current == key_frames[FRAMES_SCORE::COL_0] || skip_key_frames) {
+	if ((frame_current >= key_frames[FRAMES_SCORE::COL_0] && !key_frames_rendered[FRAMES_SCORE::COL_0]) || skip_key_frames) {
+		key_frames_rendered[FRAMES_SCORE::COL_0] = true;
 		copyCells(all_table_widgets, interface.getWidgets(), {0,0,0,rows-3});
 		if (total_kills && !skip_key_frames) snd_mgr->playSound("menu_punch");
 	}
-	if (frame_current == key_frames[FRAMES_SCORE::COL_1] || skip_key_frames) {
+	if ((frame_current >= key_frames[FRAMES_SCORE::COL_1] && !key_frames_rendered[FRAMES_SCORE::COL_1]) || skip_key_frames) {
+		key_frames_rendered[FRAMES_SCORE::COL_1] = true;
 		copyCells(all_table_widgets, interface.getWidgets(), {1,0,1,rows-3});
 		if (!game_stats->new_kills_per_enemy.empty() && !skip_key_frames) snd_mgr->playSound("menu_punch");
 	}
-	if (frame_current == key_frames[FRAMES_SCORE::COL_2] || skip_key_frames) {
+	if ((frame_current >= key_frames[FRAMES_SCORE::COL_2] && !key_frames_rendered[FRAMES_SCORE::COL_2]) || skip_key_frames) {
+		key_frames_rendered[FRAMES_SCORE::COL_2] = true;
 		copyCells(all_table_widgets, interface.getWidgets(), {2,0,2,rows-3});
 		if (total_kills && !skip_key_frames) snd_mgr->playSound("menu_punch");
-	}
-	if (frame_current == key_frames[FRAMES_SCORE::COL_3] || skip_key_frames) {
+
+	}if ((frame_current >= key_frames[FRAMES_SCORE::COL_3] && !key_frames_rendered[FRAMES_SCORE::COL_3]) || skip_key_frames) {
+		key_frames_rendered[FRAMES_SCORE::COL_3] = true;
 		copyCells(all_table_widgets, interface.getWidgets(), {3,0,3,rows-3});
 		if (total_kills && !skip_key_frames) snd_mgr->playSound("menu_punch");
 	}
-	if (frame_current == key_frames[FRAMES_SCORE::ROW_LINE] || skip_key_frames) {
+	if ((frame_current >= key_frames[FRAMES_SCORE::ROW_LINE] && !key_frames_rendered[FRAMES_SCORE::ROW_LINE]) || skip_key_frames) {
+		key_frames_rendered[FRAMES_SCORE::ROW_LINE] = true;
 		copyCells(all_table_widgets, interface.getWidgets(), {2,rows-2,3,rows-2});
 		if (total_kills && !skip_key_frames) snd_mgr->playSound("menu_punch");
 	}
-	if (frame_current == key_frames[FRAMES_SCORE::ROW_TOTAL] || skip_key_frames) {
+	if ((frame_current >= key_frames[FRAMES_SCORE::ROW_TOTAL] && !key_frames_rendered[FRAMES_SCORE::ROW_TOTAL]) || skip_key_frames) {
+		key_frames_rendered[FRAMES_SCORE::ROW_TOTAL] = true;
 		copyCells(all_table_widgets, interface.getWidgets(), {1,rows-1,3,rows-1});
 		if (!skip_key_frames) snd_mgr->playSound("menu_punch");
 	}
 	screen_tex->clear(sf::Color(10, 70, 10));
 	sDrawInterface();
 
-	frame_current++;
+	frame_current += app_conf->frame_dt * app_conf->game_speed;
 }
 
 void SceneScore::copyCells(WidgetVec& src, WidgetVec& dst, sf::IntRect rect) {

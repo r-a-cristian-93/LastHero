@@ -10,6 +10,7 @@ class SceneGameOver: public Scene {
 	};
 
 	size_t selection = SELECT_PLAY;
+	bool key_frame_rendered;
 
 	void init();
 

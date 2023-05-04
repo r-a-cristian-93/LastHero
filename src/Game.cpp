@@ -22,6 +22,8 @@ void Game::run() {
 		PROFILE_SCOPE("MAIN_GAME_LOOP");
 
 		if (window->isOpen()) {
+			app_conf->frame_dt = clock.restart().asSeconds();
+
 			sUserInput();
 
 			screen_tex->clear();
@@ -78,14 +80,14 @@ void Game::sChangeScene() {
 }
 
 void Game::sSceneFade() {
-	unsigned char * current_fade_frames = current_scene->current_fade_frames;
 	FadeType& fade = current_scene->fade;
-	const unsigned int* fade_frames = current_scene->fade_frames;
+	float * current_fade_frames = current_scene->current_fade_frames;
+	float* fade_frames = current_scene->fade_frames;
 	bool& music_fade_out = current_scene->music_fade_out;
 
 	switch (fade) {
 		case FADE::IN: {
-			current_fade_frames[fade]++;
+			current_fade_frames[fade] += app_conf->frame_dt * app_conf->game_speed;;
 			unsigned char c = current_fade_frames[fade] * (255/fade_frames[fade]);
 			screen_sprite->setColor({c, c, c});
 
@@ -93,11 +95,12 @@ void Game::sSceneFade() {
 				screen_sprite->setColor({255, 255, 255});
 				fade = FADE::NONE;
 			}
-
 		}
 		break;
 		case FADE::OUT: {
-			if (current_fade_frames[fade] > 0) current_fade_frames[fade]--;
+			if (current_fade_frames[fade] > 0) {
+				current_fade_frames[fade] -= app_conf->frame_dt * app_conf->game_speed;;
+			}
 			unsigned char c = current_fade_frames[fade] * (255/fade_frames[fade]);
 
 			if (music_fade_out && current_scene->next_scene != GAME_SCENE::SETTINGS) {
@@ -111,13 +114,11 @@ void Game::sSceneFade() {
 
 			screen_sprite->setColor({c, c, c});
 
-			if (current_fade_frames[fade] == 0) {
+			if (current_fade_frames[fade] > -1 && current_fade_frames[fade] < 1 ) {
 				fade = FADE::NONE;
 				screen_sprite->setColor({0, 0, 0});
 				setNextScene(current_scene->next_scene);
 			}
-
-
 		}
 		break;
 	}

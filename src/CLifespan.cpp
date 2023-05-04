@@ -9,8 +9,8 @@ CLifespan::CLifespan(const CLifespan& c)
 	:lifespan(c.lifespan)
 	,remaining(c.remaining)
 	{}
-	
-CLifespan::CLifespan(int l)
+
+CLifespan::CLifespan(float l)
 	:lifespan(l)
 	,remaining(l)
 	{}

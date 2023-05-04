@@ -208,7 +208,7 @@ void SceneSettings::update() {
 
 	sDrawInterface();
 
-	frame_current++;
+	frame_current += app_conf->frame_dt * app_conf->game_speed;
 }
 
 void SceneSettings::doAction(const Action& a) {

@@ -13,6 +13,8 @@ public:
 	std::string window_name = "LastHero";
 	int window_style = STYLE_WINDOWED;
 	int max_fps = 60;
+	float frame_dt = 0;		// computed in realtime
+	float game_speed = 60;	// normal speed at 60 fps
 	int game_w = 1024;
 	int game_h = 768;
 	float game_scale = 0.95;
@@ -22,8 +24,8 @@ public:
 	int directions = 8;
 	unsigned int colmap_res = 4;
 	unsigned int colmap_update = 30;
-	unsigned int scene_fade_frames[FADE::COUNT];
-	unsigned int score_key_frames[FRAMES_SCORE::COUNT] = {0};
+	float scene_fade_frames[FADE::COUNT];
+	float score_key_frames[FRAMES_SCORE::COUNT] = {0};
 	float fade_multiplier = 1;
 	std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
 	size_t current_mode_id = 0;
