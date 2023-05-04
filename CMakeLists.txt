@@ -48,7 +48,6 @@ set(SOURCE_COMMON
 	src/AppConfig.cpp
 	src/ConfigManager.cpp
 	src/GameStats.cpp
-	src/App.cpp
 	src/Link.cpp
 	src/WCText.cpp
 	src/WCBox.cpp
