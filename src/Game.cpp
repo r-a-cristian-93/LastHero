@@ -156,6 +156,8 @@ void Game::init() {
 
 void Game::setScene(size_t id) {
 	delete current_scene;
+	current_scene = nullptr;
+
 	act_mgr->reset();
 
 	switch (id) {
@@ -179,7 +181,6 @@ void Game::setScene(size_t id) {
 			current_scene = new SceneScore();
 		break;
 		case GAME_SCENE::EXIT:
-			current_scene = nullptr;
 			running = false;
 		break;
 		default:
