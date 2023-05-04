@@ -16,8 +16,6 @@ protected:
 	void sUserInput();
 	void sChangeScene();
 
-	void handleUIEvent(sf::Event& event, WidgetVec& widgets);
-
 public:
 	bool running;
 

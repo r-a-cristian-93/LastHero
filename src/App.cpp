@@ -62,26 +62,6 @@ void App::sUserInput() {
 				current_scene->doAction(action);
 			}
 		}
-		else if (event.type == sf::Event::MouseButtonPressed) {
-			handleUIEvent(event, current_scene->interface.getWidgets());
-
-			action_code = act_mgr->getCode(ActionManager::DEV_MOUSE, event.mouseButton.button);
-
-			if (action_code != 0) {
-				Action action(action_code, Action::TYPE_START, sf::Mouse::getPosition());
-				current_scene->doAction(action);
-			}
-		}
-	}
-}
-
-void App::handleUIEvent(sf::Event& event, WidgetVec& widgets) {
-	sf::Vector2i m_pos(sf::Mouse::getPosition(*window));
-
-	for (Widget& w: widgets) {
-		sf::IntRect rect (w.getGlobalBounds());
-
-		handleUIEvent(event, w.getChilds());
 	}
 }
 
