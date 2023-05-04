@@ -2,7 +2,6 @@
 #define APP_CONFIG
 
 #include "Common.h"
-#include <fstream>
 
 class AppConfig {
 public:
