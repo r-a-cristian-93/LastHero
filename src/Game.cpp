@@ -84,10 +84,11 @@ void Game::sSceneFade() {
 	float * current_fade_frames = current_scene->current_fade_frames;
 	float* fade_frames = current_scene->fade_frames;
 	bool& music_fade_out = current_scene->music_fade_out;
+	float frame_increment = app_conf->frame_dt * app_conf->game_speed;
 
 	switch (fade) {
 		case FADE::IN: {
-			current_fade_frames[fade] += app_conf->frame_dt * app_conf->game_speed;;
+			current_fade_frames[fade] += frame_increment;
 			unsigned char c = current_fade_frames[fade] * (255/fade_frames[fade]);
 			screen_sprite->setColor({c, c, c});
 
@@ -99,7 +100,7 @@ void Game::sSceneFade() {
 		break;
 		case FADE::OUT: {
 			if (current_fade_frames[fade] > 0) {
-				current_fade_frames[fade] -= app_conf->frame_dt * app_conf->game_speed;;
+				current_fade_frames[fade] -= frame_increment;
 			}
 			unsigned char c = current_fade_frames[fade] * (255/fade_frames[fade]);
 
@@ -114,7 +115,7 @@ void Game::sSceneFade() {
 
 			screen_sprite->setColor({c, c, c});
 
-			if (current_fade_frames[fade] > -1 && current_fade_frames[fade] < 1 ) {
+			if (current_fade_frames[fade] > -frame_increment && current_fade_frames[fade] < frame_increment) {
 				fade = FADE::NONE;
 				screen_sprite->setColor({0, 0, 0});
 				setNextScene(current_scene->next_scene);
