@@ -52,6 +52,7 @@ set(SOURCE_COMMON
 	src/WCText.cpp
 	src/WCBox.cpp
 	src/WCImage.cpp
+	src/FrameManager.cpp
 )
 
 set (SOURCE_GAME

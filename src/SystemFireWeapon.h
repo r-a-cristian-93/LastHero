@@ -21,12 +21,12 @@ public:
 				sf::Vector2f pos(e->get<CTransform>()->pos + e->get<CWeapon>()->projectile_spawn[facing]);
 
 				if (comp_w.p_cooldown_current > 0) {
-					comp_w.p_cooldown_current -= app_conf->frame_dt * app_conf->game_speed;
+					comp_w.p_cooldown_current -= frame_mgr->getIncrement();
 					e->get<CInput>()->fire_primary = false;
 				}
 
 				if (comp_w.s_cooldown_current > 0) {
-					comp_w.s_cooldown_current -= app_conf->frame_dt * app_conf->game_speed;
+					comp_w.s_cooldown_current -= frame_mgr->getIncrement();
 					e->get<CInput>()->fire_secondary = false;
 				}
 
@@ -44,7 +44,7 @@ public:
 							comp_w.p_delay_current = comp_w.p_delay;
 						}
 						else {
-							comp_w.p_delay_current -= app_conf->frame_dt * app_conf->game_speed;
+							comp_w.p_delay_current -= frame_mgr->getIncrement();
 						}
 					}
 					else if (e->get<CInput>()->fire_secondary && comp_w.s_rounds_current) {
@@ -58,7 +58,7 @@ public:
 							comp_w.s_delay_current = comp_w.s_delay;
 						}
 						else {
-							comp_w.s_delay_current -= app_conf->frame_dt * app_conf->game_speed;
+							comp_w.s_delay_current -= frame_mgr->getIncrement();
 						}
 					}
 				}

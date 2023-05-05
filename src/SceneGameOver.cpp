@@ -58,7 +58,7 @@ void SceneGameOver::update() {
 		setFade(FADE::OUT, GAME_SCENE::SCORE);
 	}
 
-	frame_current += app_conf->frame_dt * app_conf->game_speed;
+	frame_current += frame_mgr->getIncrement();
 }
 
 void SceneGameOver::doAction(const Action& a) {

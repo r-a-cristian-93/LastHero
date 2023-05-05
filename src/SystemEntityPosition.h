@@ -92,7 +92,7 @@ public:
 					}
 
 					//update position
-					pos += vel * app_conf->frame_dt * app_conf->game_speed;
+					pos += vel * frame_mgr->getIncrement();
 
 					//updates only if there is a change in direction
 					prev_dir = dir;

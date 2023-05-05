@@ -179,7 +179,7 @@ void SceneScore::update() {
 	screen_tex->clear(sf::Color(10, 70, 10));
 	sDrawInterface();
 
-	frame_current += app_conf->frame_dt * app_conf->game_speed;
+	frame_current += frame_mgr->getIncrement();
 }
 
 void SceneScore::copyCells(WidgetVec& src, WidgetVec& dst, sf::IntRect rect) {

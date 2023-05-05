@@ -27,7 +27,7 @@ Animation::Animation(std::vector<sf::Sprite> _sprites, std::vector<size_t> _fram
 }
 
 void Animation::update() {
-	frames_alive += app_conf->frame_dt * app_conf->game_speed;
+	frames_alive += frame_mgr->getIncrement();
 
 	if (play == PLAY_LOOP) {
 		if (frames_alive > frames_changed + (float)frame_time[active_frame]) {

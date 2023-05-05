@@ -22,7 +22,7 @@ void Game::run() {
 		PROFILE_SCOPE("MAIN_GAME_LOOP");
 
 		if (window->isOpen()) {
-			app_conf->frame_dt = clock.restart().asSeconds();
+			frame_mgr->update();
 
 			sUserInput();
 
@@ -84,7 +84,7 @@ void Game::sSceneFade() {
 	float * current_fade_frames = current_scene->current_fade_frames;
 	float* fade_frames = current_scene->fade_frames;
 	bool& music_fade_out = current_scene->music_fade_out;
-	float frame_increment = app_conf->frame_dt * app_conf->game_speed;
+	float frame_increment = frame_mgr->getIncrement();
 
 	switch (fade) {
 		case FADE::IN: {

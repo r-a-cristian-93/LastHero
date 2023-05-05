@@ -13,7 +13,6 @@ public:
 	std::string window_name = "LastHero";
 	int window_style = STYLE_WINDOWED;
 	int max_fps = 60;
-	float frame_dt = 0;		// computed in realtime
 	float game_speed = 60;	// normal speed at 60 fps
 	int game_w = 1024;
 	int game_h = 768;

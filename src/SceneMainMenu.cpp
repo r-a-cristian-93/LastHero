@@ -67,7 +67,7 @@ void SceneMainMenu::update() {
 	screen_tex->draw(*background);
 	sDrawInterface();
 
-	frame_current += app_conf->frame_dt * app_conf->game_speed;
+	frame_current += frame_mgr->getIncrement();
 }
 
 void SceneMainMenu::doAction(const Action& a) {

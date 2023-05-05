@@ -7,6 +7,7 @@
 #include "SoundManager.h"
 #include "ConfigManager.h"
 #include "GameStats.h"
+#include "FrameManager.h"
 #include <SFML/Graphics.hpp>
 
 class GameStats;
@@ -16,6 +17,7 @@ extern Assets* assets;
 extern ActionManager* act_mgr;
 extern SoundManager* snd_mgr;
 extern ConfigManager* cfg_mgr;
+extern FrameManager* frame_mgr;
 
 extern sf::RenderWindow* window;
 extern sf::RenderTexture* screen_tex;

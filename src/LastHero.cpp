@@ -5,6 +5,7 @@ int main() {
 	app_conf = new AppConfig();
 	cfg_mgr = new ConfigManager();
 	act_mgr = new ActionManager();
+	frame_mgr = new FrameManager();
 	assets = new Assets();
 	snd_mgr = new SoundManager();
 	window = new sf::RenderWindow();

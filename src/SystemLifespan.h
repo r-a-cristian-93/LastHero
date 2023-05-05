@@ -27,7 +27,7 @@ private:
 			const float lifespan = e->get<CLifespan>()->lifespan;
 			float& remaining = e->get<CLifespan>()->remaining;
 
-			remaining -= app_conf->frame_dt * app_conf->game_speed;;
+			remaining -= frame_mgr->getIncrement();;
 
 			if (remaining <= 0) {
 				e->alive = false;
