@@ -38,6 +38,18 @@ public:
 			#endif
 		}
 
+		// render and draw outlines
+		for (const std::shared_ptr<Entity>& e:entities) {
+			if (e->tag != TAG::ENVIRONMENT && e->tag != TAG::FX && e->tag != TAG::PROJECTILE) {
+				if (e->get<CAnimation>()) {
+					sf::RenderStates render_states = e->get<CAnimation>()->outline_render_states;
+					const sf::Sprite& outline_sprite = e->get<CAnimation>()->active_anim->getSprite();
+
+					screen_tex->draw(outline_sprite, render_states);
+				}
+			}
+		}
+
 		#ifdef DEBUG_GRID
 			drawGrid();
 		#endif

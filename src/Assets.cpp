@@ -4,14 +4,15 @@
 #include "Common.h"
 #include "Assets.h"
 #include "Action.h"
+#include <SFML/Graphics.hpp>
 
 Assets::Assets() {
 	loadSounds();
+	loadFonts();
+	loadShaders();
 	loadGUI();
 	loadWidgets();
 	loadEntities();
-	loadFonts();
-	loadShaders();
 	loadStages();
 }
 
@@ -484,6 +485,7 @@ void Assets::loadEntity() {
 				recipe[data_ent.tag][data_ent.name_id].add<CAnimation>(new CAnimation(data_ent.animation_set));
 				recipe[data_ent.tag][data_ent.name_id].get<CAnimation>()->anim_set.setColorMod(data_ent.color_mod);
 				recipe[data_ent.tag][data_ent.name_id].get<CAnimation>()->prio = data_ent.prio;
+				recipe[data_ent.tag][data_ent.name_id].get<CAnimation>()->outline_render_states = sf::RenderStates(&getShader("outline"));
 			}
 
 			// add CWeapon
