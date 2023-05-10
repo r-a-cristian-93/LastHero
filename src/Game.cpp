@@ -19,7 +19,7 @@ Game::Game()
 
 void Game::run() {
 	while(running) {
-		PROFILE_SCOPE("MAIN_GAME_LOOP");
+		PROFILE_FUNCTION();
 
 		if (window->isOpen()) {
 			frame_mgr->update();
@@ -44,8 +44,6 @@ void Game::run() {
 }
 
 void Game::sUserInput() {
-	PROFILE_FUNCTION();
-
 	sf::Event event;
 	Action::Code action_code = Action::NONE;
 

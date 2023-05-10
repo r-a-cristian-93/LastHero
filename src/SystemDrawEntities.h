@@ -5,6 +5,7 @@
 #include "System.h"
 #include "ScenePlayData.h"
 #include "SharedResources.h"
+#include "Profiler.h"
 
 class SystemDrawEntities: public System {
 private:
@@ -17,6 +18,8 @@ public:
 	{}
 
 	void operator() () {
+		PROFILE_SCOPE("DrawEntities");
+
 		std::sort(entities.begin(), entities.end(), comparePosition);
 
 		for (const std::shared_ptr<Entity>& e:entities) {

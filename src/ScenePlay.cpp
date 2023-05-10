@@ -28,10 +28,7 @@ ScenePlay::ScenePlay(size_t t, std::string level_path)
 ScenePlay::~ScenePlay() {}
 
 void ScenePlay::init() {
-
 	game_stats->state = GameStats::State::PLAY;
-	PROFILE_FUNCTION();
-
 	music_fade_out = true;
 
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::W, Action::MOVE_UP);
@@ -92,74 +89,62 @@ void ScenePlay::load_level(std::string path) {
 }
 
 void ScenePlay::update() {
-	{
-		PROFILE_SCOPE("SCENE_LOGIC");
+	PROFILE_FUNCTION();
 
-		if (!paused && game_stats->state == GameStats::State::PLAY && !isFading()) {
-			// commands from player: App::sUserInput(), calls doAction()
+	if (!paused && game_stats->state == GameStats::State::PLAY && !isFading()) {
+		// commands from player: App::sUserInput(), calls doAction()
 
-			// commands from AI
-			sAI();
+		// commands from AI
+		sAI();
 
-			// remove dead entities, add new spawn entities
-			play_data.ent_mgr.update();
+		// remove dead entities, add new spawn entities
+		play_data.ent_mgr.update();
 
-			// update collision map
-			play_data.collision_map.update();
+		// update collision map
+		play_data.collision_map.update();
 
-			// move entities
-			sEntityPosition();
+		// move entities
+		sEntityPosition();
 
-			// create inter-entities collisions
-			sCollision();
+		// create inter-entities collisions
+		sCollision();
 
-			// applies powerups
-			sPowerup();
+		// applies powerups
+		sPowerup();
 
-			// set widget fx based on game state
-			sWidgetFx();
+		// set widget fx based on game state
+		sWidgetFx();
 
-			// set entity state and facing
-			sStateFacing();
+		// set entity state and facing
+		sStateFacing();
 
-			// handle weapon firing and spawns projectiles
-			sFireWeapon();
+		// handle weapon firing and spawns projectiles
+		sFireWeapon();
 
-			// updated the interface (text, fx)
-			interface.update();
+		// updated the interface (text, fx)
+		interface.update();
 
-			// check if entities ran out of time and kill them
-			sLifespan();
+		// check if entities ran out of time and kill them
+		sLifespan();
 
-			// handle entity animation (set, advance)
-			sAnimation();
+		// handle entity animation (set, advance)
+		sAnimation();
 
-			// spawn fx
-			sSpawnFx();
+		// spawn fx
+		sSpawnFx();
 
-			// check level end conditions and set next scene
-			sGameState();
-		}
-		sView();
+		// check level end conditions and set next scene
+		sGameState();
 	}
+	sView();
 
-	{
-		PROFILE_SCOPE("sDrawBg");
-		screen_tex->draw(play_data.level.map_ground);
-	}
-
-	{
-		PROFILE_SCOPE("sDrawEntities");
-		sDrawEntities();
-	}
+	screen_tex->draw(play_data.level.map_ground);
+	sDrawEntities();
 
 	//change view in order to keep the interface relative to window
-	{
-		PROFILE_SCOPE("sDrawInterface");
-		screen_tex->setView(gui_view);
-		sDrawInterface();
-		screen_tex->setView(game_view);
-	}
+	screen_tex->setView(gui_view);
+	sDrawInterface();
+	screen_tex->setView(game_view);
 
 	frame_current += frame_mgr->getIncrement();
 }

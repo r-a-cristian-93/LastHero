@@ -1,3 +1,10 @@
+/*
+	The output files result.json can be viewed with chrome://tracing/
+
+	reference: https://github.com/zjrubin/Visual_Profiler/tree/master
+	reference: https://gist.github.com/TheCherno/31f135eea6ee729ab5f26a6908eb3a5e
+ */
+
 #ifndef PROFILER
 #define PROFILER
 
@@ -13,7 +20,7 @@
 	#define PROFILE_SCOPE(name) \
 		ProfileTimer time##__LINE__(name)
 	#define PROFILE_FUNCTION() \
-		PROFILE_SCOPE(__FUNCTION__)
+		PROFILE_SCOPE(__PRETTY_FUNCTION__)
 #else
 	#define PROFILE_SCOPE(name)
 	#define PROFILE_FUNCTION()
@@ -87,7 +94,6 @@ public:
 		:m_result({name, 0, 0})
 	{
 		start();
-
 	}
 
 	~ProfileTimer() {
