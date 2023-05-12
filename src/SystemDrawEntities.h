@@ -12,10 +12,22 @@ private:
 	ScenePlayData& play_data;
 	EntityVec& entities = play_data.ent_mgr.getEntities();
 
+	sf::RenderTexture reverse_tex;
+	sf::RenderStates state_outline;
+	sf::BlendMode blend_mode;
+	sf::View view;
+
+
+
 public:
 	SystemDrawEntities(ScenePlayData& _play_data)
 		:play_data(_play_data)
-	{}
+	{
+		reverse_tex.create(app_conf->game_w,
+							app_conf->game_h);
+		state_outline = sf::RenderStates(&assets->getShader("outline"));
+		blend_mode = sf::BlendMode(sf::BlendMode::Zero, sf::BlendMode::One, sf::BlendMode::Add, sf::BlendMode::DstAlpha, sf::BlendMode::OneMinusSrcAlpha, sf::BlendMode::Subtract);
+	}
 
 	void operator() () {
 		PROFILE_SCOPE("DrawEntities");
@@ -41,15 +53,70 @@ public:
 			#endif
 		}
 
-		// render and draw outlines
-		for (const std::shared_ptr<Entity>& e:entities) {
-			if (e->tag != TAG::ENVIRONMENT && e->tag != TAG::FX && e->tag != TAG::PROJECTILE) {
-				if (e->get<CAnimation>()) {
-					sf::RenderStates render_states = e->get<CAnimation>()->outline_render_states;
-					const sf::Sprite& outline_sprite = e->get<CAnimation>()->active_anim->getSprite();
+		std::reverse(entities.begin(), entities.end());
+		reverse_tex.clear(sf::Color::Transparent);
 
-					screen_tex->draw(outline_sprite, render_states);
-				}
+		//update view position
+		int w = app_conf->game_w;
+		int h = app_conf->game_h;
+		sf::FloatRect ground_rect = play_data.level.map_ground.getBounds();
+		sf::FloatRect rect(play_data.cam.target.x-w/2, play_data.cam.target.y-h/2, w, h);
+
+		//fix weird lines between map tiles when moving
+		rect.left = round(rect.left);
+		rect.top = round(rect.top);
+
+		if (rect.left < 0) rect.left = 0;
+		if (rect.top < 0) rect.top = 0;
+		if (rect.left + rect.width > ground_rect.width) rect.left = ground_rect.width - w;
+		if (rect.top + rect.height > ground_rect.height) rect.top = ground_rect.height - h;
+
+		view.reset(rect);
+
+
+		reverse_tex.setView(view);
+
+		sf::Sprite clip_sprite(reverse_tex.getTexture());
+
+
+		for (const std::shared_ptr<Entity>& e:entities) {
+			if (e->get<CAnimation>() && e->tag != TAG::ENVIRONMENT && e->tag != TAG::FX && e->tag != TAG::PROJECTILE) {
+				const sf::Sprite& anim_sprite = e->get<CAnimation>()->active_anim->getSprite();
+
+				// clip_rect has wrong values
+				sf::IntRect clip_rect;
+				clip_rect.width = anim_sprite.getLocalBounds().width;
+				clip_rect.height = anim_sprite.getLocalBounds().height;
+				clip_rect.left = anim_sprite.getGlobalBounds().left - rect.left;
+				clip_rect.top = anim_sprite.getGlobalBounds().top - rect.top;
+
+				clip_sprite.setTextureRect(clip_rect);
+				clip_sprite.setPosition(0,0);
+				clip_sprite.setOrigin(0,0);
+
+				sf::Sprite overlay_sprite(anim_sprite);
+				overlay_sprite.setPosition(0,0);
+				overlay_sprite.setOrigin(0,0);
+
+
+				sf::RenderTexture render_texture;
+				render_texture.create(overlay_sprite.getLocalBounds().width, overlay_sprite.getLocalBounds().height);
+				render_texture.clear(sf::Color::Transparent);
+				render_texture.draw(overlay_sprite, state_outline);
+				render_texture.draw(clip_sprite, blend_mode);
+				render_texture.display();
+
+				sf::Sprite outline_sprite(render_texture.getTexture());
+				outline_sprite.setOrigin(anim_sprite.getOrigin());
+				outline_sprite.setPosition(anim_sprite.getPosition());
+
+				// draw the outline_sprite
+				screen_tex->draw(outline_sprite);
+			}
+
+			if (e->get<CAnimation>() && e->tag != TAG::FX && e->tag != TAG::PROJECTILE && e->tag != TAG::PLAYER) {
+				reverse_tex.draw(e->get<CAnimation>()->active_anim->getSprite());
+				reverse_tex.display();
 			}
 		}
 
