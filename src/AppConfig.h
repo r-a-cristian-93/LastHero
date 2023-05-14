@@ -10,8 +10,15 @@ public:
 		STYLE_FULLSCREEN = 8
 	};
 
+	enum {
+		RENDER_CLASSIC = 0,
+		RENDER_FLATSCREEN,
+		RENDER_PERFORMANCE
+	};
+
 	std::string window_name = "LastHero";
 	int window_style = STYLE_WINDOWED;
+	int render_style = RENDER_CLASSIC;
 	int max_fps = 60;
 	float game_speed = 60;	// normal speed at 60 fps
 	int game_w = 1024;

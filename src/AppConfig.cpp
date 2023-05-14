@@ -25,6 +25,18 @@ void AppConfig::read(std::string file_name) {
 				std::cout << "ERROR: invalid WINDOW_STYLE: " << word << std::endl;
 			}
 		}
+		else if (word == "RENDER_STYLE") {
+			file >> word;
+			if (word == "CLASSIC_CRT") {
+				render_style = RENDER_CLASSIC;
+			}
+			else if (word == "FLATSCREEN_CRT") {
+				render_style = RENDER_FLATSCREEN;
+			}
+			else if (word == "PERFORMANCE") {
+				render_style = RENDER_PERFORMANCE;
+			}
+		}
 		else if (word == "MAX_FPS") {
 			file >> max_fps;
 		}
@@ -130,6 +142,15 @@ void AppConfig::write(std::string file_name) {
 
 	file << "// Window resolution. 0 to maximum number of available resolutions.\n";
 	file << "WINDOW_RES " << current_mode_id << "\n\n";
+
+	file << "// CLASSIC_CRT, FLATSCREEN_CRT, PERFORMANCE\n";
+	file << "RENDER_STYLE ";
+	switch (render_style) {
+		case RENDER_FLATSCREEN: file << "FLATSCREEN_CRT\n\n"; break;
+		case RENDER_PERFORMANCE: file << "PERFORMANCE\n\n"; break;
+		case RENDER_CLASSIC:
+		default: file << "CLASSIC_CRT\n\n"; break;
+	}
 
 	file << "// Background music volume 0-100.\n";
 	file << "MUSIC_VOLUME " << music_volume << "\n\n";
