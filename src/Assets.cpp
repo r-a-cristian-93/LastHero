@@ -4,12 +4,14 @@
 #include "Common.h"
 #include "Assets.h"
 #include "Action.h"
+#include "AppConfig.h"
 #include <SFML/Graphics.hpp>
 
 Assets::Assets() {
 	loadSounds();
 	loadFonts();
 	loadShaders();
+	loadRenderStates();
 	loadGUI();
 	loadWidgets();
 	loadEntities();
@@ -840,6 +842,7 @@ void Assets::loadWidget() {
 			else if (word == "secondary_rounds_current") link_target = Link::Target::SECONDARY_ROUNDS_CURRENT;
 			else if (word == "window_res") link_target = Link::Target::WINDOW_RESOLUTION;
 			else if (word == "window_style") link_target = Link::Target::WINDOW_STYLE;
+			else if (word == "render_style") link_target = Link::Target::RENDER_STYLE;
 			else if (word == "music_vol") link_target = Link::Target::MUSIC_VOLUME;
 			else if (word == "sfx_vol") link_target = Link::Target::SFX_VOLUME;
 			else {
@@ -1087,6 +1090,7 @@ void Assets::loadShaders() {
 	}
 
 	file.close();
+
 }
 
 void Assets::loadShader() {
@@ -1112,5 +1116,14 @@ sf::Shader& Assets::getShader(std::string name) {
 	return 	shaders[name];
 }
 
-Assets::~Assets() {}
+void Assets::loadRenderStates() {
+	render_states[AppConfig::RENDER_CLASSIC] = sf::RenderStates(&getShader("crt-classic"));
+	render_states[AppConfig::RENDER_FLATSCREEN] = sf::RenderStates(&getShader("crt-flatscreen"));
+	render_states[AppConfig::RENDER_PERFORMANCE] = sf::RenderStates::Default;
+}
 
+sf::RenderStates& Assets::getRenderStates(size_t render_style) {
+	return render_states[render_style];
+}
+
+Assets::~Assets() {}

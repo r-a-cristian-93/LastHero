@@ -16,6 +16,8 @@ void ConfigManager::applySettings(AppConfig& conf) {
 		screen_sprite->setPosition(offset_x, offset_y);
 	}
 
+	app_conf->current_render_state = &assets->getRenderStates(app_conf->render_style);
+
 	window->create(app_conf->modes[app_conf->current_mode_id], app_conf->window_name, app_conf->window_style);
 	window->setFramerateLimit(app_conf->max_fps);
 	window->setKeyRepeatEnabled(false);
