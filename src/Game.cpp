@@ -11,7 +11,6 @@
 Game::Game()
 	:running(true)
 	,current_scene(nullptr)
-	,render_states(sf::RenderStates::Default)
 	,next_scene(0)
 {
 	init();
@@ -35,7 +34,7 @@ void Game::run() {
 
 			screen_tex->display();
 
-			window->draw(*screen_sprite, render_states);
+			window->draw(*screen_sprite, *app_conf->current_render_state);
 			window->display();
 
 			sChangeScene();
@@ -129,27 +128,11 @@ void Game::setNextScene(size_t id) {
 }
 
 void Game::init() {
-	render_states = sf::RenderStates(&assets->getShader("crt-mattias"));
-
 	//load texture after creating the window causes sementation fault;
 	screen_tex->create(app_conf->game_w, app_conf->game_h);
 	screen_sprite->setTextureRect({0, 0, app_conf->game_w, app_conf->game_h});
 
-	{
-		float scale = static_cast<float>(app_conf->modes[app_conf->current_mode_id].height) / app_conf->game_h;
-		scale *= app_conf->game_scale;
-		screen_sprite->setScale(scale,scale);
-
-		float offset_x = (app_conf->modes[app_conf->current_mode_id].width - screen_sprite->getGlobalBounds().width)/2;
-		float offset_y = (app_conf->modes[app_conf->current_mode_id].height - screen_sprite->getGlobalBounds().height)/2;
-
-		screen_sprite->setPosition(offset_x, offset_y);
-	}
-
-	window->create(app_conf->modes[app_conf->current_mode_id], app_conf->window_name, app_conf->window_style);
-	window->setFramerateLimit(app_conf->max_fps);
-	window->setKeyRepeatEnabled(false);
-	window->setMouseCursorVisible(false);
+	cfg_mgr->applySettings(*app_conf);
 
 	setScene(GAME_SCENE::MENU);
 }

@@ -7,7 +7,6 @@ class Game {
 private:
 	Scene* current_scene;
 	size_t next_scene;
-	sf::RenderStates render_states;
 	sf::Clock clock;
 
 	void init();

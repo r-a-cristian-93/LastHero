@@ -4,12 +4,14 @@
 #include "Common.h"
 #include "Assets.h"
 #include "Action.h"
+#include "AppConfig.h"
 #include <SFML/Graphics.hpp>
 
 Assets::Assets() {
 	loadSounds();
 	loadFonts();
 	loadShaders();
+	loadRenderStates();
 	loadGUI();
 	loadWidgets();
 	loadEntities();
@@ -1088,6 +1090,7 @@ void Assets::loadShaders() {
 	}
 
 	file.close();
+
 }
 
 void Assets::loadShader() {
@@ -1113,5 +1116,14 @@ sf::Shader& Assets::getShader(std::string name) {
 	return 	shaders[name];
 }
 
-Assets::~Assets() {}
+void Assets::loadRenderStates() {
+	render_states[AppConfig::RENDER_CLASSIC] = sf::RenderStates(&getShader("crt-classic"));
+	render_states[AppConfig::RENDER_FLATSCREEN] = sf::RenderStates(&getShader("crt-flatscreen"));
+	render_states[AppConfig::RENDER_PERFORMANCE] = sf::RenderStates::Default;
+}
 
+sf::RenderStates& Assets::getRenderStates(size_t render_style) {
+	return render_states[render_style];
+}
+
+Assets::~Assets() {}

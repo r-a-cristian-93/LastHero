@@ -73,6 +73,7 @@ private:
 	std::map<std::string, sf::Sprite> sprites;
 	std::map<std::string, Box> boxes;
 	std::map<std::string, sf::Shader> shaders;
+	std::map<size_t, sf::RenderStates> render_states;
 	std::map<std::string, Widget> widgets;
 	std::map<size_t, Widget> entities_icons;
 	std::map<std::string, sf::Music> bg_music;
@@ -85,6 +86,7 @@ private:
 	void loadGUI();
 	void loadWidgets();
 	void loadShaders();
+	void loadRenderStates();
 	void loadSounds();
 	void loadStages();
 
@@ -94,6 +96,7 @@ private:
 	void loadBoxes();
 	void loadWidget();
 	void loadShader();
+	void loadRenderState();
 	void loadSong();
 	void loadSound();
 	void loadBoxRepeatable(std::string box_name, size_t sprite_name, std::string texture_name);
@@ -126,6 +129,7 @@ public:
 	sf::Texture& getTexture(std::string name);
 	sf::Sprite& getSprite(std::string name);
 	sf::Shader& getShader(std::string name);
+	sf::RenderStates& getRenderStates(size_t render_style);
 	Widget& getEntityIcon(size_t name_id);
 	Widget& getWidget(std::string name);
 	sf::Music& getSound(std::string name);
