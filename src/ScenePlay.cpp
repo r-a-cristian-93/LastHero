@@ -39,6 +39,7 @@ void ScenePlay::init() {
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::M, Action::FIRE_SECONDARY);
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::P, Action::GAME_PAUSE);
 	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::Escape, Action::CHANGE_SCENE_MENU);
+	act_mgr->registerAction(ActionManager::DEV_KEYBOARD, sf::Keyboard::K, Action::DEV_KILL_ENEMIES);
 
 	load_level(play_data.level_path);
 	play_data.collision_map.setMap(play_data.level.map_size, play_data.level.tile_size, app_conf->colmap_res, app_conf->colmap_update);
@@ -199,6 +200,9 @@ void ScenePlay::doAction(const Action& a) {
 					play_data.ent_mgr.spawnEntity(*a.ent_tag, *a.ent_name, *a.pos, *a.state, *a.facing);
 					play_data.ent_mgr.update();
 					play_data.base = play_data.ent_mgr.getEntities(TAG::BASE)[0];
+				break;
+				case Action::DEV_KILL_ENEMIES:
+					dev_kill_enemies();
 				default:
 				break;
 			}
@@ -250,4 +254,14 @@ void ScenePlay::sGameState() {
 		std::cout << "enemies left: " << play_data.ent_mgr.getEntities(TAG::ENEMY).size() << std::endl;
 	}
 	#endif
+}
+
+void ScenePlay::dev_kill_enemies() {
+	for (std::shared_ptr<Entity>& e : play_data.ent_mgr.getEntities(TAG::ENEMY)) {
+		e->alive = false;
+		e->hit = true;
+
+		play_data.kills_per_enemy[e->name]++;
+		play_data.total_kills++;
+	}
 }

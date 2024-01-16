@@ -39,6 +39,9 @@ protected:
 
 	void sGameState();
 
+private:
+	void dev_kill_enemies();
+
 public:
 	void update() override;
 	void doAction(const Action& a) override;

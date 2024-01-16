@@ -30,6 +30,8 @@ public:
 		CHANGE_SCENE_MENU,
 		CHANGE_SCENE_PLAY,
 		CHANGE_SCENE_EDITOR,
+
+		DEV_KILL_ENEMIES
 	};
 
 	enum Type {
