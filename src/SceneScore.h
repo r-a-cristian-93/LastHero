@@ -30,7 +30,7 @@ class SceneScore: public Scene {
 		FRAME_CONTINUE = 280
 	};
 	const float* key_frames = app_conf->score_key_frames;
-	bool key_frames_rendered[FRAMES_SCORE::COUNT];
+	bool key_frames_rendered[FRAMES_SCORE::COUNT] = {};
 
 	WidgetVec all_table_widgets;
 	WidgetVec table_widgets;
